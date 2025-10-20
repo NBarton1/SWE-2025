@@ -1,4 +1,4 @@
-package com.jknv.lum.entities
+package com.jknv.lum.model
 
 import jakarta.persistence.*
 
@@ -6,25 +6,25 @@ import jakarta.persistence.*
 @Entity
 @Table(name = "Account")
 data class Account(
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    var id: Long,
 
     @Column(nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(nullable = false, unique = true)
-    val username: String,
+    var username: String,
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(nullable = false)
-    val picture: ByteArray,
+    @Column(nullable = true, columnDefinition = "bytea")
+    var picture: ByteArray?,
 
-//    @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
-//    val type: AccountType
-) {
+    @Column(nullable = false, name = "hashed_password")
+    var password: String,
+
+    ) {
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -35,6 +35,7 @@ data class Account(
         if (name != other.name) return false
         if (username != other.username) return false
         if (!picture.contentEquals(other.picture)) return false
+        if (password != other.password) return false
 
         return true
     }
@@ -44,6 +45,8 @@ data class Account(
         result = 31 * result + name.hashCode()
         result = 31 * result + username.hashCode()
         result = 31 * result + picture.contentHashCode()
+        result = 31 * result + password.hashCode()
         return result
     }
+
 }

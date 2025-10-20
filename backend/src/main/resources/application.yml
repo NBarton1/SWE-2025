@@ -1,20 +1,21 @@
 spring:
+  profiles:
+    include: datasource
   application:
     name: LeagueOfUnitedMinors
   datasource:
-    password:
     url: jdbc:postgresql://localhost:5432/postgres
-    username:
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: none #TODO maybe we can do some interesting auto database handling with this?
+      ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         show_sql: true
 server:
   error:
     include-message: always
     include-binding-errors: always
+
 
