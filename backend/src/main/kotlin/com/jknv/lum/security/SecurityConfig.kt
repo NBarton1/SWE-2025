@@ -28,22 +28,29 @@ class SecurityConfig(
         return BCryptPasswordEncoder()
     }
 
+    /**
+     * Specifies security filtering, allowing or denying certain requests
+     */
     @Bean
     fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
         return httpSecurity
             .csrf{
-                csrf -> csrf.disable()
+                csrf -> csrf.disable() // React handles this for us
             }
+            .cors(Customizer.withDefaults())
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers( "/api/auth/signup").permitAll()
-                    .anyRequest().authenticated()
+                    .requestMatchers( "/api/auth/signup").permitAll() // Sign up page should be available
+                    .anyRequest().authenticated() // Otherwise everything else needs authentication
             }
-            .httpBasic(Customizer.withDefaults())
+            .httpBasic(Customizer.withDefaults()) // TODO use jwt instead
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .build()
     }
 
+    /**
+     * Handles authentication. Checks password against hashes on login
+     */
     @Bean
     fun authenticationProvider(): AuthenticationProvider {
         val provider = DaoAuthenticationProvider(userDetailsService)
@@ -51,15 +58,15 @@ class SecurityConfig(
         return provider
     }
 
-//    @Bean
-//    fun corsConfigurationSource(): CorsConfigurationSource {
-//        val configuration = CorsConfiguration()
-//        configuration.allowedOrigins = listOf("http://localhost:5173")
-//        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
-//        configuration.allowCredentials = true
-//        configuration.allowedHeaders = listOf("*")
-//        val source = UrlBasedCorsConfigurationSource()
-//        source.registerCorsConfiguration("/**", configuration)
-//        return source
-//    }
+    @Bean
+    fun corsConfigurationSource(): CorsConfigurationSource {
+        val configuration = CorsConfiguration()
+        configuration.allowedOrigins = listOf("http://localhost:5173")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
+        configuration.allowCredentials = true
+        configuration.allowedHeaders = listOf("*")
+        val source = UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
+    }
 }
