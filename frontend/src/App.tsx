@@ -21,7 +21,7 @@ function App() {
                 password,
             })
         });
-    }, []);
+    }, [name, password, username]);
 
     return (
         <>

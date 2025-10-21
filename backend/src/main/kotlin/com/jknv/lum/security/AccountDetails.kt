@@ -10,7 +10,7 @@ class AccountDetails(
     val account: Account
 ) : UserDetails {
     override fun getAuthorities(): Collection<GrantedAuthority> {
-        return Collections.singleton<GrantedAuthority>(SimpleGrantedAuthority("USER"))
+        return Collections.singleton(SimpleGrantedAuthority("USER"))
     }
 
     override fun getPassword(): String {
