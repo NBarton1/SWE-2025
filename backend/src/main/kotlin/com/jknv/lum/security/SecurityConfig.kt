@@ -25,7 +25,7 @@ class SecurityConfig(
 
     @Bean
     fun bCryptPasswordEncoder(): BCryptPasswordEncoder {
-        return BCryptPasswordEncoder(13)
+        return BCryptPasswordEncoder()
     }
 
     @Bean
@@ -34,7 +34,6 @@ class SecurityConfig(
             .csrf{
                 csrf -> csrf.disable()
             }
-            .cors(Customizer.withDefaults())
             .authorizeHttpRequests { auth ->
                 auth
                     .requestMatchers( "/api/auth/signup").permitAll()
@@ -52,15 +51,15 @@ class SecurityConfig(
         return provider
     }
 
-    @Bean
-    fun corsConfigurationSource(): CorsConfigurationSource {
-        val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("http://localhost:5173")
-        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
-        configuration.allowCredentials = true
-        configuration.allowedHeaders = listOf("*")
-        val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", configuration)
-        return source
-    }
+//    @Bean
+//    fun corsConfigurationSource(): CorsConfigurationSource {
+//        val configuration = CorsConfiguration()
+//        configuration.allowedOrigins = listOf("http://localhost:5173")
+//        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
+//        configuration.allowCredentials = true
+//        configuration.allowedHeaders = listOf("*")
+//        val source = UrlBasedCorsConfigurationSource()
+//        source.registerCorsConfiguration("/**", configuration)
+//        return source
+//    }
 }

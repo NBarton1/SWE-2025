@@ -16,14 +16,6 @@ class AccountController(
     private val accountService: AccountService
 ) {
 
-//    @PostMapping("/login")
-//    fun login(@RequestBody account: Account): ResponseEntity<Account> {
-//        val foundAccount =
-//            accountRepository.findAccountByUsername(account.username) ?: return ResponseEntity(HttpStatus.UNAUTHORIZED)
-//
-//        return ResponseEntity.ok(foundAccount)
-//    }
-
     @PostMapping("/api/auth/signup")
     fun signup(@RequestBody account: Account): ResponseEntity<Account> {
         LOGGER.info("Received signup")
