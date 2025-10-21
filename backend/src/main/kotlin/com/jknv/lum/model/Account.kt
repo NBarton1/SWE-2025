@@ -11,10 +11,10 @@ data class Account(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 32)
     var name: String,
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 32)
     var username: String,
 
     @Column(nullable = true, columnDefinition = "bytea")

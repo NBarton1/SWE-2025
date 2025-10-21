@@ -9,8 +9,8 @@ function App() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
 
-    const login = useCallback(async () => {
-        await fetch("http://localhost:8080/api/account/signup", {
+    const signup = useCallback(async () => {
+        await fetch("http://localhost:8080/api/auth/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -41,7 +41,7 @@ function App() {
                 <input onChange={e => setName(e.target.value)}/>
                 <input onChange={e => setUsername(e.target.value)}/>
                 <input onChange={e => setPassword(e.target.value)}/>
-                <button onClick={login}/>
+                <button onClick={signup}/>
                 <p>
                     Edit <code>src/App.tsx</code> and save to test HMR
                 </p>

@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 
 @Service
-class LumUserDetailsService(
+class AccountDetailsService(
     val accountRepository: AccountRepository,
 ) : UserDetailsService {
 

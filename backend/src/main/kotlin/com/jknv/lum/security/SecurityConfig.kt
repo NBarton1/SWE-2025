@@ -36,8 +36,7 @@ class SecurityConfig(
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/account/login").permitAll()
-                    .requestMatchers("/api/account/signup").permitAll()
+                    .requestMatchers( "/api/auth/signup").permitAll()
                     .anyRequest().authenticated()
             }
             .httpBasic(Customizer.withDefaults())
