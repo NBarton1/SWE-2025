@@ -16,7 +16,7 @@ data class Account(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long,
+    var id: Long? = null,
 
     @Column(nullable = false, length = 32)
     var name: String,
@@ -25,7 +25,7 @@ data class Account(
     var username: String,
 
     @Column(nullable = true, columnDefinition = "bytea")
-    var picture: ByteArray?,
+    var picture: ByteArray? = null,
 
     @param:JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // Prevents password from being written to responses
     @Column(nullable = false, name = "hashed_password")

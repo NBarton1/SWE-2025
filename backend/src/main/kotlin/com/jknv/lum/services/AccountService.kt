@@ -37,4 +37,8 @@ class AccountService(
     fun deleteAccount(id: Long) {
         accountRepository.deleteById(id)
     }
+
+    fun countAccounts(): Long {
+        return accountRepository.count()
+    }
 }
