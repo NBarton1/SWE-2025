@@ -4,6 +4,7 @@ import com.jknv.lum.model.entity.Team
 import com.jknv.lum.services.TeamService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -16,6 +17,7 @@ class TeamController (
     private val teamService: TeamService
 ) {
     @PostMapping
+    @PreAuthorize("hasAnyRole('COACH', 'ADMIN')")
     fun create(@RequestBody team: Team): ResponseEntity<Team> {
         val newTeam = teamService.create(team)
         return ResponseEntity.status(HttpStatus.CREATED).body(newTeam)

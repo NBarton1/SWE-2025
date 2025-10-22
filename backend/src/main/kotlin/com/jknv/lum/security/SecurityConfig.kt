@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -19,6 +20,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
     val userDetailsService: UserDetailsService,
 ) {
@@ -40,7 +42,7 @@ class SecurityConfig(
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers( "/api/accounts/**", "/api/teams/**").permitAll() // Sign up page should be available
+                    .requestMatchers( "/api/accounts/**").permitAll() // Sign up page should be available
                     .anyRequest().authenticated() // Otherwise everything else needs authentication
             }
             .httpBasic(Customizer.withDefaults()) // TODO use jwt instead
