@@ -2,15 +2,13 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
-import {BrowserRouter, Route, Routes} from "react-router"
+import {MantineProvider} from "@mantine/core";
+import "@mantine/core/styles.css";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-      <BrowserRouter>
-          <Routes>
-              <Route path="/login" element={(<p>TEST</p>)} />
-              <Route path="/signup" element={(<App />)} />
-          </Routes>
-      </BrowserRouter>
+      <MantineProvider defaultColorScheme="dark">
+          <App/>
+      </MantineProvider>
   </StrictMode>,
 )
