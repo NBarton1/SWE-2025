@@ -1,6 +1,6 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.model.Account
+import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.request.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
 import jakarta.transaction.Transactional
@@ -36,5 +36,9 @@ class AccountService(
 
     fun deleteAccount(id: Long) {
         accountRepository.deleteById(id)
+    }
+
+    fun countAccounts(): Long {
+        return accountRepository.count()
     }
 }
