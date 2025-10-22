@@ -3,14 +3,17 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import {BrowserRouter, Route, Routes} from "react-router"
+import MatchForm from "./MatchForm.tsx";
+import Schedule from "./Schedule.tsx";
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+<StrictMode>
       <BrowserRouter>
           <Routes>
               <Route path="/login" element={(<p>TEST</p>)} />
               <Route path="/signup" element={(<App />)} />
+              <Route path="/calendar" element={(<Schedule />)}/>
           </Routes>
       </BrowserRouter>
-  </StrictMode>,
+</StrictMode>,
 )

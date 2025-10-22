@@ -3,7 +3,6 @@ package com.jknv.lum.model
 import jakarta.persistence.*
 import java.sql.Date
 
-// TODO add users table to postgres
 @Entity
 @Table(name = "Match")
 data class Match (
