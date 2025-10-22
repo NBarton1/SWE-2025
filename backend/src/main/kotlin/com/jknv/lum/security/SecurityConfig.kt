@@ -40,7 +40,7 @@ class SecurityConfig(
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers( "/api/auth/signup").permitAll() // Sign up page should be available
+                    .requestMatchers( "/api/accounts", "/api/teams").permitAll() // Sign up page should be available
                     .anyRequest().authenticated() // Otherwise everything else needs authentication
             }
             .httpBasic(Customizer.withDefaults()) // TODO use jwt instead
