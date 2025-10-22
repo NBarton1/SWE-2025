@@ -2,7 +2,9 @@ package com.jknv.lum.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.jknv.lum.model.request.AccountUpdateRequest
 import jakarta.persistence.*
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Entity
 @Table(name = "Account")
@@ -49,6 +51,13 @@ data class Account(
         result = 31 * result + picture.contentHashCode()
         result = 31 * result + password.hashCode()
         return result
+    }
+
+    fun updateFromRequest(request: AccountUpdateRequest, passwordEncoder: BCryptPasswordEncoder) = apply {
+        request.name?.let { name = it }
+        request.username?.let { username = it }
+        request.picture?.let { picture = it }
+        request.password?.let { password = passwordEncoder.encode(it) }
     }
 
 }
