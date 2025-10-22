@@ -1,6 +1,5 @@
 package com.jknv.lum.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jknv.lum.model.request.AccountUpdateRequest
 import jakarta.persistence.*

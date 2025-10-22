@@ -1,5 +1,6 @@
 package com.jknv.lum.model
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import jakarta.persistence.*
 
 @Entity
@@ -9,26 +10,23 @@ class Team (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
 
-    @Column(nullable = false)
-    var wins: Int,
+    @Column(nullable = false, unique = true)
+    var name: String,
 
     @Column(nullable = false)
-    var losses: Int,
+    var wins: Int = 0,
 
     @Column(nullable = false)
-    var ties: Int,
+    var losses: Int = 0,
 
     @Column(nullable = false)
-    var pointsFor: Int,
+    var ties: Int = 0,
 
     @Column(nullable = false)
-    var pointsAllowed: Int,
+    var pointsFor: Int = 0,
 
-    @OneToMany(mappedBy = "homeTeam", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var homeMatches: List<Match> = mutableListOf(),
-
-    @OneToMany(mappedBy = "awayTeam", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    var awayMatches: List<Match> = mutableListOf()
+    @Column(nullable = false)
+    var pointsAllowed: Int = 0,
 
     ) {
 

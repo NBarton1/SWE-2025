@@ -1,5 +1,6 @@
 package com.jknv.lum.model
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
 import java.sql.Date
 
@@ -8,22 +9,22 @@ import java.sql.Date
 data class Match (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long,
+    var id: Long = 0,
 
     @Column(nullable = false)
     var date: Date,
 
     @Column(nullable = false)
-    var type: String,
+    var type: Int,
+
+    @Column
+    var timeLeft: Int = 0,
 
     @Column(nullable = false)
-    var timeLeft: Int,
+    var homeScore: Int = 0,
 
     @Column(nullable = false)
-    var homeScore: Int,
-
-    @Column(nullable = false)
-    var awayScore: Int,
+    var awayScore: Int = 0,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "home_team_id", nullable = false)
