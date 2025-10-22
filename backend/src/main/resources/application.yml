@@ -17,5 +17,10 @@ server:
   error:
     include-message: always
     include-binding-errors: always
-
+logging:
+  level:
+    com.jknv.lum: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: DEBUG
 

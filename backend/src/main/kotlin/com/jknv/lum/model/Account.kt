@@ -1,8 +1,11 @@
 package com.jknv.lum.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.jknv.lum.model.request.AccountUpdateRequest
 import jakarta.persistence.*
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
-// TODO add users table to postgres
 @Entity
 @Table(name = "Account")
 data class Account(
@@ -11,15 +14,16 @@ data class Account(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long,
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 32)
     var name: String,
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 32)
     var username: String,
 
     @Column(nullable = true, columnDefinition = "bytea")
     var picture: ByteArray?,
 
+    @param:JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // Prevents password from being written to responses
     @Column(nullable = false, name = "hashed_password")
     var password: String,
 
@@ -47,6 +51,13 @@ data class Account(
         result = 31 * result + picture.contentHashCode()
         result = 31 * result + password.hashCode()
         return result
+    }
+
+    fun updateFromRequest(request: AccountUpdateRequest, passwordEncoder: BCryptPasswordEncoder) = apply {
+        request.name?.let { name = it }
+        request.username?.let { username = it }
+        request.picture?.let { picture = it }
+        request.password?.let { password = passwordEncoder.encode(it) }
     }
 
 }

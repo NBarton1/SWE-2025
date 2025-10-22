@@ -8,6 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
@@ -27,23 +28,29 @@ class SecurityConfig(
         return BCryptPasswordEncoder()
     }
 
+    /**
+     * Specifies security filtering, allowing or denying certain requests
+     */
     @Bean
     fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
         return httpSecurity
             .csrf{
-                csrf -> csrf.disable()
+                csrf -> csrf.disable() // React handles this for us
             }
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/api/account/login").permitAll()
-                    .requestMatchers("/api/account/signup").permitAll()
-                    .anyRequest().authenticated()
+                    .requestMatchers( "/api/auth/signup").permitAll() // Sign up page should be available
+                    .anyRequest().authenticated() // Otherwise everything else needs authentication
             }
-            .httpBasic(Customizer.withDefaults())
+            .httpBasic(Customizer.withDefaults()) // TODO use jwt instead
+            .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .build()
     }
 
+    /**
+     * Handles authentication. Checks password against hashes on login
+     */
     @Bean
     fun authenticationProvider(): AuthenticationProvider {
         val provider = DaoAuthenticationProvider(userDetailsService)

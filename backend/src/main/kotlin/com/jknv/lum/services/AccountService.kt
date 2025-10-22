@@ -1,11 +1,14 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.Account
+import com.jknv.lum.model.request.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
+import jakarta.transaction.Transactional
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
+@Transactional
 class AccountService(
     val accountRepository: AccountRepository,
     val bCryptPasswordEncoder: BCryptPasswordEncoder
@@ -24,7 +27,10 @@ class AccountService(
         return accountRepository.findAll()
     }
 
-    fun updateAccount(account: Account): Account {
+    fun updateAccount(id: Long, updateInfo: AccountUpdateRequest): Account? {
+
+        val account = getAccount(id) ?: return null
+        account.updateFromRequest(updateInfo, bCryptPasswordEncoder)
         return accountRepository.save(account)
     }
 

@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface AccountRepository : JpaRepository<Account, Long> {
     // username is unique
-    fun findAccountByUsername(username: String): Account?
+    fun findByUsername(username: String): Account?
 }
