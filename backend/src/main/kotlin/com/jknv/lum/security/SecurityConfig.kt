@@ -3,9 +3,12 @@ package com.jknv.lum.security
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -40,12 +43,19 @@ class SecurityConfig(
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers( "/api/auth/signup").permitAll() // Sign up page should be available
+                    .requestMatchers( HttpMethod.POST,"/api/accounts").permitAll()
+                    .requestMatchers(HttpMethod.POST,"/api/accounts/login").permitAll() // Sign up page should be available
                     .anyRequest().authenticated() // Otherwise everything else needs authentication
             }
             .httpBasic(Customizer.withDefaults()) // TODO use jwt instead
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .build()
+    }
+
+
+    @Bean
+    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
+        return config.authenticationManager
     }
 
     /**

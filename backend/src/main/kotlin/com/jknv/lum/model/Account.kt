@@ -1,8 +1,7 @@
 package com.jknv.lum.model
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.jknv.lum.model.request.AccountUpdateRequest
+import com.jknv.lum.request.AccountUpdateRequest
 import jakarta.persistence.*
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 

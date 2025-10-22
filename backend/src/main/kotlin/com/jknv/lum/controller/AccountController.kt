@@ -1,8 +1,10 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.model.Account
-import com.jknv.lum.model.request.AccountUpdateRequest
+import com.jknv.lum.request.AccountLoginRequest
+import com.jknv.lum.request.AccountUpdateRequest
 import com.jknv.lum.services.AccountService
+import com.jknv.lum.services.JwtService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -17,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/accounts")
 class AccountController(
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val jwtService: JwtService
 ) {
 
     @PostMapping
@@ -46,6 +49,12 @@ class AccountController(
     @DeleteMapping("/{id}")
     fun delete(@PathVariable id: Long): ResponseEntity<Void> {
         accountService.deleteAccount(id)
+        return ResponseEntity.ok().build()
+    }
+
+    @PostMapping("/login")
+    fun login(loginRequest: AccountLoginRequest): ResponseEntity<Account> {
+//        jwtService.giveToken()
         return ResponseEntity.ok().build()
     }
 }

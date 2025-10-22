@@ -21,6 +21,7 @@ repositories {
 }
 
 dependencies {
+    implementation("io.jsonwebtoken:jjwt-api:0.13.0")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
