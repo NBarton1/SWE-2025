@@ -1,5 +1,6 @@
 package com.jknv.lum.model.entity
 
+import com.sun.org.apache.xalan.internal.lib.ExsltDatetime.time
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -41,4 +42,14 @@ data class Match (
     @JoinColumn(name = "away_team_id", nullable = false)
     var awayTeam: Team,
 
-    )
+    ) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Match
+
+        return id == other.id
+    }
+}

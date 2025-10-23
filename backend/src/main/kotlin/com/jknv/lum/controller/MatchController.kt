@@ -21,23 +21,14 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/match")
 class MatchController (
     private val matchService: MatchService,
-    private val teamService: TeamService,
 ) {
     @PostMapping("/create")
     fun createMatch(@RequestBody req: MatchCreateRequest): ResponseEntity<Match> {
         LOGGER.info("Creating new Match")
 
-        val homeTeam = teamService.getTeamById(req.homeTeamId)
-        val awayTeam = teamService.getTeamById(req.awayTeamId)
 
-        val match = Match(
-            date = req.date,
-            type = req.type,
-            homeTeam = homeTeam,
-            awayTeam = awayTeam
-        )
 
-        val newMatch = matchService.saveMatch(match)
+        val newMatch = matchService.createMatch(req)
         return ResponseEntity.status(HttpStatus.CREATED).body(newMatch)
     }
 
@@ -55,12 +46,12 @@ class MatchController (
 
         val match = matchService.getMatchById(req.id)
 
-        match.date = req.date
-        match.type = req.type
-        match.awayTeam = teamService.getTeamById(req.awayTeamId)
-        match.homeTeam = teamService.getTeamById(req.homeTeamId)
-
-        matchService.saveMatch(match)
+//        match.date = req.date
+//        match.type = req.type
+//        match.awayTeam = teamService.getTeamById(req.awayTeamId)
+//        match.homeTeam = teamService.getTeamById(req.homeTeamId)
+//
+        matchService.updateMatch(req)
 
         return ResponseEntity.status(HttpStatus.OK).body(match)
     }

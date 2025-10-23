@@ -1,7 +1,7 @@
 import React, {type Dispatch, useState} from "react";
 import {type Match, MatchType} from "./match.ts";
 import type { Team } from "./team.ts";
-import TimeInput from "../TimeInput.tsx";
+import TimeInput from "./TimeInput.tsx";
 import MatchTypeSelect from "./MatchTypeSelect.tsx";
 import {token} from "../main.tsx";
 
