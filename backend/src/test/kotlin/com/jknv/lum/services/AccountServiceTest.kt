@@ -2,6 +2,7 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.repository.AccountRepository
+import com.jknv.lum.request.AccountLoginRequest
 import com.jknv.lum.request.AccountUpdateRequest
 import io.mockk.every
 import io.mockk.justRun
@@ -112,4 +113,9 @@ class AccountServiceTest {
 
         assertEquals(expectedCount, count)
     }
+
+//    @Test
+//    fun verifyLoginTest() {
+//        accountService.verifyLogin(AccountLoginRequest("name", "username"))
+//    }
 }

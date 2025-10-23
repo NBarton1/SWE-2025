@@ -5,7 +5,6 @@ import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.request.MatchCreateRequest
 import com.jknv.lum.model.request.MatchUpdateRequest
 import com.jknv.lum.repository.MatchRepository
-import com.jknv.lum.repository.TeamRepository
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
