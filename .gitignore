@@ -67,3 +67,4 @@ dist-ssr
 *.sw?
 
 *.env
+*application-secret.yml
