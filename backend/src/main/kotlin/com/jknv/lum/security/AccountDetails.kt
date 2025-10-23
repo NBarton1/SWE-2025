@@ -1,6 +1,6 @@
 package com.jknv.lum.security
 
-import com.jknv.lum.model.Account
+import com.jknv.lum.model.entity.Account
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails

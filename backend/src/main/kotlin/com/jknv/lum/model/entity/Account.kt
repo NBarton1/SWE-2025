@@ -1,7 +1,7 @@
-package com.jknv.lum.model
+package com.jknv.lum.model.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.jknv.lum.model.request.AccountUpdateRequest
+import com.jknv.lum.request.AccountUpdateRequest
 import jakarta.persistence.*
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
@@ -11,7 +11,7 @@ data class Account(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long,
+    var id: Long? = null,
 
     @Column(nullable = false, length = 32)
     var name: String,
@@ -20,7 +20,7 @@ data class Account(
     var username: String,
 
     @Column(nullable = true, columnDefinition = "bytea")
-    var picture: ByteArray?,
+    var picture: ByteArray? = null,
 
     @param:JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // Prevents password from being written to responses
     @Column(nullable = false, name = "hashed_password")

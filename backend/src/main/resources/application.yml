@@ -1,10 +1,9 @@
 spring:
   profiles:
-    include: datasource
+    include: secret
   application:
     name: LeagueOfUnitedMinors
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
