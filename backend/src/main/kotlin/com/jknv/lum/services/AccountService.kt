@@ -4,9 +4,13 @@ import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.request.AccountUpdateRequest
 import com.jknv.lum.model.type.Role
+import com.jknv.lum.request.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
 import com.jknv.lum.repository.CoachRepository
+import com.jknv.lum.request.AccountLoginRequest
 import jakarta.transaction.Transactional
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -14,7 +18,9 @@ import org.springframework.stereotype.Service
 @Transactional
 class AccountService(
     private val accountRepository: AccountRepository,
-    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+    private val authenticationManager: AuthenticationManager,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder
+    private val jwtService: JwtService,
     private val coachService: CoachService
 ) {
 
@@ -53,6 +59,21 @@ class AccountService(
 
     fun deleteAccount(id: Long) {
         accountRepository.deleteById(id)
+    }
+
+    fun verifyLogin(loginRequest: AccountLoginRequest): String? {
+        val authentication = authenticationManager.authenticate(
+            UsernamePasswordAuthenticationToken(
+                loginRequest.username,
+                loginRequest.password
+            )
+        )
+
+        if (authentication.isAuthenticated) {
+            return jwtService.giveToken(loginRequest.username)
+        }
+
+        return null
     }
 
     fun countAccounts(): Long {
