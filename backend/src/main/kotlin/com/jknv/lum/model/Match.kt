@@ -1,8 +1,7 @@
 package com.jknv.lum.model
 
-import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.*
-import java.sql.Date
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "Match")
@@ -12,7 +11,7 @@ data class Match (
     var id: Long = 0,
 
     @Column(nullable = false)
-    var date: Date,
+    var date: LocalDateTime,
 
     @Column(nullable = false)
     var type: Int,
@@ -34,5 +33,4 @@ data class Match (
     @JoinColumn(name = "away_team_id", nullable = false)
     var awayTeam: Team,
 
-    ) {
-}
+    )

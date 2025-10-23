@@ -1,9 +1,10 @@
 package com.jknv.lum.model.request
 
-import java.sql.Date
+import java.time.LocalDateTime
+
 
 class MatchCreateRequest (
-    val date: Date,
+    val date: LocalDateTime,
     val type: Int,
     var homeTeamId: Long,
     var awayTeamId: Long

@@ -4,36 +4,62 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import "./Schedule.css"
+import DatePopup from "./DatePopup.tsx";
+import {type Match, matchStr, type Team} from './match.ts';
+import 'reactjs-popup/dist/index.css';
 
 
 const Schedule: React.FC = () => {
-    let [matches, setMatches] = useState([]);
-    let [formOpen, setFormOpen] = useState(false);
+    let [matches, setMatches] = useState<Match[]>([]);
+    let [teams, setTeams] = useState<Team[]>([]);
+    let [date, setDate] = useState<string|null>(null);
+
 
     const dateClick = useCallback((date) => {
-        setFormOpen(true);
+        setDate(date.dateStr);
     }, []);
 
+    const getMatches = async () => {
+        try {
+            let matches_res: Response = await fetch("http://localhost:8080/api/match/all", {
+                method: "GET",
+            });
+
+            console.log(matches_res.status);
+
+            return await matches_res.json();
+        } catch (error) {
+            console.log("Failed to get matches");
+            return null;
+        }
+    };
+
+    const getTeams = async () => {
+        try {
+            let teams_response = await fetch("http://localhost:8080/api/team/all", {
+                method: "GET",
+            });
+
+            console.log(teams_response.status);
+
+            return await teams_response.json();
+        } catch (error) {
+            console.log("Failed to get teams");
+            return null;
+        }
+    };
+
     useEffect(() => {
-        const getMatches = async () => {
-            try {
-                let res = await fetch("http://localhost:8080/api/match/all", {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({})
-                });
-
-                return await res.json();
-            } catch (error) {
-                console.log("Failed to get matches");
-                return null;
-            }
-        };
-
+        // TODO: error checking
         getMatches().then(matches => {
             console.log(matches);
             setMatches(matches);
         });
+
+        getTeams().then(teams => {
+            console.log(teams);
+            setTeams(teams);
+        })
     }, []);
 
     return (
@@ -47,8 +73,9 @@ const Schedule: React.FC = () => {
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 }}
                 dateClick={dateClick}
+                events={[...matches.map((match) => Object({"title": matchStr(match), "start": match.date}))]}
             />
-            <DateForm formOpen={formOpen}/>
+            <DatePopup date={date} matches={matches} setMatches={setMatches} teams={teams}/>
         </>
     );
 };
