@@ -2,6 +2,7 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Coach
+import com.jknv.lum.model.entity.Player
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.model.request.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
@@ -20,6 +21,7 @@ class AccountService(
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val jwtService: JwtService,
     private val coachService: CoachService,
+    private val playerService: PlayerService,
 ) {
 
     fun createAccount(account: Account): Account {
@@ -30,7 +32,7 @@ class AccountService(
                 Role.ADMIN -> {}
                 Role.COACH -> coachService.create(Coach(account = newAccount))
                 Role.GUARDIAN -> {}
-                Role.PLAYER -> {}
+                Role.PLAYER -> playerService.create(Player(account = newAccount))
             }
         }
         return newAccount

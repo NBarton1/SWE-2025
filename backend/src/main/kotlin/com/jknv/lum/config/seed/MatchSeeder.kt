@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
-@Order(3)
+@Order(2)
 class MatchSeeder (
     private val matchService: MatchService,
     private val teamService: TeamService

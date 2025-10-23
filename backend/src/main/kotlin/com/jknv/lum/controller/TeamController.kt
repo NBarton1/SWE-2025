@@ -1,11 +1,14 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.config.PreAuthorizeCoach
+import com.jknv.lum.config.PreAuthorizePlayerOnly
 import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.entity.TeamInvite
 import com.jknv.lum.services.AccountService
 import com.jknv.lum.services.CoachService
+import com.jknv.lum.services.PlayerService
+import com.jknv.lum.services.TeamInviteService
 import com.jknv.lum.services.TeamService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -24,6 +27,8 @@ class TeamController (
     private val teamService: TeamService,
     private val accountService: AccountService,
     private val coachService: CoachService,
+    private val playerService: PlayerService,
+    private val teamInviteService: TeamInviteService,
 ) {
     @PostMapping
     @PreAuthorizeCoach
@@ -52,12 +57,21 @@ class TeamController (
     fun invitePlayer(@PathVariable playerId: Long, principal: Principal): ResponseEntity<TeamInvite> {
         val coach = coachService.getCoachByUsername(principal.name)
             ?: return ResponseEntity.notFound().build()
-        val player = accountService.getAccount(playerId)
+        val player = playerService.getPlayer(playerId)
             ?: return ResponseEntity.notFound().build()
 
         val team = coachService.getTeam(coach)
             ?: return ResponseEntity.notFound().build()
 
-        return ResponseEntity.ok(teamService.invite(team, player))
+        return ResponseEntity.ok(teamInviteService.create(TeamInvite(team = team, player = player)))
+    }
+
+    @GetMapping("/invite")
+    @PreAuthorizePlayerOnly
+    fun getInvites(principal: Principal): ResponseEntity<List<TeamInvite>> {
+        val player = playerService.getPlayerByUsername(principal.name)
+            ?: return ResponseEntity.notFound().build()
+
+        return ResponseEntity.ok(teamInviteService.getInvitesForPlayer(player))
     }
 }

@@ -1,11 +1,11 @@
 package com.jknv.lum.repository
 
 import com.jknv.lum.model.entity.Player
-import com.jknv.lum.model.entity.TeamInvite
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TeamInviteRepository : JpaRepository<TeamInvite, Long> {
-    fun findTeamInvitesByPlayer(player: Player): MutableList<TeamInvite>
+interface PlayerRepository : JpaRepository<Player, Int> {
+    fun findPlayerByAccount_Id(accountId: Long): Player?
+    fun findPlayerByAccount_Username(accountUsername: String): Player?
 }
