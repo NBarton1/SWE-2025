@@ -5,22 +5,23 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import "./Schedule.css"
 import DatePopup from "./DatePopup.tsx";
-import {type Match, matchStr, type Team} from './match.ts';
+import {type Match, matchStr} from './match.ts';
 import {authHeader} from "../main.tsx";
+import type {Team} from "./team.ts";
 
 const Schedule: React.FC = () => {
-    let [matches, setMatches] = useState<Match[]>([]);
-    let [teams, setTeams] = useState<Team[]>([]);
-    let [date, setDate] = useState<string|null>(null);
+    const [matches, setMatches] = useState<Match[]>([]);
+    const [teams, setTeams] = useState<Team[]>([]);
+    const [date, setDate] = useState<string|null>(null);
 
 
-    const dateClick = useCallback((date) => {
+    const dateClick = useCallback((date: { dateStr: string } ) => {
         setDate(date.dateStr);
     }, []);
 
     const getMatches = async () => {
         try {
-            let matches_res: Response = await fetch("http://localhost:8080/api/matches", {
+            const matches_res: Response = await fetch("http://localhost:8080/api/matches", {
                 method: "GET",
                 headers: {
                     "Authorization": authHeader
@@ -28,7 +29,7 @@ const Schedule: React.FC = () => {
             });
 
             return await matches_res.json();
-        } catch (error) {
+        } catch {
             console.log("Failed to get matches");
             return null;
         }
@@ -36,7 +37,7 @@ const Schedule: React.FC = () => {
 
     const getTeams = async () => {
         try {
-            let teams_response = await fetch("http://localhost:8080/api/teams", {
+            const teams_response = await fetch("http://localhost:8080/api/teams", {
                 method: "GET",
                 headers: {
                     "Authorization": authHeader
@@ -46,7 +47,7 @@ const Schedule: React.FC = () => {
             console.log(teams_response.status);
 
             return await teams_response.json();
-        } catch (error) {
+        } catch {
             console.log("Failed to get teams");
             return null;
         }

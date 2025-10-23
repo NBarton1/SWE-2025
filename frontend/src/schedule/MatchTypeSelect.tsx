@@ -3,12 +3,12 @@ import {MatchType} from "./match.ts";
 
 
 interface MatchFormProps {
-    type: string
+    type?: string | undefined;
     setType: Dispatch<React.SetStateAction<string>>
 }
 
 
-const MatchTypeSelect: React.FC = ({ type, setType } : MatchFormProps) => {
+const MatchTypeSelect = ({ type, setType } : MatchFormProps) => {
     return (
         <>
             <label htmlFor="matchType">Match Type:</label>
@@ -16,7 +16,7 @@ const MatchTypeSelect: React.FC = ({ type, setType } : MatchFormProps) => {
                 e.preventDefault();
                 setType(e.target.value)
             }}>
-                {type == null && <option value="" selected disabled hidden>Select Match Type</option>}
+                {type && <option value="" selected disabled hidden>Select Match Type</option>}
                 <option value={MatchType.STANDARD}>{MatchType.STANDARD}</option>
                 <option value={MatchType.PLAYOFF}>{MatchType.PLAYOFF}</option>
             </select>

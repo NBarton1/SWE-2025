@@ -6,14 +6,14 @@ import CreateMatchForm from "./CreateMatchForm.tsx";
 
 
 interface DateFormProps {
-    date: string
+    date: string | null
     matches: Match[]
     setMatches: Dispatch<React.SetStateAction<Match[]>>
     teams: Team[]
 }
 
 
-const DatePopup: React.FC = ({ date, matches, setMatches, teams }: DateFormProps) => {
+const DatePopup = ({ date, matches, setMatches, teams }: DateFormProps) => {
 
     if (date == null) {
         return null;

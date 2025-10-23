@@ -14,15 +14,15 @@ interface MatchFormProps {
 }
 
 
-const CreateMatchForm: React.FC = ({ teams, date, matches, setMatches } : MatchFormProps) => {
+const CreateMatchForm = ({ teams, date, matches, setMatches } : MatchFormProps) => {
     const [homeTeamId, setHomeTeamId] = useState(0);
     const [awayTeamId, setAwayTeamId] = useState(0);
     const [time, setTime] = useState("");
-    const [type, setType] = useState(0);
+    const [type, setType] = useState("");
 
     const createMatch = async () => {
         try {
-            let res = await fetch("http://localhost:8080/api/matches", {
+            const res = await fetch("http://localhost:8080/api/matches", {
                 method: "POST",
                 headers: {
                     "Authorization": authHeader,
@@ -36,7 +36,7 @@ const CreateMatchForm: React.FC = ({ teams, date, matches, setMatches } : MatchF
                 })
             });
 
-            let createdMatch = await res.json();
+            const createdMatch = await res.json();
 
             matches.push(createdMatch);
             setMatches([...matches]);
