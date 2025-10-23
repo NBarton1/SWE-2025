@@ -1,6 +1,5 @@
 package com.jknv.lum.model.entity
 
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -15,9 +14,10 @@ import jakarta.persistence.Table
 data class Coach (
 
     @Id
+    @Column(name = "id")
     var id: Long? = null,
 
-    @OneToOne(cascade = [CascadeType.MERGE, CascadeType.REFRESH])
+    @OneToOne
     @MapsId
     @JoinColumn(name = "id")
     var account: Account,

@@ -22,6 +22,10 @@ class TeamService (
         return teamRepository.findAll()
     }
 
+    fun getTeam(id: Long): Team? {
+        return teamRepository.findById(id).orElse(null)
+    }
+
     fun count(): Long {
         return teamRepository.count()
     }

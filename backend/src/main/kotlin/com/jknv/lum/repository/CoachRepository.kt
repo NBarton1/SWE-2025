@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository
 @Repository
 interface CoachRepository : JpaRepository<Coach, Int> {
     fun getCoachByAccount_Username(accountUsername: String): Coach?
-
 }

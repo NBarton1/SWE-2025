@@ -13,7 +13,7 @@ import jakarta.persistence.MapsId
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "team_invite")
+@Table(name = "TeamInvite")
 data class TeamInvite (
 
     @EmbeddedId

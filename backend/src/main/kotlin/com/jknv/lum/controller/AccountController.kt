@@ -1,5 +1,6 @@
 package com.jknv.lum.controller
 
+import com.jknv.lum.LOGGER
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.request.AccountUpdateRequest
@@ -21,15 +22,11 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/accounts")
 class AccountController(
     private val accountService: AccountService,
-    private val coachService: CoachService
 ) {
 
     @PostMapping
     fun create(@RequestBody account: Account): ResponseEntity<Account> {
-        if (account.role == Role.COACH) {coachService.create(Coach(account = account))}
-
-        val newAccount = accountService.createAccount(account)
-        return ResponseEntity.status(HttpStatus.CREATED).body(newAccount)
+        return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(account))
     }
 
     @GetMapping

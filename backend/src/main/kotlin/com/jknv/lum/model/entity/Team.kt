@@ -32,6 +32,4 @@ data class Team (
 
     @Column(nullable = false)
     var pointsAllowed: Int = 0,
-) {
-
-}
+)

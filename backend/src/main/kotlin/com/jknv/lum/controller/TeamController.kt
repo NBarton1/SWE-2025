@@ -1,7 +1,7 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.LOGGER
 import com.jknv.lum.config.PreAuthorizeCoach
+import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.entity.TeamInvite
 import com.jknv.lum.services.AccountService
@@ -27,8 +27,7 @@ class TeamController (
     @PostMapping
     @PreAuthorizeCoach
     fun create(@RequestBody team: Team): ResponseEntity<Team> {
-        val newTeam = teamService.create(team)
-        return ResponseEntity.status(HttpStatus.CREATED).body(newTeam)
+        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.create(team))
     }
 
     @GetMapping
@@ -36,21 +35,28 @@ class TeamController (
         return ResponseEntity.ok(teamService.getTeams())
     }
 
-    @PostMapping("/invite/{id}")
+    @PostMapping("/coach/{teamId}")
     @PreAuthorizeCoach
-    fun invitePlayer(@PathVariable id: Long, principal: Principal): ResponseEntity<TeamInvite> {
-        LOGGER.info("Getting coach")
+    fun addCoach(@PathVariable teamId: Long, principal: Principal): ResponseEntity<Coach> {
+        var coach = coachService.getCoachByUsername(principal.name)
+            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+        var team = teamService.getTeam(teamId)
+            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+
+        return ResponseEntity.ok(coachService.setTeam(coach, team))
+    }
+
+    @PostMapping("/invite/{playerId}")
+    @PreAuthorizeCoach
+    fun invitePlayer(@PathVariable playerId: Long, principal: Principal): ResponseEntity<TeamInvite> {
         val coach = coachService.getCoachByUsername(principal.name)
             ?: return ResponseEntity.notFound().build()
-        LOGGER.info("Getting player")
-        val player = accountService.getAccount(id)
+        val player = accountService.getAccount(playerId)
             ?: return ResponseEntity.notFound().build()
 
-        LOGGER.info("Getting team")
         val team = coachService.getTeam(coach)
             ?: return ResponseEntity.notFound().build()
 
-        LOGGER.info("Sending invite")
         return ResponseEntity.ok(teamService.invite(team, player))
     }
 }

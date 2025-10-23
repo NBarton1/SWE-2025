@@ -1,9 +1,11 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Account
-import com.jknv.lum.model.entity.Team
+import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.request.AccountUpdateRequest
+import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.AccountRepository
+import com.jknv.lum.repository.CoachRepository
 import jakarta.transaction.Transactional
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
@@ -11,13 +13,23 @@ import org.springframework.stereotype.Service
 @Service
 @Transactional
 class AccountService(
-    val accountRepository: AccountRepository,
-    val bCryptPasswordEncoder: BCryptPasswordEncoder
+    private val accountRepository: AccountRepository,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+    private val coachService: CoachService
 ) {
 
     fun createAccount(account: Account): Account {
         account.password = bCryptPasswordEncoder.encode(account.password)
-        return accountRepository.save(account)
+        val newAccount = accountRepository.save(account)
+        roleHierarchy(newAccount.role).forEach { role ->
+            when (role) {
+                Role.ADMIN -> {}
+                Role.COACH -> coachService.create(Coach(account = newAccount))
+                Role.GUARDIAN -> {}
+                Role.PLAYER -> {}
+            }
+        }
+        return newAccount
     }
 
     fun getAccount(id: Long): Account? {
@@ -45,5 +57,14 @@ class AccountService(
 
     fun countAccounts(): Long {
         return accountRepository.count()
+    }
+
+    private fun roleHierarchy(role: Role): Set<Role> {
+        return when (role) {
+            Role.ADMIN -> setOf(Role.ADMIN, Role.COACH, Role.GUARDIAN)
+            Role.COACH -> setOf(Role.COACH, Role.GUARDIAN)
+            Role.GUARDIAN -> setOf(Role.GUARDIAN)
+            Role.PLAYER -> setOf(Role.PLAYER)
+        }
     }
 }
