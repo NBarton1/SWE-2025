@@ -1,6 +1,6 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.model.Account
+import com.jknv.lum.model.entity.Account
 import com.jknv.lum.request.AccountLoginRequest
 import com.jknv.lum.request.AccountUpdateRequest
 import com.jknv.lum.services.AccountService

@@ -1,6 +1,6 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.model.Account
+import com.jknv.lum.model.entity.Account
 import com.jknv.lum.request.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
 import com.jknv.lum.request.AccountLoginRequest
@@ -56,5 +56,9 @@ class AccountService(
         }
 
         return null
+    }
+
+    fun countAccounts(): Long {
+        return accountRepository.count()
     }
 }
