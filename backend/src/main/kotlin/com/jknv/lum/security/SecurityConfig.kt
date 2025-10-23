@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -18,10 +19,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy
 
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
     val userDetailsService: UserDetailsService,
 ) {
@@ -54,7 +58,6 @@ class SecurityConfig(
 
     }
 
-
     @Bean
     fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
         return config.authenticationManager
@@ -68,6 +71,15 @@ class SecurityConfig(
         val provider = DaoAuthenticationProvider(userDetailsService)
         provider.setPasswordEncoder(bCryptPasswordEncoder())
         return provider
+    }
+
+    @Bean
+    fun roleHierarchy(): RoleHierarchy {
+        return RoleHierarchyImpl.withDefaultRolePrefix()
+            .role("ADMIN").implies("COACH")
+            .role("COACH").implies("GUARDIAN")
+            .role("GUARDIAN").implies("PLAYER")
+            .build()
     }
 
     @Bean

@@ -3,7 +3,6 @@ package com.jknv.lum.controller
 import com.jknv.lum.LOGGER
 import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.request.MatchCreateRequest
-import com.jknv.lum.model.request.MatchDeleteRequest
 import com.jknv.lum.model.request.MatchUpdateRequest
 import com.jknv.lum.services.MatchService
 import com.jknv.lum.services.TeamService
@@ -11,52 +10,67 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
-@RequestMapping("/api/match")
+@RequestMapping("/api/matches")
 class MatchController (
     private val matchService: MatchService,
+    private val teamService: TeamService,
 ) {
-    @PostMapping("/create")
+    @PostMapping
     fun createMatch(@RequestBody req: MatchCreateRequest): ResponseEntity<Match> {
         LOGGER.info("Creating new Match")
 
+        val homeTeam = teamService.getTeam(req.homeTeamId)
+            ?: return ResponseEntity.notFound().build()
+        val awayTeam = teamService.getTeam(req.awayTeamId)
+            ?: return ResponseEntity.notFound().build()
 
+        val match = Match(
+            date = req.date,
+            type = req.type,
+            homeTeam = homeTeam,
+            awayTeam = awayTeam
+        )
 
-        val newMatch = matchService.createMatch(req)
+        val newMatch = matchService.create(match)
         return ResponseEntity.status(HttpStatus.CREATED).body(newMatch)
     }
 
-    @DeleteMapping("/delete")
-    fun deleteMatch(@RequestBody req: MatchDeleteRequest): ResponseEntity<Void> {
+    @DeleteMapping("/{matchId}")
+    fun deleteMatch(@PathVariable matchId: Long): ResponseEntity<Void> {
         LOGGER.info("Deleting Match")
 
-        matchService.deleteMatch(req.id)
+        matchService.deleteMatch(matchId)
         return ResponseEntity.status(HttpStatus.OK).build()
     }
 
-    @PostMapping("/update")
-    fun updateMatch(@RequestBody req: MatchUpdateRequest): ResponseEntity<Match> {
+    @PutMapping("/{matchId}")
+    fun updateMatch(@PathVariable matchId: Long, @RequestBody req: MatchUpdateRequest): ResponseEntity<Match> {
         LOGGER.info("Updating Match")
 
-        val match = matchService.getMatchById(req.id)
+        val match = matchService.getMatchById(matchId)
+            ?: return ResponseEntity.notFound().build()
 
-//        match.date = req.date
-//        match.type = req.type
-//        match.awayTeam = teamService.getTeamById(req.awayTeamId)
-//        match.homeTeam = teamService.getTeamById(req.homeTeamId)
-//
-        matchService.updateMatch(req)
+        match.homeTeam = teamService.getTeam(req.homeTeamId)
+            ?: return ResponseEntity.notFound().build()
+        match.awayTeam = teamService.getTeam(req.awayTeamId)
+            ?: return ResponseEntity.notFound().build()
+        match.date = req.date
+        match.type = req.type
 
+        matchService.create(match)
         return ResponseEntity.status(HttpStatus.OK).body(match)
     }
 
-    @GetMapping("/all")
+    @GetMapping
     fun getMatches(): ResponseEntity<List<Match>> {
         LOGGER.info("Getting all Matches")
 
