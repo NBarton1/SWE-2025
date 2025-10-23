@@ -1,7 +1,10 @@
 package com.jknv.lum.model.entity
 
+import com.jknv.lum.model.type.MatchType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -22,7 +25,8 @@ data class Match (
     var date: LocalDateTime,
 
     @Column(nullable = false)
-    var type: Int,
+    @Enumerated(EnumType.STRING)
+    var type: MatchType,
 
     @Column
     var timeLeft: Int = 0,
