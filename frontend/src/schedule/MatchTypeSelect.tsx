@@ -1,12 +1,10 @@
-import React, {type Dispatch, useState} from "react";
-import {type Match, MatchType} from "./match.ts";
-import type { Team } from "./team.ts";
-import TimeInput from "./TimeInput.tsx";
+import React, {type Dispatch} from "react";
+import {MatchType} from "./match.ts";
 
 
 interface MatchFormProps {
-    type: Number
-    setType: Dispatch<React.SetStateAction<Number>>
+    type: string
+    setType: Dispatch<React.SetStateAction<string>>
 }
 
 
@@ -16,11 +14,11 @@ const MatchTypeSelect: React.FC = ({ type, setType } : MatchFormProps) => {
             <label htmlFor="matchType">Match Type:</label>
             <select id="matchType" defaultValue={type} onChange={(e) => {
                 e.preventDefault();
-                setType(Number(e.target.value))
+                setType(e.target.value)
             }}>
                 {type == null && <option value="" selected disabled hidden>Select Match Type</option>}
-                <option value={MatchType.Regular}>Regular</option>
-                <option value={MatchType.Playoff}>Playoff</option>
+                <option value={MatchType.STANDARD}>{MatchType.STANDARD}</option>
+                <option value={MatchType.PLAYOFF}>{MatchType.PLAYOFF}</option>
             </select>
         </>
     );

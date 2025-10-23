@@ -10,8 +10,8 @@ export interface Match {
 }
 
 export enum MatchType {
-    Regular = 0,
-    Playoff
+    PLAYOFF = "PLAYOFF",
+    STANDARD = "STANDARD"
 }
 
 export function matchDate(match: Match) {

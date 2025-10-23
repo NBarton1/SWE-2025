@@ -6,8 +6,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import "./Schedule.css"
 import DatePopup from "./DatePopup.tsx";
 import {type Match, matchStr, type Team} from './match.ts';
-import 'reactjs-popup/dist/index.css';
-import {token} from "../main.tsx";
+import {authHeader} from "../main.tsx";
 
 const Schedule: React.FC = () => {
     let [matches, setMatches] = useState<Match[]>([]);
@@ -21,10 +20,10 @@ const Schedule: React.FC = () => {
 
     const getMatches = async () => {
         try {
-            let matches_res: Response = await fetch("http://localhost:8080/api/match/all", {
+            let matches_res: Response = await fetch("http://localhost:8080/api/matches", {
                 method: "GET",
                 headers: {
-                    "Authorization": `Bearer ${token}`
+                    "Authorization": authHeader
                 }
             });
 
@@ -40,7 +39,7 @@ const Schedule: React.FC = () => {
             let teams_response = await fetch("http://localhost:8080/api/teams", {
                 method: "GET",
                 headers: {
-                    "Authorization": `Bearer ${token}`
+                    "Authorization": authHeader
                 }
             });
 
