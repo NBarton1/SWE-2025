@@ -1,6 +1,5 @@
 package com.jknv.lum.security
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -16,6 +15,8 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy
 
 
 @Configuration
@@ -58,6 +59,15 @@ class SecurityConfig(
         val provider = DaoAuthenticationProvider(userDetailsService)
         provider.setPasswordEncoder(bCryptPasswordEncoder())
         return provider
+    }
+
+    @Bean
+    fun roleHierarchy(): RoleHierarchy {
+        return RoleHierarchyImpl.withDefaultRolePrefix()
+            .role("ADMIN").implies("COACH")
+            .role("COACH").implies("GUARDIAN")
+            .role("GUARDIAN").implies("PLAYER")
+            .build()
     }
 
     @Bean

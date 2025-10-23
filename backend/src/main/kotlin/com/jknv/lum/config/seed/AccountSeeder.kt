@@ -15,10 +15,10 @@ class AccountSeeder (
     override fun run(vararg args: String?) {
         if (accountService.countAccounts() == 0L) {
             val accounts = listOf(
-                Account(name = "Kyle R", username = "krichards", password = "password", role = Role.ADMIN),
-                Account(name = "Joe F", username = "jfielding", password = "password", role = Role.COACH),
-                Account(name = "Nate B", username = "nbarton", password = "password", role = Role.GUARDIAN),
-                Account(name = "Vilnis J", username = "vjatnieks", password = "password", role = Role.PLAYER),
+                Account(name = "Admin A", username = "admin", password = "password", role = Role.ADMIN),
+                Account(name = "Coach C", username = "coach", password = "password", role = Role.COACH),
+                Account(name = "Guardian G", username = "guardian", password = "password", role = Role.GUARDIAN),
+                Account(name = "Player P", username = "player", password = "password", role = Role.PLAYER),
             )
 
             accounts.forEach { accountService.createAccount(it) }
