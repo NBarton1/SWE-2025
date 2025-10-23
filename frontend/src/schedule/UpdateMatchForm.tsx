@@ -1,9 +1,9 @@
 import React, {type Dispatch, useEffect, useState} from "react";
 import {type Match, matchTime} from "./match.ts";
 import type { Team } from "./team.ts";
-import TimeInput from "../TimeInput.tsx";
+import TimeInput from "./TimeInput.tsx";
 import MatchTypeSelect from "./MatchTypeSelect.tsx";
-import {token} from "../main.tsx";
+import {authHeader} from "../main.tsx";
 
 
 interface MatchFormProps {
@@ -30,14 +30,13 @@ const UpdateMatchForm: React.FC = ({ match, teams, date, matches, setMatches } :
 
     const updateMatch = async () => {
         try {
-            let res = await fetch("http://localhost:8080/api/match/update", {
-                method: "POST",
+            let res = await fetch(`http://localhost:8080/api/matches/${match.id}`, {
+                method: "PUT",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    "Authorization": authHeader,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    id: match.id,
                     type: type,
                     homeTeamId: homeTeamId,
                     awayTeamId: awayTeamId,
@@ -55,10 +54,10 @@ const UpdateMatchForm: React.FC = ({ match, teams, date, matches, setMatches } :
 
     const deleteMatch = async () => {
         try {
-            await fetch("http://localhost:8080/api/match/delete", {
+            await fetch(`http://localhost:8080/api/matches/${match.id}`, {
                 method: "DELETE",
                 headers: {
-                    "Authorization": `Bearer ${token}`,
+                    "Authorization": authHeader,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
