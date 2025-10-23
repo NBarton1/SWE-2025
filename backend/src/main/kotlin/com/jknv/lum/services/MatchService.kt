@@ -1,6 +1,6 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.model.Match
+import com.jknv.lum.model.entity.Match
 import com.jknv.lum.repository.MatchRepository
 import org.springframework.stereotype.Service
 

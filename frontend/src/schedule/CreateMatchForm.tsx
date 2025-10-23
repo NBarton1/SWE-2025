@@ -1,12 +1,12 @@
 import React, {type Dispatch, useState} from "react";
 import {type Match, MatchType} from "./match.ts";
 import type { Team } from "./team.ts";
-import TimeInput from "./TimeInput.tsx";
+import TimeInput from "../TimeInput.tsx";
 import MatchTypeSelect from "./MatchTypeSelect.tsx";
+import {token} from "../main.tsx";
 
 
 interface MatchFormProps {
-    initialMatch: Match
     teams: Team[]
     date: string
     matches: Match[]
@@ -24,7 +24,10 @@ const CreateMatchForm: React.FC = ({ teams, date, matches, setMatches } : MatchF
         try {
             let res = await fetch("http://localhost:8080/api/match/create", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({
                     type: type,
                     homeTeamId: homeTeamId,

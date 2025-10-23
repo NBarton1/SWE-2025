@@ -7,7 +7,7 @@ import "./Schedule.css"
 import DatePopup from "./DatePopup.tsx";
 import {type Match, matchStr, type Team} from './match.ts';
 import 'reactjs-popup/dist/index.css';
-
+import {token} from "../main.tsx";
 
 const Schedule: React.FC = () => {
     let [matches, setMatches] = useState<Match[]>([]);
@@ -23,9 +23,10 @@ const Schedule: React.FC = () => {
         try {
             let matches_res: Response = await fetch("http://localhost:8080/api/match/all", {
                 method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             });
-
-            console.log(matches_res.status);
 
             return await matches_res.json();
         } catch (error) {
@@ -36,8 +37,11 @@ const Schedule: React.FC = () => {
 
     const getTeams = async () => {
         try {
-            let teams_response = await fetch("http://localhost:8080/api/team/all", {
+            let teams_response = await fetch("http://localhost:8080/api/teams", {
                 method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             console.log(teams_response.status);

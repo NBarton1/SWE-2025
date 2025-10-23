@@ -1,8 +1,9 @@
 import React, {type Dispatch, useEffect, useState} from "react";
 import {type Match, matchTime} from "./match.ts";
 import type { Team } from "./team.ts";
-import TimeInput from "./TimeInput.tsx";
+import TimeInput from "../TimeInput.tsx";
 import MatchTypeSelect from "./MatchTypeSelect.tsx";
+import {token} from "../main.tsx";
 
 
 interface MatchFormProps {
@@ -31,7 +32,10 @@ const UpdateMatchForm: React.FC = ({ match, teams, date, matches, setMatches } :
         try {
             let res = await fetch("http://localhost:8080/api/match/update", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({
                     id: match.id,
                     type: type,
@@ -53,13 +57,15 @@ const UpdateMatchForm: React.FC = ({ match, teams, date, matches, setMatches } :
         try {
             await fetch("http://localhost:8080/api/match/delete", {
                 method: "DELETE",
-                headers: {"Content-Type": "application/json"},
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({
                     id: match.id
                 })
             });
 
-            console.log("Updated", [...matches.filter(curr => curr.id != match.id)]);
             setMatches([...matches.filter(curr => curr.id != match.id)]);
         } catch (error) {
             console.log("Failed to delete match", error);

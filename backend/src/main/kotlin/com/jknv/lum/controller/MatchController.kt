@@ -1,7 +1,7 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.LOGGER
-import com.jknv.lum.model.Match
+import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.request.MatchCreateRequest
 import com.jknv.lum.model.request.MatchDeleteRequest
 import com.jknv.lum.model.request.MatchUpdateRequest
