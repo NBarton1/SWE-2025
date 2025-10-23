@@ -24,6 +24,10 @@ data class Player (
     @JoinColumn(name = "id")
     var account: Account,
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "guardian_id", nullable = false)
+    var guardianAccount: Account,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = true)
     var playingTeam: Team? = null,

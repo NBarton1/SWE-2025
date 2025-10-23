@@ -32,14 +32,23 @@ class AccountService(
                 Role.ADMIN -> {}
                 Role.COACH -> coachService.create(Coach(account = newAccount))
                 Role.GUARDIAN -> {}
-                Role.PLAYER -> playerService.create(Player(account = newAccount))
+                Role.PLAYER -> {}
             }
         }
         return newAccount
     }
 
+    fun createPlayerAccount(player: Account, guardian: Account): Player {
+        val playerAccount = createAccount(player)
+        return playerService.create(Player(account = playerAccount, guardianAccount = guardian))
+    }
+
     fun getAccount(id: Long): Account? {
         return accountRepository.findById(id).orElse(null)
+    }
+
+    fun getAccountByUsername(username: String): Account? {
+        return accountRepository.findByUsername(username)
     }
 
     fun getAccounts(): List<Account> {
