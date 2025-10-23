@@ -58,7 +58,6 @@ class SecurityConfig(
 
     }
 
-
     @Bean
     fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
         return config.authenticationManager

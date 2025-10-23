@@ -1,8 +1,8 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.request.AccountLoginRequest
 import com.jknv.lum.model.request.AccountUpdateRequest
-import com.jknv.lum.request.AccountLoginRequest
 import com.jknv.lum.services.AccountService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

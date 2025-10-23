@@ -9,12 +9,12 @@ class MatchService (
     val matchRepository: MatchRepository,
 ) {
 
-    fun saveMatch(match: Match): Match {
+    fun create(match: Match): Match {
         return matchRepository.save(match)
     }
 
-    fun getMatchById(id: Long): Match {
-        return matchRepository.getReferenceById(id)
+    fun getMatchById(id: Long): Match? {
+        return matchRepository.findById(id).orElse(null)
     }
 
     fun deleteMatch(id: Long) {
@@ -23,5 +23,9 @@ class MatchService (
 
     fun getMatches(): List<Match> {
         return matchRepository.findAll()
+    }
+
+    fun count(): Long {
+        return matchRepository.count()
     }
 }

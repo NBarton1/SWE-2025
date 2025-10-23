@@ -7,6 +7,7 @@ import jakarta.persistence.EmbeddedId
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.MapsId
@@ -19,12 +20,12 @@ data class TeamInvite (
     @EmbeddedId
     var id: TeamInvitePK = TeamInvitePK(),
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("teamId")
     @JoinColumn(name = "team_id", nullable = false)
     var team: Team,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("playerId")
     @JoinColumn(name = "player_id", nullable = false)
     var player: Account,

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -35,12 +36,12 @@ class TeamController (
         return ResponseEntity.ok(teamService.getTeams())
     }
 
-    @PostMapping("/coach/{teamId}")
+    @PutMapping("/coach/{teamId}")
     @PreAuthorizeCoach
     fun addCoach(@PathVariable teamId: Long, principal: Principal): ResponseEntity<Coach> {
-        var coach = coachService.getCoachByUsername(principal.name)
+        val coach = coachService.getCoachByUsername(principal.name)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        var team = teamService.getTeam(teamId)
+        val team = teamService.getTeam(teamId)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
 
         return ResponseEntity.ok(coachService.setTeam(coach, team))

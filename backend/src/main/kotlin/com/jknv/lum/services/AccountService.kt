@@ -2,12 +2,10 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Coach
-import com.jknv.lum.model.request.AccountUpdateRequest
 import com.jknv.lum.model.type.Role
-import com.jknv.lum.request.AccountUpdateRequest
+import com.jknv.lum.model.request.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
-import com.jknv.lum.repository.CoachRepository
-import com.jknv.lum.request.AccountLoginRequest
+import com.jknv.lum.model.request.AccountLoginRequest
 import jakarta.transaction.Transactional
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -19,9 +17,9 @@ import org.springframework.stereotype.Service
 class AccountService(
     private val accountRepository: AccountRepository,
     private val authenticationManager: AuthenticationManager,
-    private val bCryptPasswordEncoder: BCryptPasswordEncoder
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val jwtService: JwtService,
-    private val coachService: CoachService
+    private val coachService: CoachService,
 ) {
 
     fun createAccount(account: Account): Account {
@@ -40,10 +38,6 @@ class AccountService(
 
     fun getAccount(id: Long): Account? {
         return accountRepository.findById(id).orElse(null)
-    }
-
-    fun getAccountByUsername(username: String): Account? {
-        return accountRepository.findByUsername(username)
     }
 
     fun getAccounts(): List<Account> {
