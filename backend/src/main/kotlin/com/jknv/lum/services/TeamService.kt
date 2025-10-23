@@ -14,6 +14,10 @@ class TeamService (
         return teamRepository.save(team)
     }
 
+    fun getTeamById(id: Long): Team {
+        return teamRepository.getReferenceById(id)
+    }
+
     fun getTeams(): List<Team> {
         return teamRepository.findAll()
     }
