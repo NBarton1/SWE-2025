@@ -1,8 +1,11 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.request.AccountUpdateRequest
+import com.jknv.lum.model.type.Role
 import com.jknv.lum.services.AccountService
+import com.jknv.lum.services.CoachService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -17,11 +20,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/accounts")
 class AccountController(
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val coachService: CoachService
 ) {
 
     @PostMapping
     fun create(@RequestBody account: Account): ResponseEntity<Account> {
+        if (account.role == Role.COACH) {coachService.create(Coach(account = account))}
+
         val newAccount = accountService.createAccount(account)
         return ResponseEntity.status(HttpStatus.CREATED).body(newAccount)
     }

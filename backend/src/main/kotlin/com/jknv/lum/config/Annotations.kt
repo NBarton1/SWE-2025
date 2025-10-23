@@ -1,4 +1,4 @@
-package com.jknv.lum.config.seed
+package com.jknv.lum.config
 
 import org.springframework.security.access.prepost.PreAuthorize
 

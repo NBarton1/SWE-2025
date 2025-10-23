@@ -1,6 +1,7 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.request.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
 import jakarta.transaction.Transactional
@@ -21,6 +22,10 @@ class AccountService(
 
     fun getAccount(id: Long): Account? {
         return accountRepository.findById(id).orElse(null)
+    }
+
+    fun getAccountByUsername(username: String): Account? {
+        return accountRepository.findByUsername(username)
     }
 
     fun getAccounts(): List<Account> {

@@ -4,9 +4,11 @@ import com.jknv.lum.LOGGER
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.services.TeamService
 import org.springframework.boot.CommandLineRunner
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
+@Order(2)
 class TeamSeeder (
     private val teamService: TeamService
 ) : CommandLineRunner {

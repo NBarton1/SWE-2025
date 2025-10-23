@@ -5,9 +5,11 @@ import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.services.AccountService
 import org.springframework.boot.CommandLineRunner
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
+@Order(1)
 class AccountSeeder (
     private val accountService: AccountService
 ) : CommandLineRunner {
