@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service
 @Service
 @Transactional
 class AccountService(
-    val accountRepository: AccountRepository,
-    val authenticationManager: AuthenticationManager,
-    val jwtService: JwtService,
-    val bCryptPasswordEncoder: BCryptPasswordEncoder
+    private val accountRepository: AccountRepository,
+    private val authenticationManager: AuthenticationManager,
+    private val jwtService: JwtService,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) {
 
     fun createAccount(account: Account): Account {
@@ -43,7 +43,7 @@ class AccountService(
         accountRepository.deleteById(id)
     }
 
-    fun verifyLogin(loginRequest: AccountLoginRequest) {
+    fun verifyLogin(loginRequest: AccountLoginRequest): String? {
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 loginRequest.username,
@@ -52,7 +52,9 @@ class AccountService(
         )
 
         if (authentication.isAuthenticated) {
-
+            return jwtService.giveToken(loginRequest.username)
         }
+
+        return null
     }
 }

@@ -4,23 +4,14 @@ import com.jknv.lum.model.Account
 import com.jknv.lum.request.AccountLoginRequest
 import com.jknv.lum.request.AccountUpdateRequest
 import com.jknv.lum.services.AccountService
-import com.jknv.lum.services.JwtService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/accounts")
 class AccountController(
     private val accountService: AccountService,
-    private val jwtService: JwtService
 ) {
 
     @PostMapping
@@ -53,8 +44,8 @@ class AccountController(
     }
 
     @PostMapping("/login")
-    fun login(loginRequest: AccountLoginRequest): ResponseEntity<Account> {
-//        jwtService.giveToken()
-        return ResponseEntity.ok().build()
+    fun login(@RequestBody loginRequest: AccountLoginRequest): ResponseEntity<String> {
+        val token = accountService.verifyLogin(loginRequest) ?: return ResponseEntity.notFound().build()
+        return ResponseEntity.accepted().body(token)
     }
 }

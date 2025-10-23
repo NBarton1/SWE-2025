@@ -1,6 +1,5 @@
 package com.jknv.lum.security
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -15,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
@@ -35,7 +35,7 @@ class SecurityConfig(
      * Specifies security filtering, allowing or denying certain requests
      */
     @Bean
-    fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(httpSecurity: HttpSecurity, jwtTokenFilter: JwtTokenFilter): SecurityFilterChain {
         return httpSecurity
             .csrf{
                 csrf -> csrf.disable() // React handles this for us
@@ -47,9 +47,11 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.POST,"/api/accounts/login").permitAll() // Sign up page should be available
                     .anyRequest().authenticated() // Otherwise everything else needs authentication
             }
-            .httpBasic(Customizer.withDefaults()) // TODO use jwt instead
+            .httpBasic(Customizer.withDefaults())
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
+
     }
 
 
