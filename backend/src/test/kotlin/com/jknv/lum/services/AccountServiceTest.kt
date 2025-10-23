@@ -113,9 +113,4 @@ class AccountServiceTest {
 
         assertEquals(expectedCount, count)
     }
-
-//    @Test
-//    fun verifyLoginTest() {
-//        accountService.verifyLogin(AccountLoginRequest("name", "username"))
-//    }
 }
