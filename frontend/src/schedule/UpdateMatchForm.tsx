@@ -14,7 +14,7 @@ interface MatchFormProps {
     setMatches: Dispatch<React.SetStateAction<Match[]>>
 }
 
-const UpdateMatchForm: React.FC = ({ match, teams, date, matches, setMatches } : MatchFormProps) => {
+const UpdateMatchForm = ({ match, teams, date, matches, setMatches } : MatchFormProps) => {
 
     const [homeTeamId, setHomeTeamId] = useState(match.homeTeam.id);
     const [awayTeamId, setAwayTeamId] = useState(match.awayTeam.id);
@@ -30,7 +30,7 @@ const UpdateMatchForm: React.FC = ({ match, teams, date, matches, setMatches } :
 
     const updateMatch = async () => {
         try {
-            let res = await fetch(`http://localhost:8080/api/matches/${match.id}`, {
+            const res = await fetch(`http://localhost:8080/api/matches/${match.id}`, {
                 method: "PUT",
                 headers: {
                     "Authorization": authHeader,
@@ -44,7 +44,7 @@ const UpdateMatchForm: React.FC = ({ match, teams, date, matches, setMatches } :
                 })
             });
 
-            let updatedMatch: Match = await res.json();
+            const updatedMatch: Match = await res.json();
 
             setMatches(matches.map(curr_match => curr_match.id == updatedMatch.id ? updatedMatch : curr_match));
         } catch (error) {

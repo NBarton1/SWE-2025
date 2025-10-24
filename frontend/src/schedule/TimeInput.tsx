@@ -6,7 +6,7 @@ interface MatchFormProps {
     setTime: Dispatch<React.SetStateAction<string>>
 }
 
-const TimeInput: React.FC = ({ time, setTime } : MatchFormProps) => {
+const TimeInput = ({ time, setTime } : MatchFormProps) => {
     return (
         <>
             <label htmlFor="time">Time:</label>
