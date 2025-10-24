@@ -1,8 +1,8 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.model.entity.Team
-import com.jknv.lum.model.request.MatchCreateRequest
-import com.jknv.lum.model.request.MatchUpdateRequest
+import com.jknv.lum.model.request.match.MatchCreateRequest
+import com.jknv.lum.model.request.match.MatchUpdateRequest
 import com.jknv.lum.model.type.MatchType
 import com.jknv.lum.services.TeamService
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -30,8 +30,8 @@ class MatchControllerTest {
 
     @BeforeEach
     fun setup() {
-        homeTeam = teamService.create(Team(name = "Home Team"))
-        awayTeam = teamService.create(Team(name = "Away Team"))
+        homeTeam = teamService.createTeam(Team(name = "Home Team"))
+        awayTeam = teamService.createTeam(Team(name = "Away Team"))
         matchCreateRequest = MatchCreateRequest(
             homeTeamId = homeTeam.id!!,
             awayTeamId = awayTeam.id!!,
