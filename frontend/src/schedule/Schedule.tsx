@@ -3,16 +3,16 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import {Container, Paper, Modal, Title} from "@mantine/core";
+import { Container, Paper, Modal, Title, Box } from "@mantine/core";
 import DatePopup from "./DatePopup.tsx";
 import { type Match, matchStr } from "./match.ts";
 import type { Team } from "./team.ts";
-import {createBearerAuthHeader} from "../util.ts";
-import {getTeams} from "../request/teams.ts";
+import { createBearerAuthHeader } from "../util.ts";
+import { getTeams } from "../request/teams.ts";
 
 
 interface ScheduleProps {
-    jwt: string,
+    jwt: string;
 }
 
 const Schedule = ({ jwt }: ScheduleProps) => {
@@ -23,7 +23,7 @@ const Schedule = ({ jwt }: ScheduleProps) => {
 
     const dateClick = useCallback((info: { dateStr: string }) => {
         setSelectedDate(info.dateStr);
-        setOpened(true); // open modal
+        setOpened(true);
     }, []);
 
     const getMatches = useCallback(async () => {
@@ -51,26 +51,35 @@ const Schedule = ({ jwt }: ScheduleProps) => {
                     Schedule
                 </Title>
 
-                <FullCalendar
-                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                    initialView="dayGridMonth"
-                    headerToolbar={{
-                        left: "title",
-                        center: "prev,next today",
-                        right: "dayGridMonth,timeGridWeek,timeGridDay",
-                    }}
-                    dateClick={dateClick}
-                    events={matches.map((match) => ({
-                        title: matchStr(match),
-                        start: match.date,
-                    }))}
-                />
+                <Box>
+                    <style>
+                        {`
+                            .fc .fc-col-header-cell-cushion {
+                                color: black !important;
+                            }
+                        `}
+                    </style>
+                    <FullCalendar
+                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                        initialView="dayGridMonth"
+                        headerToolbar={{
+                            left: "prev,next today",
+                            center: "title",
+                            right: "dayGridMonth,timeGridWeek,timeGridDay",
+                        }}
+                        dateClick={dateClick}
+                        events={matches.map((match) => ({
+                            title: matchStr(match),
+                            start: match.date,
+                        }))}
+                        height="auto"
+                    />
+                </Box>
             </Paper>
 
             <Modal
                 opened={opened}
                 onClose={() => setOpened(false)}
-                title={selectedDate ? `Matches on ${selectedDate}` : ""}
                 size="lg"
             >
                 {selectedDate && (
@@ -79,6 +88,7 @@ const Schedule = ({ jwt }: ScheduleProps) => {
                         matches={matches}
                         setMatches={setMatches}
                         teams={teams}
+                        jwt={jwt}
                     />
                 )}
             </Modal>

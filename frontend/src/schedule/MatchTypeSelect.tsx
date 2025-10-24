@@ -1,26 +1,21 @@
-import React, {type Dispatch} from "react";
-import {MatchType} from "./match.ts";
+import {Select, type SelectProps} from "@mantine/core";
+import { MatchType } from "./match.ts";
 
 
-interface MatchFormProps {
-    type?: string | undefined;
-    setType: Dispatch<React.SetStateAction<string>>
-}
+const MatchTypeSelect = ( props: SelectProps) => {
+    const matchTypeOptions = [
+        { value: MatchType.STANDARD, label: MatchType.STANDARD },
+        { value: MatchType.PLAYOFF, label: MatchType.PLAYOFF }
+    ];
 
-
-const MatchTypeSelect = ({ type, setType } : MatchFormProps) => {
     return (
-        <>
-            <label htmlFor="matchType">Match Type:</label>
-            <select id="matchType" defaultValue={type} onChange={(e) => {
-                e.preventDefault();
-                setType(e.target.value)
-            }}>
-                {type && <option value="" selected disabled hidden>Select Match Type</option>}
-                <option value={MatchType.STANDARD}>{MatchType.STANDARD}</option>
-                <option value={MatchType.PLAYOFF}>{MatchType.PLAYOFF}</option>
-            </select>
-        </>
+        <Select
+            label="Match Type"
+            placeholder="Select Match Type"
+            data={matchTypeOptions}
+            required
+            {...props}
+        />
     );
 };
 
