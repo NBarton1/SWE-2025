@@ -15,11 +15,7 @@ import {login} from "./request/login.ts";
 import {useNavigate} from "react-router";
 
 
-interface SignupPageProps {
-    setJwt: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const SignupPage = ({ setJwt }: SignupPageProps) => {
+const SignupPage = () => {
     const theme = useMantineTheme(); // access Mantine theme
 
     const navigate = useNavigate()
@@ -55,12 +51,9 @@ const SignupPage = ({ setJwt }: SignupPageProps) => {
             return;
         }
 
-        const jwt = await loginRes.text()
-        setJwt(jwt)
-
         navigate("/calendar")
 
-    }, [form.values.name, form.values.password, form.values.username, navigate, setJwt]);
+    }, [form.values.name, form.values.password, form.values.username, navigate]);
 
     return (
         <Box

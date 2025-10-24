@@ -14,11 +14,7 @@ import {useCallback} from "react";
 import {useNavigate} from "react-router";
 
 
-interface LoginProps {
-    setJwt: React.Dispatch<React.SetStateAction<string>>
-}
-
-const LoginPage = ({ setJwt }: LoginProps) => {
+const LoginPage = () => {
 
     const navigate = useNavigate();
 
@@ -30,21 +26,17 @@ const LoginPage = ({ setJwt }: LoginProps) => {
 
     const handleLogin = useCallback(async () => {
         const res = await login({
-                username: form.values.username,
-                password: form.values.password
-            })
+            username: form.values.username,
+            password: form.values.password
+        });
 
         if (!res.ok) {
             return;
         }
 
-        const jwt = await res.text()
-
-        setJwt(jwt)
-
         navigate("/teams")
 
-    }, [form.values.password, form.values.username, navigate, setJwt]);
+    }, [form.values.password, form.values.username, navigate]);
 
     return (
         <Box

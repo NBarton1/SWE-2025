@@ -1,10 +1,11 @@
-import React, { type Dispatch } from "react";
+import React, {type Dispatch, useCallback} from "react";
 import { Button, Group, Stack, Paper } from "@mantine/core";
 import { type Match, matchTime } from "./match.ts";
 import type { Team } from "./team.ts";
-import { createBearerAuthHeader } from "../util.ts";
 import {useForm} from "@mantine/form";
 import MatchFormFields from "./MatchFormFields.tsx";
+import { updateMatch, deleteMatch } from "../request/matches.ts";
+
 
 interface UpdateMatchFormProps {
     match: Match;
@@ -12,10 +13,9 @@ interface UpdateMatchFormProps {
     date: string;
     matches: Match[];
     setMatches: Dispatch<React.SetStateAction<Match[]>>;
-    jwt: string;
 }
 
-const UpdateMatchForm = ({ match, teams, date, matches, setMatches, jwt }: UpdateMatchFormProps) => {
+const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatchFormProps) => {
 
     const matchForm = useForm({
         initialValues: {
@@ -26,47 +26,25 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches, jwt }: Updat
         },
     });
 
-    const updateMatch = async () => {
+    const updateMatchCallback = useCallback(async () => {
         try {
-            const { type, homeTeamId, awayTeamId, time } = matchForm.values;
-
-            const res = await fetch(`http://localhost:8080/api/matches/${match.id}`, {
-                method: "PUT",
-                headers: {
-                    "Authorization": createBearerAuthHeader(jwt),
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    type,
-                    homeTeamId,
-                    awayTeamId,
-                    date: `${date}T${time}`,
-                })
-            });
-
-            const updatedMatch: Match = await res.json();
+            const updatedMatch: Match = await updateMatch(match.id, matchForm, date);
 
             setMatches(matches.map(curr_match => curr_match.id === updatedMatch.id ? updatedMatch : curr_match));
         } catch (error) {
             console.log("Failed to update match", error);
         }
-    };
+    }, []);
 
-    const deleteMatch = async () => {
+    const deleteMatchCallback = useCallback(async () => {
         try {
-            await fetch(`http://localhost:8080/api/matches/${match.id}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": createBearerAuthHeader(jwt),
-                    "Content-Type": "application/json"
-                }
-            });
+            await deleteMatch(match.id);
 
             setMatches([...matches.filter(curr => curr.id !== match.id)]);
         } catch (error) {
             console.log("Failed to delete match", error);
         }
-    };
+    }, []);
 
     const teamSelection = teams.map(team => ({
         value: team.id.toString(),
@@ -77,7 +55,7 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches, jwt }: Updat
         <Paper shadow="sm" p="md" radius="md" withBorder>
             <form onSubmit={async (e) => {
                 e.preventDefault();
-                await updateMatch();
+                await updateMatchCallback();
             }}>
                 <Stack gap="md">
                     <MatchFormFields teams={teamSelection} matchFormFields={matchForm} />
@@ -88,7 +66,7 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches, jwt }: Updat
                             variant="outline"
                             onClick={async (e) => {
                                 e.preventDefault();
-                                await deleteMatch();
+                                await deleteMatchCallback();
                             }}
                         >
                             Delete
