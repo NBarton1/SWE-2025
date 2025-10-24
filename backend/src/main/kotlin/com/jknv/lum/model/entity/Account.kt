@@ -36,7 +36,7 @@ data class Account(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var role: Role,
+    var role: Role = Role.GUARDIAN,
     ) {
 
     override fun equals(other: Any?): Boolean {

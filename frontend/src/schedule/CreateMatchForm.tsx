@@ -3,7 +3,7 @@ import {type Match} from "./match.ts";
 import type { Team } from "./team.ts";
 import TimeInput from "./TimeInput.tsx";
 import MatchTypeSelect from "./MatchTypeSelect.tsx";
-import {authHeader} from "../main.tsx";
+import {createBearerAuthHeader} from "../util.ts";
 
 
 interface MatchFormProps {
@@ -11,10 +11,11 @@ interface MatchFormProps {
     date: string
     matches: Match[]
     setMatches: Dispatch<React.SetStateAction<Match[]>>
+    jwt: string
 }
 
 
-const CreateMatchForm = ({ teams, date, matches, setMatches } : MatchFormProps) => {
+const CreateMatchForm = ({ teams, date, matches, setMatches, jwt } : MatchFormProps) => {
     const [homeTeamId, setHomeTeamId] = useState(0);
     const [awayTeamId, setAwayTeamId] = useState(0);
     const [time, setTime] = useState("");
@@ -25,7 +26,7 @@ const CreateMatchForm = ({ teams, date, matches, setMatches } : MatchFormProps) 
             const res = await fetch("http://localhost:8080/api/matches", {
                 method: "POST",
                 headers: {
-                    "Authorization": authHeader,
+                    "Authorization": createBearerAuthHeader(jwt),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
