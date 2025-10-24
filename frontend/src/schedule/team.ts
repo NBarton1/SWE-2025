@@ -8,6 +8,7 @@ export interface Team {
     loss: number
 }
 
+
 export function getPCT(team: Team): number {
     return (team.win + team.draw / 2) / (team.win + team.loss + team.draw);
 }
