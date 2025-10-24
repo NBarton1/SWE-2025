@@ -1,6 +1,6 @@
 import {useCallback, useState} from 'react'
 import './App.css'
-import {Route, Routes} from "react-router";
+import {BrowserRouter, Route, Routes} from "react-router";
 import Schedule from "./schedule/Schedule.tsx";
 
 function App() {
@@ -24,11 +24,13 @@ function App() {
     }, [name, password, username]);
 
     return (
-        <Routes>
-            <Route path="/login" element={(<p>TEST</p>)} />
-            <Route path="/signup" element={(<p/>)} />
-            <Route path="/calendar" element={(<Schedule />)}/>
-        </Routes>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/login" element={(<p>TEST</p>)} />
+                <Route path="/signup" element={(<p/>)} />
+                <Route path="/calendar" element={(<Schedule />)}/>
+            </Routes>
+        </BrowserRouter>
     )
 }
 

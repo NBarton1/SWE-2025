@@ -1,6 +1,7 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.LOGGER
+import com.jknv.lum.config.PreAuthorizeAdmin
 import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.request.MatchCreateRequest
 import com.jknv.lum.model.request.MatchUpdateRequest
@@ -25,6 +26,7 @@ class MatchController (
     private val teamService: TeamService,
 ) {
     @PostMapping
+    @PreAuthorizeAdmin
     fun createMatch(@RequestBody req: MatchCreateRequest): ResponseEntity<Match> {
         LOGGER.info("Creating new Match")
 
@@ -45,6 +47,7 @@ class MatchController (
     }
 
     @DeleteMapping("/{matchId}")
+    @PreAuthorizeAdmin
     fun deleteMatch(@PathVariable matchId: Long): ResponseEntity<Void> {
         LOGGER.info("Deleting Match")
 
@@ -53,6 +56,7 @@ class MatchController (
     }
 
     @PutMapping("/{matchId}")
+    @PreAuthorizeAdmin
     fun updateMatch(@PathVariable matchId: Long, @RequestBody req: MatchUpdateRequest): ResponseEntity<Match> {
         LOGGER.info("Updating Match")
 
