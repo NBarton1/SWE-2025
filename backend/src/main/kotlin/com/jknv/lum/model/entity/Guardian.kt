@@ -1,19 +1,19 @@
 package com.jknv.lum.model.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 import jakarta.persistence.MapsId
+import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
-
 @Entity
-@Table(name = "Player")
-data class Player (
+@Table(name = "Guardian")
+data class Guardian (
 
     @Id
     @Column(name = "id")
@@ -24,17 +24,8 @@ data class Player (
     @JoinColumn(name = "id")
     var account: Account,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "guardian_id", nullable = false)
-    var guardian: Guardian,
+    @OneToMany(mappedBy = "guardian", fetch = FetchType.LAZY)
+    @JsonIgnore
+    var children: MutableSet<Player> = mutableSetOf()
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id", nullable = true)
-    var playingTeam: Team? = null,
-
-    @Column(nullable = false)
-    var hasPermission: Boolean = false,
-
-    @Column(nullable = true)
-    var position: String? = null,
 )

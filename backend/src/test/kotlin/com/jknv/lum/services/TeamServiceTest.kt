@@ -24,7 +24,7 @@ class TeamServiceTest {
     fun createTest() {
         every { teamRepository.save(team) } returns team
 
-        val savedTeam = teamService.create(team)
+        val savedTeam = teamService.createTeam(team)
 
         verify(exactly = 1) { teamRepository.save(team) }
         assertEquals(savedTeam, team)
@@ -56,7 +56,7 @@ class TeamServiceTest {
 
         every { teamRepository.count() } returns expectedCount
 
-        val count = teamService.count()
+        val count = teamService.countTeams()
 
         verify(exactly = 1) { teamRepository.count() }
         assertEquals(count, expectedCount)

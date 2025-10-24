@@ -19,7 +19,7 @@ class TeamInviteSeeder (
 ) : CommandLineRunner {
 
     override fun run(vararg args: String?) {
-        if (teamInviteService.count() == 0L) {
+        if (teamInviteService.countInvites() == 0L) {
             val teams = teamService.getTeams()
             val players = playerService.getPlayers()
 
@@ -29,7 +29,7 @@ class TeamInviteSeeder (
                 TeamInvite(team = teams[2], player = players[0], status = InviteStatus.DECLINED),
             )
 
-            invites.forEach { teamInviteService.create(it) }
+            invites.forEach { teamInviteService.createInvite(it) }
             LOGGER.info("Invites seeded")
         }
     }

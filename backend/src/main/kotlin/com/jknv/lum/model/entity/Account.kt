@@ -1,7 +1,7 @@
 package com.jknv.lum.model.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.jknv.lum.model.request.AccountUpdateRequest
+import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.model.type.Role
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -36,7 +36,7 @@ data class Account(
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var role: Role,
+    var role: Role = Role.GUARDIAN,
     ) {
 
     override fun equals(other: Any?): Boolean {

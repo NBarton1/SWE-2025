@@ -1,9 +1,8 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
-import com.jknv.lum.request.AccountLoginRequest
-import com.jknv.lum.request.AccountUpdateRequest
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
@@ -20,13 +19,17 @@ class AccountServiceTest {
     val accountRepository: AccountRepository = mockk()
     val authenticationManager: AuthenticationManager = mockk()
     val jwtService: JwtService = mockk()
+    val coachService: CoachService = mockk()
+    val guardianService: GuardianService = mockk()
     val bCryptPasswordEncoder: BCryptPasswordEncoder = mockk()
 
     val accountService: AccountService = AccountService(
-        accountRepository,
-        authenticationManager,
-        jwtService,
-        bCryptPasswordEncoder,
+        accountRepository = accountRepository,
+        authenticationManager = authenticationManager,
+        bCryptPasswordEncoder = bCryptPasswordEncoder,
+        jwtService = jwtService,
+        coachService = coachService,
+        guardianService = guardianService,
     )
     lateinit var account: Account
 
@@ -59,7 +62,7 @@ class AccountServiceTest {
 
         every { accountRepository.findById(1) } returns Optional.ofNullable(account)
 
-        val accountFound = accountService.getAccount(1)
+        val accountFound = accountService.getAccountById(1)
 
         assertEquals(account, accountFound)
     }
@@ -77,7 +80,7 @@ class AccountServiceTest {
     fun updateAccountTest() {
         every { bCryptPasswordEncoder.encode(any()) } returns "password"
         every {accountRepository.save(any())} returns account
-        every { accountService.getAccount(1) } returns account
+        every { accountService.getAccountById(1) } returns account
 
         val req = AccountUpdateRequest(
             name = "name1",

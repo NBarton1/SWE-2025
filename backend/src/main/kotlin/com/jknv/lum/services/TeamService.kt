@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class TeamService (
     private val teamRepository: TeamRepository,
 ) {
-    fun create(team: Team): Team {
+    fun createTeam(team: Team): Team {
         return teamRepository.save(team)
     }
 
@@ -18,11 +18,11 @@ class TeamService (
         return teamRepository.findAll()
     }
 
-    fun getTeam(id: Long): Team? {
+    fun getTeamById(id: Long): Team? {
         return teamRepository.findById(id).orElse(null)
     }
 
-    fun count(): Long {
+    fun countTeams(): Long {
         return teamRepository.count()
     }
 }

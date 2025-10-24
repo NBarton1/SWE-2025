@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PlayerRepository : JpaRepository<Player, Int> {
+interface PlayerRepository : JpaRepository<Player, Long> {
     fun findPlayerByAccount_Id(accountId: Long): Player?
     fun findPlayerByAccount_Username(accountUsername: String): Player?
 }

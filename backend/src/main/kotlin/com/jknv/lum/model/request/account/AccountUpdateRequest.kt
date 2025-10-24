@@ -1,4 +1,4 @@
-package com.jknv.lum.model.request
+package com.jknv.lum.model.request.account
 
 data class AccountUpdateRequest(
     val name: String?,

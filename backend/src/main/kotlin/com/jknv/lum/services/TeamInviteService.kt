@@ -11,15 +11,15 @@ import org.springframework.stereotype.Service
 class TeamInviteService (
     private val teamInviteRepository: TeamInviteRepository
 ) {
-    fun create(invite: TeamInvite): TeamInvite {
+    fun createInvite(invite: TeamInvite): TeamInvite {
         return teamInviteRepository.save(invite)
     }
 
-    fun getInvitesForPlayer(player: Player): List<TeamInvite> {
+    fun getInvitesByPlayer(player: Player): List<TeamInvite> {
         return teamInviteRepository.findTeamInvitesByPlayer(player)
     }
 
-    fun count(): Long {
+    fun countInvites(): Long {
         return teamInviteRepository.count()
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 class CoachService (
     private val coachRepository: CoachRepository,
 ) {
-    fun create(coach: Coach): Coach {
+    fun createCoach(coach: Coach): Coach {
         return coachRepository.save(coach)
     }
 
@@ -20,16 +20,16 @@ class CoachService (
         return coachRepository.getCoachByAccount_Username(username)
     }
 
-    fun setTeam(coach: Coach, team: Team): Coach {
+    fun setCoachingTeam(coach: Coach, team: Team): Coach {
         coach.coachingTeam = team
         return coachRepository.save(coach)
     }
 
-    fun getTeam(coach: Coach): Team? {
+    fun getTeamByCoach(coach: Coach): Team? {
         return coach.coachingTeam
     }
 
-    fun count(): Long {
+    fun countCoaches(): Long {
         return coachRepository.count()
     }
 }

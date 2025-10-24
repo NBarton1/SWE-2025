@@ -33,7 +33,7 @@ class TeamController (
     @PostMapping
     @PreAuthorizeCoach
     fun create(@RequestBody team: Team): ResponseEntity<Team> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.create(team))
+        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.createTeam(team))
     }
 
     @GetMapping
@@ -46,10 +46,10 @@ class TeamController (
     fun addCoach(@PathVariable teamId: Long, principal: Principal): ResponseEntity<Coach> {
         val coach = coachService.getCoachByUsername(principal.name)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        val team = teamService.getTeam(teamId)
+        val team = teamService.getTeamById(teamId)
             ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
 
-        return ResponseEntity.ok(coachService.setTeam(coach, team))
+        return ResponseEntity.ok(coachService.setCoachingTeam(coach, team))
     }
 
     @PostMapping("/invite/{playerId}")
@@ -57,13 +57,13 @@ class TeamController (
     fun invitePlayer(@PathVariable playerId: Long, principal: Principal): ResponseEntity<TeamInvite> {
         val coach = coachService.getCoachByUsername(principal.name)
             ?: return ResponseEntity.notFound().build()
-        val player = playerService.getPlayer(playerId)
+        val player = playerService.getPlayerById(playerId)
             ?: return ResponseEntity.notFound().build()
 
-        val team = coachService.getTeam(coach)
+        val team = coachService.getTeamByCoach(coach)
             ?: return ResponseEntity.notFound().build()
 
-        return ResponseEntity.ok(teamInviteService.create(TeamInvite(team = team, player = player)))
+        return ResponseEntity.ok(teamInviteService.createInvite(TeamInvite(team = team, player = player)))
     }
 
     @GetMapping("/invite")
@@ -72,6 +72,6 @@ class TeamController (
         val player = playerService.getPlayerByUsername(principal.name)
             ?: return ResponseEntity.notFound().build()
 
-        return ResponseEntity.ok(teamInviteService.getInvitesForPlayer(player))
+        return ResponseEntity.ok(teamInviteService.getInvitesByPlayer(player))
     }
 }

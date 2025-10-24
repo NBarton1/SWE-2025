@@ -1,4 +1,4 @@
-package com.jknv.lum.model.request
+package com.jknv.lum.model.request.match
 
 import com.jknv.lum.model.type.MatchType
 import java.time.LocalDateTime
