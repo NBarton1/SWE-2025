@@ -4,14 +4,6 @@ import './index.css'
 import App from './App.tsx'
 import {createTheme, MantineProvider} from "@mantine/core";
 
-// function createBasicAuthHeader(username: string, password: string) {
-//     const credentials = `${username}:${password}`;
-//     const encoded = btoa(credentials);
-//     return `Basic ${encoded}`;
-// }
-
-// export const authHeader = createBasicAuthHeader(username, password);
-
 
 const theme = createTheme({
     colors: {

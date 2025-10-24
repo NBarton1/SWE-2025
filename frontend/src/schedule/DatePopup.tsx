@@ -10,10 +10,9 @@ interface DatePopupProps {
     matches: Match[];
     setMatches: Dispatch<React.SetStateAction<Match[]>>;
     teams: Team[];
-    jwt: string;
 }
 
-const DatePopup = ({ date, matches, setMatches, teams, jwt }: DatePopupProps) => {
+const DatePopup = ({ date, matches, setMatches, teams }: DatePopupProps) => {
 
     if (date == null) {
         return null;
@@ -39,7 +38,6 @@ const DatePopup = ({ date, matches, setMatches, teams, jwt }: DatePopupProps) =>
                     teams={teams}
                     matches={matches}
                     setMatches={setMatches}
-                    jwt={jwt}
                 />
             </div>
 
@@ -55,7 +53,6 @@ const DatePopup = ({ date, matches, setMatches, teams, jwt }: DatePopupProps) =>
                                 date={date}
                                 matches={matches}
                                 setMatches={setMatches}
-                                jwt={jwt}
                             />
                         ))}
                     </Stack>

@@ -23,4 +23,8 @@ class CookieService(
             .sameSite(SameSiteCookies.STRICT.toString())
             .build()
     }
+
+    fun getCookieName(): String {
+        return cookieName
+    }
 }

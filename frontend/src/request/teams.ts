@@ -1,10 +1,8 @@
-import {createBearerAuthHeader} from "../util.ts";
-
-export const getTeams = async (jwt: string) => {
+export const getTeams = async () => {
     try {
         const res = await fetch("http://localhost:8080/api/teams", {
             method: "GET",
-            headers: { Authorization: createBearerAuthHeader(jwt) },
+            credentials: 'include'
         });
         return await res.json();
     } catch (err) {

@@ -10,17 +10,14 @@ import {
 import {formatPCT, getPCT, type Team} from "./schedule/team.ts";
 import {getTeams} from "./request/teams.ts";
 
-interface TeamTablePage {
-    jwt: string
-}
 
-const TeamTablePage = ({ jwt }: TeamTablePage) => {
+const TeamTablePage = () => {
 
     const [teams, setTeams] = useState<Team[]>([]);
 
     useEffect(() => {
-        getTeams(jwt).then(setTeams)
-    }, [jwt]);
+        getTeams().then(setTeams)
+    }, []);
 
     return (
         <Box

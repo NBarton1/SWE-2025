@@ -7,15 +7,11 @@ import { Container, Paper, Modal, Title, Box } from "@mantine/core";
 import DatePopup from "./DatePopup.tsx";
 import { type Match, matchStr } from "./match.ts";
 import type { Team } from "./team.ts";
-import { createBearerAuthHeader } from "../util.ts";
 import { getTeams } from "../request/teams.ts";
+import {getMatches} from "../request/matches.ts";
 
 
-interface ScheduleProps {
-    jwt: string;
-}
-
-const Schedule = ({ jwt }: ScheduleProps) => {
+const Schedule = () => {
     const [matches, setMatches] = useState<Match[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
@@ -26,23 +22,10 @@ const Schedule = ({ jwt }: ScheduleProps) => {
         setOpened(true);
     }, []);
 
-    const getMatches = useCallback(async () => {
-        try {
-            const res = await fetch("http://localhost:8080/api/matches", {
-                method: "GET",
-                headers: { Authorization: createBearerAuthHeader(jwt) },
-            });
-            return await res.json();
-        } catch (err) {
-            console.error("Failed to get matches", err);
-            return [];
-        }
-    }, [jwt]);
-
     useEffect(() => {
         getMatches().then(setMatches);
-        getTeams(jwt).then(setTeams);
-    }, [getMatches, jwt]);
+        getTeams().then(setTeams);
+    }, [getMatches]);
 
     return (
         <Container py="md">
@@ -88,7 +71,6 @@ const Schedule = ({ jwt }: ScheduleProps) => {
                         matches={matches}
                         setMatches={setMatches}
                         teams={teams}
-                        jwt={jwt}
                     />
                 )}
             </Modal>
