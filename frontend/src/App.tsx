@@ -1,34 +1,24 @@
-import {useCallback, useState} from 'react'
-import './App.css'
 import {BrowserRouter, Route, Routes} from "react-router";
 import Schedule from "./schedule/Schedule.tsx";
+import SignupPage from "./SignupPage.tsx";
+import LoginPage from "./LoginPage.tsx";
+import {useState} from "react";
+import TeamsPage from "./TeamsPage.tsx";
+import Layout from "./Layout.tsx";
 
 function App() {
-    const [count, setCount] = useState(0)
-    const [name, setName] = useState("")
-    const [username, setUsername] = useState("")
-    const [password, setPassword] = useState("")
-
-    const signup = useCallback(async () => {
-        await fetch("http://localhost:8080/api/auth/signup", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                name,
-                username,
-                password,
-            })
-        });
-    }, [name, password, username]);
+    const [jwt, setJwt] = useState<string>("")
 
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/login" element={(<p>TEST</p>)} />
-                <Route path="/signup" element={(<p/>)} />
-                <Route path="/calendar" element={(<Schedule />)}/>
+                <Route path="/login" element={(<LoginPage setJwt={setJwt}/>)} />
+                <Route path="/signup" element={(<SignupPage setJwt={setJwt}/>)} />
+
+                <Route element={<Layout/>}>
+                    <Route path="/calendar" element={(<Schedule jwt={jwt}/>)}/>
+                    <Route path="/teams" element={(<TeamsPage jwt={jwt}/>)}/>
+                </Route>
             </Routes>
         </BrowserRouter>
     )

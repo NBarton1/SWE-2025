@@ -1,86 +1,98 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import "./Schedule.css"
+import { useCallback, useEffect, useState } from "react";
+import FullCalendar from "@fullcalendar/react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import { Container, Paper, Modal, Title, Box } from "@mantine/core";
 import DatePopup from "./DatePopup.tsx";
-import {type Match, matchStr} from './match.ts';
-import {authHeader} from "../main.tsx";
-import type {Team} from "./team.ts";
+import { type Match, matchStr } from "./match.ts";
+import type { Team } from "./team.ts";
+import { createBearerAuthHeader } from "../util.ts";
+import { getTeams } from "../request/teams.ts";
 
-const Schedule: React.FC = () => {
+
+interface ScheduleProps {
+    jwt: string;
+}
+
+const Schedule = ({ jwt }: ScheduleProps) => {
     const [matches, setMatches] = useState<Match[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
-    const [date, setDate] = useState<string|null>(null);
+    const [selectedDate, setSelectedDate] = useState<string | null>(null);
+    const [opened, setOpened] = useState(false);
 
-
-    const dateClick = useCallback((date: { dateStr: string } ) => {
-        setDate(date.dateStr);
+    const dateClick = useCallback((info: { dateStr: string }) => {
+        setSelectedDate(info.dateStr);
+        setOpened(true);
     }, []);
 
-    const getMatches = async () => {
+    const getMatches = useCallback(async () => {
         try {
-            const matches_res: Response = await fetch("http://localhost:8080/api/matches", {
+            const res = await fetch("http://localhost:8080/api/matches", {
                 method: "GET",
-                headers: {
-                    "Authorization": authHeader
-                }
+                headers: { Authorization: createBearerAuthHeader(jwt) },
             });
-
-            return await matches_res.json();
-        } catch {
-            console.log("Failed to get matches");
-            return null;
+            return await res.json();
+        } catch (err) {
+            console.error("Failed to get matches", err);
+            return [];
         }
-    };
-
-    const getTeams = async () => {
-        try {
-            const teams_response = await fetch("http://localhost:8080/api/teams", {
-                method: "GET",
-                headers: {
-                    "Authorization": authHeader
-                }
-            });
-
-            console.log(teams_response.status);
-
-            return await teams_response.json();
-        } catch {
-            console.log("Failed to get teams");
-            return null;
-        }
-    };
+    }, [jwt]);
 
     useEffect(() => {
-        // TODO: error checking
-        getMatches().then(matches => {
-            console.log(matches);
-            setMatches(matches);
-        });
-
-        getTeams().then(teams => {
-            console.log(teams);
-            setTeams(teams);
-        })
-    }, []);
+        getMatches().then(setMatches);
+        getTeams(jwt).then(setTeams);
+    }, [getMatches, jwt]);
 
     return (
-        <>
-            <FullCalendar
-                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                initialView="dayGridMonth"
-                headerToolbar={{
-                    left: 'title',
-                    center: 'prev,next today',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                }}
-                dateClick={dateClick}
-                events={[...matches.map((match) => Object({"title": matchStr(match), "start": match.date}))]}
-            />
-            <DatePopup date={date} matches={matches} setMatches={setMatches} teams={teams}/>
-        </>
+        <Container py="md">
+            <Paper shadow="md" p="md" radius="md">
+                <Title order={2} mb="md" ta="center">
+                    Schedule
+                </Title>
+
+                <Box>
+                    <style>
+                        {`
+                            .fc .fc-col-header-cell-cushion {
+                                color: black !important;
+                            }
+                        `}
+                    </style>
+                    <FullCalendar
+                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                        initialView="dayGridMonth"
+                        headerToolbar={{
+                            left: "prev,next today",
+                            center: "title",
+                            right: "dayGridMonth,timeGridWeek,timeGridDay",
+                        }}
+                        dateClick={dateClick}
+                        events={matches.map((match) => ({
+                            title: matchStr(match),
+                            start: match.date,
+                        }))}
+                        height="auto"
+                    />
+                </Box>
+            </Paper>
+
+            <Modal
+                opened={opened}
+                onClose={() => setOpened(false)}
+                size="lg"
+            >
+                {selectedDate && (
+                    <DatePopup
+                        date={selectedDate}
+                        matches={matches}
+                        setMatches={setMatches}
+                        teams={teams}
+                        jwt={jwt}
+                    />
+                )}
+            </Modal>
+        </Container>
     );
 };
 

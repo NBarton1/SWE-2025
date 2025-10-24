@@ -1,37 +1,44 @@
-import React, {type Dispatch, useState} from "react";
+import React, { type Dispatch } from "react";
+import { Button, Group, Stack, Paper } from "@mantine/core";
 import {type Match} from "./match.ts";
 import type { Team } from "./team.ts";
-import TimeInput from "./TimeInput.tsx";
-import MatchTypeSelect from "./MatchTypeSelect.tsx";
-import {authHeader} from "../main.tsx";
+import { createBearerAuthHeader } from "../util.ts";
+import {useForm} from "@mantine/form";
+import MatchFormFields from "./MatchFormFields.tsx";
 
-
-interface MatchFormProps {
-    teams: Team[]
-    date: string
-    matches: Match[]
-    setMatches: Dispatch<React.SetStateAction<Match[]>>
+interface CreateMatchFormProps {
+    teams: Team[];
+    date: string;
+    matches: Match[];
+    setMatches: Dispatch<React.SetStateAction<Match[]>>;
+    jwt: string;
 }
 
+const CreateMatchForm = ({ teams, date, matches, setMatches, jwt }: CreateMatchFormProps) => {
 
-const CreateMatchForm = ({ teams, date, matches, setMatches } : MatchFormProps) => {
-    const [homeTeamId, setHomeTeamId] = useState(0);
-    const [awayTeamId, setAwayTeamId] = useState(0);
-    const [time, setTime] = useState("");
-    const [type, setType] = useState("");
+    const matchForm = useForm({
+        initialValues: {
+            homeTeamId: "",
+            awayTeamId: "",
+            time: "",
+            type: ""
+        },
+    });
 
     const createMatch = async () => {
         try {
+            const { type, homeTeamId, awayTeamId, time } = matchForm.values;
+
             const res = await fetch("http://localhost:8080/api/matches", {
                 method: "POST",
                 headers: {
-                    "Authorization": authHeader,
+                    "Authorization": createBearerAuthHeader(jwt),
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    type: type,
-                    homeTeamId: homeTeamId,
-                    awayTeamId: awayTeamId,
+                    type,
+                    homeTeamId,
+                    awayTeamId,
                     date: `${date}T${time}`,
                 })
             });
@@ -45,33 +52,28 @@ const CreateMatchForm = ({ teams, date, matches, setMatches } : MatchFormProps) 
         }
     };
 
+    const teamSelection = teams.map(team => ({
+        value: team.id.toString(),
+        label: team.name
+    }));
+
     return (
-        <form onSubmit={async (e) => {
-            e.preventDefault();
-            await createMatch();
-        }}>
-            <label htmlFor="home">Home Team:</label>
-            <select id="home" onChange={(e) => {
-                setHomeTeamId(Number(e.target.value));
+        <Paper shadow="sm" p="md" radius="md" withBorder>
+            <form onSubmit={async (e) => {
+                e.preventDefault();
+                await createMatch();
             }}>
-                <option value="" selected disabled hidden>Select Home Team</option>
-                {teams.map(team => <option value={team.id}>{team.name}</option>)}
-            </select>
+                <Stack gap="md">
+                    <MatchFormFields teams={teamSelection} matchFormFields={matchForm} />
 
-            <label htmlFor="away">Away Team:</label>
-            <select id="away" onChange={(e) => {
-                setAwayTeamId(Number(e.target.value));
-            }}>
-                <option value="" selected disabled hidden>Select Away Team</option>
-                {teams.map(team => <option value={team.id}>{team.name}</option>)}
-            </select>
-
-            <TimeInput time={time} setTime={setTime} />
-
-            <MatchTypeSelect setType={setType} />
-
-            <button type="submit">Save</button>
-        </form>
+                    <Group justify="flex-end" mt="md">
+                        <Button type="submit" >
+                            Create Match
+                        </Button>
+                    </Group>
+                </Stack>
+            </form>
+        </Paper>
     );
 };
 
