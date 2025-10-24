@@ -4,9 +4,9 @@ import SignupPage from "./SignupPage.tsx";
 import LoginPage from "./LoginPage.tsx";
 import {useState} from "react";
 import TeamsPage from "./TeamsPage.tsx";
+import Layout from "./Layout.tsx";
 
 function App() {
-
     const [jwt, setJwt] = useState<string>("")
 
     return (
@@ -14,8 +14,11 @@ function App() {
             <Routes>
                 <Route path="/login" element={(<LoginPage setJwt={setJwt}/>)} />
                 <Route path="/signup" element={(<SignupPage setJwt={setJwt}/>)} />
-                <Route path="/calendar" element={(<Schedule jwt={jwt}/>)}/>
-                <Route path="/teams" element={(<TeamsPage jwt={jwt}/>)}/>
+
+                <Route element={<Layout/>}>
+                    <Route path="/calendar" element={(<Schedule jwt={jwt}/>)}/>
+                    <Route path="/teams" element={(<TeamsPage jwt={jwt}/>)}/>
+                </Route>
             </Routes>
         </BrowserRouter>
     )

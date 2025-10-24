@@ -4,7 +4,6 @@ import {
     Paper,
     Title,
     Box,
-    useMantineTheme,
     ScrollArea,
     Flex,
 } from "@mantine/core";
@@ -16,7 +15,6 @@ interface TeamTablePage {
 }
 
 const TeamTablePage = ({ jwt }: TeamTablePage) => {
-    const theme = useMantineTheme();
 
     const [teams, setTeams] = useState<Team[]>([]);
 
@@ -27,23 +25,21 @@ const TeamTablePage = ({ jwt }: TeamTablePage) => {
     return (
         <Box
             style={{
-                minHeight: "100vh",
                 padding: "3rem 0",
                 display: "flex",
                 justifyContent: "center",
             }}
         >
             <Paper
-                shadow="md"
                 radius="md"
                 p="xl"
                 style={{
-                    width: "90%",
-                    maxWidth: 1000,
-                    border: `1px solid ${theme.colors[theme.primaryColor][4]}`,
+                    width: "100%",
+                    height: "100%",
+                    maxWidth: "100%",
                 }}
-            >
-                <Flex justify="space-between" align="center" style={{ marginBottom: "1rem", gap: "12px" }}>
+                >
+                <Flex justify="space-between" align="center" style={{marginBottom: "1rem", gap: "12px"}}>
                     <Title order={2}>Team Standings</Title>
                 </Flex>
 

@@ -26,7 +26,7 @@ const Schedule = ({ jwt }: ScheduleProps) => {
         setOpened(true); // open modal
     }, []);
 
-    const getMatches = async () => {
+    const getMatches = useCallback(async () => {
         try {
             const res = await fetch("http://localhost:8080/api/matches", {
                 method: "GET",
@@ -37,7 +37,7 @@ const Schedule = ({ jwt }: ScheduleProps) => {
             console.error("Failed to get matches", err);
             return [];
         }
-    };
+    }, [jwt]);
 
     useEffect(() => {
         getMatches().then(setMatches);
@@ -45,7 +45,7 @@ const Schedule = ({ jwt }: ScheduleProps) => {
     }, [getMatches, jwt]);
 
     return (
-        <Container size="xl" py="md">
+        <Container py="md">
             <Paper shadow="md" p="md" radius="md">
                 <Title order={2} mb="md" ta="center">
                     Schedule
