@@ -1,10 +1,9 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.model.entity.Account
-import com.jknv.lum.model.request.AccountLoginRequest
+import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.services.AccountService
-import com.jknv.lum.services.CoachService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach

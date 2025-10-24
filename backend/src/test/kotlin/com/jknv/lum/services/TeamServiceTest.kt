@@ -13,8 +13,7 @@ import kotlin.test.assertEquals
 
 class TeamServiceTest {
     val teamRepository: TeamRepository = mockk()
-    val teamInviteRepository: TeamInviteRepository = mockk()
-    val teamService = TeamService(teamRepository, teamInviteRepository)
+    val teamService = TeamService(teamRepository)
 
     lateinit var team: Team
 
@@ -37,7 +36,7 @@ class TeamServiceTest {
     fun getTeamByIdTest() {
         every { teamRepository.findById(1) } returns Optional.of(team)
 
-        val fetchedTeam = teamService.getTeam(1)
+        val fetchedTeam = teamService.getTeamById(1)
 
         verify(exactly = 1) { teamRepository.findById(1) }
         assertEquals(fetchedTeam, team)

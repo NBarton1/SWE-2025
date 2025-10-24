@@ -40,7 +40,7 @@ class MatchServiceTest {
     fun saveMatchTest() {
         every { matchRepository.save(any()) } returns match
 
-        val savedMatch = matchService.create(match)
+        val savedMatch = matchService.createMatch(match)
 
         verify(exactly = 1) { matchRepository.save(any()) }
         assertEquals(match, savedMatch)
