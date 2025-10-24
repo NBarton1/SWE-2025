@@ -28,7 +28,7 @@ data class TeamInvite (
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("playerId")
     @JoinColumn(name = "player_id", nullable = false)
-    var player: Account,
+    var player: Player,
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)

@@ -1,11 +1,13 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Team
+import com.jknv.lum.repository.TeamInviteRepository
 import com.jknv.lum.repository.TeamRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
+import java.util.Optional
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -24,7 +26,7 @@ class TeamServiceTest {
     fun createTest() {
         every { teamRepository.save(team) } returns team
 
-        val savedTeam = teamService.create(team)
+        val savedTeam = teamService.createTeam(team)
 
         verify(exactly = 1) { teamRepository.save(team) }
         assertEquals(savedTeam, team)
@@ -32,11 +34,11 @@ class TeamServiceTest {
 
     @Test
     fun getTeamByIdTest() {
-        every { teamRepository.getReferenceById(1) } returns team
+        every { teamRepository.findById(1) } returns Optional.of(team)
 
         val fetchedTeam = teamService.getTeamById(1)
 
-        verify(exactly = 1) { teamRepository.getReferenceById(1) }
+        verify(exactly = 1) { teamRepository.findById(1) }
         assertEquals(fetchedTeam, team)
     }
 
@@ -56,7 +58,7 @@ class TeamServiceTest {
 
         every { teamRepository.count() } returns expectedCount
 
-        val count = teamService.count()
+        val count = teamService.countTeams()
 
         verify(exactly = 1) { teamRepository.count() }
         assertEquals(count, expectedCount)

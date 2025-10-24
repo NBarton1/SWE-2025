@@ -1,6 +1,7 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.AccountRepository
 import com.jknv.lum.security.AccountDetails
 import io.mockk.every
@@ -27,6 +28,7 @@ class JwtServiceTest {
             name = "abc",
             username = "abc",
             password = "abc",
+            role = Role.ADMIN,
         )
     }
 

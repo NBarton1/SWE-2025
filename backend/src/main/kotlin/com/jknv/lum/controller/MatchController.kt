@@ -1,9 +1,10 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.LOGGER
+import com.jknv.lum.config.PreAuthorizeAdmin
 import com.jknv.lum.model.entity.Match
-import com.jknv.lum.model.request.MatchCreateRequest
-import com.jknv.lum.model.request.MatchUpdateRequest
+import com.jknv.lum.model.request.match.MatchCreateRequest
+import com.jknv.lum.model.request.match.MatchUpdateRequest
 import com.jknv.lum.services.MatchService
 import com.jknv.lum.services.TeamService
 import org.springframework.http.HttpStatus
@@ -25,12 +26,13 @@ class MatchController (
     private val teamService: TeamService,
 ) {
     @PostMapping
+    @PreAuthorizeAdmin
     fun createMatch(@RequestBody req: MatchCreateRequest): ResponseEntity<Match> {
         LOGGER.info("Creating new Match")
 
-        val homeTeam = teamService.getTeam(req.homeTeamId)
+        val homeTeam = teamService.getTeamById(req.homeTeamId)
             ?: return ResponseEntity.notFound().build()
-        val awayTeam = teamService.getTeam(req.awayTeamId)
+        val awayTeam = teamService.getTeamById(req.awayTeamId)
             ?: return ResponseEntity.notFound().build()
 
         val match = Match(
@@ -40,11 +42,12 @@ class MatchController (
             awayTeam = awayTeam
         )
 
-        val newMatch = matchService.create(match)
+        val newMatch = matchService.createMatch(match)
         return ResponseEntity.status(HttpStatus.CREATED).body(newMatch)
     }
 
     @DeleteMapping("/{matchId}")
+    @PreAuthorizeAdmin
     fun deleteMatch(@PathVariable matchId: Long): ResponseEntity<Void> {
         LOGGER.info("Deleting Match")
 
@@ -53,20 +56,21 @@ class MatchController (
     }
 
     @PutMapping("/{matchId}")
+    @PreAuthorizeAdmin
     fun updateMatch(@PathVariable matchId: Long, @RequestBody req: MatchUpdateRequest): ResponseEntity<Match> {
         LOGGER.info("Updating Match")
 
         val match = matchService.getMatchById(matchId)
             ?: return ResponseEntity.notFound().build()
 
-        match.homeTeam = teamService.getTeam(req.homeTeamId)
+        match.homeTeam = teamService.getTeamById(req.homeTeamId)
             ?: return ResponseEntity.notFound().build()
-        match.awayTeam = teamService.getTeam(req.awayTeamId)
+        match.awayTeam = teamService.getTeamById(req.awayTeamId)
             ?: return ResponseEntity.notFound().build()
         match.date = req.date
         match.type = req.type
 
-        matchService.create(match)
+        matchService.createMatch(match)
         return ResponseEntity.status(HttpStatus.OK).body(match)
     }
 

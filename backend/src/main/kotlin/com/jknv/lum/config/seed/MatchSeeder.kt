@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
-@Order(3)
+@Order(2)
 class MatchSeeder (
     private val matchService: MatchService,
     private val teamService: TeamService
@@ -19,13 +19,13 @@ class MatchSeeder (
 
     override fun run(vararg args: String?) {
         val teams = teamService.getTeams()
-        if (matchService.count() == 0L) {
+        if (matchService.countMatches() == 0L) {
             val matches = listOf(
                 Match(homeTeam = teams[0], awayTeam = teams[1], date = LocalDateTime.now(),type = MatchType.PLAYOFF),
                 Match(homeTeam = teams[1], awayTeam = teams[2], date = LocalDateTime.now(),type = MatchType.STANDARD),
             )
 
-            matches.forEach { matchService.create(it) }
+            matches.forEach { matchService.createMatch(it) }
             LOGGER.info("Matches seeded")
         }
     }

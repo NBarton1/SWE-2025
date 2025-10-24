@@ -1,9 +1,9 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.request.account.AccountUpdateRequest
+import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.AccountRepository
-import com.jknv.lum.request.AccountLoginRequest
-import com.jknv.lum.request.AccountUpdateRequest
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
@@ -22,11 +22,16 @@ class AccountServiceTest {
     val jwtService: JwtService = mockk()
     val bCryptPasswordEncoder: BCryptPasswordEncoder = mockk()
 
+    val coachService: CoachService = mockk()
+    val guardianService: GuardianService = mockk()
+
     val accountService: AccountService = AccountService(
         accountRepository,
         authenticationManager,
-        jwtService,
         bCryptPasswordEncoder,
+        jwtService,
+        coachService,
+        guardianService,
     )
     lateinit var account: Account
 
@@ -36,30 +41,15 @@ class AccountServiceTest {
             name = "name",
             username = "username",
             password = "password",
+            role = Role.ADMIN,
         )
-    }
-
-    @Test
-    fun createAccountTest() {
-        every { bCryptPasswordEncoder.encode(any()) } returns "password"
-        every { accountRepository.save(any()) } returns account
-
-        val accountCreated = accountService.createAccount(account)
-
-        assertEquals(account, accountCreated)
     }
 
     @Test
     fun getAccountTest() {
-        val account = Account(
-            name = "name",
-            username = "username",
-            password = "password",
-        )
-
         every { accountRepository.findById(1) } returns Optional.ofNullable(account)
 
-        val accountFound = accountService.getAccount(1)
+        val accountFound = accountService.getAccountById(1)
 
         assertEquals(account, accountFound)
     }
@@ -77,7 +67,7 @@ class AccountServiceTest {
     fun updateAccountTest() {
         every { bCryptPasswordEncoder.encode(any()) } returns "password"
         every {accountRepository.save(any())} returns account
-        every { accountService.getAccount(1) } returns account
+        every { accountService.getAccountById(1) } returns account
 
         val req = AccountUpdateRequest(
             name = "name1",
