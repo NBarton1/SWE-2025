@@ -2,10 +2,11 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Coach
+import com.jknv.lum.model.entity.Guardian
 import com.jknv.lum.model.type.Role
-import com.jknv.lum.model.request.AccountUpdateRequest
+import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
-import com.jknv.lum.model.request.AccountLoginRequest
+import com.jknv.lum.model.request.account.AccountLoginRequest
 import jakarta.transaction.Transactional
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -20,6 +21,7 @@ class AccountService(
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val jwtService: JwtService,
     private val coachService: CoachService,
+    private val guardianService: GuardianService,
 ) {
 
     fun createAccount(account: Account): Account {
@@ -28,16 +30,20 @@ class AccountService(
         roleHierarchy(newAccount.role).forEach { role ->
             when (role) {
                 Role.ADMIN -> {}
-                Role.COACH -> coachService.create(Coach(account = newAccount))
-                Role.GUARDIAN -> {}
+                Role.COACH -> coachService.createCoach(Coach(account = newAccount))
+                Role.GUARDIAN -> guardianService.createGuardian(Guardian(account = newAccount))
                 Role.PLAYER -> {}
             }
         }
         return newAccount
     }
 
-    fun getAccount(id: Long): Account? {
+    fun getAccountById(id: Long): Account? {
         return accountRepository.findById(id).orElse(null)
+    }
+
+    fun getAccountByUsername(username: String): Account? {
+        return accountRepository.findByUsername(username)
     }
 
     fun getAccounts(): List<Account> {
@@ -46,7 +52,7 @@ class AccountService(
 
     fun updateAccount(id: Long, updateInfo: AccountUpdateRequest): Account? {
 
-        val account = getAccount(id) ?: return null
+        val account = getAccountById(id) ?: return null
         account.updateFromRequest(updateInfo, bCryptPasswordEncoder)
         return accountRepository.save(account)
     }

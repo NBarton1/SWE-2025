@@ -9,7 +9,7 @@ class MatchService (
     val matchRepository: MatchRepository,
 ) {
 
-    fun create(match: Match): Match {
+    fun createMatch(match: Match): Match {
         return matchRepository.save(match)
     }
 
@@ -25,7 +25,7 @@ class MatchService (
         return matchRepository.findAll()
     }
 
-    fun count(): Long {
+    fun countMatches(): Long {
         return matchRepository.count()
     }
 }

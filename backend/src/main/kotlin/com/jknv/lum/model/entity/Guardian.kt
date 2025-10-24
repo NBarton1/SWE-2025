@@ -1,0 +1,31 @@
+package com.jknv.lum.model.entity
+
+import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.MapsId
+import jakarta.persistence.OneToMany
+import jakarta.persistence.OneToOne
+import jakarta.persistence.Table
+
+@Entity
+@Table(name = "Guardian")
+data class Guardian (
+
+    @Id
+    @Column(name = "id")
+    var id: Long? = null,
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "id")
+    var account: Account,
+
+    @OneToMany(mappedBy = "guardian", fetch = FetchType.LAZY)
+    @JsonIgnore
+    var children: MutableSet<Player> = mutableSetOf()
+
+)

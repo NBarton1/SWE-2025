@@ -1,8 +1,8 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.model.entity.Account
-import com.jknv.lum.model.request.AccountLoginRequest
-import com.jknv.lum.model.request.AccountUpdateRequest
+import com.jknv.lum.model.request.account.AccountLoginRequest
+import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.services.AccountService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,12 +20,12 @@ class AccountController(
     }
 
     @GetMapping
-    fun findAll(): ResponseEntity<List<Account>> =
+    fun getAll(): ResponseEntity<List<Account>> =
         ResponseEntity.ok(accountService.getAccounts())
 
     @GetMapping("/{id}")
-    fun find(@PathVariable id: Long): ResponseEntity<Account> =
-        ResponseEntity.ok(accountService.getAccount(id))
+    fun getById(@PathVariable id: Long): ResponseEntity<Account> =
+        ResponseEntity.ok(accountService.getAccountById(id))
 
     @PutMapping("/{id}")
     fun update(
