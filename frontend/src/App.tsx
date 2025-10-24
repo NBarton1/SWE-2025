@@ -7,8 +7,7 @@ import TeamsPage from "./TeamsPage.tsx";
 import Layout from "./Layout.tsx";
 
 function App() {
-    let [jwt, setJwt] = useState<string>("")
-    jwt = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTc2MTMxODg4MiwiaXNzIjoiRG9ua2V5S29uZyIsImV4cCI6MTc2MTMyMjQ4Mn0.w2xZSMwEzG7vuGkjglry6EDhJtpEgQ4qOx1mY__Rf2A"
+    const [jwt, setJwt] = useState<string>("")
 
     return (
         <BrowserRouter>
