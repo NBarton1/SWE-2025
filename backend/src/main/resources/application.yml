@@ -23,3 +23,11 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.springframework.security: DEBUG
 
+lum:
+  jwt:
+    issuer: DonkeyKong
+    expiration: 3600
+
+  cookie:
+    name: authToken
+    expires-in: 3600

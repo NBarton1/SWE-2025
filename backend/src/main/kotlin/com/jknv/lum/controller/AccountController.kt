@@ -4,6 +4,9 @@ import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.services.AccountService
+import com.jknv.lum.services.CookieService
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/accounts")
 class AccountController(
     private val accountService: AccountService,
+    private val cookieService: CookieService,
 ) {
 
     @PostMapping
@@ -43,8 +47,14 @@ class AccountController(
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody loginRequest: AccountLoginRequest): ResponseEntity<String> {
+    fun login(@RequestBody loginRequest: AccountLoginRequest, response: HttpServletResponse): ResponseEntity<String> {
         val token = accountService.verifyLogin(loginRequest) ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.accepted().body(token)
+
+        val cookie = cookieService.giveCookie(token)
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        // TODO: make response dto, not return cookie
+        return ResponseEntity.ok(token)
     }
 }

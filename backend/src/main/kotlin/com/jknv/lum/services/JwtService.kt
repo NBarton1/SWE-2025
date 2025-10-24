@@ -14,26 +14,27 @@ import kotlin.io.encoding.Base64
 
 @Service
 class JwtService(
-    @param:Value($$"${jwt.secret}")
+    @param:Value($$"${lum.jwt.secret}")
     private val jwtSecret: String,
+
+    @param:Value($$"${lum.jwt.expiration}")
+    private val jwtExpiration: Long,
+
+    @param:Value($$"${lum.jwt.issuer}")
+    private val jwtIssuer: String,
 ) {
-
-    companion object {
-        const val ISSUER: String = "DonkeyKong"
-    }
-
     fun giveToken(username: String): String {
         val claims = mapOf<String, Any>()
 
         val issuedAt = Date.from(Instant.now())
-        val expiration = Date.from(Instant.now().plus(1, ChronoUnit.HOURS))
+        val expiration = Date.from(Instant.now().plus(jwtExpiration, ChronoUnit.SECONDS))
 
         return Jwts.builder()
             .claims()
             .add(claims)
             .subject(username)
             .issuedAt(issuedAt)
-            .issuer(ISSUER)
+            .issuer(jwtIssuer)
             .expiration(expiration)
             .and()
             .signWith(getKey())
@@ -57,7 +58,7 @@ class JwtService(
 
     fun isValidToken(jwt: Claims, accountDetails: AccountDetails): Boolean {
         return jwt.subject.equals(accountDetails.username) &&
-                jwt.issuer.equals(ISSUER) &&
+                jwt.issuer.equals(jwtIssuer) &&
                 !isTokenExpired(jwt)
     }
 
