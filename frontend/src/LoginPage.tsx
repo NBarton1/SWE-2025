@@ -42,9 +42,9 @@ const LoginPage = ({ setJwt }: LoginProps) => {
 
         setJwt(jwt)
 
-        navigate("/calendar")
+        navigate("/teams")
 
-    }, [form.values.password, form.values.username]);
+    }, [form.values.password, form.values.username, navigate, setJwt]);
 
     return (
         <Box

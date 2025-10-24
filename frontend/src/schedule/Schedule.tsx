@@ -3,11 +3,12 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import {Container, Paper, Modal, Title, useMantineTheme} from "@mantine/core";
+import {Container, Paper, Modal, Title} from "@mantine/core";
 import DatePopup from "./DatePopup.tsx";
 import { type Match, matchStr } from "./match.ts";
 import type { Team } from "./team.ts";
 import {createBearerAuthHeader} from "../util.ts";
+import {getTeams} from "../request/teams.ts";
 
 
 interface ScheduleProps {
@@ -20,19 +21,12 @@ const Schedule = ({ jwt }: ScheduleProps) => {
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [opened, setOpened] = useState(false);
 
-    // @ts-ignore we will use later
-    const theme = useMantineTheme()
-
     const dateClick = useCallback((info: { dateStr: string }) => {
         setSelectedDate(info.dateStr);
         setOpened(true); // open modal
     }, []);
 
     const getMatches = async () => {
-        if (jwt === null) {
-            return
-        }
-
         try {
             const res = await fetch("http://localhost:8080/api/matches", {
                 method: "GET",
@@ -45,23 +39,10 @@ const Schedule = ({ jwt }: ScheduleProps) => {
         }
     };
 
-    const getTeams = async () => {
-        try {
-            const res = await fetch("http://localhost:8080/api/teams", {
-                method: "GET",
-                headers: { Authorization: createBearerAuthHeader(jwt) },
-            });
-            return await res.json();
-        } catch (err) {
-            console.error("Failed to get teams", err);
-            return [];
-        }
-    };
-
     useEffect(() => {
         getMatches().then(setMatches);
-        getTeams().then(setTeams);
-    }, []);
+        getTeams(jwt).then(setTeams);
+    }, [getMatches, jwt]);
 
     return (
         <Container size="xl" py="md">

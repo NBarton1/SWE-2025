@@ -3,6 +3,7 @@ import Schedule from "./schedule/Schedule.tsx";
 import SignupPage from "./SignupPage.tsx";
 import LoginPage from "./LoginPage.tsx";
 import {useState} from "react";
+import TeamsPage from "./TeamsPage.tsx";
 
 function App() {
 
@@ -13,7 +14,8 @@ function App() {
             <Routes>
                 <Route path="/login" element={(<LoginPage setJwt={setJwt}/>)} />
                 <Route path="/signup" element={(<SignupPage setJwt={setJwt}/>)} />
-                <Route path="/calendar" element={(<Schedule jwt={jwt} />)}/>
+                <Route path="/calendar" element={(<Schedule jwt={jwt}/>)}/>
+                <Route path="/teams" element={(<TeamsPage jwt={jwt}/>)}/>
             </Routes>
         </BrowserRouter>
     )
