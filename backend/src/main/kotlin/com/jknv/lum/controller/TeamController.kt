@@ -65,13 +65,4 @@ class TeamController (
 
         return ResponseEntity.ok(teamInviteService.createInvite(TeamInvite(team = team, player = player)))
     }
-
-    @GetMapping("/invite")
-    @PreAuthorizePlayerOnly
-    fun getInvites(principal: Principal): ResponseEntity<List<TeamInvite>> {
-        val player = playerService.getPlayerByUsername(principal.name)
-            ?: return ResponseEntity.notFound().build()
-
-        return ResponseEntity.ok(teamInviteService.getInvitesByPlayer(player))
-    }
 }
