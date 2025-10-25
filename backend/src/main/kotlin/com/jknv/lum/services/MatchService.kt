@@ -16,9 +16,10 @@ class MatchService (
 
     fun createMatch(req: MatchCreateRequest): MatchDTO {
         val homeTeam = teamService.getTeamById(req.homeTeamId)
-            ?: throw EntityNotFoundException("Team not found")
         val awayTeam = teamService.getTeamById(req.awayTeamId)
-            ?: throw EntityNotFoundException("Team not found")
+
+        if (homeTeam == null || awayTeam == null)
+            throw EntityNotFoundException()
 
         val match = req.toEntity(homeTeam, awayTeam)
         return matchRepository.save(match).toDTO()
@@ -26,12 +27,12 @@ class MatchService (
 
     fun updateMatch(matchId: Long, req: MatchUpdateRequest): MatchDTO {
         val match = getMatchById(matchId)
-            ?: throw EntityNotFoundException("Match not found")
 
         val homeTeam = teamService.getTeamById(req.homeTeamId)
-            ?: throw EntityNotFoundException("Team not found")
         val awayTeam = teamService.getTeamById(req.awayTeamId)
-            ?: throw EntityNotFoundException("Team not found")
+
+        if (homeTeam == null || awayTeam == null || match == null)
+            throw EntityNotFoundException()
 
         match.type = req.type
         match.date = req.date
