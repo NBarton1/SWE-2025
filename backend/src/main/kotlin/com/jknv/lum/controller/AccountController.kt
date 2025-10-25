@@ -1,6 +1,8 @@
 package com.jknv.lum.controller
 
+import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.services.AccountService
@@ -10,6 +12,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -19,25 +22,24 @@ class AccountController(
 ) {
 
     @PostMapping
-    fun create(@RequestBody account: Account): ResponseEntity<Account> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(accountService.createAccount(account))
+    fun create(@RequestBody req: AccountCreateRequest): ResponseEntity<AccountDTO> {
+        val response = accountService.createAccountWithRoles(req)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @GetMapping
-    fun getAll(): ResponseEntity<List<Account>> =
-        ResponseEntity.ok(accountService.getAccounts())
+    fun getAll(): ResponseEntity<List<AccountDTO>> {
+        val response = accountService.getAccounts()
+        return ResponseEntity.ok(response)
+    }
 
-    @GetMapping("/{id}")
-    fun getById(@PathVariable id: Long): ResponseEntity<Account> =
-        ResponseEntity.ok(accountService.getAccountById(id))
-
-    @PutMapping("/{id}")
+    @PutMapping
     fun update(
-        @PathVariable id: Long,
-        @RequestBody updateInfo: AccountUpdateRequest
-    ): ResponseEntity<Account> {
-        val updatedAccount = accountService.updateAccount(id, updateInfo) ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.accepted().body(updatedAccount)
+        @RequestBody updateInfo: AccountUpdateRequest,
+        principal: Principal,
+    ): ResponseEntity<AccountDTO> {
+        val response = accountService.updateAccount(principal.name, updateInfo)
+        return ResponseEntity.accepted().body(response)
     }
 
     @DeleteMapping("/{id}")

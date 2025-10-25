@@ -1,9 +1,7 @@
-// note: this entity is currently useless, but may have unique fields in the future
-
 package com.jknv.lum.model.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.jknv.lum.model.dto.GuardianDTO
+import com.jknv.lum.model.dto.AdminDTO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -15,8 +13,8 @@ import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "Guardian")
-data class Guardian (
+@Table(name = "Admin")
+data class Admin (
 
     @Id
     @Column(name = "id")
@@ -26,14 +24,9 @@ data class Guardian (
     @MapsId
     @JoinColumn(name = "id")
     var account: Account,
-
-    @OneToMany(mappedBy = "guardian", fetch = FetchType.LAZY)
-    @JsonIgnore
-    var children: MutableSet<Player> = mutableSetOf()
-
 ) {
-    fun toDTO(): GuardianDTO {
-        return GuardianDTO(
+    fun toDTO(): AdminDTO {
+        return AdminDTO(
             account = account.toSummary(),
         )
     }

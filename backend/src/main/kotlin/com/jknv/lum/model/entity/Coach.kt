@@ -1,5 +1,6 @@
 package com.jknv.lum.model.entity
 
+import com.jknv.lum.model.dto.CoachDTO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -16,7 +17,7 @@ data class Coach (
 
     @Id
     @Column(name = "id")
-    var id: Long? = null,
+    var id: Long = 0,
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
@@ -32,4 +33,13 @@ data class Coach (
 
     @Column(nullable = false)
     var dislikes: Int = 0,
-)
+) {
+    fun toDTO(): CoachDTO {
+        return CoachDTO(
+            account = account.toSummary(),
+            team = coachingTeam?.toSummary(),
+            likes = likes,
+            dislikes = dislikes,
+        )
+    }
+}

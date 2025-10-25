@@ -11,7 +11,7 @@ import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Component
-@Order(2)
+@Order(5)
 class TeamInviteSeeder (
     private val teamInviteService: TeamInviteService,
     private val teamService: TeamService,
@@ -24,12 +24,12 @@ class TeamInviteSeeder (
             val players = playerService.getPlayers()
 
             val invites = listOf(
-                TeamInvite(team = teams[0], player = players[0], status = InviteStatus.PENDING),
-                TeamInvite(team = teams[1], player = players[0], status = InviteStatus.ACCEPTED),
-                TeamInvite(team = teams[2], player = players[0], status = InviteStatus.DECLINED),
+                Pair(2, 0),
+                Pair(0, 1),
+                Pair(1, 1),
             )
 
-            invites.forEach { teamInviteService.createInvite(it) }
+            invites.forEach { (teamIdx, playerIdx) -> teamInviteService.createInvite(teams[teamIdx].id, players[playerIdx].account.id) }
             LOGGER.info("Invites seeded")
         }
     }

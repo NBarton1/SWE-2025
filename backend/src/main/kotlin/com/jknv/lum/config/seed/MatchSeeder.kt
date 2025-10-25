@@ -2,6 +2,7 @@ package com.jknv.lum.config.seed
 
 import com.jknv.lum.LOGGER
 import com.jknv.lum.model.entity.Match
+import com.jknv.lum.model.request.match.MatchCreateRequest
 import com.jknv.lum.model.type.MatchType
 import com.jknv.lum.services.MatchService
 import com.jknv.lum.services.TeamService
@@ -21,8 +22,8 @@ class MatchSeeder (
         val teams = teamService.getTeams()
         if (matchService.countMatches() == 0L) {
             val matches = listOf(
-                Match(homeTeam = teams[0], awayTeam = teams[1], date = LocalDateTime.now(),type = MatchType.PLAYOFF),
-                Match(homeTeam = teams[1], awayTeam = teams[2], date = LocalDateTime.now(),type = MatchType.STANDARD),
+                MatchCreateRequest(homeTeamId = teams[0].id, awayTeamId = teams[1].id, date = LocalDateTime.now(), type = MatchType.PLAYOFF, homeScore = 1000),
+                MatchCreateRequest(homeTeamId = teams[1].id, awayTeamId = teams[2].id, date = LocalDateTime.now(), type = MatchType.STANDARD),
             )
 
             matches.forEach { matchService.createMatch(it) }

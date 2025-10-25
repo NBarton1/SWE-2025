@@ -1,5 +1,7 @@
 package com.jknv.lum.services
 
+import com.jknv.lum.model.dto.GuardianDTO
+import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Guardian
 import com.jknv.lum.repository.GuardianRepository
 import org.springframework.stereotype.Service
@@ -10,19 +12,15 @@ import org.springframework.transaction.annotation.Transactional
 class GuardianService (
     private val guardianRepository: GuardianRepository
 ) {
-    fun createGuardian(guardian: Guardian): Guardian {
-        return guardianRepository.save(guardian)
-    }
+    fun createGuardian(account: Account): GuardianDTO =
+        guardianRepository.save(Guardian(account = account)).toDTO()
 
-    fun getGuardianById(guardianId: Long): Guardian? {
-        return guardianRepository.findById(guardianId).orElse(null)
-    }
+    internal fun getGuardianByUsername(username: String): Guardian? =
+        guardianRepository.findByAccount_Username(username)
 
-    fun getGuardianByUsername(username: String): Guardian? {
-        return guardianRepository.findByAccount_Username(username)
-    }
+    fun getGuardians(): List<GuardianDTO> =
+        guardianRepository.findAll().map { it.toDTO() }
 
-    fun getGuardians(): List<Guardian> {
-        return guardianRepository.findAll()
-    }
+    fun countGuardians(): Long =
+        guardianRepository.count()
 }
