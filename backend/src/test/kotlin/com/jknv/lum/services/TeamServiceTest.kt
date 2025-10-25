@@ -1,7 +1,8 @@
 package com.jknv.lum.services
 
+import com.jknv.lum.model.dto.TeamDTO
 import com.jknv.lum.model.entity.Team
-import com.jknv.lum.repository.TeamInviteRepository
+import com.jknv.lum.model.request.team.TeamCreateRequest
 import com.jknv.lum.repository.TeamRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -12,24 +13,28 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TeamServiceTest {
-    val teamRepository: TeamRepository = mockk()
-    val teamService = TeamService(teamRepository)
+    private val teamRepository: TeamRepository = mockk()
+    private val teamService = TeamService(teamRepository)
 
-    lateinit var team: Team
+    private lateinit var req: TeamCreateRequest
+    private lateinit var team: Team
+    private lateinit var teamDTO: TeamDTO
 
     @BeforeEach
     fun setup() {
-        team = Team(name = "name")
+        req = TeamCreateRequest(name = "name")
+        team = req.toEntity()
+        teamDTO = team.toDTO()
     }
 
     @Test
-    fun createTest() {
+    fun createTeamTest() {
         every { teamRepository.save(team) } returns team
 
-        val savedTeam = teamService.createTeam(team)
+        val result = teamService.createTeam(req)
 
         verify(exactly = 1) { teamRepository.save(team) }
-        assertEquals(savedTeam, team)
+        assertEquals(teamDTO, result)
     }
 
     @Test
@@ -49,7 +54,7 @@ class TeamServiceTest {
         val teamList = teamService.getTeams()
 
         verify(exactly = 1) { teamRepository.findAll() }
-        assertEquals(teamList, listOf(team))
+        assertEquals(teamList, listOf(teamDTO))
     }
 
     @Test
