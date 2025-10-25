@@ -6,6 +6,7 @@ import com.jknv.lum.model.dto.CoachDTO
 import com.jknv.lum.model.dto.GuardianDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.request.account.AccountCreateRequest
+import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.AccountRepository
@@ -16,6 +17,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -141,6 +144,19 @@ class AccountServiceTest {
         accountService.deleteAccount(accountId)
 
         verify(exactly = 1) { accountRepository.deleteById(accountId) }
+    }
+
+    @Test
+    fun verifyLoginTest() {
+        val loginRequest = AccountLoginRequest(username = "username", password = "password")
+        val auth: Authentication = mockk()
+        every { auth.isAuthenticated } returns true
+        every { authenticationManager.authenticate(any<UsernamePasswordAuthenticationToken>()) } returns auth
+        every { jwtService.giveToken("username") } returns "token"
+
+        val result = accountService.verifyLogin(loginRequest)
+
+        assertEquals("token", result)
     }
 
     @Test
