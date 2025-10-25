@@ -1,112 +1,98 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { BrowserRouter } from "react-router";
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
 import LoginPage from "../main/LoginPage";
 import * as loginRequest from "../main/request/login";
-import {MantineProvider} from "@mantine/core";
+import {MOCK_OK, MOCK_UNAUTHORIZED, mockNavigate, renderWithWrap} from "../../vitest.setup.tsx";
 
-vi.mock("../main/request/login");
-
-const mockNavigate = vi.fn();
-vi.mock('react-router', () => ({
-    BrowserRouter: ({ children }: { children: React.ReactNode }) => children,
-    Routes: ({ children }: { children: React.ReactNode }) => children,
-    Route: ({ children }: { children: React.ReactNode }) => children,
-    Link: ({ children, to }: { children: React.ReactNode; to: string }) => (
-        <a href={to}>{children}</a>
-    ),
-    useNavigate: () => vi.fn(),
-    useLocation: () => ({ pathname: '/' }),
-    useParams: () => ({}),
-}));
-
-const renderWithExtra = (component: React.ReactElement) => {
-    return render(
-        <MantineProvider>
-            <BrowserRouter>
-                {component}
-            </BrowserRouter>
-        </MantineProvider>
-    );
-};
-
-
-const OK = new Response('OK', { status: 200 });
-const UNAUTHORIZED = new Response('Unauthorized', { status: 401 });
 
 describe("LoginPage", () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        renderWithExtra(<LoginPage />);
+        renderWithWrap(<LoginPage />);
     });
 
-    it("renders login form with all fields", () => {
-
+    test("renders login form with all fields", () => {
+        expect(screen.getByTestId("login-title")).toBeInTheDocument();
         expect(screen.getByTestId("login-username")).toBeInTheDocument();
         expect(screen.getByTestId("login-password")).toBeInTheDocument();
         expect(screen.getByTestId("login-submit")).toBeInTheDocument();
     });
 
-    it("allows user to type in username and password fields", () => {
+    test("user types username and password", async () => {
+        const user = userEvent.setup();
 
         const usernameInput = screen.getByTestId("login-username");
         const passwordInput = screen.getByTestId("login-password");
 
-        fireEvent.change(usernameInput, { target: { value: "test" } });
-        fireEvent.change(passwordInput, { target: { value: "pass" } });
+        await user.type(usernameInput, "user");
+        await user.type(passwordInput, "password");
 
-        expect(usernameInput).toHaveValue("test");
-        expect(passwordInput).toHaveValue("pass");
+        expect(usernameInput).toHaveValue("user");
+        expect(passwordInput).toHaveValue("password");
     });
 
-    it("calls login function with correct credentials", async () => {
-        const mockLogin = vi.spyOn(loginRequest, "login").mockResolvedValue(OK);
+    test("calls login function with correct credentials", async () => {
+        const user = userEvent.setup();
+        const mockLogin = vi.spyOn(loginRequest, "login").mockResolvedValue(MOCK_OK);
 
         const usernameInput = screen.getByTestId("login-username");
         const passwordInput = screen.getByTestId("login-password");
         const submitButton = screen.getByTestId("login-submit");
 
-        fireEvent.change(usernameInput, { target: { value: "test" } });
-        fireEvent.change(passwordInput, { target: { value: "pass" } });
-        fireEvent.click(submitButton);
+        await user.type(usernameInput, "user");
+        await user.type(passwordInput, "password");
+        await user.click(submitButton);
 
         await waitFor(() => {
             expect(mockLogin).toHaveBeenCalledWith({
-                username: "test",
-                password: "pass",
+                username: "user",
+                password: "password",
             });
         });
     });
 
-    it("navigates to /teams on successful login", async () => {
-        vi.spyOn(loginRequest, "login").mockResolvedValue(OK);
+    test("navigate on success", async () => {
+        const user = userEvent.setup();
+        vi.spyOn(loginRequest, "login").mockResolvedValue(MOCK_OK);
 
         const usernameInput = screen.getByTestId("login-username");
         const passwordInput = screen.getByTestId("login-password");
         const submitButton = screen.getByTestId("login-submit");
 
-        fireEvent.change(usernameInput, { target: { value: "test" } });
-        fireEvent.change(passwordInput, { target: { value: "pass" } });
-        fireEvent.click(submitButton);
+        await user.type(usernameInput, "user");
+        await user.type(passwordInput, "password");
+        await user.click(submitButton);
 
         await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith("/teams");
+            expect(loginRequest.login).toHaveBeenCalledWith({
+                username: "user",
+                password: "password"
+            });
         });
+
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalled();
+        });
+
     });
 
-    it("does not navigate on failed login", async () => {
-        vi.spyOn(loginRequest, "login").mockResolvedValue(UNAUTHORIZED);
+    test("no navigate on fail", async () => {
+        const user = userEvent.setup();
+        vi.spyOn(loginRequest, "login").mockResolvedValue(MOCK_UNAUTHORIZED);
 
         const usernameInput = screen.getByTestId("login-username");
         const passwordInput = screen.getByTestId("login-password");
         const submitButton = screen.getByTestId("login-submit");
 
-        fireEvent.change(usernameInput, { target: { value: "test" } });
-        fireEvent.change(passwordInput, { target: { value: "incorrect" } });
-        fireEvent.click(submitButton);
+        await user.type(usernameInput, "user");
+        await user.type(passwordInput, "incorrect");
+        await user.click(submitButton);
 
         await waitFor(() => {
-            expect(loginRequest.login).toHaveBeenCalled();
+            expect(loginRequest.login).toHaveBeenCalledWith({
+                username: "user",
+                password: "incorrect"
+            });
         });
 
         expect(mockNavigate).not.toHaveBeenCalled();

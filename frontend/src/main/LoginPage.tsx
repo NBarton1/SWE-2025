@@ -49,7 +49,7 @@ const LoginPage = () => {
             }}
         >
             <Paper shadow="md" p="xl" radius="md" withBorder style={{ width: 480 }}>
-                <Title order={2} ta="center" mb="lg">
+                <Title order={2} ta="center" mb="lg" data-testid="login-title">
                     Log In
                 </Title>
 

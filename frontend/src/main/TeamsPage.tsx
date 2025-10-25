@@ -22,7 +22,6 @@ const TeamTablePage = () => {
     return (
         <Box
             style={{
-                padding: "3rem 0",
                 display: "flex",
                 justifyContent: "center",
             }}
@@ -37,11 +36,17 @@ const TeamTablePage = () => {
                 }}
                 >
                 <Flex justify="space-between" align="center" style={{marginBottom: "1rem", gap: "12px"}}>
-                    <Title order={2}>Team Standings</Title>
+                    <Title order={2} data-test-id="teams-title">Team Standings</Title>
                 </Flex>
-
-                <ScrollArea>
-                    <Table highlightOnHover striped verticalSpacing="sm" horizontalSpacing="md">
+                <ScrollArea h="80vh">
+                    <Table
+                        highlightOnHover
+                        striped
+                        stickyHeader
+                        verticalSpacing="sm"
+                        horizontalSpacing="md"
+                        data-test-id="teams-table"
+                    >
                         <Table.Thead>
                             <Table.Tr>
                                 <Table.Th>Team</Table.Th>
@@ -54,8 +59,8 @@ const TeamTablePage = () => {
                             </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>
-                            {teams.sort((t0, t1) => getPCT(t1) - getPCT(t0)).map((team) => (
-                                <Table.Tr key={team.id}>
+                            {teams.sort((t0, t1) => getPCT(t1) - getPCT(t0)).map((team, index) => (
+                                <Table.Tr key={`${team.id}-${index}`}>
                                     <Table.Td>{team.name}</Table.Td>
                                     <Table.Td>{team.win}</Table.Td>
                                     <Table.Td>{team.loss}</Table.Td>
