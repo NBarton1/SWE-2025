@@ -70,34 +70,49 @@ const SignupPage = () => {
                     Create an Account
                 </Title>
 
-                <form onSubmit={form.onSubmit(handleSignup)}>
-                    <Stack>
-                        <TextInput
-                            label="Full Name"
-                            placeholder="Enter your name..."
-                            {...form.getInputProps("name")}
-                            required
-                        />
+                <Paper shadow="md" p="xl" radius="md" withBorder style={{ width: 480 }}>
+                    <Title order={2} ta="center" mb="lg" data-testid="signup-title">
+                        Create an Account
+                    </Title>
 
-                        <TextInput
-                            label="Username"
-                            placeholder="Enter your username..."
-                            {...form.getInputProps("username")}
-                            required
-                        />
+                    <form onSubmit={form.onSubmit(handleSignup)}>
+                        <Stack>
+                            <TextInput
+                                label="Full Name"
+                                placeholder="Enter your name..."
+                                {...form.getInputProps("name")}
+                                data-testid="signup-name"
+                                required
+                            />
 
-                        <PasswordInput
-                            label="Password"
-                            placeholder="Enter your password..."
-                            {...form.getInputProps("password")}
-                            required
-                        />
+                            <TextInput
+                                label="Username"
+                                placeholder="Enter your username..."
+                                {...form.getInputProps("username")}
+                                data-testid="signup-username"
+                                required
+                            />
 
-                        <Button fullWidth mt="md" type="submit" variant="filled">
-                            Sign Up
-                        </Button>
-                    </Stack>
-                </form>
+                            <PasswordInput
+                                label="Password"
+                                placeholder="Enter your password..."
+                                {...form.getInputProps("password")}
+                                data-testid="signup-password"
+                                required
+                            />
+
+                            <Button
+                                fullWidth
+                                mt="md"
+                                type="submit"
+                                variant="filled"
+                                data-testid="signup-submit"
+                            >
+                                Sign Up
+                            </Button>
+                        </Stack>
+                    </form>
+                </Paper>
             </Paper>
         </Box>
     );

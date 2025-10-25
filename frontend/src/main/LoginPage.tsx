@@ -59,6 +59,7 @@ const LoginPage = () => {
                             label="Username"
                             placeholder="Enter your username..."
                             {...form.getInputProps("username")}
+                            data-testid="login-username"
                             required
                         />
 
@@ -66,10 +67,16 @@ const LoginPage = () => {
                             label="Password"
                             placeholder="Enter your password..."
                             {...form.getInputProps("password")}
+                            data-testid="login-password"
                             required
                         />
 
-                        <Button fullWidth mt="md" type="submit" variant="filled">
+                        <Button
+                            fullWidth mt="md"
+                            type="submit"
+                            variant="filled"
+                            data-testid="login-submit"
+                        >
                             Log In
                         </Button>
                     </Stack>

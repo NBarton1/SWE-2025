@@ -1,5 +1,5 @@
-import MatchTimeInput from "./MatchTimeInput";
-import MatchTypeSelect from "./MatchTypeSelect";
+import MatchTimeInput from "./MatchTimeInput.tsx";
+import MatchTypeSelect from "./MatchTypeSelect.tsx";
 import type {UseFormReturnType} from "@mantine/form";
 import MatchTeamSelect from "./MatchTeamSelect.tsx";
 
