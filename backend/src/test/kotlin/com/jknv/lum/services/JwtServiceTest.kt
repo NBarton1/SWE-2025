@@ -2,23 +2,20 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.type.Role
-import com.jknv.lum.repository.AccountRepository
 import com.jknv.lum.security.AccountDetails
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.assertNull
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import kotlin.test.assertEquals
+import java.util.Base64
 import kotlin.test.assertFalse
 
 class JwtServiceTest {
     val jwtService: JwtService = JwtService(
-        jwtSecret = "YWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWE=",
+        jwtSecret = Base64.getEncoder().encodeToString("secretsecretsecretsecretsecretsecret".toByteArray()),
+        jwtExpiration = 3600,
+        jwtIssuer = "test"
     )
     lateinit var account: Account
 
