@@ -36,7 +36,7 @@ const TeamTablePage = () => {
                 }}
                 >
                 <Flex justify="space-between" align="center" style={{marginBottom: "1rem", gap: "12px"}}>
-                    <Title order={2} data-test-id="teams-title">Team Standings</Title>
+                    <Title order={2} data-testid="teams-title">Team Standings</Title>
                 </Flex>
                 <ScrollArea h="80vh">
                     <Table
@@ -45,7 +45,7 @@ const TeamTablePage = () => {
                         stickyHeader
                         verticalSpacing="sm"
                         horizontalSpacing="md"
-                        data-test-id="teams-table"
+                        data-testid="teams-table"
                     >
                         <Table.Thead>
                             <Table.Tr>

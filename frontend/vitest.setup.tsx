@@ -37,8 +37,17 @@ Object.defineProperty(window, 'matchMedia', {
     })),
 });
 
+global.ResizeObserver = vi.fn().mockImplementation(function(this: any) {
+    this.observe = vi.fn();
+    this.unobserve = vi.fn();
+    this.disconnect = vi.fn();
+});
+
 vi.mock("../main/request/login");
 vi.mock("../main/request/signup");
+vi.mock("../main/request/teams.ts", () => ({
+    getTeams: vi.fn(),
+}));
 
 export const mockNavigate = vi.fn();
 vi.mock('react-router', () => ({
