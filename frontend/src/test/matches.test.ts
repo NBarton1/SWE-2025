@@ -1,4 +1,3 @@
-// vitest.setup.tsx
 import { vi, beforeEach } from 'vitest';
 import type {Team} from "../main/schedule/team.ts";
 import type {Match} from "../main/schedule/match.ts";

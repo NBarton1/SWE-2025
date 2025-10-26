@@ -1,15 +1,9 @@
 import { vi } from "vitest";
-import {renderWithWrap} from "../../vitest.setup.tsx";
+import {mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
 import DatePopup from "../main/schedule/DatePopup.tsx";
-import type {Team} from "../main/schedule/team.ts";
 import {type Match, MatchType} from "../main/schedule/match.ts";
 import '@testing-library/jest-dom';
-
-const mockTeams: Team[] = [
-    { id: 1, name: "Home Team" } as Team,
-    { id: 2, name: "Away Team" } as Team,
-];
 
 const mockMatches: Match[] = [
     {

@@ -1,16 +1,11 @@
 import { vi } from "vitest";
-import {renderWithWrap} from "../../vitest.setup.tsx";
+import {mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import type {Team} from "../main/schedule/team.ts";
 import {type Match, MatchType} from "../main/schedule/match.ts";
 import '@testing-library/jest-dom';
 import CreateMatchForm from "../main/schedule/CreateMatchForm.tsx";
 import * as matchRequest from "../main/request/matches.ts";
-
-const mockTeams: Team[] = [
-    { id: 1, name: "Home Team" } as Team,
-    { id: 2, name: "Away Team" } as Team,
-];
 
 const mockMatches: Match[] = [
     {
@@ -23,12 +18,6 @@ const mockMatches: Match[] = [
 ];
 
 const mockSetMatches = vi.fn();
-
-global.ResizeObserver = vi.fn().mockImplementation(function(this: any) {
-    this.observe = vi.fn();
-    this.unobserve = vi.fn();
-    this.disconnect = vi.fn();
-});
 
 // @ts-ignore
 let mockProps: CreateMatchFormProps;
