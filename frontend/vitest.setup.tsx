@@ -3,6 +3,7 @@ import {cleanup, render} from '@testing-library/react'
 import * as matchers from '@testing-library/jest-dom/matchers'
 import {createTheme, MantineProvider} from "@mantine/core";
 import {BrowserRouter} from "react-router";
+import type {Team} from "./src/main/schedule/team.ts";
 
 expect.extend(matchers)
 
@@ -16,6 +17,36 @@ export const testTheme = createTheme({
     primaryColor: 'violet',
     primaryShade: 6,
 });
+
+export const mockTeams: Team[] = [
+    {
+        id: 1,
+        name: "DK",
+        win: 2,
+        loss: 0,
+        draw: 0,
+        pointsFor: 999,
+        pointsAllowed: 0,
+    },
+    {
+        id: 2,
+        name: "Chickens",
+        win: 0,
+        loss: 2,
+        draw: 0,
+        pointsFor: 0,
+        pointsAllowed: 1499,
+    },
+    {
+        id: 3,
+        name: "Eagles",
+        win: 1,
+        loss: 1,
+        draw: 0,
+        pointsFor: 500,
+        pointsAllowed: 500,
+    },
+];
 
 
 afterEach(() => {
@@ -67,7 +98,7 @@ export const MOCK_UNAUTHORIZED = new Response('Unauthorized', { status: 401 });
 
 export const renderWithWrap = (component: React.ReactElement) => {
     return render(
-        <MantineProvider>
+        <MantineProvider theme={testTheme}>
             <BrowserRouter>
                 {component}
             </BrowserRouter>
