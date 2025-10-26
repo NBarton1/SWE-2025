@@ -8,6 +8,8 @@ https://studentsloyola-my.sharepoint.com/:x:/r/personal/jpfielding_loyola_edu/Do
 
 Frontend: `frontend/coverage`
 
+Backend: `backend/coverage`
+
 # Running
 
 ## Separately
