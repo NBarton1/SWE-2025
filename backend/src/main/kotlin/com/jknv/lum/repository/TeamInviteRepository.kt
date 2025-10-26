@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface TeamInviteRepository : JpaRepository<TeamInvite, Long> {
-    fun findTeamInvitesByPlayer(player: Player): MutableList<TeamInvite>
+    fun findTeamInvitesByPlayer(player: Player): List<TeamInvite>
     fun findTeamInviteById(id: TeamInvitePK): TeamInvite?
 }
