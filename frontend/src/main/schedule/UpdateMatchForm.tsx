@@ -1,4 +1,4 @@
-import React, {type Dispatch, useCallback} from "react";
+import React, {type Dispatch} from "react";
 import { Button, Group, Stack, Paper } from "@mantine/core";
 import { type Match, matchTime } from "./match.ts";
 import type { Team } from "./team.ts";
@@ -26,17 +26,19 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
         },
     });
 
-    const updateMatchCallback = useCallback(async () => {
+    const updateMatchCallback = async () => {
         try {
-            const updatedMatch: Match = await updateMatch(match.id, matchForm, date);
+            const { type, homeTeamId, awayTeamId, time } = matchForm.values;
+
+            const updatedMatch: Match = await updateMatch(match.id, type, homeTeamId, awayTeamId, time, date);
 
             setMatches(matches.map(curr_match => curr_match.id === updatedMatch.id ? updatedMatch : curr_match));
         } catch (error) {
             console.log("Failed to update match", error);
         }
-    }, []);
+    };
 
-    const deleteMatchCallback = useCallback(async () => {
+    const deleteMatchCallback = async () => {
         try {
             await deleteMatch(match.id);
 
@@ -44,7 +46,7 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
         } catch (error) {
             console.log("Failed to delete match", error);
         }
-    }, []);
+    };
 
     const teamSelection = teams.map(team => ({
         value: team.id.toString(),
@@ -52,7 +54,7 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
     }));
 
     return (
-        <Paper shadow="sm" p="md" radius="md" withBorder>
+        <Paper shadow="sm" p="md" radius="md" withBorder data-testid={`update-match-form-${match.id}`}>
             <form onSubmit={async (e) => {
                 e.preventDefault();
                 await updateMatchCallback();

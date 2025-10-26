@@ -1,4 +1,4 @@
-import React, {type Dispatch, useCallback} from "react";
+import React, {type Dispatch} from "react";
 import { Button, Group, Stack, Paper } from "@mantine/core";
 import {type Match} from "./match.ts";
 import type { Team } from "./team.ts";
@@ -24,16 +24,20 @@ const CreateMatchForm = ({ teams, date, matches, setMatches }: CreateMatchFormPr
         },
     });
 
-    const createMatchCallback = useCallback(async () => {
+    const createMatchCallback = async () => {
         try {
-            let createdMatch = await createMatch(matchForm, date);
+            const { type, homeTeamId, awayTeamId, time } = matchForm.values;
+
+            let createdMatch: Match = await createMatch(type, homeTeamId, awayTeamId, time, date);
+
+            console.log(createdMatch);
 
             matches.push(createdMatch);
             setMatches([...matches]);
         } catch (error) {
             console.log("Failed to create match", error);
         }
-    }, []);
+    };
 
     const teamSelection = teams.map(team => ({
         value: team.id.toString(),
@@ -41,7 +45,7 @@ const CreateMatchForm = ({ teams, date, matches, setMatches }: CreateMatchFormPr
     }));
 
     return (
-        <Paper shadow="sm" p="md" radius="md" withBorder>
+        <Paper shadow="sm" p="md" radius="md" withBorder data-testid="create-match-form">
             <form onSubmit={async (e) => {
                 e.preventDefault();
                 await createMatchCallback();
@@ -50,7 +54,7 @@ const CreateMatchForm = ({ teams, date, matches, setMatches }: CreateMatchFormPr
                     <MatchFormFields teams={teamSelection} matchFormFields={matchForm} />
 
                     <Group justify="flex-end" mt="md">
-                        <Button type="submit" >
+                        <Button type="submit" data-testid={`create-match-form-submit`}>
                             Create Match
                         </Button>
                     </Group>

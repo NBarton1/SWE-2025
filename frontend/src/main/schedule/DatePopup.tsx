@@ -19,9 +19,10 @@ const DatePopup = ({ date, matches, setMatches, teams }: DatePopupProps) => {
     }
 
     const dateMatches = matches.filter(match => matchDate(match) === date);
+    console.log("date Matches", dateMatches)
 
     return (
-        <Stack gap="lg">
+        <Stack gap="lg" data-testid="date-popup-stack">
             <Title order={3}>
                 {new Date(date).toLocaleDateString('en-US', {
                     weekday: 'long',

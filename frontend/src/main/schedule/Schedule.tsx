@@ -25,12 +25,12 @@ const Schedule = () => {
     useEffect(() => {
         getMatches().then(setMatches);
         getTeams().then(setTeams);
-    }, [getMatches]);
+    }, []);
 
     return (
         <Container py="md">
-            <Paper shadow="md" p="md" radius="md">
-                <Title order={2} mb="md" ta="center">
+            <Paper shadow="md" p="md" radius="md" data-testid="schedule-paper">
+                <Title order={2} mb="md" ta="center" data-testid="schedule-title">
                     Schedule
                 </Title>
 
@@ -56,6 +56,7 @@ const Schedule = () => {
                             start: match.date,
                         }))}
                         height="auto"
+                        data-testid="calendar"
                     />
                 </Box>
             </Paper>
@@ -64,6 +65,7 @@ const Schedule = () => {
                 opened={opened}
                 onClose={() => setOpened(false)}
                 size="lg"
+                data-testid="date-popup"
             >
                 {selectedDate && (
                     <DatePopup

@@ -1,8 +1,10 @@
-import type {UseFormReturnType} from "@mantine/form";
-import type MatchFormFields from "../schedule/MatchFormFields.tsx";
-
-export async function createMatch(matchForm: UseFormReturnType<MatchFormFields>, date: string) {
-    const { type, homeTeamId, awayTeamId, time } = matchForm.values;
+export async function createMatch(
+    type: string,
+    homeTeamId: string,
+    awayTeamId: string,
+    time: string,
+    date: string
+) {
 
     const res = await fetch("http://localhost:8080/api/matches", {
         method: "POST",
@@ -21,8 +23,13 @@ export async function createMatch(matchForm: UseFormReturnType<MatchFormFields>,
     return res.json();
 }
 
-export async function updateMatch(matchId: number, matchForm: UseFormReturnType<MatchFormFields>, date: string) {
-    const { type, homeTeamId, awayTeamId, time } = matchForm.values;
+export async function updateMatch(
+    matchId: number,
+    type: string,
+    homeTeamId: string,
+    awayTeamId: string,
+    time: string,
+    date: string) {
 
     const res = await fetch(`http://localhost:8080/api/matches/${matchId}`, {
         method: "PUT",
