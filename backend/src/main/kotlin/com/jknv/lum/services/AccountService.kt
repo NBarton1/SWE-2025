@@ -1,12 +1,13 @@
 package com.jknv.lum.services
 
+import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.entity.Account
-import com.jknv.lum.model.entity.Coach
-import com.jknv.lum.model.entity.Guardian
+import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
 import com.jknv.lum.model.request.account.AccountLoginRequest
+import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -22,44 +23,50 @@ class AccountService(
     private val jwtService: JwtService,
     private val coachService: CoachService,
     private val guardianService: GuardianService,
+    private val adminService: AdminService,
 ) {
 
-    fun createAccount(account: Account): Account {
-        account.password = bCryptPasswordEncoder.encode(account.password)
-        val newAccount = accountRepository.save(account)
-        roleHierarchy(newAccount.role).forEach { role ->
+    private fun createAdmin(account: Account) = adminService.createAdmin(account)
+    private fun createCoach(account: Account) = coachService.createCoach(account)
+    private fun createGuardian(account: Account) = guardianService.createGuardian(account)
+
+    internal fun createAccount(req: AccountCreateRequest): Account =
+        accountRepository.save(req.toEntity())
+
+    fun createAccountWithRoles(req: AccountCreateRequest): AccountDTO {
+        val account = createAccount(req)
+        roleHierarchy(account.role).forEach { role ->
             when (role) {
-                Role.ADMIN -> {}
-                Role.COACH -> coachService.createCoach(Coach(account = newAccount))
-                Role.GUARDIAN -> guardianService.createGuardian(Guardian(account = newAccount))
-                Role.PLAYER -> {}
+                Role.ADMIN -> { createAdmin(account) }
+                Role.COACH -> { createCoach(account) }
+                Role.GUARDIAN -> { createGuardian(account) }
+                Role.PLAYER -> {} // player is created directly by guardian
             }
         }
-        return newAccount
+
+        return account.toDTO()
     }
 
-    fun getAccountById(id: Long): Account? {
-        return accountRepository.findById(id).orElse(null)
+    internal fun getAccountByUsername(username: String): Account? =
+        accountRepository.findByUsername(username)
+
+    fun getAccounts(): List<AccountDTO> =
+        accountRepository.findAll().map { it.toDTO() }
+
+    fun updateAccount(username: String, req: AccountUpdateRequest): AccountDTO {
+        val account = getAccountByUsername(username)
+            ?: throw EntityNotFoundException("Account not found")
+
+        req.name?.let { account.name = it }
+        req.username?.let { account.username = it }
+        req.picture?.let { account.picture = it }
+        req.password?.let { account.password = bCryptPasswordEncoder.encode(it) }
+
+        return accountRepository.save(account).toDTO()
     }
 
-    fun getAccountByUsername(username: String): Account? {
-        return accountRepository.findByUsername(username)
-    }
-
-    fun getAccounts(): List<Account> {
-        return accountRepository.findAll()
-    }
-
-    fun updateAccount(id: Long, updateInfo: AccountUpdateRequest): Account? {
-
-        val account = getAccountById(id) ?: return null
-        account.updateFromRequest(updateInfo, bCryptPasswordEncoder)
-        return accountRepository.save(account)
-    }
-
-    fun deleteAccount(id: Long) {
+    fun deleteAccount(id: Long) =
         accountRepository.deleteById(id)
-    }
 
     fun verifyLogin(loginRequest: AccountLoginRequest): String? {
         val authentication = authenticationManager.authenticate(
@@ -76,16 +83,14 @@ class AccountService(
         return null
     }
 
-    fun countAccounts(): Long {
-        return accountRepository.count()
-    }
+    fun countAccounts(): Long =
+         accountRepository.count()
 
-    private fun roleHierarchy(role: Role): Set<Role> {
-        return when (role) {
+    private fun roleHierarchy(role: Role): Set<Role> =
+        when (role) {
             Role.ADMIN -> setOf(Role.ADMIN, Role.COACH, Role.GUARDIAN)
             Role.COACH -> setOf(Role.COACH, Role.GUARDIAN)
             Role.GUARDIAN -> setOf(Role.GUARDIAN)
             Role.PLAYER -> setOf(Role.PLAYER)
         }
-    }
 }

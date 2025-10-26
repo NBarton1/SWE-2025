@@ -2,9 +2,14 @@ package com.jknv.lum.controller
 
 import com.jknv.lum.config.PreAuthorizeCoach
 import com.jknv.lum.config.PreAuthorizePlayerOnly
+import com.jknv.lum.model.dto.CoachDTO
+import com.jknv.lum.model.dto.TeamDTO
+import com.jknv.lum.model.dto.TeamInviteDTO
 import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.entity.TeamInvite
+import com.jknv.lum.model.request.team.TeamCreateRequest
+import com.jknv.lum.repository.TeamRepository
 import com.jknv.lum.services.AccountService
 import com.jknv.lum.services.CoachService
 import com.jknv.lum.services.PlayerService
@@ -25,44 +30,33 @@ import java.security.Principal
 @RequestMapping("/api/teams")
 class TeamController (
     private val teamService: TeamService,
-    private val accountService: AccountService,
-    private val coachService: CoachService,
-    private val playerService: PlayerService,
     private val teamInviteService: TeamInviteService,
+    private val coachService: CoachService,
 ) {
     @PostMapping
     @PreAuthorizeCoach
-    fun create(@RequestBody team: Team): ResponseEntity<Team> {
-        return ResponseEntity.status(HttpStatus.CREATED).body(teamService.createTeam(team))
+    fun create(@RequestBody req: TeamCreateRequest): ResponseEntity<TeamDTO> {
+        val response = teamService.createTeam(req)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @GetMapping
-    fun getAll(): ResponseEntity<List<Team>> {
-        return ResponseEntity.ok(teamService.getTeams())
+    fun getAll(): ResponseEntity<List<TeamDTO>> {
+        val response = teamService.getTeams()
+        return ResponseEntity.ok(response)
     }
 
     @PutMapping("/coach/{teamId}")
     @PreAuthorizeCoach
-    fun addCoach(@PathVariable teamId: Long, principal: Principal): ResponseEntity<Coach> {
-        val coach = coachService.getCoachByUsername(principal.name)
-            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-        val team = teamService.getTeamById(teamId)
-            ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-
-        return ResponseEntity.ok(coachService.setCoachingTeam(coach, team))
+    fun addCoach(@PathVariable teamId: Long, principal: Principal): ResponseEntity<CoachDTO> {
+        val response = coachService.setCoachingTeam(teamId, principal.name)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @PostMapping("/invite/{playerId}")
     @PreAuthorizeCoach
-    fun invitePlayer(@PathVariable playerId: Long, principal: Principal): ResponseEntity<TeamInvite> {
-        val coach = coachService.getCoachByUsername(principal.name)
-            ?: return ResponseEntity.notFound().build()
-        val player = playerService.getPlayerById(playerId)
-            ?: return ResponseEntity.notFound().build()
-
-        val team = coachService.getTeamByCoach(coach)
-            ?: return ResponseEntity.notFound().build()
-
-        return ResponseEntity.ok(teamInviteService.createInvite(TeamInvite(team = team, player = player)))
+    fun invitePlayer(@PathVariable playerId: Long, principal: Principal): ResponseEntity<TeamInviteDTO> {
+        val response = teamInviteService.invitePlayerByCoach(playerId, principal.name)
+        return ResponseEntity.ok(response)
     }
 }

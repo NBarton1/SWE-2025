@@ -1,5 +1,6 @@
 package com.jknv.lum.model.entity
 
+import com.jknv.lum.model.dto.TeamInviteDTO
 import com.jknv.lum.model.type.InviteStatus
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
@@ -34,7 +35,15 @@ data class TeamInvite (
     @Enumerated(EnumType.STRING)
     var status: InviteStatus = InviteStatus.PENDING,
 
-    )
+) {
+    fun toDTO(): TeamInviteDTO {
+        return TeamInviteDTO(
+            team = team.toSummary(),
+            player = player.account.toSummary(),
+            status = status,
+        )
+    }
+}
 
 @Embeddable
 data class TeamInvitePK (
