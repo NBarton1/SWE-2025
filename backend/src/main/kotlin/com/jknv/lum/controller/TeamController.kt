@@ -17,6 +17,7 @@ import com.jknv.lum.services.TeamInviteService
 import com.jknv.lum.services.TeamService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -32,6 +33,7 @@ class TeamController (
     private val teamService: TeamService,
     private val teamInviteService: TeamInviteService,
     private val coachService: CoachService,
+    private val playerService: PlayerService
 ) {
     @PostMapping
     @PreAuthorizeCoach
@@ -58,5 +60,12 @@ class TeamController (
     fun invitePlayer(@PathVariable playerId: Long, principal: Principal): ResponseEntity<TeamInviteDTO> {
         val response = teamInviteService.invitePlayerByCoach(playerId, principal.name)
         return ResponseEntity.ok(response)
+    }
+
+    @DeleteMapping("/remove/{playerId}")
+    @PreAuthorizeCoach
+    fun removePlayer(@PathVariable playerId: Long): ResponseEntity<Void> {
+        playerService.removePlayerFromTeam(playerId)
+        return ResponseEntity.ok().build()
     }
 }
