@@ -1,6 +1,7 @@
 package com.jknv.lum.model.entity
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.jknv.lum.model.dto.MatchDTO
 import com.jknv.lum.model.type.MatchType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -50,7 +51,19 @@ data class Match (
     @JoinColumn(name = "away_team_id", nullable = false)
     var awayTeam: Team,
 
-    ) {
+) {
+    fun toDTO(): MatchDTO {
+        return MatchDTO(
+            id = id,
+            date = date,
+            type = type,
+            timeLeft = timeLeft,
+            homeScore = homeScore,
+            awayScore = awayScore,
+            homeTeam = homeTeam.toSummary(),
+            awayTeam = awayTeam.toSummary(),
+        )
+    }
 
     @PrePersist
     @PreUpdate

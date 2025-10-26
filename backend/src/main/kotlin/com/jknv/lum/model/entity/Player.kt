@@ -1,5 +1,6 @@
 package com.jknv.lum.model.entity
 
+import com.jknv.lum.model.dto.PlayerDTO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -37,4 +38,14 @@ data class Player (
 
     @Column(nullable = true)
     var position: String? = null,
-)
+) {
+    fun toDTO() : PlayerDTO {
+        return PlayerDTO(
+            account = account.toSummary(),
+            guardian = guardian.account.toSummary(),
+            team = playingTeam?.toSummary(),
+            hasPermission = hasPermission,
+            position = position,
+        )
+    }
+}

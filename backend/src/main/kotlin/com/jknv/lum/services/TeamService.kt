@@ -1,6 +1,8 @@
 package com.jknv.lum.services
 
+import com.jknv.lum.model.dto.TeamDTO
 import com.jknv.lum.model.entity.Team
+import com.jknv.lum.model.request.team.TeamCreateRequest
 import com.jknv.lum.repository.TeamRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -10,19 +12,15 @@ import org.springframework.stereotype.Service
 class TeamService (
     private val teamRepository: TeamRepository,
 ) {
-    fun createTeam(team: Team): Team {
-        return teamRepository.save(team)
-    }
+    fun createTeam(req: TeamCreateRequest): TeamDTO =
+        teamRepository.save(req.toEntity()).toDTO()
 
-    fun getTeams(): List<Team> {
-        return teamRepository.findAll()
-    }
+    fun getTeams(): List<TeamDTO> =
+        teamRepository.findAll().map { it.toDTO() }
 
-    fun getTeamById(id: Long): Team? {
-        return teamRepository.findById(id).orElse(null)
-    }
+    internal fun getTeamById(id: Long): Team? =
+        teamRepository.findById(id).orElse(null)
 
-    fun countTeams(): Long {
-        return teamRepository.count()
-    }
+    fun countTeams(): Long =
+        teamRepository.count()
 }

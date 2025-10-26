@@ -1,6 +1,9 @@
+// note: this entity is currently useless, but may have unique fields in the future
+
 package com.jknv.lum.model.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.jknv.lum.model.dto.GuardianDTO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -28,4 +31,10 @@ data class Guardian (
     @JsonIgnore
     var children: MutableSet<Player> = mutableSetOf()
 
-)
+) {
+    fun toDTO(): GuardianDTO {
+        return GuardianDTO(
+            account = account.toSummary(),
+        )
+    }
+}

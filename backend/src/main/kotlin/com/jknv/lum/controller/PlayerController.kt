@@ -2,14 +2,11 @@ package com.jknv.lum.controller
 
 import com.jknv.lum.config.PreAuthorizeGuardian
 import com.jknv.lum.config.PreAuthorizePlayerOnly
-import com.jknv.lum.model.entity.Account
-import com.jknv.lum.model.entity.Player
-import com.jknv.lum.model.entity.TeamInvite
+import com.jknv.lum.model.dto.PlayerDTO
+import com.jknv.lum.model.dto.TeamInviteDTO
+import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.player.PlayerPermissionUpdateRequest
-import com.jknv.lum.model.request.player.PlayerCreateRequest
 import com.jknv.lum.model.request.player.PlayerInviteRequest
-import com.jknv.lum.model.type.Role
-import com.jknv.lum.services.GuardianService
 import com.jknv.lum.services.PlayerService
 import com.jknv.lum.services.TeamInviteService
 import org.springframework.http.HttpStatus
@@ -28,18 +25,16 @@ import java.security.Principal
 @RequestMapping("/api/players")
 class PlayerController (
     private val playerService: PlayerService,
-    private val guardianService: GuardianService,
     private val teamInviteService: TeamInviteService,
 ) {
     @PostMapping
     @PreAuthorizeGuardian
-    fun createPlayer(@RequestBody req: PlayerCreateRequest, principal: Principal): ResponseEntity<Player> {
-        val playerAccount = Account(name = req.name, username = req.username, password = req.password, role = Role.PLAYER)
-        val guardian = guardianService.getGuardianByUsername(principal.name)
-            ?: return ResponseEntity.notFound().build()
-
-        val player = Player(account = playerAccount, guardian = guardian)
-        return ResponseEntity.status(HttpStatus.CREATED).body(playerService.createPlayer(player))
+    fun createPlayer(
+        @RequestBody req: AccountCreateRequest,
+        principal: Principal
+    ): ResponseEntity<PlayerDTO> {
+        val response = playerService.createPlayer(req, principal.name)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @PatchMapping("/{playerId}/permission")
@@ -48,22 +43,16 @@ class PlayerController (
         @PathVariable playerId: Long,
         @RequestBody req: PlayerPermissionUpdateRequest,
         principal: Principal
-    ): ResponseEntity<Player> {
-        val player = playerService.getPlayerById(playerId)
-            ?: return ResponseEntity.notFound().build()
-        val guardian = guardianService.getGuardianByUsername(principal.name)
-            ?: return ResponseEntity.notFound().build()
-
-        return ResponseEntity.ok(playerService.updatePlayerPermission(player, guardian, req.hasPermission))
+    ): ResponseEntity<PlayerDTO> {
+        val response = playerService.updatePlayerPermission(playerId, principal.name, req.hasPermission)
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/invites")
     @PreAuthorizePlayerOnly
-    fun getInvites(principal: Principal): ResponseEntity<List<TeamInvite>> {
-        val player = playerService.getPlayerByUsername(principal.name)
-            ?: return ResponseEntity.notFound().build()
-
-        return ResponseEntity.ok(teamInviteService.getInvitesByPlayer(player))
+    fun getInvites(principal: Principal): ResponseEntity<List<TeamInviteDTO>> {
+        val response = teamInviteService.getInvitesByPlayer(principal.name)
+        return ResponseEntity.ok(response)
     }
 
     @PutMapping("/invites/{teamId}")
@@ -72,7 +61,8 @@ class PlayerController (
         @PathVariable teamId: Long,
         @RequestBody req: PlayerInviteRequest,
         principal: Principal
-    ): ResponseEntity<Player> {
-        return ResponseEntity.ok(playerService.respondToInvite(principal.name, teamId, req.isAccepted))
+    ): ResponseEntity<PlayerDTO> {
+        val response = teamInviteService.respondToInvite(principal.name, teamId, req.isAccepted)
+        return ResponseEntity.ok(response)
     }
 }

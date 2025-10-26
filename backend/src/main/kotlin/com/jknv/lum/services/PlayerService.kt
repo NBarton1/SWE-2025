@@ -1,11 +1,10 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.model.entity.Guardian
+import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.entity.Player
-import com.jknv.lum.model.type.InviteStatus
+import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.repository.PlayerRepository
 import jakarta.persistence.EntityNotFoundException
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -14,50 +13,50 @@ import org.springframework.transaction.annotation.Transactional
 class PlayerService (
     private val playerRepository: PlayerRepository,
     private val accountService: AccountService,
-    private val teamInviteService: TeamInviteService,
+    private val guardianService: GuardianService,
 ) {
-    fun createPlayer(player: Player): Player {
-        accountService.createAccount(player.account)
-        return playerRepository.save(player)
+    fun createPlayer(req: AccountCreateRequest, username: String): PlayerDTO {
+        val guardian = guardianService.getGuardianByUsername(username)
+            ?: throw EntityNotFoundException("Guardian not found")
+
+        val account = accountService.createAccount(req)
+        val player = Player(account = account, guardian = guardian)
+        return playerRepository.save(player).toDTO()
     }
 
-    fun getPlayerById(playerId: Long): Player? {
-        return playerRepository.findPlayerByAccount_Id(playerId)
-    }
+    fun updatePlayer(player: Player): PlayerDTO =
+        playerRepository.save(player).toDTO()
 
-    fun getPlayerByUsername(username: String): Player? {
-        return playerRepository.findPlayerByAccount_Username(username)
-    }
+    internal fun getPlayerById(playerId: Long): Player? =
+        playerRepository.findPlayerByAccount_Id(playerId)
 
-    fun getPlayers(): List<Player> {
-        return playerRepository.findAll()
-    }
+    internal fun getPlayerByUsername(username: String): Player? =
+        playerRepository.findPlayerByAccount_Username(username)
 
-    fun updatePlayerPermission(player: Player, guardian: Guardian, hasPermission: Boolean): Player {
-        if (player.guardian.id != guardian.id) {
+    fun getPlayers(): List<PlayerDTO> =
+        playerRepository.findAll().map { it.toDTO() }
+
+    fun countPlayers(): Long =
+        playerRepository.count()
+
+    fun updatePlayerPermission(playerId: Long, username: String, hasPermission: Boolean): PlayerDTO {
+        val player = getPlayerById(playerId)
+            ?: throw EntityNotFoundException("Player not found")
+        val guardian = guardianService.getGuardianByUsername(username)
+            ?: throw EntityNotFoundException("Guardian not found")
+
+        if (player.guardian.id != guardian.id)
             throw IllegalAccessException("You do not have permission to modify this player")
-        }
 
         player.hasPermission = hasPermission
-        return playerRepository.save(player)
+        return updatePlayer(player)
     }
 
-    fun respondToInvite(username: String, teamId: Long, isAccepted: Boolean): Player {
-        val player = getPlayerByUsername(username)
-            ?: throw EntityNotFoundException("Could not find player $username")
-        if (!player.hasPermission)
-            throw IllegalAccessException("You do not have permission to register for a team")
+    fun removePlayerFromTeam(playerId: Long) {
+        val player = getPlayerById(playerId)
+            ?: throw EntityNotFoundException("Player not found")
 
-        val invite = teamInviteService.getInviteById(player.id, teamId)
-            ?: throw EntityNotFoundException("Could not find invite for player $username from team $teamId")
-
-        invite.status = InviteStatus.DECLINED
-        if (isAccepted) {
-            player.playingTeam = invite.team
-            invite.status = InviteStatus.ACCEPTED
-        }
-
-        teamInviteService.updateInvite(invite)
-        return playerRepository.save(player)
+        player.playingTeam = null
+        updatePlayer(player)
     }
 }
