@@ -52,4 +52,12 @@ class PlayerService (
         player.hasPermission = hasPermission
         return updatePlayer(player)
     }
+
+    fun removePlayerFromTeam(playerId: Long) {
+        val player = getPlayerById(playerId)
+            ?: throw EntityNotFoundException("Player not found")
+
+        player.playingTeam = null
+        updatePlayer(player)
+    }
 }
