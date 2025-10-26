@@ -88,6 +88,7 @@ vi.mock('react-router', () => ({
     Link: ({ children, to }: { children: React.ReactNode; to: string }) => (
         <a href={to}>{children}</a>
     ),
+    Outlet: () => <div data-testid="outlet">Outlet</div>, // Add this
     useNavigate: () => mockNavigate,
     useLocation: () => ({ pathname: '/' }),
     useParams: () => ({}),
