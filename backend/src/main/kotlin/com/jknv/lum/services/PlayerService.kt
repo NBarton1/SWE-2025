@@ -53,11 +53,11 @@ class PlayerService (
         return updatePlayer(player)
     }
 
-    fun removePlayerFromTeam(playerId: Long) {
+    fun removePlayerFromTeam(playerId: Long): PlayerDTO {
         val player = getPlayerById(playerId)
             ?: throw EntityNotFoundException("Player not found")
 
         player.playingTeam = null
-        updatePlayer(player)
+        return updatePlayer(player)
     }
 }

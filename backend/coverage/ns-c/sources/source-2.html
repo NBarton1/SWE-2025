@@ -1,0 +1,233 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AccountService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.services</a>
+</div>
+
+<h1>Coverage Summary for Class: AccountService (com.jknv.lum.services)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AccountService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (12/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93%
+  </span>
+  <span class="absValue">
+    (40/43)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AccountService$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">AccountService$WhenMappings</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (12/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93%
+  </span>
+  <span class="absValue">
+    (40/43)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
+&nbsp;
+&nbsp;import com.jknv.lum.model.dto.AccountDTO
+&nbsp;import com.jknv.lum.model.entity.Account
+&nbsp;import com.jknv.lum.model.request.account.AccountCreateRequest
+&nbsp;import com.jknv.lum.model.type.Role
+&nbsp;import com.jknv.lum.model.request.account.AccountUpdateRequest
+&nbsp;import com.jknv.lum.repository.AccountRepository
+&nbsp;import com.jknv.lum.model.request.account.AccountLoginRequest
+&nbsp;import jakarta.persistence.EntityNotFoundException
+&nbsp;import jakarta.transaction.Transactional
+&nbsp;import org.springframework.security.authentication.AuthenticationManager
+&nbsp;import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+&nbsp;import org.springframework.stereotype.Service
+&nbsp;
+<b class="fc">&nbsp;@Service</b>
+&nbsp;@Transactional
+&nbsp;class AccountService(
+<b class="fc">&nbsp;    private val accountRepository: AccountRepository,</b>
+<b class="fc">&nbsp;    private val authenticationManager: AuthenticationManager,</b>
+<b class="fc">&nbsp;    private val bCryptPasswordEncoder: BCryptPasswordEncoder,</b>
+<b class="fc">&nbsp;    private val jwtService: JwtService,</b>
+<b class="fc">&nbsp;    private val coachService: CoachService,</b>
+<b class="fc">&nbsp;    private val guardianService: GuardianService,</b>
+<b class="fc">&nbsp;    private val adminService: AdminService,</b>
+&nbsp;) {
+&nbsp;
+<b class="fc">&nbsp;    private fun createAdmin(account: Account) = adminService.createAdmin(account)</b>
+<b class="fc">&nbsp;    private fun createCoach(account: Account) = coachService.createCoach(account)</b>
+<b class="fc">&nbsp;    private fun createGuardian(account: Account) = guardianService.createGuardian(account)</b>
+&nbsp;
+&nbsp;    internal fun createAccount(req: AccountCreateRequest): Account =
+<b class="fc">&nbsp;        accountRepository.save(req.toEntity())</b>
+&nbsp;
+&nbsp;    fun createAccountWithRoles(req: AccountCreateRequest): AccountDTO {
+<b class="fc">&nbsp;        val account = createAccount(req)</b>
+<b class="fc">&nbsp;        roleHierarchy(account.role).forEach { role -&gt;</b>
+<b class="pc">&nbsp;            when (role) {</b>
+<b class="fc">&nbsp;                Role.ADMIN -&gt; { createAdmin(account) }</b>
+<b class="fc">&nbsp;                Role.COACH -&gt; { createCoach(account) }</b>
+<b class="fc">&nbsp;                Role.GUARDIAN -&gt; { createGuardian(account) }</b>
+&nbsp;                Role.PLAYER -&gt; {} // player is created directly by guardian
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        return account.toDTO()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    internal fun getAccountByUsername(username: String): Account? =
+<b class="fc">&nbsp;        accountRepository.findByUsername(username)</b>
+&nbsp;
+&nbsp;    fun getAccounts(): List&lt;AccountDTO&gt; =
+<b class="fc">&nbsp;        accountRepository.findAll().map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    fun updateAccount(username: String, req: AccountUpdateRequest): AccountDTO {
+<b class="pc">&nbsp;        val account = getAccountByUsername(username)</b>
+<b class="nc">&nbsp;            ?: throw EntityNotFoundException(&quot;Account not found&quot;)</b>
+&nbsp;
+<b class="pc">&nbsp;        req.name?.let { account.name = it }</b>
+<b class="pc">&nbsp;        req.username?.let { account.username = it }</b>
+<b class="pc">&nbsp;        req.picture?.let { account.picture = it }</b>
+<b class="pc">&nbsp;        req.password?.let { account.password = bCryptPasswordEncoder.encode(it) }</b>
+&nbsp;
+<b class="fc">&nbsp;        return accountRepository.save(account).toDTO()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun deleteAccount(id: Long) =
+<b class="fc">&nbsp;        accountRepository.deleteById(id)</b>
+&nbsp;
+&nbsp;    fun verifyLogin(loginRequest: AccountLoginRequest): String? {
+<b class="fc">&nbsp;        val authentication = authenticationManager.authenticate(</b>
+<b class="fc">&nbsp;            UsernamePasswordAuthenticationToken(</b>
+<b class="fc">&nbsp;                loginRequest.username,</b>
+<b class="fc">&nbsp;                loginRequest.password</b>
+&nbsp;            )
+&nbsp;        )
+&nbsp;
+<b class="pc">&nbsp;        if (authentication.isAuthenticated) {</b>
+<b class="fc">&nbsp;            return jwtService.giveToken(loginRequest.username)</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return null</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun countAccounts(): Long =
+<b class="fc">&nbsp;         accountRepository.count()</b>
+&nbsp;
+&nbsp;    private fun roleHierarchy(role: Role): Set&lt;Role&gt; =
+<b class="pc">&nbsp;        when (role) {</b>
+<b class="fc">&nbsp;            Role.ADMIN -&gt; setOf(Role.ADMIN, Role.COACH, Role.GUARDIAN)</b>
+<b class="fc">&nbsp;            Role.COACH -&gt; setOf(Role.COACH, Role.GUARDIAN)</b>
+<b class="fc">&nbsp;            Role.GUARDIAN -&gt; setOf(Role.GUARDIAN)</b>
+<b class="nc">&nbsp;            Role.PLAYER -&gt; setOf(Role.PLAYER)</b>
+&nbsp;        }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-26 03:13</div>
+</div>
+</body>
+</html>

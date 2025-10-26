@@ -106,4 +106,22 @@ class PlayerServiceTest {
 
         assertEquals(expectedDTO, result)
     }
+
+    @Test
+    fun removePlayerFromTeamTest() {
+        val expectedDTO = PlayerDTO(
+            account = player.account.toSummary(),
+            guardian = guardian.account.toSummary(),
+            team = null,
+            hasPermission = false,
+            position = player.position,
+        )
+
+        every { playerRepository.findPlayerByAccount_Id(player.account.id) } returns player
+        every { playerRepository.save(player) } returns player
+
+        val result = playerService.removePlayerFromTeam(player.account.id)
+
+        assertEquals(expectedDTO, result)
+    }
 }

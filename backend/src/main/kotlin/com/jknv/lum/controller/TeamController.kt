@@ -3,6 +3,7 @@ package com.jknv.lum.controller
 import com.jknv.lum.config.PreAuthorizeCoach
 import com.jknv.lum.config.PreAuthorizePlayerOnly
 import com.jknv.lum.model.dto.CoachDTO
+import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
 import com.jknv.lum.model.entity.Coach
@@ -64,8 +65,8 @@ class TeamController (
 
     @DeleteMapping("/remove/{playerId}")
     @PreAuthorizeCoach
-    fun removePlayer(@PathVariable playerId: Long): ResponseEntity<Void> {
-        playerService.removePlayerFromTeam(playerId)
-        return ResponseEntity.ok().build()
+    fun removePlayer(@PathVariable playerId: Long): ResponseEntity<PlayerDTO> {
+        val response = playerService.removePlayerFromTeam(playerId)
+        return ResponseEntity.ok(response)
     }
 }
