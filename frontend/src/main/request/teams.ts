@@ -1,4 +1,6 @@
-export const getTeams = async () => {
+import type {Team} from "../schedule/team.ts";
+
+export const getTeams = async (): Promise<Team[]> => {
     try {
         const res = await fetch("http://localhost:8080/api/teams", {
             method: "GET",

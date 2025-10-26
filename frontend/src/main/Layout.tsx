@@ -19,6 +19,7 @@ function Layout() {
                 width: 280,
                 breakpoint: 'sm',
             }}
+            data-testid="layout-appshell"
         >
             <AppShell.Header>
                 <Group h="100%" px="md" justify="space-between">
