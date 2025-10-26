@@ -1,0 +1,182 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PlayerController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.controller</a>
+</div>
+
+<h1>Coverage Summary for Class: PlayerController (com.jknv.lum.controller)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PlayerController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PlayerController$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.controller
+&nbsp;
+&nbsp;import com.jknv.lum.config.PreAuthorizeGuardian
+&nbsp;import com.jknv.lum.config.PreAuthorizePlayerOnly
+&nbsp;import com.jknv.lum.model.dto.PlayerDTO
+&nbsp;import com.jknv.lum.model.dto.TeamInviteDTO
+&nbsp;import com.jknv.lum.model.request.account.AccountCreateRequest
+&nbsp;import com.jknv.lum.model.request.player.PlayerPermissionUpdateRequest
+&nbsp;import com.jknv.lum.model.request.player.PlayerInviteRequest
+&nbsp;import com.jknv.lum.services.PlayerService
+&nbsp;import com.jknv.lum.services.TeamInviteService
+&nbsp;import org.springframework.http.HttpStatus
+&nbsp;import org.springframework.http.ResponseEntity
+&nbsp;import org.springframework.web.bind.annotation.GetMapping
+&nbsp;import org.springframework.web.bind.annotation.PatchMapping
+&nbsp;import org.springframework.web.bind.annotation.PathVariable
+&nbsp;import org.springframework.web.bind.annotation.PostMapping
+&nbsp;import org.springframework.web.bind.annotation.PutMapping
+&nbsp;import org.springframework.web.bind.annotation.RequestBody
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping
+&nbsp;import org.springframework.web.bind.annotation.RestController
+&nbsp;import java.security.Principal
+&nbsp;
+<b class="fc">&nbsp;@RestController</b>
+&nbsp;@RequestMapping(&quot;/api/players&quot;)
+&nbsp;class PlayerController (
+<b class="fc">&nbsp;    private val playerService: PlayerService,</b>
+<b class="fc">&nbsp;    private val teamInviteService: TeamInviteService,</b>
+&nbsp;) {
+&nbsp;    @PostMapping
+&nbsp;    @PreAuthorizeGuardian
+&nbsp;    fun createPlayer(
+&nbsp;        @RequestBody req: AccountCreateRequest,
+&nbsp;        principal: Principal
+&nbsp;    ): ResponseEntity&lt;PlayerDTO&gt; {
+<b class="fc">&nbsp;        val response = playerService.createPlayer(req, principal.name)</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PatchMapping(&quot;/{playerId}/permission&quot;)
+&nbsp;    @PreAuthorizeGuardian
+&nbsp;    fun setPermission(
+&nbsp;        @PathVariable playerId: Long,
+&nbsp;        @RequestBody req: PlayerPermissionUpdateRequest,
+&nbsp;        principal: Principal
+&nbsp;    ): ResponseEntity&lt;PlayerDTO&gt; {
+<b class="fc">&nbsp;        val response = playerService.updatePlayerPermission(playerId, principal.name, req.hasPermission)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/invites&quot;)
+&nbsp;    @PreAuthorizePlayerOnly
+&nbsp;    fun getInvites(principal: Principal): ResponseEntity&lt;List&lt;TeamInviteDTO&gt;&gt; {
+<b class="fc">&nbsp;        val response = teamInviteService.getInvitesByPlayer(principal.name)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/invites/{teamId}&quot;)
+&nbsp;    @PreAuthorizePlayerOnly
+&nbsp;    fun respondToInvite(
+&nbsp;        @PathVariable teamId: Long,
+&nbsp;        @RequestBody req: PlayerInviteRequest,
+&nbsp;        principal: Principal
+&nbsp;    ): ResponseEntity&lt;PlayerDTO&gt; {
+<b class="fc">&nbsp;        val response = teamInviteService.respondToInvite(principal.name, teamId, req.isAccepted)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response)</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-10-26 03:13</div>
+</div>
+</body>
+</html>
