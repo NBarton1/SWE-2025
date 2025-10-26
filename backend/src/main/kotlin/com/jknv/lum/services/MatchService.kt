@@ -27,17 +27,23 @@ class MatchService (
 
     fun updateMatch(matchId: Long, req: MatchUpdateRequest): MatchDTO {
         val match = getMatchById(matchId)
+            ?: throw EntityNotFoundException("Match not found")
 
-        val homeTeam = teamService.getTeamById(req.homeTeamId)
-        val awayTeam = teamService.getTeamById(req.awayTeamId)
+        req.date?.let { match.date = it }
+        req.type?.let { match.type = it }
 
-        if (homeTeam == null || awayTeam == null || match == null)
-            throw EntityNotFoundException()
+        req.homeTeamId?.let {
+            val homeTeam = teamService.getTeamById(it)
+                ?: throw EntityNotFoundException("Home team not found")
+            match.homeTeam = homeTeam
+        }
 
-        match.type = req.type
-        match.date = req.date
-        match.homeTeam = homeTeam
-        match.awayTeam = awayTeam
+        req.awayTeamId?.let {
+            val awayTeam = teamService.getTeamById(it)
+                ?: throw EntityNotFoundException("Away team not found")
+            match.awayTeam = awayTeam
+        }
+
         return matchRepository.save(match).toDTO()
     }
 
