@@ -24,7 +24,7 @@ class PlayerService (
         return playerRepository.save(player).toDTO()
     }
 
-    fun updatePlayer(player: Player): PlayerDTO =
+    internal fun updatePlayer(player: Player): PlayerDTO =
         playerRepository.save(player).toDTO()
 
     internal fun getPlayerById(playerId: Long): Player? =
@@ -41,9 +41,10 @@ class PlayerService (
 
     fun updatePlayerPermission(playerId: Long, username: String, hasPermission: Boolean): PlayerDTO {
         val player = getPlayerById(playerId)
-            ?: throw EntityNotFoundException("Player not found")
         val guardian = guardianService.getGuardianByUsername(username)
-            ?: throw EntityNotFoundException("Guardian not found")
+
+        if (player == null || guardian == null)
+            throw EntityNotFoundException()
 
         if (player.guardian.id != guardian.id)
             throw IllegalAccessException("You do not have permission to modify this player")

@@ -20,21 +20,21 @@ class TeamInviteService (
 ) {
     fun createInvite(teamId: Long, playerId: Long): TeamInviteDTO {
         val team = teamService.getTeamById(teamId)
-            ?: throw EntityNotFoundException("Team not found")
         val player = playerService.getPlayerById(playerId)
-            ?: throw EntityNotFoundException("Player not found")
+
+        if (team == null || player == null)
+            throw EntityNotFoundException()
 
         val invite = TeamInvite(team = team, player = player)
         return teamInviteRepository.save(invite).toDTO()
     }
 
     fun invitePlayerByCoach(playerId: Long, username: String): TeamInviteDTO {
-        val coach = coachService.getCoachByUsername(username)
-            ?: throw EntityNotFoundException("Coach not found")
-        val team = coach.coachingTeam
-            ?: throw EntityNotFoundException("Team not found")
+        val team = coachService.getCoachByUsername(username)?.coachingTeam
         val player = playerService.getPlayerById(playerId)
-            ?: throw EntityNotFoundException("Player not found")
+
+        if (team == null || player == null)
+            throw EntityNotFoundException()
 
         return createInvite(team.id, player.id)
     }

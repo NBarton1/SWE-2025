@@ -3,9 +3,9 @@ package com.jknv.lum.model.dto
 data class TeamDTO (
     val id: Long,
     val name: String,
-    val win: Int,
-    val loss: Int,
-    val draw: Int,
-    val pointsFor: Int,
-    val pointsAllowed: Int,
+    val win: Int = 0,
+    val loss: Int = 0,
+    val draw: Int = 0,
+    val pointsFor: Int = 0,
+    val pointsAllowed: Int = 0,
 )

@@ -21,7 +21,7 @@ class JwtTokenFilter(private val accountDetailsService: AccountDetailsService, p
         const val JWT_BEARER_AUTH_HEADER_START = "Bearer "
     }
 
-    override fun doFilterInternal(
+    public override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
