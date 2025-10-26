@@ -1,8 +1,8 @@
 import React, { type Dispatch } from "react";
 import { Stack, Title, Divider, Text } from "@mantine/core";
 import UpdateMatchForm from "./UpdateMatchForm.tsx";
-import { type Match, matchDate } from "./match.ts";
-import type { Team } from "./team.ts";
+import { type Match, matchDate } from "../../types/match.ts";
+import type { Team } from "../../types/team.ts";
 import CreateMatchForm from "./CreateMatchForm.tsx";
 
 interface DatePopupProps {

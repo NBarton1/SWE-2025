@@ -1,6 +1,6 @@
 import { vi, beforeEach } from 'vitest';
-import type {Team} from "../main/schedule/team.ts";
-import type {Match} from "../main/schedule/match.ts";
+import type {Team} from "../main/types/team.ts";
+import type {Match} from "../main/types/match.ts";
 import {waitFor} from "@testing-library/react";
 import {createMatch, deleteMatch, getMatches, updateMatch} from "../main/request/matches.ts";
 

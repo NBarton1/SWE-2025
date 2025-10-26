@@ -1,10 +1,10 @@
 import React, {type Dispatch} from "react";
 import { Button, Group, Stack, Paper } from "@mantine/core";
-import { type Match, matchTime } from "./match.ts";
-import type { Team } from "./team.ts";
+import { type Match, matchTime } from "../../types/match.ts";
+import type { Team } from "../../types/team.ts";
 import {useForm} from "@mantine/form";
 import MatchFormFields from "./MatchFormFields.tsx";
-import { updateMatch, deleteMatch } from "../request/matches.ts";
+import { updateMatch, deleteMatch } from "../../request/matches.ts";
 
 
 interface UpdateMatchFormProps {
@@ -70,6 +70,7 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
                                 e.preventDefault();
                                 await deleteMatchCallback();
                             }}
+                            data-testid="match-delete-button"
                         >
                             Delete
                         </Button>

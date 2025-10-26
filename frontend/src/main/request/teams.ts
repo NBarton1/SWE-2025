@@ -1,4 +1,4 @@
-import type {Team} from "../schedule/team.ts";
+import type {Team} from "../types/team.ts";
 
 export const getTeams = async (): Promise<Team[]> => {
     try {

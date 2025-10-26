@@ -7,8 +7,8 @@ import {
     ScrollArea,
     Flex,
 } from "@mantine/core";
-import {formatPCT, getPCT, type Team} from "./schedule/team.ts";
-import {getTeams} from "./request/teams.ts";
+import {formatPCT, getPCT, type Team} from "../../types/team.ts";
+import {getTeams} from "../../request/teams.ts";
 
 
 const TeamTablePage = () => {

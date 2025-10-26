@@ -1,6 +1,6 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
-import LoginPage from "../main/LoginPage";
+import LoginPage from "../main/components/login/LoginPage.tsx";
 import * as loginRequest from "../main/request/login";
 import {MOCK_OK, MOCK_UNAUTHORIZED, mockNavigate, renderWithWrap} from "../../vitest.setup.tsx";
 

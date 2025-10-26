@@ -9,7 +9,7 @@ import {
     Box
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import {login} from "./request/login.ts";
+import {login} from "../../request/login.ts";
 import {useCallback} from "react";
 import {useNavigate} from "react-router";
 

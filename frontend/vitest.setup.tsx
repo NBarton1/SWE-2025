@@ -3,7 +3,8 @@ import {cleanup, render} from '@testing-library/react'
 import * as matchers from '@testing-library/jest-dom/matchers'
 import {createTheme, MantineProvider} from "@mantine/core";
 import {BrowserRouter} from "react-router";
-import type {Team} from "./src/main/schedule/team.ts";
+import type {Team} from "./src/main/types/team.ts";
+import {type Match, MatchType} from "./src/main/types/match.ts";
 
 expect.extend(matchers)
 
@@ -46,6 +47,18 @@ export const mockTeams: Team[] = [
         pointsFor: 500,
         pointsAllowed: 500,
     },
+];
+
+export const mockDate = "2026-03-14";
+
+export const mockMatches: Match[] = [
+    {
+        id: 1,
+        type: MatchType.STANDARD,
+        date: `${mockDate}T03:00`,
+        homeTeam: mockTeams[0],
+        awayTeam: mockTeams[1]
+    }
 ];
 
 

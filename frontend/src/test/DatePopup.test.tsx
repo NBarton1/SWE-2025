@@ -1,19 +1,11 @@
 import { vi } from "vitest";
-import {mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
+import {mockDate, mockMatches, mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import DatePopup from "../main/schedule/DatePopup.tsx";
-import {type Match, MatchType} from "../main/schedule/match.ts";
+import DatePopup from "../main/components/schedule/DatePopup.tsx";
 import '@testing-library/jest-dom';
-
-const mockMatches: Match[] = [
-    {
-        id: 1,
-        type: MatchType.STANDARD,
-        date: "2024-03-14T03:00",
-        homeTeam: mockTeams[0],
-        awayTeam: mockTeams[1]
-    }
-];
+import type {Match} from "../main/types/match.ts";
+import React, {type Dispatch} from "react";
+import type {Team} from "../main/types/team.ts";
 
 const mockSetMatches = vi.fn();
 
@@ -23,15 +15,19 @@ global.ResizeObserver = vi.fn().mockImplementation(function(this: any) {
     this.disconnect = vi.fn();
 });
 
-// @ts-ignore
-let mockProps: DatePopupProps;
+let mockProps: {
+    date: string | null;
+    matches: Match[];
+    setMatches: Dispatch<React.SetStateAction<Match[]>>;
+    teams: Team[];
+};
 
 describe("DatePopup", () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
         mockProps = {
-            date: "2024-03-14",
+            date: mockDate,
             matches: mockMatches,
             setMatches: mockSetMatches,
             teams: mockTeams,
@@ -47,7 +43,7 @@ describe("DatePopup", () => {
     });
 
     test("date popup not displayed if no date clicked", async () => {
-        mockProps.date = undefined;
+        mockProps.date = null;
 
         renderWithWrap(<DatePopup {...mockProps} />);
 

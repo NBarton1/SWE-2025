@@ -1,5 +1,5 @@
 import {Select, type SelectProps} from "@mantine/core";
-import { MatchType } from "./match.ts";
+import { MatchType } from "../../types/match.ts";
 
 
 const MatchTypeSelect = ( props: SelectProps) => {

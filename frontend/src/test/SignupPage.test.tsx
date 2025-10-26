@@ -1,4 +1,4 @@
-import SignupPage from "../main/SignupPage.tsx";
+import SignupPage from "../main/components/signup/SignupPage.tsx";
 import {expect, vi} from "vitest";
 import {MOCK_OK, MOCK_UNAUTHORIZED, renderWithWrap} from "../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";

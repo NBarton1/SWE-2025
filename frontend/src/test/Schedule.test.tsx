@@ -1,12 +1,10 @@
 import { vi } from "vitest";
-import {renderWithWrap} from "../../vitest.setup.tsx";
+import {mockDate, mockMatches, renderWithWrap} from "../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import Schedule from "../main/schedule/Schedule.tsx";
+import Schedule from "../main/components/schedule/Schedule.tsx";
 import * as matchRequest from "../main/request/matches.ts";
 import * as teamRequest from "../main/request/teams.ts";
 import type {DateClickArg} from "@fullcalendar/interaction";
-import type {Team} from "../main/schedule/team.ts";
-import {MatchType, type Match} from "../main/schedule/match.ts";
 
 let mockDateClick: ((arg: DateClickArg) => void) | undefined;
 let mockEvents: any[];
@@ -24,11 +22,14 @@ describe("Schedule", () => {
         vi.clearAllMocks();
     });
 
-    test("renders components", () => {
-        renderWithWrap(<Schedule />);
-        expect(screen.getByTestId("calendar")).toBeInTheDocument();
-        expect(screen.getByTestId("schedule-title")).toBeInTheDocument();
-        expect(screen.getByTestId("schedule-paper")).toBeInTheDocument();
+    test("renders components", async () => {
+        renderWithWrap(<Schedule/>);
+
+        await waitFor(() => {
+            expect(screen.getByTestId("calendar")).toBeInTheDocument();
+            expect(screen.getByTestId("schedule-title")).toBeInTheDocument();
+            expect(screen.getByTestId("schedule-paper")).toBeInTheDocument();
+        });
     });
 
     test("fetches matches and teams", async () => {
@@ -46,7 +47,7 @@ describe("Schedule", () => {
     test("popup opened when date clicked", async () => {
         renderWithWrap(<Schedule />);
 
-        mockDateClick?.({ dateStr: "2024-03-15" });
+        mockDateClick?.({ dateStr: mockDate } as DateClickArg);
 
         await waitFor(() => {
             expect(screen.getByTestId("date-popup")).toBeInTheDocument();
@@ -55,15 +56,7 @@ describe("Schedule", () => {
 
     test("fetches matches and teams1", async () => {
 
-        const match: Match = {
-            id: 1,
-            type: MatchType.STANDARD,
-            date: "2024-03-15",
-            homeTeam: { name: "home" } as Team,
-            awayTeam: { name: "away" } as Team
-        };
-
-        vi.spyOn(matchRequest, "getMatches").mockResolvedValue([match]);
+        vi.spyOn(matchRequest, "getMatches").mockResolvedValue(mockMatches);
 
         renderWithWrap(<Schedule />);
 

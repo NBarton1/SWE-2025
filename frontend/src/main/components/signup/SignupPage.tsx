@@ -10,8 +10,8 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {useCallback} from "react";
-import {signup} from "./request/signup.ts";
-import {login} from "./request/login.ts";
+import {signup} from "../../request/signup.ts";
+import {login} from "../../request/login.ts";
 import {useNavigate} from "react-router";
 
 

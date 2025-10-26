@@ -1,6 +1,6 @@
 import {describe, expect} from "vitest";
 import {renderWithWrap} from "../../vitest.setup.tsx";
-import Layout from "../main/Layout.tsx";
+import Layout from "../main/components/layout/Layout.tsx";
 import {screen} from "@testing-library/react";
 
 

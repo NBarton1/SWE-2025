@@ -1,33 +1,28 @@
 import { vi } from "vitest";
-import {mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
+import {mockDate, mockMatches, mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
 import {fireEvent, screen, waitFor} from "@testing-library/react";
-import type {Team} from "../main/schedule/team.ts";
-import {type Match, MatchType} from "../main/schedule/match.ts";
 import '@testing-library/jest-dom';
-import CreateMatchForm from "../main/schedule/CreateMatchForm.tsx";
+import CreateMatchForm from "../main/components/schedule/CreateMatchForm.tsx";
 import * as matchRequest from "../main/request/matches.ts";
-
-const mockMatches: Match[] = [
-    {
-        id: 1,
-        type: MatchType.STANDARD,
-        date: "2024-03-14T03:00",
-        homeTeam: mockTeams[0],
-        awayTeam: mockTeams[1]
-    }
-];
+import type {Team} from "../main/types/team.ts";
+import type {Match} from "../main/types/match.ts";
+import React, {type Dispatch} from "react";
 
 const mockSetMatches = vi.fn();
 
-// @ts-ignore
-let mockProps: CreateMatchFormProps;
+let mockProps: {
+    teams: Team[];
+    date: string;
+    matches: Match[];
+    setMatches: Dispatch<React.SetStateAction<Match[]>>;
+}
 
 describe("CreateMatchForm", () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
         mockProps = {
-            date: "2024-03-14",
+            date: mockDate,
             matches: mockMatches,
             setMatches: mockSetMatches,
             teams: mockTeams,
@@ -42,18 +37,9 @@ describe("CreateMatchForm", () => {
         });
     });
 
-    test("create match from rendered1", async () => {
-        const mockCreatedMatch: Match = {
-            id: 1,
-            type: "regular",
-            date: "2024-03-15",
-            homeTeam: { id: 1, name: "Team A" } as Team,
-            awayTeam: { id: 2, name: "Team B" } as Team,
-        };
+    test("create new match test", async () => {
 
-        vi.spyOn(matchRequest, "createMatch").mockResolvedValue(mockCreatedMatch);
-
-        renderWithWrap(<CreateMatchForm {...mockProps} />);
+        vi.spyOn(matchRequest, "createMatch").mockResolvedValue(mockMatches[0]);
 
         const { container } = renderWithWrap(<CreateMatchForm {...mockProps} />);
 

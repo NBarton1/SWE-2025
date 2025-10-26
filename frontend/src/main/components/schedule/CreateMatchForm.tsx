@@ -1,10 +1,10 @@
 import React, {type Dispatch} from "react";
 import { Button, Group, Stack, Paper } from "@mantine/core";
-import {type Match} from "./match.ts";
-import type { Team } from "./team.ts";
+import {type Match} from "../../types/match.ts";
+import type { Team } from "../../types/team.ts";
 import {useForm} from "@mantine/form";
 import MatchFormFields from "./MatchFormFields.tsx";
-import {createMatch} from "../request/matches.ts";
+import {createMatch} from "../../request/matches.ts";
 
 interface CreateMatchFormProps {
     teams: Team[];
