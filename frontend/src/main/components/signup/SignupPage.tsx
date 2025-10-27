@@ -6,7 +6,7 @@ import {
     Title,
     Stack,
     useMantineTheme,
-    Box
+    Box, Group
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {useCallback} from "react";
@@ -96,15 +96,23 @@ const SignupPage = () => {
                             required
                         />
 
-                        <Button
-                            fullWidth
-                            mt="md"
-                            type="submit"
-                            variant="filled"
-                            data-testid="signup-submit"
-                        >
-                            Sign Up
-                        </Button>
+                        <Group mt="md" grow>
+                            <Button
+                                type="submit"
+                                variant="filled"
+                                data-testid="signup-submit"
+                            >
+                                Sign Up
+                            </Button>
+
+                            <Button
+                                variant="outline"
+                                onClick={() => navigate("/login")}
+                                data-testid="signup-login"
+                            >
+                                Login
+                            </Button>
+                        </Group>
                     </Stack>
                 </form>
             </Paper>
