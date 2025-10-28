@@ -20,10 +20,13 @@ vi.mock("@fullcalendar/react", () => ({
 describe("Schedule", () => {
     beforeEach(() => {
         vi.clearAllMocks();
+
+        vi.spyOn(matchRequest, "getMatches").mockResolvedValue([]);
+        vi.spyOn(teamRequest, "getTeams").mockResolvedValue([]);
     });
 
     test("renders components", async () => {
-        renderWithWrap(<Schedule/>);
+        renderWithWrap(<Schedule />);
 
         await waitFor(() => {
             expect(screen.getByTestId("calendar")).toBeInTheDocument();
@@ -33,8 +36,7 @@ describe("Schedule", () => {
     });
 
     test("fetches matches and teams", async () => {
-        vi.spyOn(matchRequest, "getMatches").mockResolvedValue([]);
-        vi.spyOn(teamRequest, "getTeams").mockResolvedValue([]);
+
 
         renderWithWrap(<Schedule />);
 
@@ -54,7 +56,7 @@ describe("Schedule", () => {
         });
     })
 
-    test("fetches matches and teams1", async () => {
+    test("matches populate on calendar", async () => {
 
         vi.spyOn(matchRequest, "getMatches").mockResolvedValue(mockMatches);
 

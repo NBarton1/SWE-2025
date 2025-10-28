@@ -75,7 +75,7 @@ const LoginPage = () => {
                             <Button
                                 onClick={() => navigate("/signup")}
                                 variant="outline"
-                                data-testid="signup-submit"
+                                data-testid="login-signup"
                             >
                                 Sign Up
                             </Button>
@@ -83,7 +83,7 @@ const LoginPage = () => {
                             <Button
                                 type="submit"
                                 variant="filled"
-                                data-testid="signup-login"
+                                data-testid="login-submit"
                             >
                                 Login
                             </Button>
