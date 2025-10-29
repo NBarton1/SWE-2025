@@ -11,6 +11,8 @@ describe("TeamsPage", () => {
         vi.clearAllMocks()
     })
 
+
+
     test("renders", () => {
 
         renderWithWrap(<TeamsPage/>)
@@ -29,11 +31,13 @@ describe("TeamsPage", () => {
             expect(mockGetTeams).toHaveBeenCalled();
         });
 
-        expect(screen.getByTestId("teams-title")).toBeInTheDocument();
-        expect(screen.getByTestId("teams-table")).toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByTestId("teams-title")).toBeInTheDocument();
+            expect(screen.getByTestId("teams-table")).toBeInTheDocument();
 
-        expect(screen.getByText("DK")).toBeInTheDocument();
-        expect(screen.getByText("Chickens")).toBeInTheDocument();
-        expect(screen.getByText("Eagles")).toBeInTheDocument();
+            expect(screen.getByText("DK")).toBeInTheDocument();
+            expect(screen.getByText("Chickens")).toBeInTheDocument();
+            expect(screen.getByText("Eagles")).toBeInTheDocument();
+        });
     });
 });
