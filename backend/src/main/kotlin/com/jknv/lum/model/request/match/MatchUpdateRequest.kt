@@ -7,5 +7,8 @@ class MatchUpdateRequest (
     val date: LocalDateTime?,
     val type: MatchType?,
     var homeTeamId: Long?,
-    var awayTeamId: Long?
+    var awayTeamId: Long?,
+    val homeScore: Int?,
+    val awayScore: Int?,
+    val timeLeft: Int?,
 )

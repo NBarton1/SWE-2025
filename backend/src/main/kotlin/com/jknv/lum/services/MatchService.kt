@@ -31,6 +31,9 @@ class MatchService (
 
         req.date?.let { match.date = it }
         req.type?.let { match.type = it }
+        req.homeScore?.let { match.homeScore = it }
+        req.awayScore?.let { match.awayScore = it }
+        req.timeLeft?.let { match.timeLeft = it }
 
         req.homeTeamId?.let {
             val homeTeam = teamService.getTeamById(it)
@@ -56,6 +59,6 @@ class MatchService (
     fun countMatches(): Long =
         matchRepository.count()
 
-    private fun getMatchById(id: Long): Match? =
+    fun getMatchById(id: Long): Match? =
         matchRepository.findById(id).orElse(null)
 }

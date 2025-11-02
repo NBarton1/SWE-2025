@@ -47,6 +47,7 @@ class SecurityConfig(
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests { auth ->
                 auth
+                    .requestMatchers("/ws/**").permitAll()
                     .requestMatchers( HttpMethod.POST,"/api/accounts").permitAll()
                     .requestMatchers(HttpMethod.POST,"/api/accounts/login").permitAll() // Sign up page should be available
                     .anyRequest().authenticated() // Otherwise everything else needs authentication

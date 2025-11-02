@@ -15,14 +15,15 @@ class MatchCreateRequest (
     val awayScore: Int = 0,
 ) {
     fun toEntity(homeTeam: Team, awayTeam: Team): Match {
-        return Match (
+        return Match(
             date = date,
             type = type,
             homeTeam = homeTeam,
             awayTeam = awayTeam,
-            timeLeft = timeLeft,
             homeScore = homeScore,
             awayScore = awayScore,
+            timeRunning = false,
+            timeSinceResume = timeLeft,
         )
     }
 }

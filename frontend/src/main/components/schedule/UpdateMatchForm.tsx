@@ -4,7 +4,7 @@ import { type Match, matchTime } from "../../types/match.ts";
 import type { Team } from "../../types/team.ts";
 import {useForm} from "@mantine/form";
 import MatchFormFields from "./MatchFormFields.tsx";
-import { updateMatch, deleteMatch } from "../../request/matches.ts";
+import { updateMatch, deleteMatch, type UpdateMatchRequest } from "../../request/matches.ts";
 
 
 interface UpdateMatchFormProps {
@@ -30,7 +30,15 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
         try {
             const { type, homeTeamId, awayTeamId, time } = matchForm.values;
 
-            const updatedMatch: Match = await updateMatch(match.id, type, homeTeamId, awayTeamId, time, date);
+            const req: UpdateMatchRequest = {
+                matchId: match.id,
+                type,
+                homeTeamId,
+                awayTeamId,
+                date: `${date}T${time}`,
+            };
+
+            const updatedMatch: Match = await updateMatch(req);
 
             setMatches(matches.map(curr_match => curr_match.id === updatedMatch.id ? updatedMatch : curr_match));
         } catch (error) {

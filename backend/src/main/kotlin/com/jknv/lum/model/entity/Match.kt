@@ -34,8 +34,11 @@ data class Match (
     @Enumerated(EnumType.STRING)
     var type: MatchType,
 
+    @Column(nullable = true)
+    var timeStarted: LocalDateTime,
+
     @Column
-    var timeLeft: Int = 0,
+    var timePrevious: Int = 0,
 
     @Column(nullable = false)
     var homeScore: Int = 0,
@@ -49,7 +52,7 @@ data class Match (
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "away_team_id", nullable = false)
-    var awayTeam: Team,
+    var awayTeam: Team
 
 ) {
     fun toDTO(): MatchDTO {
@@ -57,7 +60,7 @@ data class Match (
             id = id,
             date = date,
             type = type,
-            timeLeft = timeLeft,
+            timeLeft = 0, // TODO
             homeScore = homeScore,
             awayScore = awayScore,
             homeTeam = homeTeam.toSummary(),
