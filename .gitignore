@@ -68,3 +68,5 @@ dist-ssr
 
 *.env
 *application-secret.yml
+
+/coverage-ignore
