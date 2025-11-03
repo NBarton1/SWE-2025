@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 @Transactional
@@ -52,6 +53,9 @@ class AccountService(
 
     fun getAccounts(): List<AccountDTO> =
         accountRepository.findAll().map { it.toDTO() }
+
+    fun getAccount(id: Long): AccountDTO? =
+        accountRepository.findById(id).getOrNull()?.toDTO()
 
     fun updateAccount(username: String, req: AccountUpdateRequest): AccountDTO {
         val account = getAccountByUsername(username)

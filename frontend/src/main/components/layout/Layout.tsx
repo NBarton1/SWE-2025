@@ -1,10 +1,13 @@
 import {AppShell, Group, Text, Menu, Button, ActionIcon, useMantineColorScheme} from '@mantine/core';
 import {Home, BarChart3, Settings, ChevronDown, Sun, Moon} from 'lucide-react';
 import { Outlet } from "react-router";
+import useLogin from "../../hooks/useLogin.tsx";
 
 function Layout() {
 
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
+    const { currentAccount } = useLogin()
 
     const menuItems = [
         {
@@ -93,18 +96,22 @@ function Layout() {
                                 </Button>
                             </Menu.Target>
                             <Menu.Dropdown>
-                                <Menu.Item
-                                    component="a"
-                                    href="/profile"
-                                >
-                                    Profile
-                                </Menu.Item>
-                                <Menu.Divider />
+                                {currentAccount &&
+                                    <>
+                                        <Menu.Item
+                                            component="a"
+                                            href={`/profile/${currentAccount.id}`}
+                                        >
+                                            Profile
+                                        </Menu.Item>
+                                        <Menu.Divider />
+                                    </>
+                                }
                                 <Menu.Item
                                     component="a"
                                     href="/login"
                                 >
-                                    Logout
+                                    {currentAccount ? "Logout" : "Login"}
                                 </Menu.Item>
                             </Menu.Dropdown>
                         </Menu>

@@ -11,14 +11,18 @@ import {
 import { useForm } from "@mantine/form";
 import {useCallback} from "react";
 import {signup} from "../../request/signup.ts";
-import {login} from "../../request/login.ts";
 import {useNavigate} from "react-router";
+import useLogin from "../../hooks/useLogin.tsx";
+
+
 
 
 const SignupPage = () => {
     const theme = useMantineTheme(); // access Mantine theme
 
     const navigate = useNavigate()
+
+    const { tryLogin } = useLogin()
 
     const form = useForm({
         initialValues: { name: "", username: "", password: "" },
@@ -41,17 +45,7 @@ const SignupPage = () => {
             return;
         }
 
-
-        const loginRes = await login({
-            username: form.values.username,
-            password: form.values.password,
-        })
-
-        if (!loginRes.ok) {
-            return;
-        }
-
-        navigate("/calendar")
+        await tryLogin(form.values.username, form.values.password)
 
     }, [form.values.name, form.values.password, form.values.username, navigate]);
 

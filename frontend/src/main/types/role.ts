@@ -1,0 +1,1 @@
+export type Role = "PLAYER" | "GUARDIAN" | "COACH" | "ADMIN"

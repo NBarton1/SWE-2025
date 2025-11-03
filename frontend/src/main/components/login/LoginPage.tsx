@@ -9,34 +9,21 @@ import {
     Box, Group
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import {login} from "../../request/login.ts";
-import {useCallback} from "react";
 import {useNavigate} from "react-router";
+import useLogin from "../../hooks/useLogin.tsx";
 
 
 const LoginPage = () => {
 
     const navigate = useNavigate();
 
+    const { tryLogin } = useLogin()
+
     const theme = useMantineTheme(); // access Mantine theme
 
     const form = useForm({
         initialValues: { username: "", password: "" },
     });
-
-    const handleLogin = useCallback(async () => {
-        const res = await login({
-            username: form.values.username,
-            password: form.values.password
-        });
-
-        if (!res.ok) {
-            return;
-        }
-
-        navigate("/teams")
-
-    }, [form.values.password, form.values.username, navigate]);
 
     return (
         <Box
@@ -53,7 +40,7 @@ const LoginPage = () => {
                     Log In
                 </Title>
 
-                <form onSubmit={form.onSubmit(handleLogin)}>
+                <form onSubmit={form.onSubmit(() => tryLogin(form.values.username, form.values.password))}>
                     <Stack>
                         <TextInput
                             label="Username"

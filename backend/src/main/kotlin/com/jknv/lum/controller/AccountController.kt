@@ -33,6 +33,12 @@ class AccountController(
         return ResponseEntity.ok(response)
     }
 
+    @GetMapping("/{id}")
+    fun get(@PathVariable id: Long): ResponseEntity<AccountDTO?> {
+        val response = accountService.getAccount(id)
+        return ResponseEntity.ok(response)
+    }
+
     @PutMapping
     fun update(
         @RequestBody updateInfo: AccountUpdateRequest,
@@ -49,14 +55,15 @@ class AccountController(
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody loginRequest: AccountLoginRequest, response: HttpServletResponse): ResponseEntity<String> {
+    fun login(@RequestBody loginRequest: AccountLoginRequest, response: HttpServletResponse): ResponseEntity<Long> {
         val token = accountService.verifyLogin(loginRequest) ?: return ResponseEntity.notFound().build()
+
+        val id = accountService.getAccountByUsername(loginRequest.username)?.id
 
         val cookie = cookieService.giveCookie(token)
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        // TODO: make response dto, not return cookie
-        return ResponseEntity.ok(token)
+        return ResponseEntity.ok(id)
     }
 }
