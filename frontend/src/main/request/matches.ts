@@ -6,7 +6,7 @@ export interface MatchRequestFields {
     date: string;
     homeScore: number,
     awayScore: number,
-    timeLeft: string,
+    timeLeft: number,
     toggleClock: boolean,
 }
 

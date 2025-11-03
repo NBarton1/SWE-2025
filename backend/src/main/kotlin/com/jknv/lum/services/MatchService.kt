@@ -48,7 +48,11 @@ class MatchService (
             match.awayTeam = awayTeam
         }
 
-        if (req.toggleClock) {
+
+        if (req.timeLeft != null) {
+            match.clockBase = req.timeLeft
+            match.clockTimestamp = null
+        } else if (req.toggleClock) {
             if (match.clockTimestamp == null) {
                 match.clockTimestamp = LocalDateTime.now()
             } else {
