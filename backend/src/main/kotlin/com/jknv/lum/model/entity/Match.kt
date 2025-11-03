@@ -18,6 +18,7 @@ import jakarta.persistence.PreUpdate
 import jakarta.persistence.Table
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.time.Duration
 
 @Entity
 @Table(name = "Match")
@@ -34,11 +35,11 @@ data class Match (
     @Enumerated(EnumType.STRING)
     var type: MatchType,
 
-    @Column(nullable = true)
-    var timeStarted: LocalDateTime,
+    @Column
+    var clockBase: Int = 10,
 
     @Column
-    var timePrevious: Int = 0,
+    var clockTimestamp: LocalDateTime?,
 
     @Column(nullable = false)
     var homeScore: Int = 0,
@@ -56,15 +57,23 @@ data class Match (
 
 ) {
     fun toDTO(): MatchDTO {
+        val running = clockTimestamp != null
+        val timeRemaining = maxOf(0, if (running) {
+            clockBase - Duration.between(clockTimestamp, LocalDateTime.now()).seconds.toInt()
+        } else {
+            clockBase
+        })
+
         return MatchDTO(
             id = id,
             date = date,
             type = type,
-            timeLeft = 0, // TODO
             homeScore = homeScore,
             awayScore = awayScore,
             homeTeam = homeTeam.toSummary(),
             awayTeam = awayTeam.toSummary(),
+            clockTimestamp = timeRemaining,
+            timeRunning = timeRemaining > 0 && running,
         )
     }
 

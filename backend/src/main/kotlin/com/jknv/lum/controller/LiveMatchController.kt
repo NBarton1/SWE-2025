@@ -17,13 +17,7 @@ class LiveMatchController(
     private val simpMessagingTemplate: SimpMessagingTemplate,
 ) {
 
-    @SubscribeMapping("/match/{matchId}")
-    fun getInitialMatchData(@DestinationVariable matchId: Long): MatchDTO? {
-        return matchService.getMatchById(matchId)?.toDTO()
-    }
-
     @MessageMapping("/match/live-update/{matchId}")
-    @PreAuthorizeAdmin
     fun liveUpdate(
         @DestinationVariable matchId: Long,
         @Payload req: MatchUpdateRequest

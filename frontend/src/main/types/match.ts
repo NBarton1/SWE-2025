@@ -6,7 +6,11 @@ export interface Match {
     type: string,
     date: string,
     homeTeam: Team,
-    awayTeam: Team
+    awayTeam: Team,
+    homeScore: number,
+    awayScore: number,
+    clockTimestamp: number,
+    timeRunning: boolean
 }
 
 

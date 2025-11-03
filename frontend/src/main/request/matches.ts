@@ -7,6 +7,7 @@ export interface MatchRequestFields {
     homeScore: number,
     awayScore: number,
     timeLeft: string,
+    toggleClock: boolean,
 }
 
 export type CreateMatchRequest = Partial<MatchRequestFields>;
@@ -51,6 +52,16 @@ export async function deleteMatch(matchId: number) {
         method: "DELETE",
         credentials: "include",
     });
+}
+
+export async function getMatch(matchId: number) {
+
+    const res = await fetch(`${URL}/${matchId}`, {
+        method: "GET",
+        credentials: "include"
+    });
+
+    return res.json();
 }
 
 export const getMatches = async () => {

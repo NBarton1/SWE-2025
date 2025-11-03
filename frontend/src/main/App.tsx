@@ -4,7 +4,7 @@ import SignupPage from "./components/signup/SignupPage.tsx";
 import LoginPage from "./components/login/LoginPage.tsx";
 import TeamsPage from "./components/teams/TeamsPage.tsx";
 import Layout from "./components/layout/Layout.tsx";
-import LiveMatchEdit from "./components/live_match/LiveMatchEdit.tsx";
+import LiveMatchEditPage from "./components/live_match/LiveMatchEditPage.tsx";
 
 function App() {
     return (
@@ -17,7 +17,7 @@ function App() {
                 <Route element={<Layout/>}>
                     <Route path="/calendar" element={(<Schedule />)}/>
                     <Route path="/teams" element={(<TeamsPage />)}/>
-                    <Route path="/live" element={(<LiveMatchEdit />)}/>
+                    <Route path="/live" element={(<LiveMatchEditPage matchId={1} />)}/>
                 </Route>
             </Routes>
         </BrowserRouter>

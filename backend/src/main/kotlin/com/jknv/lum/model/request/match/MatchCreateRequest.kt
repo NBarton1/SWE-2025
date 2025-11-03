@@ -22,8 +22,7 @@ class MatchCreateRequest (
             awayTeam = awayTeam,
             homeScore = homeScore,
             awayScore = awayScore,
-            timeRunning = false,
-            timeSinceResume = timeLeft,
+            clockTimestamp = null,
         )
     }
 }

@@ -11,4 +11,5 @@ class MatchUpdateRequest (
     val homeScore: Int?,
     val awayScore: Int?,
     val timeLeft: Int?,
+    val toggleClock: Boolean = false,
 )
