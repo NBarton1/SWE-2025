@@ -11,3 +11,10 @@ export const login = async (loginRequest: LoginRequest) => {
         body: JSON.stringify(loginRequest),
     });
 }
+
+export const logout = async () => {
+    return await fetch("http://localhost:8080/api/accounts/logout", {
+        method: "POST",
+        credentials: "include"
+    });
+}

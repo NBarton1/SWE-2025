@@ -14,12 +14,22 @@ class CookieService(
     private val cookieExpiration: Long,
 ) {
 
-    fun giveCookie(jwt: String): ResponseCookie {
+    fun giveLoginCookie(jwt: String): ResponseCookie {
         return ResponseCookie.from(cookieName, jwt)
             .httpOnly(true)
             .secure(true)
             .path("/")
             .maxAge(cookieExpiration)
+            .sameSite(SameSiteCookies.STRICT.toString())
+            .build()
+    }
+
+    fun giveLogoutCookie(): ResponseCookie {
+        return ResponseCookie.from(cookieName, "")
+            .httpOnly(true)
+            .secure(true)
+            .path("/")
+            .maxAge(0)
             .sameSite(SameSiteCookies.STRICT.toString())
             .build()
     }

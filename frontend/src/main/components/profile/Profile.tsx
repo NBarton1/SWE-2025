@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {
     Container,
     Paper,
@@ -15,7 +15,7 @@ import {
 import '@mantine/core/styles.css';
 import type {Account} from "../../types/account.ts";
 import {useParams} from "react-router";
-import {getAccount} from "../../request/accounts.ts";
+import {getAccount, updateAccount} from "../../request/accounts.ts";
 
 const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
@@ -26,57 +26,43 @@ const ProfilePage = () => {
         const id_num = Number(id)
         if (isNaN(id_num)) return
         getAccount(id_num).then(account => setAccount(account))
-    }, []);
-
-    // const readPictureAsDataUrl = useCallback(() => {
-    //     if (account === null) return null
-    //     if (account.picture === null) return null
-    //     const reader = new FileReader();
-    //     reader.onloadend = () => {
-    //         if (typeof reader.result === 'string') {
-    //
-    //         }
-    //     };
-    //     reader.readAsDataURL(account.picture);
-    // }, []);
+    }, [id]);
 
     const [account, setAccount] = useState<Account | null>(null);
 
     const [editedAccount, setEditedAccount] = useState(account);
-    const [editedPicture, setEditedPicture] = useState<String | null>();
-    const [picture, setPicture] = useState<String | null>();
 
+
+    const editedPictureUrl = useMemo(() => {
+        if (editedAccount === null) return null;
+        if (editedAccount.picture === null) return null;
+        const blob = new Blob([editedAccount.picture]);
+        return URL.createObjectURL(blob);
+    }, [editedAccount]);
+
+    const pictureUrl = useMemo(() => {
+        if (account === null) return null;
+        if (account.picture === null) return null;
+        const blob = new Blob([account.picture]);
+        return URL.createObjectURL(blob);
+    }, [account]);
 
     const edit = useCallback(() => {
         setEditedAccount(account);
-        setEditedPicture(picture);
         setIsEditing(true);
-    },[]);
+    },[account]);
 
-    const save = useCallback(() => {
+    const save = useCallback(async () => {
         setAccount(editedAccount);
-        setPicture(editedPicture)
         setIsEditing(false);
-    },[]);
+        if (editedAccount === null) return;
+        await updateAccount({...editedAccount});
+    },[editedAccount]);
 
     const cancel =  useCallback(() => {
         setEditedAccount(account);
-        setEditedPicture(null)
         setIsEditing(false);
-    },[]);
-
-    // const handlePictureChange = (file: File | null) => {
-    //     setPictureFile(file);
-    //     if (!file) return
-    //     const reader = new FileReader();
-    //     reader.onloadend = () => {
-    //         if (typeof reader.result === 'string') {
-    //
-    //         }
-    //     };
-    //     reader.readAsDataURL(file);
-    // };
-
+    },[account]);
 
     return (
         <Container size="md" py={40}>
@@ -87,14 +73,18 @@ const ProfilePage = () => {
                             <Group align="flex-start">
                                 <Stack gap="xs" align="center">
                                     <Avatar
-                                        src={isEditing && editedAccount ? editedAccount.picture : account.picture}
+                                        src={isEditing ? editedPictureUrl : pictureUrl}
                                         size={120}
                                         radius="md"
                                         name={account.name}
                                     />
-                                    {isEditing && (
+                                    {isEditing && editedAccount && (
                                         <FileButton
-                                            onChange={() => {}}
+                                            onChange={async picture => {
+                                                if (picture === null) return
+                                                const pictureBuffer = await picture.arrayBuffer()
+                                                setEditedAccount({...editedAccount, picture: pictureBuffer})
+                                            }}
                                             accept="image/png,image/jpeg"
                                         >
                                             {(props) => (

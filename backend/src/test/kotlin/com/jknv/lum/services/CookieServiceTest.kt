@@ -16,7 +16,7 @@ class CookieServiceTest {
     @Test
     fun giveCookieTest() {
         val jwt = "token"
-        val cookie: ResponseCookie = cookieService.giveCookie(jwt)
+        val cookie: ResponseCookie = cookieService.giveLoginCookie(jwt)
 
         assertEquals(cookieName, cookie.name)
         assertEquals(jwt, cookie.value)
