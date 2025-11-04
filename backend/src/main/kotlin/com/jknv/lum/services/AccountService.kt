@@ -13,13 +13,12 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.context.annotation.Lazy
 
 @Service
 @Transactional
 class AccountService(
     private val accountRepository: AccountRepository,
-    @Lazy private val authenticationManager: AuthenticationManager,
+    private val authenticationManager: AuthenticationManager,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val jwtService: JwtService,
     private val coachService: CoachService,
