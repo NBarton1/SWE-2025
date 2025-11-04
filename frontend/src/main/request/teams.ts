@@ -1,5 +1,5 @@
 import type {Team} from "../types/team.ts";
-import type {Coach, Player} from "../types/account_types.ts";
+import type {Coach, Player} from "../types/accountTypes.ts";
 
 export const getTeams = async (): Promise<Team[]> => {
     try {
