@@ -36,8 +36,8 @@ data class Coach (
 ) {
     fun toDTO(): CoachDTO {
         return CoachDTO(
-            account = account.toSummary(),
-            team = coachingTeam?.toSummary(),
+            account = account.toDTO(),
+            team = coachingTeam?.toDTO(),
             likes = likes,
             dislikes = dislikes,
         )

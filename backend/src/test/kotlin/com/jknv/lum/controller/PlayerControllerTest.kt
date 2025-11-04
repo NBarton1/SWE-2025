@@ -38,9 +38,9 @@ class PlayerControllerTest {
         guardian = Guardian(account = Account(name = "guardian", username = "guardian", password = "password"))
         player = Player(id = 1, account = req.toEntity(), guardian = guardian)
         playerDTO = PlayerDTO(
-            account = player.account.toSummary(),
-            guardian = guardian.account.toSummary(),
-            team = player.playingTeam?.toSummary(),
+            account = player.account.toDTO(),
+            guardian = guardian.account.toDTO(),
+            team = player.playingTeam?.toDTO(),
             hasPermission = player.hasPermission,
             position = player.position
         )

@@ -9,8 +9,8 @@ data class MatchDTO (
     val type: MatchType,
     val homeScore: Int = 0,
     val awayScore: Int = 0,
-    val homeTeam: TeamSummary,
-    val awayTeam: TeamSummary,
+    val homeTeam: TeamDTO,
+    val awayTeam: TeamDTO,
     val clockTimestamp: Int = 0,
     val timeRunning: Boolean = false,
 )

@@ -34,7 +34,7 @@ data class Guardian (
 ) {
     fun toDTO(): GuardianDTO {
         return GuardianDTO(
-            account = account.toSummary(),
+            account = account.toDTO(),
         )
     }
 }

@@ -1,7 +1,6 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.model.dto.MatchDTO
-import com.jknv.lum.model.dto.TeamSummary
 import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.request.match.MatchCreateRequest
@@ -78,8 +77,8 @@ class MatchControllerTest {
             id = match.id,
             date = req.date ?: match.date,
             type = req.type ?: match.type,
-            homeTeam = homeTeam.toSummary(),
-            awayTeam = awayTeam.toSummary()
+            homeTeam = homeTeam.toDTO(),
+            awayTeam = awayTeam.toDTO()
         )
 
         every { matchService.updateMatch(match.id, req) } returns updatedDTO
