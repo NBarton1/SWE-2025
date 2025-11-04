@@ -1,6 +1,6 @@
-import {Paper, Stack} from "@mantine/core";
-import MatchClock from "./MatchClock.tsx";
-import TeamScore from "./TeamScore.tsx";
+import {Divider, Paper, Stack, Title} from "@mantine/core";
+import LiveMatchClockEdit from "./LiveMatchClockEdit.tsx";
+import TeamScoreEdit from "./TeamScoreEdit.tsx";
 import type {Match} from "../../types/match.ts";
 import {type UpdateMatchRequest} from "../../request/matches.ts";
 
@@ -13,19 +13,27 @@ const LiveMatchEdit = ({ match, updateLiveMatch }: LiveMatchEditProps) => {
 
     return (
         <Paper shadow="sm" p="md" radius="md" withBorder>
-            {match && <Stack gap="md">
-                <TeamScore
-                    team={match.awayTeam}
-                    score={match.awayScore}
-                    updateScore={(awayScore) => updateLiveMatch({ awayScore })}
-                />
-                <TeamScore
-                    team={match.homeTeam}
-                    score={match.homeScore}
-                    updateScore={(homeScore) => updateLiveMatch({ homeScore })}
-                />
-                <MatchClock match={match} updateLiveMatch={updateLiveMatch} />
-            </Stack>}
+            <Stack gap="md">
+                <Title ta="center" order={3}>
+                    {`${match.awayTeam.name} @ ${match.homeTeam.name} Live Feed`}
+                </Title>
+
+                <Divider labelPosition="center" />
+
+                {match && <Stack gap="md">
+                    <TeamScoreEdit
+                        team={match.awayTeam}
+                        score={match.awayScore}
+                        updateScore={(awayScore) => updateLiveMatch({ awayScore })}
+                    />
+                    <TeamScoreEdit
+                        team={match.homeTeam}
+                        score={match.homeScore}
+                        updateScore={(homeScore) => updateLiveMatch({ homeScore })}
+                    />
+                    <LiveMatchClockEdit match={match} updateLiveMatch={updateLiveMatch} />
+                </Stack>}
+            </Stack>
         </Paper>
     );
 };

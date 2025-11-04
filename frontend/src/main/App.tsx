@@ -5,6 +5,8 @@ import LoginPage from "./components/login/LoginPage.tsx";
 import TeamsPage from "./components/teams/TeamsPage.tsx";
 import Layout from "./components/layout/Layout.tsx";
 import LiveMatchEditPage from "./components/live_match/LiveMatchEditPage.tsx";
+import LiveMatchViewPage from "./components/live_match/LiveMatchViewPage.tsx";
+
 
 function App() {
     return (
@@ -17,7 +19,8 @@ function App() {
                 <Route element={<Layout/>}>
                     <Route path="/calendar" element={(<Schedule />)}/>
                     <Route path="/teams" element={(<TeamsPage />)}/>
-                    <Route path="/live" element={(<LiveMatchEditPage matchId={1} />)}/>
+                    <Route path="/live/:id" element={<LiveMatchEditPage />} />
+                    <Route path="/match/:id" element={(<LiveMatchViewPage />)}/>
                 </Route>
             </Routes>
         </BrowserRouter>

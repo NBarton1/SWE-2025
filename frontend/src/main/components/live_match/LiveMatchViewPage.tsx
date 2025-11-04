@@ -2,13 +2,12 @@ import {Container} from "@mantine/core";
 import {useEffect, useRef, useState} from "react";
 import { Client } from "@stomp/stompjs";
 import type {Match} from "../../types/match.ts";
-import LiveMatchEdit from "./LiveMatchEdit.tsx";
-import {type UpdateMatchRequest} from "../../request/matches.ts";
+import LiveMatchView from "./LiveMatchView.tsx";
 import {live_match_websocket} from "./live_match.ts";
 import {useParams} from "react-router";
 
 
-const LiveMatchEditPage = () => {
+const LiveMatchViewPage = () => {
     const { id } = useParams<{ id: string }>();
     const matchId = Number(id);
 
@@ -17,24 +16,11 @@ const LiveMatchEditPage = () => {
 
     useEffect(() => live_match_websocket(matchId, setMatch, clientRef), []);
 
-    const updateLiveMatch = (req: UpdateMatchRequest) => {
-
-        if (clientRef.current?.connected) {
-
-            clientRef.current.publish({
-                destination: `/app/match/live-update/${matchId}`,
-                body: JSON.stringify(req),
-            });
-        } else {
-            console.error("Not Connected");
-        }
-    };
-
     return (
         <Container py="md">
-            {match && <LiveMatchEdit match={match} updateLiveMatch={updateLiveMatch} />}
+            {match && <LiveMatchView match={match} />}
         </Container>
     );
 };
 
-export default LiveMatchEditPage;
+export default LiveMatchViewPage;
