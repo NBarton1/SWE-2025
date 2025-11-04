@@ -21,7 +21,7 @@ import java.time.temporal.ChronoUnit
 
 @Entity
 @Table(name = "Match")
-data class Match (
+class Match (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,

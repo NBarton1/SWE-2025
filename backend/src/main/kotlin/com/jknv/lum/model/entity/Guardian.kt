@@ -15,7 +15,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "Guardian")
-data class Guardian (
+class Guardian (
 
     @Id
     @Column(name = "id")

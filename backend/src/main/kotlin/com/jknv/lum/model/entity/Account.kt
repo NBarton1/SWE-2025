@@ -15,7 +15,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "Account")
-data class Account(
+class Account(
 
     /* columns */
 
