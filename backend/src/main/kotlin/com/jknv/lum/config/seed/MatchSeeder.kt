@@ -2,12 +2,9 @@ package com.jknv.lum.config.seed
 
 import com.jknv.lum.LOGGER
 import com.jknv.lum.model.entity.Match
-import com.jknv.lum.model.request.match.MatchCreateRequest
 import com.jknv.lum.model.type.MatchType
 import com.jknv.lum.repository.MatchRepository
 import com.jknv.lum.repository.TeamRepository
-import com.jknv.lum.services.MatchService
-import com.jknv.lum.services.TeamService
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component

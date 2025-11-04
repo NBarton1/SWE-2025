@@ -5,15 +5,11 @@ import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.entity.Guardian
 import com.jknv.lum.model.entity.Team
-import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.AccountRepository
 import com.jknv.lum.repository.CoachRepository
 import com.jknv.lum.repository.GuardianRepository
 import com.jknv.lum.repository.TeamRepository
-import com.jknv.lum.services.AccountService
-import com.jknv.lum.services.CoachService
-import com.jknv.lum.services.TeamService
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder

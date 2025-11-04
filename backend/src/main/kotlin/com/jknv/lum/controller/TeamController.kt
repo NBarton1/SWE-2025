@@ -1,17 +1,11 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.config.PreAuthorizeCoach
-import com.jknv.lum.config.PreAuthorizePlayerOnly
 import com.jknv.lum.model.dto.CoachDTO
 import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
-import com.jknv.lum.model.entity.Coach
-import com.jknv.lum.model.entity.Team
-import com.jknv.lum.model.entity.TeamInvite
 import com.jknv.lum.model.request.team.TeamCreateRequest
-import com.jknv.lum.repository.TeamRepository
-import com.jknv.lum.services.AccountService
 import com.jknv.lum.services.CoachService
 import com.jknv.lum.services.PlayerService
 import com.jknv.lum.services.TeamInviteService

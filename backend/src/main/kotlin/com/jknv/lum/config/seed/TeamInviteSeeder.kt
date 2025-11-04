@@ -8,9 +8,6 @@ import com.jknv.lum.model.type.InviteStatus
 import com.jknv.lum.repository.PlayerRepository
 import com.jknv.lum.repository.TeamInviteRepository
 import com.jknv.lum.repository.TeamRepository
-import com.jknv.lum.services.PlayerService
-import com.jknv.lum.services.TeamInviteService
-import com.jknv.lum.services.TeamService
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
