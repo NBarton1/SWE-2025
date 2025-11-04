@@ -49,21 +49,39 @@ class TeamController (
         return ResponseEntity.ok(response)
     }
 
-    @PutMapping("/coach/{teamId}")
+    @GetMapping("/{teamId}")
+    fun getTeam(@PathVariable teamId: Long): ResponseEntity<TeamDTO> {
+        val response = teamService.getTeam(teamId)
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/{teamId}/players")
+    fun getPlayersByTeam(@PathVariable teamId: Long): ResponseEntity<List<PlayerDTO>> {
+        val response = teamService.getPlayersByTeam(teamId)
+        return ResponseEntity.ok(response)
+    }
+
+    @GetMapping("/{teamId}/coaches")
+    fun getCoachesByTeam(@PathVariable teamId: Long): ResponseEntity<List<CoachDTO>> {
+        val response = teamService.getCoachesByTeam(teamId)
+        return ResponseEntity.ok(response)
+    }
+
+    @PutMapping("/{teamId}/coaches")
     @PreAuthorizeCoach
     fun addCoach(@PathVariable teamId: Long, principal: Principal): ResponseEntity<CoachDTO> {
         val response = coachService.setCoachingTeam(teamId, principal.name)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
-    @PostMapping("/invite/{playerId}")
+    @PostMapping("/{playerId}/invite")
     @PreAuthorizeCoach
     fun invitePlayer(@PathVariable playerId: Long, principal: Principal): ResponseEntity<TeamInviteDTO> {
         val response = teamInviteService.invitePlayerByCoach(playerId, principal.name)
         return ResponseEntity.ok(response)
     }
 
-    @DeleteMapping("/remove/{playerId}")
+    @DeleteMapping("/{playerId}")
     @PreAuthorizeCoach
     fun removePlayer(@PathVariable playerId: Long): ResponseEntity<PlayerDTO> {
         val response = playerService.removePlayerFromTeam(playerId)
