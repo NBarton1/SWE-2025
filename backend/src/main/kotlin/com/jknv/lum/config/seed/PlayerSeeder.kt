@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-@Order(2)
+@Order(4)
 class PlayerSeeder(
     private val playerRepository: PlayerRepository,
     private val guardianRepository: GuardianRepository,

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-@Order(3)
+@Order(5)
 class TeamInviteSeeder (
     private val teamInviteRepository: TeamInviteRepository,
     private val teamRepository: TeamRepository,
