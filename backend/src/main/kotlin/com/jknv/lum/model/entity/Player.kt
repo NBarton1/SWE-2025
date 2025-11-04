@@ -41,9 +41,9 @@ data class Player (
 ) {
     fun toDTO() : PlayerDTO {
         return PlayerDTO(
-            account = account.toSummary(),
-            guardian = guardian.account.toSummary(),
-            team = playingTeam?.toSummary(),
+            account = account.toDTO(),
+            guardian = guardian.account.toDTO(),
+            team = playingTeam?.toDTO(),
             hasPermission = hasPermission,
             position = position,
         )

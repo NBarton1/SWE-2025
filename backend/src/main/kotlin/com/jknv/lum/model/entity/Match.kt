@@ -60,8 +60,8 @@ data class Match (
             timeLeft = timeLeft,
             homeScore = homeScore,
             awayScore = awayScore,
-            homeTeam = homeTeam.toSummary(),
-            awayTeam = awayTeam.toSummary(),
+            homeTeam = homeTeam.toDTO(),
+            awayTeam = awayTeam.toDTO(),
         )
     }
 

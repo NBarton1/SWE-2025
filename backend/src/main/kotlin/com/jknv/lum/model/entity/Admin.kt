@@ -27,7 +27,7 @@ data class Admin (
 ) {
     fun toDTO(): AdminDTO {
         return AdminDTO(
-            account = account.toSummary(),
+            account = account.toDTO(),
         )
     }
 }

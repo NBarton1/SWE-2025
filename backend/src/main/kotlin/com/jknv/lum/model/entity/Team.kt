@@ -1,7 +1,6 @@
 package com.jknv.lum.model.entity
 
 import com.jknv.lum.model.dto.TeamDTO
-import com.jknv.lum.model.dto.TeamSummary
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -52,13 +51,6 @@ data class Team (
             draw = draw,
             pointsFor = pointsFor,
             pointsAllowed = pointsAllowed
-        )
-    }
-
-    fun toSummary(): TeamSummary {
-        return TeamSummary(
-            id = id,
-            name = name,
         )
     }
 }

@@ -2,7 +2,6 @@ package com.jknv.lum.model.entity
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.jknv.lum.model.dto.AccountDTO
-import com.jknv.lum.model.dto.AccountSummary
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.model.type.Role
 import jakarta.persistence.CascadeType
@@ -63,14 +62,6 @@ data class Account(
             name = name,
             username = username,
             role = role,
-        )
-    }
-
-    fun toSummary(): AccountSummary {
-        return AccountSummary(
-            id = id,
-            name = name,
-            username = username,
         )
     }
 }

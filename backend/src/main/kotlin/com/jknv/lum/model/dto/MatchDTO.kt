@@ -10,6 +10,6 @@ data class MatchDTO (
     val timeLeft: Int = 0,
     val homeScore: Int = 0,
     val awayScore: Int = 0,
-    val homeTeam: TeamSummary,
-    val awayTeam: TeamSummary,
+    val homeTeam: TeamDTO,
+    val awayTeam: TeamDTO,
 )
