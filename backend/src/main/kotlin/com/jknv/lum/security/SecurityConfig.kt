@@ -49,6 +49,7 @@ class SecurityConfig(
                 auth
                     .requestMatchers( HttpMethod.POST,"/api/accounts").permitAll()
                     .requestMatchers(HttpMethod.POST,"/api/accounts/login").permitAll() // Sign up page should be available
+                    .requestMatchers(HttpMethod.POST,"/api/accounts/logout").permitAll()
                     .anyRequest().authenticated() // Otherwise everything else needs authentication
             }
             .httpBasic(Customizer.withDefaults())
