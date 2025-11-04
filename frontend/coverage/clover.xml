@@ -145,7 +145,7 @@
     </package>
     <package name="components.teams">
       <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
-      <file name="TeamsPage.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/teams/TeamsPage.tsx">
+      <file name="TeamStandings.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/teams/TeamStandings.tsx">
         <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
         <line num="14" count="1" type="stmt"/>
         <line num="16" count="3" type="stmt"/>

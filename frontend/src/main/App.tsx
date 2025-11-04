@@ -2,7 +2,7 @@ import {BrowserRouter, Navigate, Route, Routes} from "react-router";
 import Schedule from "./components/schedule/Schedule.tsx";
 import SignupPage from "./components/signup/SignupPage.tsx";
 import LoginPage from "./components/login/LoginPage.tsx";
-import TeamsPage from "./components/teams/TeamsPage.tsx";
+import TeamStandings from "./components/teams/TeamStandings.tsx";
 import Layout from "./components/layout/Layout.tsx";
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
 
                 <Route element={<Layout/>}>
                     <Route path="/calendar" element={(<Schedule />)}/>
-                    <Route path="/teams" element={(<TeamsPage />)}/>
+                    <Route path="/teams" element={(<TeamStandings />)}/>
                 </Route>
             </Routes>
         </BrowserRouter>

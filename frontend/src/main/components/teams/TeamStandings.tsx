@@ -11,7 +11,7 @@ import {formatPCT, getPCT, type Team} from "../../types/team.ts";
 import {getTeams} from "../../request/teams.ts";
 
 
-const TeamTablePage = () => {
+const TeamStandings = () => {
 
     const [teams, setTeams] = useState<Team[]>([]);
 
@@ -78,4 +78,4 @@ const TeamTablePage = () => {
     );
 };
 
-export default TeamTablePage;
+export default TeamStandings;
