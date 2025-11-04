@@ -1,37 +1,48 @@
 package com.jknv.lum.config.seed
 
 import com.jknv.lum.LOGGER
-import com.jknv.lum.model.request.account.AccountCreateRequest
+import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.entity.Guardian
 import com.jknv.lum.model.type.Role
-import com.jknv.lum.services.AccountService
-import com.jknv.lum.services.GuardianService
+import com.jknv.lum.repository.AccountRepository
+import com.jknv.lum.repository.GuardianRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.core.annotation.Order
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 @Order(1)
 class GuardianSeeder (
-    private val accountService: AccountService,
-    private val guardianService: GuardianService,
+    private val guardianRepository: GuardianRepository,
+    private val accountRepository: AccountRepository,
+    private val bCryptPasswordEncoder: BCryptPasswordEncoder,
 ) : CommandLineRunner {
 
+    @Transactional
     override fun run(vararg args: String?) {
-        if (guardianService.countGuardians() == 0L) {
-            val accounts = listOf(
-                toRequest(name = "Guardian G", username = "guardian"),
+        if (guardianRepository.count() == 0L) {
+            val guardians = listOf(
+                guardianOf("Guardian G", "guardian")
             )
 
-            accounts.forEach { accountService.createAccountWithRoles(it) }
+            guardians.forEach {
+                it.account = accountRepository.save(it.account)
+                guardianRepository.save(it)
+            }
             LOGGER.info("Guardians seeded")
         }
     }
 
-    fun toRequest(name: String, username: String) : AccountCreateRequest =
-        AccountCreateRequest(
+    fun guardianOf(name: String, username: String) : Guardian =
+        Guardian(account = accountOf(name, username))
+
+    fun accountOf(name: String, username: String) : Account =
+        Account(
             name = name,
             username = username,
-            password = "password",
+            password = bCryptPasswordEncoder.encode("password"),
             role = Role.GUARDIAN,
         )
 }

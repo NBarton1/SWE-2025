@@ -16,7 +16,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "TeamInvite")
-data class TeamInvite (
+class TeamInvite (
 
     @EmbeddedId
     var id: TeamInvitePK = TeamInvitePK(),
@@ -38,8 +38,8 @@ data class TeamInvite (
 ) {
     fun toDTO(): TeamInviteDTO {
         return TeamInviteDTO(
-            team = team.toSummary(),
-            player = player.account.toSummary(),
+            team = team.toDTO(),
+            player = player.account.toDTO(),
             status = status,
         )
     }

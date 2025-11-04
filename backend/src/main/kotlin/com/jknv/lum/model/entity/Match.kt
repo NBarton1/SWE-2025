@@ -21,7 +21,7 @@ import java.time.temporal.ChronoUnit
 
 @Entity
 @Table(name = "Match")
-data class Match (
+class Match (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
@@ -60,8 +60,8 @@ data class Match (
             timeLeft = timeLeft,
             homeScore = homeScore,
             awayScore = awayScore,
-            homeTeam = homeTeam.toSummary(),
-            awayTeam = awayTeam.toSummary(),
+            homeTeam = homeTeam.toDTO(),
+            awayTeam = awayTeam.toDTO(),
         )
     }
 
