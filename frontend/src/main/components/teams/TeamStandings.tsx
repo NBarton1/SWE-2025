@@ -11,7 +11,7 @@ import {formatTeamPCT, getTeamPCT, type Team} from "../../types/team.ts";
 import {getTeams} from "../../request/teams.ts";
 import {useNavigate} from "react-router";
 import useLogin from "../../hooks/useLogin.tsx";
-import {hasRole, Role} from "../../types/accountTypes.ts";
+import {isCoach} from "../../types/accountTypes.ts";
 import TeamCreateModal from "./TeamCreateModal.tsx";
 
 
@@ -51,7 +51,7 @@ const TeamStandings = () => {
                 <Flex justify="space-between" align="center" style={{ marginBottom: "1rem", gap: "12px" }}>
                     <Title order={2} data-testid="teams-title">Team Standings</Title>
 
-                    {currentAccount && hasRole(currentAccount, Role.COACH) && (
+                    {currentAccount && isCoach(currentAccount) && (
                         <Button onClick={() => setModalOpen(true)}>Create Team</Button>
                     )}
                 </Flex>

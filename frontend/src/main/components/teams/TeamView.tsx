@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {Box, Card, Divider, Group, ScrollArea, Stack, Table, Title, Text, Button} from "@mantine/core";
 import { getTeam, getTeamPlayers, getTeamCoaches } from "../../request/teams";
 import {type Team} from "../../types/team";
-import {type Player, type Coach, hasRole, Role} from "../../types/accountTypes";
+import {type Player, type Coach, isCoach} from "../../types/accountTypes";
 import { useParams } from "react-router-dom";
 import {formatLikePCT, getLikePCT} from "../../types/util.ts";
 import useLogin from "../../hooks/useLogin.tsx";
@@ -30,8 +30,9 @@ const TeamView = () => {
     }, [id]);
 
     const {currentAccount} = useLogin();
-    const isCoachingTeam = currentAccount &&
-        hasRole(currentAccount, Role.COACH) &&
+    const isCoachingTeam =
+        currentAccount &&
+        isCoach(currentAccount) &&
         coaches.some(c => c.account.id == currentAccount.id)
 
     if (!team) return <Text>Team not found</Text>

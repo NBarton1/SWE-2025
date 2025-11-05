@@ -10,18 +10,25 @@ import {
     Button,
     TextInput,
     FileButton,
-    PasswordInput
+    PasswordInput,
+    Title,
+    Divider,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import '@mantine/core/styles.css';
-import type {Account} from "../../types/accountTypes.ts";
+import {type Account, isPlayer} from "../../types/accountTypes.ts";
 import {useParams} from "react-router";
 import {getAccount, updateAccount} from "../../request/accounts.ts";
+import {getInvites, respondToInvite} from "../../request/invites.ts";
+import useLogin from "../../hooks/useLogin.tsx";
+import type {TeamInvite} from "../../types/invite.ts";
 
 const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const { id } = useParams();
     const [account, setAccount] = useState<Account | null>(null);
+    const [invites, setInvites] = useState<TeamInvite[]>([]);
+    const { currentAccount } = useLogin();
 
     const form = useForm({
         initialValues: {
@@ -63,6 +70,12 @@ const ProfilePage = () => {
         });
     }, [id]);
 
+    useEffect(() => {
+        if (currentAccount && account && currentAccount.id === account.id && isPlayer(currentAccount)) {
+            getInvites().then(setInvites);
+        }
+    }, [account, currentAccount]);
+
     const edit = useCallback(() => {
         if (!account) return;
         form.setValues({
@@ -95,6 +108,13 @@ const ProfilePage = () => {
         form.reset();
         setIsEditing(false);
     }, []);
+
+    const handleRespond = async (teamId: number, accepted: boolean) => {
+        const res = await respondToInvite(teamId, {isAccepted: accepted});
+        if (!res) return;
+
+        setInvites((prev) => prev.filter((i) => i.team.id !== teamId));
+    };
 
     return (
         <Container size="md" py={40}>
@@ -205,6 +225,46 @@ const ProfilePage = () => {
                     </Stack>
                 )}
             </Paper>
+
+            {currentAccount && account && currentAccount.id === account.id && isPlayer(currentAccount) &&
+                <Paper shadow="sm" radius="md" p="xl" withBorder>
+                    <Stack>
+                        <Title order={3}>Team Invites</Title>
+                        <Divider />
+                        {invites.length === 0 ? (
+                            <Text c="dimmed">You have no pending invites.</Text>
+                        ) : (
+                            invites.map(invite => (
+                                <Group
+                                    key={invite.team.id}
+                                    justify="space-between"
+                                    style={{ borderBottom: "1px solid #eee", paddingBottom: 8 }}
+                                >
+                                    <Text>
+                                        You’ve been invited to join <b>{invite.team.name}</b>
+                                    </Text>
+                                    <Group>
+                                        <Button
+                                            size="xs"
+                                            color="green"
+                                            onClick={() => handleRespond(invite.team.id, true)}
+                                        >
+                                            Accept
+                                        </Button>
+                                        <Button
+                                            size="xs"
+                                            color="red"
+                                            onClick={() => handleRespond(invite.team.id, false)}
+                                        >
+                                            Decline
+                                        </Button>
+                                    </Group>
+                                </Group>
+                            ))
+                        )}
+                    </Stack>
+                </Paper>
+            }
         </Container>
     );
 };

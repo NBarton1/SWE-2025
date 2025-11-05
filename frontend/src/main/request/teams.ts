@@ -81,7 +81,7 @@ export const getTeamCoaches = async (id: number): Promise<Coach[]> => {
 };
 
 export const invitePlayer = async (playerId: number) => {
-    return fetch(`http://localhost:8080/api/teams/${playerId}/invite`, {
+    return await fetch(`http://localhost:8080/api/teams/${playerId}/invite`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
