@@ -59,7 +59,7 @@ class TeamInviteService (
         val player = playerService.getPlayerByUsername(username)
             ?: throw EntityNotFoundException("Could not find player")
         if (!player.hasPermission)
-            throw IllegalAccessException("You do not have permission to register for a team")
+            throw IllegalAccessException("You do not have permission to register for WebSocketSecurityConfig.kt team")
 
         val invite = getInviteById(player.id, teamId)
             ?: throw EntityNotFoundException("Could not find invite for player from team $teamId")

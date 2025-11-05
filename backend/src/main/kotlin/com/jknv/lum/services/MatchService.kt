@@ -35,6 +35,7 @@ class MatchService (
         req.type?.let { match.type = it }
         req.homeScore?.let { match.homeScore = it }
         req.awayScore?.let { match.awayScore = it }
+        req.state?.let { match.state = it }
 
         req.homeTeamId?.let {
             val homeTeam = teamService.getTeamById(it)
@@ -47,7 +48,6 @@ class MatchService (
                 ?: throw EntityNotFoundException("Away team not found")
             match.awayTeam = awayTeam
         }
-
 
         if (req.timeLeft != null) {
             match.clockBase = req.timeLeft

@@ -8,6 +8,7 @@ export interface MatchRequestFields {
     awayScore: number,
     timeLeft: number,
     toggleClock: boolean,
+    state: string,
 }
 
 export type CreateMatchRequest = Partial<MatchRequestFields>;

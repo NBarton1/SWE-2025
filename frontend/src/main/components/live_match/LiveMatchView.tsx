@@ -1,7 +1,8 @@
-import {Divider, Paper, Stack, Title} from "@mantine/core";
-import type {Match} from "../../types/match.ts";
+import {Divider, Paper, Stack} from "@mantine/core";
+import {type Match} from "../../types/match.ts";
 import TeamScoreView from "./TeamScoreView.tsx";
 import LiveMatchClockView from "./LiveMatchClockView.tsx";
+import MatchTitle from "./MatchTitle.tsx";
 
 interface LiveMatchEditProps {
     match: Match,
@@ -13,9 +14,7 @@ const LiveMatchView = ({ match }: LiveMatchEditProps) => {
     return (
         <Paper shadow="md" p="lg" radius="lg" withBorder>
             <Stack gap="md">
-                <Title order={3} ta="center">
-                    {`${match.awayTeam.name} @ ${match.homeTeam.name}`}
-                </Title>
+                <MatchTitle match={match} />
 
                 <Divider labelPosition="center" />
 

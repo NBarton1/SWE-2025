@@ -1,5 +1,5 @@
 import {Box, Title} from "@mantine/core";
-import type {Match} from "../../types/match.ts";
+import {type Match, MatchState} from "../../types/match.ts";
 import {useEffect, useState} from "react";
 import {updateLiveTime} from "./live_time.ts";
 
@@ -9,6 +9,11 @@ interface LiveMatchClockViewProps {
 }
 
 const LiveMatchClockView = ({ match }: LiveMatchClockViewProps) => {
+
+    if (match.state != MatchState.LIVE) {
+        return null;
+    }
+
     const [timeLeft, setTimeLeft] = useState(match.clockTimestamp);
     useEffect(() => updateLiveTime(match, setTimeLeft), [match]);
 

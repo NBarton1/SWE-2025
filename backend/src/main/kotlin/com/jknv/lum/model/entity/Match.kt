@@ -2,6 +2,7 @@ package com.jknv.lum.model.entity
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.jknv.lum.model.dto.MatchDTO
+import com.jknv.lum.model.type.MatchState
 import com.jknv.lum.model.type.MatchType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -34,6 +35,10 @@ data class Match (
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var type: MatchType,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var state: MatchState,
 
     @Column
     var clockBase: Int = 10,
@@ -68,6 +73,7 @@ data class Match (
             id = id,
             date = date,
             type = type,
+            state = state,
             homeScore = homeScore,
             awayScore = awayScore,
             homeTeam = homeTeam.toDTO(),

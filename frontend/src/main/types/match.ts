@@ -10,7 +10,8 @@ export interface Match {
     homeScore: number,
     awayScore: number,
     clockTimestamp: number,
-    timeRunning: boolean
+    timeRunning: boolean,
+    state: string,
 }
 
 
@@ -18,6 +19,13 @@ export interface Match {
 export enum MatchType {
     PLAYOFF = "PLAYOFF",
     STANDARD = "STANDARD"
+}
+
+// @ts-expect-error non erasable syntax
+export enum MatchState {
+    SCHEDULED = "SCHEDULED",
+    LIVE = "LIVE",
+    FINISHED = "FINISHED"
 }
 
 export function matchDate(match: Match) {

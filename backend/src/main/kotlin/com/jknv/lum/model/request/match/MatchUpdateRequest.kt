@@ -1,5 +1,6 @@
 package com.jknv.lum.model.request.match
 
+import com.jknv.lum.model.type.MatchState
 import com.jknv.lum.model.type.MatchType
 import java.time.LocalDateTime
 
@@ -12,4 +13,5 @@ class MatchUpdateRequest (
     val awayScore: Int?,
     val timeLeft: Int?,
     val toggleClock: Boolean = false,
+    val state: MatchState?
 )
