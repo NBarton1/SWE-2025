@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {
     Container,
     Paper,
@@ -12,6 +12,7 @@ import {
     FileButton,
     PasswordInput
 } from '@mantine/core';
+import { useForm } from '@mantine/form';
 import '@mantine/core/styles.css';
 import type {Account} from "../../types/account.ts";
 import {useParams} from "react-router";
@@ -19,155 +20,193 @@ import {getAccount, updateAccount} from "../../request/accounts.ts";
 
 const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
-
     const { id } = useParams();
-
-    useEffect(() => {
-        const id_num = Number(id)
-        if (isNaN(id_num)) return
-        getAccount(id_num).then(account => setAccount(account))
-    }, [id]);
-
     const [account, setAccount] = useState<Account | null>(null);
 
-    const [editedAccount, setEditedAccount] = useState(account);
+    const form = useForm({
+        initialValues: {
+            name: '',
+            username: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+        },
+        validate: {
+            name: (value) => (isEditing && value.trim().length === 0 ? 'Name is required' : null),
+            username: (value) => (isEditing && value.trim().length === 0 ? 'Username is required' : null),
+            email: (value) => (isEditing && value && !/^\S+@\S+$/.test(value) ? 'Invalid email' : null),
+            password: (value, _) => {
+                if (!value) return null;
+                if (value.length < 8) return 'Password must be at least 8 characters';
+                return null;
+            },
+            confirmPassword: (value, values) => {
+                if (!values.password) return null;
+                return value !== values.password ? 'Passwords do not match' : null;
+            },
+        },
+    });
 
-
-    const editedPictureUrl = useMemo(() => {
-        if (editedAccount === null) return null;
-        if (editedAccount.picture === null) return null;
-        const blob = new Blob([editedAccount.picture]);
-        return URL.createObjectURL(blob);
-    }, [editedAccount]);
-
-    const pictureUrl = useMemo(() => {
-        if (account === null) return null;
-        if (account.picture === null) return null;
-        const blob = new Blob([account.picture]);
-        return URL.createObjectURL(blob);
-    }, [account]);
+    useEffect(() => {
+        const id_num = Number(id);
+        if (isNaN(id_num)) return;
+        getAccount(id_num).then(account => {
+            if (account == null) return
+            setAccount(account);
+            form.setValues({
+                name: account.name,
+                username: account.username,
+                email: '',
+                password: '',
+                confirmPassword: '',
+            });
+        });
+    }, [id]);
 
     const edit = useCallback(() => {
-        setEditedAccount(account);
+        if (!account) return;
+        form.setValues({
+            name: account.name,
+            username: account.username,
+            email: '',
+            password: '',
+            confirmPassword: '',
+        });
         setIsEditing(true);
-    },[account]);
+    }, [account]);
 
-    const save = useCallback(async () => {
-        setAccount(editedAccount);
-        setIsEditing(false);
-        if (editedAccount === null) return;
-        await updateAccount({...editedAccount});
-    },[editedAccount]);
+    const handleSubmit = useCallback(async (values: typeof form.values) => {
+        if (!account) return;
 
-    const cancel =  useCallback(() => {
-        setEditedAccount(account);
+        const updatedAccount = {
+            ...account,
+            name: values.name,
+            username: values.username,
+            password: values.password,
+            email: values.email,
+        };
+
+        await updateAccount(updatedAccount);
+        setAccount(updatedAccount);
         setIsEditing(false);
-    },[account]);
+    }, [account]);
+
+    const cancel = useCallback(() => {
+        form.reset();
+        setIsEditing(false);
+    }, []);
 
     return (
         <Container size="md" py={40}>
             <Paper shadow="md" radius="md" p="xl" withBorder>
-                {account ?
-                    <Stack gap="lg">
-                        <Group justify="space-between" align="flex-start">
-                            <Group align="flex-start">
-                                <Stack gap="xs" align="center">
-                                    <Avatar
-                                        src={isEditing ? editedPictureUrl : pictureUrl}
-                                        size={120}
-                                        radius="md"
-                                        name={account.name}
-                                    />
-                                    {isEditing && editedAccount && (
-                                        <FileButton
-                                            onChange={async picture => {
-                                                if (picture === null) return
-                                                const pictureBuffer = await picture.arrayBuffer()
-                                                setEditedAccount({...editedAccount, picture: pictureBuffer})
-                                            }}
-                                            accept="image/png,image/jpeg"
-                                        >
-                                            {(props) => (
-                                                <Button {...props} size="xs" variant="light">
-                                                    Change Picture
-                                                </Button>
-                                            )}
-                                        </FileButton>
-                                    )}
-                                </Stack>
+                {account ? (
+                    <form onSubmit={form.onSubmit(handleSubmit)}>
+                        <Stack gap="lg">
+                            <Group justify="space-between" align="flex-start">
+                                <Group align="flex-start">
+                                    <Stack gap="xs" align="center">
+                                        <Avatar
+                                            src={null}
+                                            size={120}
+                                            radius="md"
+                                            name={account.name}
+                                        />
+                                        {isEditing && (
+                                            <FileButton
+                                                onChange={() => {}}
+                                                accept="image/png,image/jpeg"
+                                            >
+                                                {(props) => (
+                                                    <Button {...props} size="xs" variant="light">
+                                                        Change Picture
+                                                    </Button>
+                                                )}
+                                            </FileButton>
+                                        )}
+                                    </Stack>
 
-                                <Stack gap="xs" style={{ flex: 1 }}>
-                                    {isEditing && editedAccount ? (
-                                        <>
-                                            <TextInput
-                                                label="Name"
-                                                value={editedAccount.name}
-                                                onChange={(e) => setEditedAccount({ ...editedAccount, name: e.target.value })}
-                                                placeholder="Name"
-                                                maxLength={32}
-                                                required
-                                            />
-                                            <TextInput
-                                                label="Username"
-                                                value={editedAccount.username}
-                                                onChange={(e) => setEditedAccount({ ...editedAccount, username: e.target.value })}
-                                                placeholder="Username"
-                                                maxLength={32}
-                                                required
-                                            />
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Text size="xl" fw={700}>{account.name}</Text>
-                                            <Text size="sm" c="dimmed">@{account.username}</Text>
-                                        </>
-                                    )}
+                                    <Stack gap="xs" style={{ flex: 1 }}>
+                                        {isEditing ? (
+                                            <>
+                                                <TextInput
+                                                    label="Name"
+                                                    placeholder="Name"
+                                                    maxLength={32}
+                                                    required
+                                                    {...form.getInputProps('name')}
+                                                />
+                                                <TextInput
+                                                    label="Username"
+                                                    placeholder="Username"
+                                                    maxLength={32}
+                                                    required
+                                                    {...form.getInputProps('username')}
+                                                />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Text size="xl" fw={700}>{account.name}</Text>
+                                                <Text size="sm" c="dimmed">@{account.username}</Text>
+                                            </>
+                                        )}
+                                        <Group gap="xs">
+                                            <Badge variant="light">
+                                                {account.role}
+                                            </Badge>
+                                        </Group>
+                                    </Stack>
+                                </Group>
+
+                                {!isEditing ? (
+                                    <Button variant="light" size="sm" onClick={edit}>
+                                        Edit Profile
+                                    </Button>
+                                ) : (
                                     <Group gap="xs">
-                                        <Badge variant="light">
-                                            {account.role}
-                                        </Badge>
+                                        <Button variant="light" color="green" size="sm" type="submit">
+                                            Save
+                                        </Button>
+                                        <Button variant="light" color="red" size="sm" onClick={cancel}>
+                                            Cancel
+                                        </Button>
                                     </Group>
-                                </Stack>
+                                )}
                             </Group>
 
-                            {!isEditing ? (
-                                <Button variant="light" size="sm" onClick={edit}>
-                                    Edit Profile
-                                </Button>
-                            ) : (
-                                <Group gap="xs">
-                                    <Button variant="light" color="green" size="sm" onClick={save}>
-                                        Save
-                                    </Button>
-                                    <Button variant="light" color="red" size="sm" onClick={cancel}>
-                                        Cancel
-                                    </Button>
+                            {isEditing && (
+                                <Group align="flex-start">
+                                    <Stack style={{ flex: 1 }}>
+                                        <TextInput
+                                            label="Email"
+                                            size="sm"
+                                            placeholder="user@example.com"
+                                            {...form.getInputProps('email')}
+                                        />
+                                        <PasswordInput
+                                            label="Password"
+                                            size="sm"
+                                            placeholder="Leave blank to keep current"
+                                            {...form.getInputProps('password')}
+                                        />
+                                        <PasswordInput
+                                            label="Confirm Password"
+                                            size="sm"
+                                            placeholder="Confirm new password"
+                                            {...form.getInputProps('confirmPassword')}
+                                        />
+                                    </Stack>
                                 </Group>
                             )}
-                        </Group>
-
-                        {isEditing && (
-                            <Group align="flex-start">
-                                <Stack style={{ flex: 1 }}>
-                                    <TextInput label="Email" size="sm"/>
-                                    <PasswordInput label="Password" size="sm"/>
-                                    <PasswordInput label="Confirm Password" size="sm"/>
-                                </Stack>
-                            </Group>
-                        )}
-
-                        {/*<Divider />*/}
-
-
-                    </Stack>
-                    :
+                        </Stack>
+                    </form>
+                ) : (
                     <Stack align="center">
                         <Text size="lg">The user you are looking for does not exist</Text>
                     </Stack>
-                }
+                )}
             </Paper>
         </Container>
     );
-}
+};
 
 export default ProfilePage;

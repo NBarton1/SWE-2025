@@ -13,9 +13,11 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Lob
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import java.sql.Blob
 
 @Entity
 @Table(name = "Account")
