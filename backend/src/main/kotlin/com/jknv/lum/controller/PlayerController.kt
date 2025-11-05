@@ -39,6 +39,12 @@ class PlayerController (
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
+    @GetMapping
+    fun getPlayers(): ResponseEntity<List<PlayerDTO>> {
+        val response = playerService.getPlayers()
+        return ResponseEntity.ok(response)
+    }
+
     @PatchMapping("/{playerId}/permission")
     @PreAuthorizeGuardian
     fun setPermission(

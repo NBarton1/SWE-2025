@@ -1,6 +1,4 @@
-import type {Account} from "../types/account.ts";
-import type {Role} from "../types/role.ts";
-
+import type {Account, Player, Role} from "../types/accountTypes.ts";
 
 interface UpdateAccountRequest {
     name?: string,
@@ -18,7 +16,7 @@ export const getAccounts = async (): Promise<Account[]> => {
         });
         return await res.json();
     } catch (err) {
-        console.error("Failed to get users", err);
+        console.error("Failed to get accounts", err);
         return [];
     }
 };
@@ -34,7 +32,7 @@ export const getAccount = async (
         });
         return await res.json();
     } catch (err) {
-        console.error("Failed to get users", err);
+        console.error(`Failed to get account ${accountId}`, err);
         return null;
     }
 };
@@ -52,7 +50,20 @@ export const updateAccount = async (account: UpdateAccountRequest): Promise<Acco
         });
         return await res.json();
     } catch (err) {
-        console.error("Failed to get users", err);
+        console.error(`Failed to update account ${account.username}`, err);
         return null;
+    }
+};
+
+export const getPlayers = async (): Promise<Player[]> => {
+    try {
+        const res = await fetch("http://localhost:8080/api/players", {
+            method: "GET",
+            credentials: 'include'
+        });
+        return await res.json();
+    } catch (err) {
+        console.error("Failed to get players", err);
+        return [];
     }
 };

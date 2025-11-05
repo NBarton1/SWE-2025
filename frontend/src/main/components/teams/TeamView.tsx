@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import {Box, Card, Divider, Group, ScrollArea, Stack, Table, Title, Text} from "@mantine/core";
+import {Box, Card, Divider, Group, ScrollArea, Stack, Table, Title, Text, Button} from "@mantine/core";
 import { getTeam, getTeamPlayers, getTeamCoaches } from "../../request/teams";
 import {type Team} from "../../types/team";
-import type { Player, Coach } from "../../types/accountTypes";
+import {type Player, type Coach, hasRole, Role} from "../../types/accountTypes";
 import { useParams } from "react-router-dom";
 import {formatLikePCT, getLikePCT} from "../../types/util.ts";
+import useLogin from "../../hooks/useLogin.tsx";
+import InvitePlayerModal from "./TeamInviteModal.tsx";
 
 const TeamView = () => {
     const { id } = useParams<{ id: string }>();
@@ -12,6 +14,7 @@ const TeamView = () => {
     const [team, setTeam] = useState<Team | null>(null);
     const [players, setPlayers] = useState<Player[]>([]);
     const [coaches, setCoaches] = useState<Coach[]>([]);
+    const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -25,6 +28,11 @@ const TeamView = () => {
             setCoaches(coachData);
         });
     }, [id]);
+
+    const {currentAccount} = useLogin();
+    const isCoachingTeam = currentAccount &&
+        hasRole(currentAccount, Role.COACH) &&
+        coaches.some(c => c.account.id == currentAccount.id)
 
     if (!team) return <Text>Team not found</Text>
 
@@ -73,7 +81,12 @@ const TeamView = () => {
                 </Card>
 
                 <Card withBorder>
-                    <Title order={4}>Players</Title>
+                    <Group justify="space-between" mb="xs">
+                        <Title order={4}>Players</Title>
+                        {isCoachingTeam && (
+                            <Button onClick={() => setInviteModalOpen(true)}>Invite</Button>
+                        )}
+                    </Group>
                     <ScrollArea h={300}>
                         <Table striped highlightOnHover>
                             <Table.Thead>
@@ -96,6 +109,11 @@ const TeamView = () => {
                     </ScrollArea>
                 </Card>
             </Stack>
+
+            <InvitePlayerModal
+                opened={inviteModalOpen}
+                onClose={() => setInviteModalOpen(false)}
+            />
         </Box>
     );
 };

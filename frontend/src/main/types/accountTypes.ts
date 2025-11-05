@@ -47,6 +47,6 @@ const roleHierarchy: Record<Role, Role[]> = {
     [Role.PLAYER]: [Role.PLAYER],
 };
 
-export function hasPermission(account: Account, needs: Role): boolean {
+export function hasRole(account: Account, needs: Role): boolean {
     return roleHierarchy[account.role].includes(needs);
 }

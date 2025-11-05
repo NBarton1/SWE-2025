@@ -79,3 +79,11 @@ export const getTeamCoaches = async (id: number): Promise<Coach[]> => {
         return [];
     }
 };
+
+export const invitePlayer = async (playerId: number) => {
+    return fetch(`http://localhost:8080/api/teams/${playerId}/invite`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+    });
+};
