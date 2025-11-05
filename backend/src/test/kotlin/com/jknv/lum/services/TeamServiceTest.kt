@@ -29,11 +29,11 @@ class TeamServiceTest {
 
     @Test
     fun createTeamTest() {
-        every { teamRepository.save(team) } returns team
+        every { teamRepository.save(any()) } returns team
 
         val result = teamService.createTeam(req)
 
-        verify(exactly = 1) { teamRepository.save(team) }
+        verify(exactly = 1) { teamRepository.save(any()) }
         assertEquals(teamDTO, result)
     }
 

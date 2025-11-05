@@ -34,11 +34,11 @@ class PlayerServiceTest {
 
     @Test
     fun createPlayerTest() {
-        every { playerRepository.save(player) } returns player
-        every { guardianService.getGuardianByUsername(guardian.account.username) } returns guardian
+        every { playerRepository.save(any()) } returns player
+        every { guardianService.getGuardianById(guardian.account.id) } returns guardian
         every { accountService.createAccount(req) } returns player.account
 
-        val result = playerService.createPlayer(req, guardian.account.username)
+        val result = playerService.createPlayer(req, guardian.account.id)
 
         assertEquals(result, playerDTO)
     }
@@ -54,7 +54,7 @@ class PlayerServiceTest {
 
     @Test
     fun getPlayerByIdTest() {
-        every { playerRepository.findPlayerByAccount_Id(player.account.id) } returns player
+        every { playerRepository.findPlayerByAccountId(player.account.id) } returns player
 
         val result = playerService.getPlayerById(player.account.id)
 
@@ -63,7 +63,7 @@ class PlayerServiceTest {
 
     @Test
     fun getPlayerByUsernameTest() {
-        every { playerRepository.findPlayerByAccount_Username(player.account.username) } returns player
+        every { playerRepository.findPlayerByAccountUsername(player.account.username) } returns player
 
         val result = playerService.getPlayerByUsername(player.account.username)
 
@@ -98,11 +98,11 @@ class PlayerServiceTest {
             position = player.position,
         )
 
-        every { playerRepository.findPlayerByAccount_Id(player.account.id) } returns player
-        every { guardianService.getGuardianByUsername(guardian.account.username) } returns guardian
+        every { playerRepository.findPlayerByAccountId(player.account.id) } returns player
+        every { guardianService.getGuardianById(guardian.account.id) } returns guardian
         every { playerRepository.save(player) } returns player
 
-        val result = playerService.updatePlayerPermission(player.id, guardian.account.username, true)
+        val result = playerService.updatePlayerPermission(player.id, guardian.account.id, true)
 
         assertEquals(expectedDTO, result)
     }
@@ -117,7 +117,7 @@ class PlayerServiceTest {
             position = player.position,
         )
 
-        every { playerRepository.findPlayerByAccount_Id(player.account.id) } returns player
+        every { playerRepository.findPlayerByAccountId(player.account.id) } returns player
         every { playerRepository.save(player) } returns player
 
         val result = playerService.removePlayerFromTeam(player.account.id)

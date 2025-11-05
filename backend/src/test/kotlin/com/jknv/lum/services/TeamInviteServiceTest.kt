@@ -42,7 +42,7 @@ class TeamInviteServiceTest {
     fun setup() {
         team = Team(name = "team")
         player = Player(
-            account = Account(name = "player", username = "player", password = "password"),
+            account = Account(id = 2, name = "player", username = "player", password = "password"),
             guardian = Guardian(account = Account(name = "guardian", username = "guardian", password = "password")),
             hasPermission = true
         )
@@ -59,7 +59,7 @@ class TeamInviteServiceTest {
 
         val result = teamInviteService.createInvite(team.id, player.id)
 
-        verify { teamInviteRepository.save(invite) }
+        verify { teamInviteRepository.save(any()) }
         assertEquals(inviteDTO, result)
     }
 
@@ -70,12 +70,12 @@ class TeamInviteServiceTest {
             coachingTeam = team
         )
 
-        every { coachService.getCoachByUsername("coach") } returns coach
+        every { coachService.getCoachById(coach.id) } returns coach
         every { playerService.getPlayerById(player.id) } returns player
         every { teamService.getTeamById(team.id) } returns team
         every { teamInviteRepository.save(any()) } returns invite
 
-        val result = teamInviteService.invitePlayerByCoach(player.id, "coach")
+        val result = teamInviteService.invitePlayerByCoach(player.id, coach.id)
 
         verify { teamInviteRepository.save(invite) }
         assertEquals(inviteDTO, result)
@@ -93,10 +93,10 @@ class TeamInviteServiceTest {
 
     @Test
     fun getInvitesByPlayerTest() {
-        every { playerService.getPlayerByUsername(player.account.username) } returns player
+        every { playerService.getPlayerById(player.account.id) } returns player
         every { teamInviteRepository.findTeamInvitesByPlayer(player) } returns listOf(invite)
 
-        val result = teamInviteService.getInvitesByPlayer(player.account.username)
+        val result = teamInviteService.getInvitesByPlayer(player.account.id)
 
         assertEquals(listOf(inviteDTO), result)
     }
@@ -121,12 +121,12 @@ class TeamInviteServiceTest {
 
     @Test
     fun respondToInviteTest() {
-        every { playerService.getPlayerByUsername(player.account.username) } returns player
+        every { playerService.getPlayerById(player.account.id) } returns player
         every { teamInviteService.getInviteById(player.id, team.id) } returns invite
         every { teamInviteService.updateInvite(invite) } returns inviteDTO
         every { playerService.updatePlayer(player) } returns playerDTO
 
-        val result = teamInviteService.respondToInvite(player.account.username, team.id, true)
+        val result = teamInviteService.respondToInvite(player.account.id, team.id, true)
 
         assertEquals(InviteStatus.ACCEPTED, invite.status)
         assertEquals(playerDTO, result)

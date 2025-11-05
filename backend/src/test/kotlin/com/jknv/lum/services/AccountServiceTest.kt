@@ -10,7 +10,7 @@ import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.AccountRepository
-import io.mockk.core.ValueClassSupport.boxedValue
+import com.jknv.lum.security.AccountDetails
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
@@ -46,6 +46,7 @@ class AccountServiceTest {
     lateinit var req: AccountCreateRequest
     lateinit var account: Account
     lateinit var accountDTO: AccountDTO
+    lateinit var details: AccountDetails
 
     @BeforeEach
     fun setup() {
@@ -57,6 +58,7 @@ class AccountServiceTest {
         )
         account = req.toEntity()
         accountDTO = account.toDTO()
+        details = AccountDetails(account)
     }
 
     @Test
@@ -117,11 +119,11 @@ class AccountServiceTest {
             picture = ByteArray(0),
         )
 
-        every { accountRepository.findByUsername("username") } returns account
+        every { accountRepository.findById(account.id) } returns java.util.Optional.of(account)
         every { bCryptPasswordEncoder.encode("newpass") } returns "hashedpass"
         every { accountRepository.save(account) } returns account
 
-        val result = accountService.updateAccount("username", update)
+        val result = accountService.updateAccount(account.id, update)
 
         val expectedDTO = AccountDTO(
             id = account.id,
@@ -150,9 +152,11 @@ class AccountServiceTest {
     fun verifyLoginTest() {
         val loginRequest = AccountLoginRequest(username = "username", password = "password")
         val auth: Authentication = mockk()
+
         every { auth.isAuthenticated } returns true
+        every { auth.principal } returns details
         every { authenticationManager.authenticate(any<UsernamePasswordAuthenticationToken>()) } returns auth
-        every { jwtService.giveToken("username") } returns "token"
+        every { jwtService.giveToken(account.id) } returns "token"
 
         val result = accountService.verifyLogin(loginRequest)
 

@@ -23,7 +23,7 @@ class JwtService(
     @param:Value($$"${lum.jwt.issuer}")
     private val jwtIssuer: String,
 ) {
-    fun giveToken(username: String): String {
+    fun giveToken(id: Long): String {
         val claims = mapOf<String, Any>()
 
         val issuedAt = Date.from(Instant.now())
@@ -32,7 +32,7 @@ class JwtService(
         return Jwts.builder()
             .claims()
             .add(claims)
-            .subject(username)
+            .subject(id.toString())
             .issuedAt(issuedAt)
             .issuer(jwtIssuer)
             .expiration(expiration)
@@ -57,8 +57,8 @@ class JwtService(
     }
 
     fun isValidToken(jwt: Claims, accountDetails: AccountDetails): Boolean {
-        return jwt.subject.equals(accountDetails.username) &&
-                jwt.issuer.equals(jwtIssuer) &&
+        return jwt.subject == accountDetails.id.toString() &&
+                jwt.issuer == jwtIssuer &&
                 !isTokenExpired(jwt)
     }
 

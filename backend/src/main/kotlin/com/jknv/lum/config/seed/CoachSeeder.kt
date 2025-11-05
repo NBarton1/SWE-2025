@@ -34,7 +34,7 @@ class CoachSeeder (
                 Pair(0, 1),
                 Pair(1, 1),
             )
-            coaching.forEach { (teamIdx, coachIdx) -> coachService.setCoachingTeam(teams[teamIdx].id, coaches[coachIdx].account.username) }
+            coaching.forEach { (teamIdx, coachIdx) -> coachService.setCoachingTeam(teams[teamIdx].id, coaches[coachIdx].account.id) }
             LOGGER.info("Coaches seeded")
         }
     }

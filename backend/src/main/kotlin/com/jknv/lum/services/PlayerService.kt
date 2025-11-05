@@ -15,8 +15,8 @@ class PlayerService (
     private val accountService: AccountService,
     private val guardianService: GuardianService,
 ) {
-    fun createPlayer(req: AccountCreateRequest, username: String): PlayerDTO {
-        val guardian = guardianService.getGuardianByUsername(username)
+    fun createPlayer(req: AccountCreateRequest, accountId: Long): PlayerDTO {
+        val guardian = guardianService.getGuardianById(accountId)
             ?: throw EntityNotFoundException("Guardian not found")
 
         val account = accountService.createAccount(req)
@@ -28,10 +28,11 @@ class PlayerService (
         playerRepository.save(player).toDTO()
 
     internal fun getPlayerById(playerId: Long): Player? =
-        playerRepository.findPlayerByAccount_Id(playerId)
+        playerRepository.findPlayerByAccountId(playerId)
 
     internal fun getPlayerByUsername(username: String): Player? =
-        playerRepository.findPlayerByAccount_Username(username)
+        playerRepository.findPlayerByAccountUsername(username)
+
 
     fun getPlayers(): List<PlayerDTO> =
         playerRepository.findAll().map { it.toDTO() }
@@ -39,9 +40,9 @@ class PlayerService (
     fun countPlayers(): Long =
         playerRepository.count()
 
-    fun updatePlayerPermission(playerId: Long, username: String, hasPermission: Boolean): PlayerDTO {
+    fun updatePlayerPermission(playerId: Long, accountId: Long, hasPermission: Boolean): PlayerDTO {
         val player = getPlayerById(playerId)
-        val guardian = guardianService.getGuardianByUsername(username)
+        val guardian = guardianService.getGuardianById(accountId)
 
         if (player == null || guardian == null)
             throw EntityNotFoundException()

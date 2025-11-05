@@ -25,7 +25,7 @@ class PlayerSeeder(
                 Pair(toRequest("Dixie Kong", "dixiek"), 2),
             )
 
-            players.forEach { (player, guardianIdx) -> playerService.createPlayer(player, guardians[guardianIdx].account.username) }
+            players.forEach { (player, guardianIdx) -> playerService.createPlayer(player, guardians[guardianIdx].account.id) }
         }
     }
 

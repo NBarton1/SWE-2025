@@ -5,6 +5,7 @@ import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
+import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.AccountService
 import com.jknv.lum.services.CookieService
 import jakarta.servlet.http.HttpServletResponse
@@ -12,6 +13,8 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
@@ -43,9 +46,12 @@ class AccountController(
     @PutMapping
     fun update(
         @RequestBody updateInfo: AccountUpdateRequest,
-        principal: Principal,
+        @AuthenticationPrincipal details: AccountDetails,
     ): ResponseEntity<AccountDTO> {
-        val response = accountService.updateAccount(principal.name, updateInfo)
+
+        LOGGER.info("${details.id}")
+
+        val response = accountService.updateAccount(details.id, updateInfo)
         return ResponseEntity.accepted().body(response)
     }
 

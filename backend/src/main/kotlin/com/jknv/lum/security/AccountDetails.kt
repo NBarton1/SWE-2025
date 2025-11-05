@@ -9,6 +9,10 @@ import java.util.Collections
 class AccountDetails(
     val account: Account
 ) : UserDetails {
+
+    val id: Long
+        get() = account.id
+
     override fun getAuthorities(): Collection<GrantedAuthority> {
         return Collections.singleton(SimpleGrantedAuthority("ROLE_"+account.role.name))
     }
@@ -20,4 +24,5 @@ class AccountDetails(
     override fun getUsername(): String {
         return account.username
     }
+
 }

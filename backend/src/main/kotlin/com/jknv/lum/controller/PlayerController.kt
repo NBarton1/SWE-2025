@@ -7,10 +7,12 @@ import com.jknv.lum.model.dto.TeamInviteDTO
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.player.PlayerPermissionUpdateRequest
 import com.jknv.lum.model.request.player.PlayerInviteRequest
+import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.PlayerService
 import com.jknv.lum.services.TeamInviteService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -31,9 +33,9 @@ class PlayerController (
     @PreAuthorizeGuardian
     fun createPlayer(
         @RequestBody req: AccountCreateRequest,
-        principal: Principal
+        @AuthenticationPrincipal details: AccountDetails
     ): ResponseEntity<PlayerDTO> {
-        val response = playerService.createPlayer(req, principal.name)
+        val response = playerService.createPlayer(req, details.id)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
@@ -42,16 +44,16 @@ class PlayerController (
     fun setPermission(
         @PathVariable playerId: Long,
         @RequestBody req: PlayerPermissionUpdateRequest,
-        principal: Principal
+        @AuthenticationPrincipal details: AccountDetails
     ): ResponseEntity<PlayerDTO> {
-        val response = playerService.updatePlayerPermission(playerId, principal.name, req.hasPermission)
+        val response = playerService.updatePlayerPermission(playerId, details.id, req.hasPermission)
         return ResponseEntity.ok(response)
     }
 
     @GetMapping("/invites")
     @PreAuthorizePlayerOnly
-    fun getInvites(principal: Principal): ResponseEntity<List<TeamInviteDTO>> {
-        val response = teamInviteService.getInvitesByPlayer(principal.name)
+    fun getInvites(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<List<TeamInviteDTO>> {
+        val response = teamInviteService.getInvitesByPlayer(details.id)
         return ResponseEntity.ok(response)
     }
 
@@ -60,9 +62,9 @@ class PlayerController (
     fun respondToInvite(
         @PathVariable teamId: Long,
         @RequestBody req: PlayerInviteRequest,
-        principal: Principal
+        @AuthenticationPrincipal details: AccountDetails
     ): ResponseEntity<PlayerDTO> {
-        val response = teamInviteService.respondToInvite(principal.name, teamId, req.isAccepted)
+        val response = teamInviteService.respondToInvite(details.id, teamId, req.isAccepted)
         return ResponseEntity.ok(response)
     }
 }

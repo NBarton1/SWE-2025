@@ -37,15 +37,15 @@ class JwtTokenFilterTest {
     @Test
     fun doFilterInternalTest() {
         val jwt = "DK"
-        val username = "username"
+        val userId = 1L
 
         val accountDetails = mockk<AccountDetails>(relaxed = true)
 
         every { request.getHeader("Authorization") } returns "Bearer $jwt"
         every { jwtService.getClaimsFromJwt(jwt) } returns mockk {
-            every { subject } returns username
+            every { subject } returns userId.toString()
         }
-        every { accountDetailsService.loadUserByUsername(username) } returns accountDetails
+        every { accountDetailsService.loadUserById(userId) } returns accountDetails
         every { jwtService.isValidToken(any(), accountDetails) } returns true
 
         filter.doFilterInternal(request, response, filterChain)

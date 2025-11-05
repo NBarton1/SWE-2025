@@ -8,6 +8,7 @@ import com.jknv.lum.model.entity.Player
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.player.PlayerInviteRequest
 import com.jknv.lum.model.request.player.PlayerPermissionUpdateRequest
+import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.PlayerService
 import com.jknv.lum.services.TeamInviteService
 import io.mockk.every
@@ -23,7 +24,7 @@ class PlayerControllerTest {
 
     val playerService: PlayerService = mockk()
     val teamInviteService: TeamInviteService = mockk()
-    val principal: Principal = mockk()
+    val details: AccountDetails = mockk()
 
     val controller: PlayerController = PlayerController(playerService, teamInviteService)
 
@@ -44,14 +45,14 @@ class PlayerControllerTest {
             hasPermission = player.hasPermission,
             position = player.position
         )
-        every { principal.name } returns guardian.account.username
+        every { details.id } returns guardian.account.id
     }
 
     @Test
     fun createPlayerTest() {
         every { playerService.createPlayer(any(), any()) } returns playerDTO
 
-        val response = controller.createPlayer(req, principal)
+        val response = controller.createPlayer(req, details)
 
         assertEquals(HttpStatus.CREATED, response.statusCode)
         assertEquals(playerDTO, response.body)
@@ -65,7 +66,7 @@ class PlayerControllerTest {
 
         every { playerService.updatePlayerPermission(any(), any(), any()) } returns expectedDTO
 
-        val response = controller.setPermission(player.id, req, principal)
+        val response = controller.setPermission(player.id, req, details)
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(expectedDTO, response.body)
@@ -84,7 +85,7 @@ class PlayerControllerTest {
 
         every { teamInviteService.getInvitesByPlayer(any()) } returns invites
 
-        val response = controller.getInvites(principal)
+        val response = controller.getInvites(details)
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(invites, response.body)
@@ -98,7 +99,7 @@ class PlayerControllerTest {
 
         every { teamInviteService.respondToInvite(any(), any(), any()) } returns expectedDTO
 
-        val response = controller.respondToInvite(10, req, principal)
+        val response = controller.respondToInvite(10, req, details)
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(expectedDTO, response.body)

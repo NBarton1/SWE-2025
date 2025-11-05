@@ -6,6 +6,7 @@ import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.model.type.Role
+import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.AccountService
 import com.jknv.lum.services.CookieService
 import io.mockk.every
@@ -22,7 +23,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
-import java.security.Principal
 import kotlin.test.assertNull
 
 
@@ -87,13 +87,13 @@ class AccountControllerTest {
             role = account.role,
         )
 
-        val principal = mockk<Principal> { every { name } returns account.username }
+        val details = AccountDetails(account)
 
-        every { accountService.updateAccount(account.username, update) } returns expectedDTO
+        every { accountService.updateAccount(account.id, update) } returns expectedDTO
 
-        val response: ResponseEntity<AccountDTO> = accountController.update(update, principal)
+        val response: ResponseEntity<AccountDTO> = accountController.update(update, details)
 
-        verify(exactly = 1) { accountService.updateAccount(account.username, update) }
+        verify(exactly = 1) { accountService.updateAccount(account.id, update) }
         assertEquals(HttpStatus.ACCEPTED, response.statusCode)
         assertEquals(expectedDTO, response.body)
     }
@@ -117,15 +117,16 @@ class AccountControllerTest {
         val cookie = ResponseCookie.from("token", token).build()
 
         every { accountService.verifyLogin(loginReq) } returns token
+        every { accountService.getAccountByUsername("user1") } returns account
         every { cookieService.giveLoginCookie(token) } returns cookie
 
-        val result: ResponseEntity<String> = accountController.login(loginReq, response)
+        val result: ResponseEntity<Long> = accountController.login(loginReq, response)
 
         verify { accountService.verifyLogin(loginReq) }
         verify { cookieService.giveLoginCookie(token) }
         verify { response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString()) }
 
         assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals(token, result.body)
+        assertEquals(account.id, result.body)
     }
 }

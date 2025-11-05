@@ -8,8 +8,10 @@ import com.jknv.lum.model.type.Role
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
 import com.jknv.lum.model.request.account.AccountLoginRequest
+import com.jknv.lum.security.AccountDetails
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -52,17 +54,19 @@ class AccountService(
     internal fun getAccountByUsername(username: String): Account? =
         accountRepository.findByUsername(username)
 
+    internal fun getAccountById(id: Long): Account? =
+        accountRepository.findByIdOrNull(id)
+
     fun getAccounts(): List<AccountDTO> =
         accountRepository.findAll().map { it.toDTO() }
 
     fun getAccount(id: Long): AccountDTO? =
         accountRepository.findById(id).getOrNull()?.toDTO()
 
-    fun updateAccount(username: String, req: AccountUpdateRequest): AccountDTO {
+    fun updateAccount(id: Long, req: AccountUpdateRequest): AccountDTO {
 
-        val account = getAccountByUsername(username)
+        val account = getAccountById(id)
             ?: throw EntityNotFoundException("Account not found")
-
 
         req.name?.let { account.name = it }
         req.username?.let { account.username = it }
@@ -84,7 +88,8 @@ class AccountService(
         )
 
         if (authentication.isAuthenticated) {
-            return jwtService.giveToken(loginRequest.username)
+            val userId = (authentication.principal as? AccountDetails)?.account?.id ?: return null
+            return jwtService.giveToken(userId)
         }
 
         return null

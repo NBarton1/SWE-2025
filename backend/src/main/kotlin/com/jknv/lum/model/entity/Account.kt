@@ -19,7 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Entity
 @Table(name = "Account")
-data class Account(
+class Account(
 
     /* columns */
 

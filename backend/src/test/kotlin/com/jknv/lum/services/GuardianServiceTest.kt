@@ -3,7 +3,6 @@ package com.jknv.lum.services
 import com.jknv.lum.model.dto.GuardianDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Guardian
-import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.GuardianRepository
 import io.mockk.every
@@ -47,7 +46,7 @@ class GuardianServiceTest {
 
     @Test
     fun getGuardianByUsernameTest() {
-        every { guardianRepository.findByAccount_Username("guardian") } returns guardian
+        every { guardianRepository.findByAccountUsername("guardian") } returns guardian
 
         val result = guardianService.getGuardianByUsername("guardian")
 

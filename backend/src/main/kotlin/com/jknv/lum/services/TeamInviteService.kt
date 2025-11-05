@@ -29,8 +29,8 @@ class TeamInviteService (
         return teamInviteRepository.save(invite).toDTO()
     }
 
-    fun invitePlayerByCoach(playerId: Long, username: String): TeamInviteDTO {
-        val team = coachService.getCoachByUsername(username)?.coachingTeam
+    fun invitePlayerByCoach(playerId: Long, accountId: Long): TeamInviteDTO {
+        val team = coachService.getCoachById(accountId)?.coachingTeam
         val player = playerService.getPlayerById(playerId)
 
         if (team == null || player == null)
@@ -42,8 +42,8 @@ class TeamInviteService (
     fun updateInvite(invite: TeamInvite): TeamInviteDTO =
         teamInviteRepository.save(invite).toDTO()
 
-    fun getInvitesByPlayer(username: String): List<TeamInviteDTO> {
-        val player = playerService.getPlayerByUsername(username)
+    fun getInvitesByPlayer(id: Long): List<TeamInviteDTO> {
+        val player = playerService.getPlayerById(id)
             ?: throw EntityNotFoundException("Player not found")
 
         return teamInviteRepository.findTeamInvitesByPlayer(player).map { it.toDTO() }
@@ -55,8 +55,8 @@ class TeamInviteService (
     fun countInvites(): Long =
         teamInviteRepository.count()
 
-    fun respondToInvite(username: String, teamId: Long, isAccepted: Boolean): PlayerDTO {
-        val player = playerService.getPlayerByUsername(username)
+    fun respondToInvite(id: Long, teamId: Long, isAccepted: Boolean): PlayerDTO {
+        val player = playerService.getPlayerById(id)
             ?: throw EntityNotFoundException("Could not find player")
         if (!player.hasPermission)
             throw IllegalAccessException("You do not have permission to register for a team")

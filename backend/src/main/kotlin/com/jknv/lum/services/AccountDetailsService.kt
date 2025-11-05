@@ -26,4 +26,11 @@ class AccountDetailsService(
 
         return accountDetails
     }
+
+    fun loadUserById(id: Long): AccountDetails {
+        val account = accountRepository.findById(id).orElseThrow {
+            UsernameNotFoundException("User not found with id: $id")
+        }
+        return AccountDetails(account)
+    }
 }

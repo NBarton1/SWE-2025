@@ -22,15 +22,18 @@ class CoachService (
         coachRepository.findAll().map { it.toDTO() }
 
     internal fun getCoachByUsername(username: String): Coach? =
-        coachRepository.getCoachByAccount_Username(username)
+        coachRepository.getCoachByAccountUsername(username)
 
+    internal fun getCoachById(id: Long): Coach? =
+        coachRepository.getCoachById(id)
+    
     fun countCoaches(): Long =
         coachRepository.count()
 
-    fun setCoachingTeam(teamId: Long, username: String): CoachDTO {
+    fun setCoachingTeam(teamId: Long, accountId: Long): CoachDTO {
         val team = teamService.getTeamById(teamId)
             ?: throw EntityNotFoundException("Team not found")
-        val coach = getCoachByUsername(username)
+        val coach = getCoachById(accountId)
             ?: throw EntityNotFoundException("Coach not found")
 
         coach.coachingTeam = team

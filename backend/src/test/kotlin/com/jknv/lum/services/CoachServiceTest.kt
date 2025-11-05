@@ -1,14 +1,12 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.CoachDTO
-import com.jknv.lum.model.dto.TeamDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.CoachRepository
 import io.mockk.every
-import io.mockk.excludeRecords
 import io.mockk.mockk
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -50,7 +48,7 @@ class CoachServiceTest {
 
     @Test
     fun getCoachByUsernameTest() {
-        every { coachRepository.getCoachByAccount_Username("coach") } returns coach
+        every { coachRepository.getCoachByAccountUsername("coach") } returns coach
 
         val result = coachService.getCoachByUsername("coach")
 
@@ -72,10 +70,10 @@ class CoachServiceTest {
         val expectedDTO = CoachDTO(account = coach.account.toSummary(), team = team.toSummary())
 
         every { teamService.getTeamById(any()) } returns team
-        every { coachRepository.getCoachByAccount_Username(coach.account.username) } returns coach
+        every { coachRepository.getCoachById(coach.account.id) } returns coach
         every { coachRepository.save(coach) } returns coach
 
-        val result = coachService.setCoachingTeam(team.id, coach.account.username)
+        val result = coachService.setCoachingTeam(team.id, coach.account.id)
 
         assertEquals(result, expectedDTO)
     }

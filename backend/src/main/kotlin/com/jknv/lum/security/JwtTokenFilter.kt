@@ -30,16 +30,19 @@ class JwtTokenFilter(private val accountDetailsService: AccountDetailsService, p
         val claims = if (jwt != null) jwtService.getClaimsFromJwt(jwt) else null
 
         if (claims != null) {
-            val username = claims.subject
-            val accountDetails = accountDetailsService.loadUserByUsername(username)
-            if (jwtService.isValidToken(claims, accountDetails)) {
-                val token = UsernamePasswordAuthenticationToken(
-                    accountDetails,
-                    null,
-                    accountDetails.authorities
-                )
-                token.details = WebAuthenticationDetailsSource().buildDetails(request)
-                SecurityContextHolder.getContext().authentication = token
+            val id = claims.subject.toLongOrNull()
+
+            if (id != null) {
+                val accountDetails = accountDetailsService.loadUserById(id)
+                if (jwtService.isValidToken(claims, accountDetails)) {
+                    val token = UsernamePasswordAuthenticationToken(
+                        accountDetails,
+                        null,
+                        accountDetails.authorities
+                    )
+                    token.details = WebAuthenticationDetailsSource().buildDetails(request)
+                    SecurityContextHolder.getContext().authentication = token
+                }
             }
         }
 

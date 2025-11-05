@@ -14,7 +14,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "Admin")
-data class Admin (
+class Admin (
 
     @Id
     @Column(name = "id")

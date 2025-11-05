@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface GuardianRepository: JpaRepository<Guardian, Long> {
-    fun findByAccount_Username(accountUsername: String): Guardian?
+    fun findByAccountUsername(accountUsername: String): Guardian?
+    fun findByAccountId(accountId: Long): Guardian?
 }

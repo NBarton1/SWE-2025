@@ -16,7 +16,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "TeamInvite")
-data class TeamInvite (
+class TeamInvite (
 
     @EmbeddedId
     var id: TeamInvitePK = TeamInvitePK(),

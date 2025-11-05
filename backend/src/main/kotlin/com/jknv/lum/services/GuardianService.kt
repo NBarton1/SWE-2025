@@ -16,7 +16,10 @@ class GuardianService (
         guardianRepository.save(Guardian(account = account)).toDTO()
 
     internal fun getGuardianByUsername(username: String): Guardian? =
-        guardianRepository.findByAccount_Username(username)
+        guardianRepository.findByAccountUsername(username)
+
+    internal fun getGuardianById(accountId: Long): Guardian? =
+        guardianRepository.findByAccountId(accountId)
 
     fun getGuardians(): List<GuardianDTO> =
         guardianRepository.findAll().map { it.toDTO() }
