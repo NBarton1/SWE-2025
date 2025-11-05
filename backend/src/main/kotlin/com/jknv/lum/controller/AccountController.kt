@@ -1,7 +1,7 @@
 package com.jknv.lum.controller
 
+import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.AccountDTO
-import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
@@ -10,6 +10,7 @@ import com.jknv.lum.services.CookieService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
@@ -33,6 +34,12 @@ class AccountController(
         return ResponseEntity.ok(response)
     }
 
+    @GetMapping("/{id}")
+    fun get(@PathVariable id: Long): ResponseEntity<AccountDTO?> {
+        val response = accountService.getAccount(id)
+        return ResponseEntity.ok(response)
+    }
+
     @PutMapping
     fun update(
         @RequestBody updateInfo: AccountUpdateRequest,
@@ -49,14 +56,23 @@ class AccountController(
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody loginRequest: AccountLoginRequest, response: HttpServletResponse): ResponseEntity<String> {
+    fun login(@RequestBody loginRequest: AccountLoginRequest, response: HttpServletResponse): ResponseEntity<Long> {
         val token = accountService.verifyLogin(loginRequest) ?: return ResponseEntity.notFound().build()
 
-        val cookie = cookieService.giveCookie(token)
+        val id = accountService.getAccountByUsername(loginRequest.username)?.id
+
+        val cookie = cookieService.giveLoginCookie(token)
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        // TODO: make response dto, not return cookie
-        return ResponseEntity.ok(token)
+        return ResponseEntity.ok(id)
+    }
+
+    @PostMapping("/logout")
+    fun logout(response: HttpServletResponse): ResponseEntity<Void> {
+
+        val cookie = cookieService.giveLogoutCookie()
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok().build()
     }
 }

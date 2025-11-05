@@ -23,7 +23,7 @@ import java.time.Duration
 
 @Entity
 @Table(name = "Match")
-data class Match (
+class Match (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
@@ -38,13 +38,13 @@ data class Match (
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var state: MatchState,
+    var state: MatchState = MatchState.SCHEDULED,
 
     @Column
-    var clockBase: Int = 10,
+    var clockBase: Int = 3600,
 
     @Column
-    var clockTimestamp: LocalDateTime?,
+    var clockTimestamp: LocalDateTime? = null,
 
     @Column(nullable = false)
     var homeScore: Int = 0,

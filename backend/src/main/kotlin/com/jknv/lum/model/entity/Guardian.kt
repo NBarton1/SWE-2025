@@ -2,7 +2,6 @@
 
 package com.jknv.lum.model.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.jknv.lum.model.dto.GuardianDTO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -16,7 +15,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "Guardian")
-data class Guardian (
+class Guardian (
 
     @Id
     @Column(name = "id")
@@ -28,7 +27,6 @@ data class Guardian (
     var account: Account,
 
     @OneToMany(mappedBy = "guardian", fetch = FetchType.LAZY)
-    @JsonIgnore
     var children: MutableSet<Player> = mutableSetOf()
 
 ) {

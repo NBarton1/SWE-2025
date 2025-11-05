@@ -117,12 +117,12 @@ class AccountControllerTest {
         val cookie = ResponseCookie.from("token", token).build()
 
         every { accountService.verifyLogin(loginReq) } returns token
-        every { cookieService.giveCookie(token) } returns cookie
+        every { cookieService.giveLoginCookie(token) } returns cookie
 
         val result: ResponseEntity<String> = accountController.login(loginReq, response)
 
         verify { accountService.verifyLogin(loginReq) }
-        verify { cookieService.giveCookie(token) }
+        verify { cookieService.giveLoginCookie(token) }
         verify { response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString()) }
 
         assertEquals(HttpStatus.OK, result.statusCode)

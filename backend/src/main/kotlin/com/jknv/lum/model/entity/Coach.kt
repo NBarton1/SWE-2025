@@ -13,7 +13,7 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "Coach")
-data class Coach (
+class Coach (
 
     @Id
     @Column(name = "id")

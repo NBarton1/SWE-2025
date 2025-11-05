@@ -4,6 +4,7 @@ import com.jknv.lum.model.dto.GuardianDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Guardian
 import com.jknv.lum.repository.GuardianRepository
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -15,12 +16,12 @@ class GuardianService (
     fun createGuardian(account: Account): GuardianDTO =
         guardianRepository.save(Guardian(account = account)).toDTO()
 
-    internal fun getGuardianByUsername(username: String): Guardian? =
-        guardianRepository.findByAccount_Username(username)
-
     fun getGuardians(): List<GuardianDTO> =
         guardianRepository.findAll().map { it.toDTO() }
 
     fun countGuardians(): Long =
         guardianRepository.count()
+
+    internal fun getGuardianByUsername(username: String): Guardian =
+        guardianRepository.findByAccount_Username(username).orElseThrow { EntityNotFoundException("Guardian $username not found") }
 }

@@ -9,12 +9,12 @@ export interface Team {
 }
 
 
-export function getPCT(team: Team): number {
+export function getTeamPCT(team: Team): number {
     return (team.win + team.draw / 2) / (team.win + team.loss + team.draw);
 }
 
-export function formatPCT(team: Team) {
-    const pct = getPCT(team);
+export function formatTeamPCT(team: Team) {
+    const pct = getTeamPCT(team);
 
     return isNaN(pct) ? "-" : pct.toFixed(3).replace(/^0/, "");
 }
