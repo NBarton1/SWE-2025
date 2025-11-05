@@ -19,22 +19,9 @@ class TeamInviteService (
     private val playerService: PlayerService,
     private val coachService: CoachService,
 ) {
-    fun invitePlayerByCoach(playerId: Long, username: String): TeamInviteDTO {
-        val team = coachService.getCoachByUsername(username).coachingTeam
-            ?: throw EntityNotFoundException("You are not coaching a team")
-    fun createInvite(teamId: Long, playerId: Long): TeamInviteDTO {
-        val team = teamService.getTeamById(teamId)
-        val player = playerService.getPlayerById(playerId)
-
-        if (team == null || player == null)
-            throw EntityNotFoundException()
-
-        val invite = TeamInvite(team = team, player = player)
-        return teamInviteRepository.save(invite).toDTO()
-    }
-
     fun invitePlayerByCoach(playerId: Long, accountId: Long): TeamInviteDTO {
-        val team = coachService.getCoachById(accountId)?.coachingTeam
+        val team = coachService.getCoachById(accountId).coachingTeam
+            ?: throw EntityNotFoundException("You are not coaching a team")
         val player = playerService.getPlayerById(playerId)
 
         return createInvite(team, player)

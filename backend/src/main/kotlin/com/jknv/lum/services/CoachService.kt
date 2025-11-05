@@ -33,8 +33,8 @@ class CoachService (
     }
 
     internal fun getCoachByUsername(username: String): Coach =
-        coachRepository.getCoachByAccount_Username(username).orElseThrow { EntityNotFoundException("Coach $username not found") }
+        coachRepository.getCoachByAccountUsername(username).orElseThrow { EntityNotFoundException("Coach $username not found") }
 
-    internal fun getCoachByUsername(id: Long): Coach =
-        coachRepository.getCoachByAccount_Id(id).orElseThrow { EntityNotFoundException("Coach $id not found") }
+    internal fun getCoachById(id: Long): Coach =
+        coachRepository.getCoachById(id).orElseThrow { EntityNotFoundException("Coach $id not found") }
 }

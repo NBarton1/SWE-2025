@@ -1,6 +1,5 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.request.account.AccountCreateRequest
@@ -11,12 +10,10 @@ import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.security.AccountDetails
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 @Transactional
@@ -42,6 +39,9 @@ class AccountService(
 
         return account.toDTO()
     }
+
+    fun getAccount(id: Long): AccountDTO =
+        getAccountById(id).toDTO()
 
     fun getAccounts(): List<AccountDTO> =
         accountRepository.findAll().map { it.toDTO() }
@@ -100,5 +100,4 @@ class AccountService(
 
     internal fun getAccountById(id: Long): Account =
         accountRepository.findById(id).orElseThrow { EntityNotFoundException("User $id not found") }
-
 }

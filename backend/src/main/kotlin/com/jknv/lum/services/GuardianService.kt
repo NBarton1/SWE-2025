@@ -23,9 +23,9 @@ class GuardianService (
         guardianRepository.count()
 
     internal fun getGuardianByUsername(username: String): Guardian =
-        guardianRepository.findByAccount_Username(username).orElseThrow { EntityNotFoundException("Guardian $username not found") }
+        guardianRepository.findByAccountUsername(username).orElseThrow { EntityNotFoundException("Guardian $username not found") }
 
-    internal fun getGuardianByUsername(id: Long): Guardian =
-        guardianRepository.findByAccount_Id(id).orElseThrow { EntityNotFoundException("Guardian $id not found") }
+    internal fun getGuardianById(id: Long): Guardian =
+        guardianRepository.findById(id).orElseThrow { EntityNotFoundException("Guardian $id not found") }
 
 }

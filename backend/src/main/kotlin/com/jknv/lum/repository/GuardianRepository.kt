@@ -8,5 +8,4 @@ import java.util.Optional
 @Repository
 interface GuardianRepository: JpaRepository<Guardian, Long> {
     fun findByAccountUsername(accountUsername: String): Optional<Guardian>
-    fun findByAccountId(accountId: Long): Optional<Guardian>
 }

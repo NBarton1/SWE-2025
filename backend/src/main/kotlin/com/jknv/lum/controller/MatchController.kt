@@ -7,9 +7,6 @@ import com.jknv.lum.model.dto.MatchDTO
 import com.jknv.lum.services.MatchService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.messaging.handler.annotation.DestinationVariable
-import org.springframework.messaging.handler.annotation.MessageMapping
-import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -49,7 +46,7 @@ class MatchController (
 
     @GetMapping("/{matchId}")
     fun getMatch(@PathVariable matchId: Long): ResponseEntity<MatchDTO> {
-        val response = matchService.getMatchById(matchId)?.toDTO()
+        val response = matchService.getMatchById(matchId).toDTO()
         return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 

@@ -51,8 +51,8 @@ class PlayerService (
         playerRepository.save(player).toDTO()
 
     internal fun getPlayerById(playerId: Long): Player =
-        playerRepository.findPlayerByAccount_Id(playerId).orElseThrow { EntityNotFoundException("Player $playerId not found") }
+        playerRepository.findById(playerId).orElseThrow { EntityNotFoundException("Player $playerId not found") }
 
     internal fun getPlayerByUsername(username: String): Player =
-        playerRepository.findPlayerByAccount_Username(username).orElseThrow { EntityNotFoundException("Player $username not found") }
+        playerRepository.findPlayerByAccountUsername(username).orElseThrow { EntityNotFoundException("Player $username not found") }
 }

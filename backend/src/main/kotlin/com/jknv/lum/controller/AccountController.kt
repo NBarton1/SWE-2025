@@ -11,12 +11,9 @@ import com.jknv.lum.services.CookieService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
-import java.security.Principal
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -65,11 +62,11 @@ class AccountController(
     fun login(@RequestBody loginRequest: AccountLoginRequest, response: HttpServletResponse): ResponseEntity<Long> {
         val token = accountService.verifyLogin(loginRequest) ?: return ResponseEntity.notFound().build()
 
-        val id = accountService.getAccountByUsername(loginRequest.username)?.id
+        val id = accountService.getAccountByUsername(loginRequest.username).id
 
         val cookie = cookieService.giveLoginCookie(token)
 
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
 
         return ResponseEntity.ok(id)
     }
@@ -78,7 +75,7 @@ class AccountController(
     fun logout(response: HttpServletResponse): ResponseEntity<Void> {
 
         val cookie = cookieService.giveLogoutCookie()
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())
         return ResponseEntity.ok().build()
     }
 }
