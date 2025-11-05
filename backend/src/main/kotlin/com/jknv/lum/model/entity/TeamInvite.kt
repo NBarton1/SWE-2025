@@ -38,8 +38,8 @@ class TeamInvite (
 ) {
     fun toDTO(): TeamInviteDTO {
         return TeamInviteDTO(
-            team = team.toSummary(),
-            player = player.account.toSummary(),
+            team = team.toDTO(),
+            player = player.account.toDTO(),
             status = status,
         )
     }

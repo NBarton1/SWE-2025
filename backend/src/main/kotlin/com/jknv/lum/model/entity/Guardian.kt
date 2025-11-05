@@ -2,7 +2,6 @@
 
 package com.jknv.lum.model.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.jknv.lum.model.dto.GuardianDTO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -28,13 +27,12 @@ class Guardian (
     var account: Account,
 
     @OneToMany(mappedBy = "guardian", fetch = FetchType.LAZY)
-    @JsonIgnore
     var children: MutableSet<Player> = mutableSetOf()
 
 ) {
     fun toDTO(): GuardianDTO {
         return GuardianDTO(
-            account = account.toSummary(),
+            account = account.toDTO(),
         )
     }
 }

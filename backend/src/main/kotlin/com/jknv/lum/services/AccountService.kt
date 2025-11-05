@@ -29,14 +29,6 @@ class AccountService(
     private val guardianService: GuardianService,
     private val adminService: AdminService,
 ) {
-
-    private fun createAdmin(account: Account) = adminService.createAdmin(account)
-    private fun createCoach(account: Account) = coachService.createCoach(account)
-    private fun createGuardian(account: Account) = guardianService.createGuardian(account)
-
-    internal fun createAccount(req: AccountCreateRequest): Account =
-        accountRepository.save(req.toEntity())
-
     fun createAccountWithRoles(req: AccountCreateRequest): AccountDTO {
         val account = createAccount(req)
         roleHierarchy(account.role).forEach { role ->
@@ -51,22 +43,12 @@ class AccountService(
         return account.toDTO()
     }
 
-    internal fun getAccountByUsername(username: String): Account? =
-        accountRepository.findByUsername(username)
-
-    internal fun getAccountById(id: Long): Account? =
-        accountRepository.findByIdOrNull(id)
-
     fun getAccounts(): List<AccountDTO> =
         accountRepository.findAll().map { it.toDTO() }
-
-    fun getAccount(id: Long): AccountDTO? =
-        accountRepository.findById(id).getOrNull()?.toDTO()
 
     fun updateAccount(id: Long, req: AccountUpdateRequest): AccountDTO {
 
         val account = getAccountById(id)
-            ?: throw EntityNotFoundException("Account not found")
 
         req.name?.let { account.name = it }
         req.username?.let { account.username = it }
@@ -105,4 +87,18 @@ class AccountService(
             Role.GUARDIAN -> setOf(Role.GUARDIAN)
             Role.PLAYER -> setOf(Role.PLAYER)
         }
+
+    private fun createAdmin(account: Account) = adminService.createAdmin(account)
+    private fun createCoach(account: Account) = coachService.createCoach(account)
+    private fun createGuardian(account: Account) = guardianService.createGuardian(account)
+
+    internal fun createAccount(req: AccountCreateRequest): Account =
+        accountRepository.save(req.toEntity())
+
+    internal fun getAccountByUsername(username: String): Account =
+        accountRepository.findByUsername(username).orElseThrow { EntityNotFoundException("User $username not found") }
+
+    internal fun getAccountById(id: Long): Account =
+        accountRepository.findById(id).orElseThrow { EntityNotFoundException("User $id not found") }
+
 }

@@ -17,22 +17,11 @@ class PlayerService (
 ) {
     fun createPlayer(req: AccountCreateRequest, accountId: Long): PlayerDTO {
         val guardian = guardianService.getGuardianById(accountId)
-            ?: throw EntityNotFoundException("Guardian not found")
 
         val account = accountService.createAccount(req)
         val player = Player(account = account, guardian = guardian)
         return playerRepository.save(player).toDTO()
     }
-
-    internal fun updatePlayer(player: Player): PlayerDTO =
-        playerRepository.save(player).toDTO()
-
-    internal fun getPlayerById(playerId: Long): Player? =
-        playerRepository.findPlayerByAccountId(playerId)
-
-    internal fun getPlayerByUsername(username: String): Player? =
-        playerRepository.findPlayerByAccountUsername(username)
-
 
     fun getPlayers(): List<PlayerDTO> =
         playerRepository.findAll().map { it.toDTO() }
@@ -44,9 +33,6 @@ class PlayerService (
         val player = getPlayerById(playerId)
         val guardian = guardianService.getGuardianById(accountId)
 
-        if (player == null || guardian == null)
-            throw EntityNotFoundException()
-
         if (player.guardian.id != guardian.id)
             throw IllegalAccessException("You do not have permission to modify this player")
 
@@ -56,9 +42,17 @@ class PlayerService (
 
     fun removePlayerFromTeam(playerId: Long): PlayerDTO {
         val player = getPlayerById(playerId)
-            ?: throw EntityNotFoundException("Player not found")
 
         player.playingTeam = null
         return updatePlayer(player)
     }
+
+    internal fun updatePlayer(player: Player): PlayerDTO =
+        playerRepository.save(player).toDTO()
+
+    internal fun getPlayerById(playerId: Long): Player =
+        playerRepository.findPlayerByAccount_Id(playerId).orElseThrow { EntityNotFoundException("Player $playerId not found") }
+
+    internal fun getPlayerByUsername(username: String): Player =
+        playerRepository.findPlayerByAccount_Username(username).orElseThrow { EntityNotFoundException("Player $username not found") }
 }

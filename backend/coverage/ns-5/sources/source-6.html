@@ -148,9 +148,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;) {
 &nbsp;    fun toDTO() : PlayerDTO {
 <b class="fc">&nbsp;        return PlayerDTO(</b>
-<b class="fc">&nbsp;            account = account.toSummary(),</b>
-<b class="fc">&nbsp;            guardian = guardian.account.toSummary(),</b>
-<b class="pc">&nbsp;            team = playingTeam?.toSummary(),</b>
+<b class="fc">&nbsp;            account = account.toDTO(),</b>
+<b class="fc">&nbsp;            guardian = guardian.account.toDTO(),</b>
+<b class="pc">&nbsp;            team = playingTeam?.toDTO(),</b>
 <b class="fc">&nbsp;            hasPermission = hasPermission,</b>
 <b class="fc">&nbsp;            position = position,</b>
 &nbsp;        )

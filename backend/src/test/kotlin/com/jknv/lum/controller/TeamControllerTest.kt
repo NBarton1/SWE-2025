@@ -85,9 +85,9 @@ class TeamControllerTest {
 
     @Test
     fun invitePlayerTest() {
-        val playerSummary = AccountSummary(1, "player", "player")
-        val teamSummary = team.toSummary()
-        val inviteDTO = TeamInviteDTO(teamSummary, playerSummary, InviteStatus.PENDING)
+        val playerSummary = AccountDTO(1, "player", "player")
+        val TeamDTO = team.toDTO()
+        val inviteDTO = TeamInviteDTO(TeamDTO, playerSummary, InviteStatus.PENDING)
 
         every { teamInviteService.invitePlayerByCoach(playerSummary.id, details.id) } returns inviteDTO
 
@@ -101,8 +101,8 @@ class TeamControllerTest {
     @Test
     fun removePlayerTest() {
         val expectedDTO = PlayerDTO(
-            account = AccountSummary(1, "dk", "dk"),
-            guardian = AccountSummary(1, "dk", "dk"),
+            account = AccountDTO(1, "dk", "dk"),
+            guardian = AccountDTO(1, "dk", "dk"),
             team = null,
             hasPermission = false,
             position = null,

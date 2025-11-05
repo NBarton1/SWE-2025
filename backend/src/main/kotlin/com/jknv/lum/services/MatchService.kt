@@ -7,6 +7,8 @@ import com.jknv.lum.model.request.match.MatchUpdateRequest
 import com.jknv.lum.repository.MatchRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
+import java.time.Duration
+import java.time.LocalDateTime
 
 @Service
 class MatchService (
@@ -18,19 +20,18 @@ class MatchService (
         val homeTeam = teamService.getTeamById(req.homeTeamId)
         val awayTeam = teamService.getTeamById(req.awayTeamId)
 
-        if (homeTeam == null || awayTeam == null)
-            throw EntityNotFoundException()
-
         val match = req.toEntity(homeTeam, awayTeam)
         return matchRepository.save(match).toDTO()
     }
 
     fun updateMatch(matchId: Long, req: MatchUpdateRequest): MatchDTO {
         val match = getMatchById(matchId)
-            ?: throw EntityNotFoundException("Match not found")
 
         req.date?.let { match.date = it }
         req.type?.let { match.type = it }
+        req.homeScore?.let { match.homeScore = it }
+        req.awayScore?.let { match.awayScore = it }
+        req.state?.let { match.state = it }
 
         req.homeTeamId?.let {
             val homeTeam = teamService.getTeamById(it)
@@ -42,6 +43,20 @@ class MatchService (
             val awayTeam = teamService.getTeamById(it)
                 ?: throw EntityNotFoundException("Away team not found")
             match.awayTeam = awayTeam
+        }
+        req.homeTeamId?.let { match.homeTeam = teamService.getTeamById(it) }
+        req.awayTeamId?.let { match.awayTeam = teamService.getTeamById(it) }
+
+        if (req.timeLeft != null) {
+            match.clockBase = req.timeLeft
+            match.clockTimestamp = null
+        } else if (req.toggleClock) {
+            if (match.clockTimestamp == null) {
+                match.clockTimestamp = LocalDateTime.now()
+            } else {
+                match.clockBase -= Duration.between(match.clockTimestamp, LocalDateTime.now()).seconds.toInt()
+                match.clockTimestamp = null
+            }
         }
 
         return matchRepository.save(match).toDTO()
@@ -56,6 +71,6 @@ class MatchService (
     fun countMatches(): Long =
         matchRepository.count()
 
-    private fun getMatchById(id: Long): Match? =
-        matchRepository.findById(id).orElse(null)
+    internal fun getMatchById(id: Long): Match =
+        matchRepository.findById(id).orElseThrow { EntityNotFoundException("Match $id not found") }
 }

@@ -115,8 +115,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;) {
 &nbsp;    fun toDTO(): TeamInviteDTO {
 &nbsp;        return TeamInviteDTO(
-&nbsp;            team = team.toSummary(),
-&nbsp;            player = player.account.toSummary(),
+&nbsp;            team = team.toDTO(),
+&nbsp;            player = player.account.toDTO(),
 &nbsp;            status = status,
 &nbsp;        )
 &nbsp;    }

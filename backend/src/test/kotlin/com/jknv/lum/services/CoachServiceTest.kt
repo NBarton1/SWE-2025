@@ -67,7 +67,7 @@ class CoachServiceTest {
     @Test
     fun setCoachingTeamTest() {
         val team = Team(name = "team")
-        val expectedDTO = CoachDTO(account = coach.account.toSummary(), team = team.toSummary())
+        val expectedDTO = CoachDTO(account = coach.account.toDTO(), team = team.toDTO())
 
         every { teamService.getTeamById(any()) } returns team
         every { coachRepository.getCoachById(coach.account.id) } returns coach

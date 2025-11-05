@@ -89,7 +89,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;import com.fasterxml.jackson.annotation.JsonProperty
 &nbsp;import com.jknv.lum.model.dto.AccountDTO
-&nbsp;import com.jknv.lum.model.dto.AccountSummary
+&nbsp;import com.jknv.lum.model.dto.AccountDTO
 &nbsp;import com.jknv.lum.model.request.account.AccountUpdateRequest
 &nbsp;import com.jknv.lum.model.type.Role
 &nbsp;import jakarta.persistence.CascadeType
@@ -153,8 +153,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        )
 &nbsp;    }
 &nbsp;
-&nbsp;    fun toSummary(): AccountSummary {
-<b class="fc">&nbsp;        return AccountSummary(</b>
+&nbsp;    fun toDTO(): AccountDTO {
+<b class="fc">&nbsp;        return AccountDTO(</b>
 <b class="fc">&nbsp;            id = id,</b>
 <b class="fc">&nbsp;            name = name,</b>
 <b class="fc">&nbsp;            username = username,</b>

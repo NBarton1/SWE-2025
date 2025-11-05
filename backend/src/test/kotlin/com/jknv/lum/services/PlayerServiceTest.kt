@@ -91,9 +91,9 @@ class PlayerServiceTest {
     @Test
     fun updatePlayerPermissionTest() {
         val expectedDTO = PlayerDTO(
-            account = player.account.toSummary(),
-            guardian = guardian.account.toSummary(),
-            team = player.playingTeam?.toSummary(),
+            account = player.account.toDTO(),
+            guardian = guardian.account.toDTO(),
+            team = player.playingTeam?.toDTO(),
             hasPermission = true,
             position = player.position,
         )
@@ -110,8 +110,8 @@ class PlayerServiceTest {
     @Test
     fun removePlayerFromTeamTest() {
         val expectedDTO = PlayerDTO(
-            account = player.account.toSummary(),
-            guardian = guardian.account.toSummary(),
+            account = player.account.toDTO(),
+            guardian = guardian.account.toDTO(),
             team = null,
             hasPermission = false,
             position = player.position,

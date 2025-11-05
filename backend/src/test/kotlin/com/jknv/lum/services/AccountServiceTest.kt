@@ -73,9 +73,9 @@ class AccountServiceTest {
 
     @Test
     fun createAccountWithRolesTest() {
-        val adminDTO = AdminDTO(account.toSummary())
-        val coachDTO = CoachDTO(account.toSummary())
-        val guardianDTO = GuardianDTO(account.toSummary())
+        val adminDTO = AdminDTO(account.toDTO())
+        val coachDTO = CoachDTO(account.toDTO())
+        val guardianDTO = GuardianDTO(account.toDTO())
 
         every { accountRepository.save(any()) } returns account
         every { adminService.createAdmin(account) } returns adminDTO

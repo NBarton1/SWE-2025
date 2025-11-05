@@ -1,9 +1,6 @@
 package com.jknv.lum.model.entity
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.jknv.lum.model.dto.AccountDTO
-import com.jknv.lum.model.dto.AccountSummary
-import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.model.type.Role
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -13,11 +10,8 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.Lob
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import java.sql.Blob
 
 @Entity
 @Table(name = "Account")
@@ -65,14 +59,6 @@ class Account(
             name = name,
             username = username,
             role = role,
-        )
-    }
-
-    fun toSummary(): AccountSummary {
-        return AccountSummary(
-            id = id,
-            name = name,
-            username = username,
         )
     }
 }

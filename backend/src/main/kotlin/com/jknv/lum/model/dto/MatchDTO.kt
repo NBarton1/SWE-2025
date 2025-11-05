@@ -1,5 +1,6 @@
 package com.jknv.lum.model.dto
 
+import com.jknv.lum.model.type.MatchState
 import com.jknv.lum.model.type.MatchType
 import java.time.LocalDateTime
 
@@ -7,9 +8,11 @@ data class MatchDTO (
     val id: Long,
     val date: LocalDateTime,
     val type: MatchType,
-    val timeLeft: Int = 0,
+    val state: MatchState,
     val homeScore: Int = 0,
     val awayScore: Int = 0,
-    val homeTeam: TeamSummary,
-    val awayTeam: TeamSummary,
+    val homeTeam: TeamDTO,
+    val awayTeam: TeamDTO,
+    val clockTimestamp: Int = 0,
+    val timeRunning: Boolean = false,
 )
