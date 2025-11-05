@@ -4,6 +4,7 @@ import SignupPage from "./components/signup/SignupPage.tsx";
 import LoginPage from "./components/login/LoginPage.tsx";
 import TeamStandings from "./components/teams/TeamStandings.tsx";
 import TeamView from "./components/teams/TeamView.tsx";
+import TeamCreate from "./components/teams/TeamCreateModal.tsx"
 import Layout from "./components/layout/Layout.tsx";
 import Profile from "./components/profile/Profile.tsx";
 
@@ -21,6 +22,7 @@ function App() {
                     <Route path="/profile/:id" element={<Profile />} />
                     <Route path="/teams" element={(<TeamStandings />)}/>
                     <Route path="/teams/:id" element={<TeamView />} />
+                    <Route path="/teams/create" element={<TeamCreate />}/>
                 </Route>
             </Routes>
         </BrowserRouter>

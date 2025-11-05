@@ -13,7 +13,7 @@ import {
     PasswordInput
 } from '@mantine/core';
 import '@mantine/core/styles.css';
-import type {Account} from "../../types/account.ts";
+import type {Account} from "../../types/accountTypes.ts";
 import {useParams} from "react-router";
 import {getAccount, updateAccount} from "../../request/accounts.ts";
 

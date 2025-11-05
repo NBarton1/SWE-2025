@@ -9,10 +9,12 @@ export enum Role {
 }
 
 export interface Account {
-    id: number;
-    name: string;
-    username: string;
-    role: Role;
+    id: number
+    name: string,
+    username: string,
+    picture: ArrayBuffer | null,
+    email: string | null
+    role: Role
 }
 
 export interface Player {
@@ -36,4 +38,15 @@ export interface Coach {
 
 export interface Admin {
     account: Account;
+}
+
+const roleHierarchy: Record<Role, Role[]> = {
+    [Role.ADMIN]: [Role.ADMIN, Role.COACH, Role.GUARDIAN],
+    [Role.COACH]: [Role.COACH, Role.GUARDIAN],
+    [Role.GUARDIAN]: [Role.GUARDIAN],
+    [Role.PLAYER]: [Role.PLAYER],
+};
+
+export function hasPermission(account: Account, needs: Role): boolean {
+    return roleHierarchy[account.role].includes(needs);
 }

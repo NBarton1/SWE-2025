@@ -1,6 +1,19 @@
 import type {Team} from "../types/team.ts";
 import type {Coach, Player} from "../types/accountTypes.ts";
 
+export interface TeamCreateRequest {
+    name: string;
+}
+
+export const createTeam = async (req: TeamCreateRequest) => {
+    return await fetch("http://localhost:8080/api/teams", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(req),
+    });
+};
+
 export const getTeams = async (): Promise<Team[]> => {
     try {
         const res = await fetch("http://localhost:8080/api/teams", {
