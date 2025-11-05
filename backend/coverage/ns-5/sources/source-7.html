@@ -88,7 +88,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.entity
 &nbsp;
 &nbsp;import com.jknv.lum.model.dto.TeamDTO
-&nbsp;import com.jknv.lum.model.dto.TeamSummary
+&nbsp;import com.jknv.lum.model.dto.TeamDTO
 &nbsp;import jakarta.persistence.Column
 &nbsp;import jakarta.persistence.Entity
 &nbsp;import jakarta.persistence.GeneratedValue
@@ -134,8 +134,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        )
 &nbsp;    }
 &nbsp;
-&nbsp;    fun toSummary(): TeamSummary {
-<b class="fc">&nbsp;        return TeamSummary(</b>
+&nbsp;    fun toDTO(): TeamDTO {
+<b class="fc">&nbsp;        return TeamDTO(</b>
 <b class="fc">&nbsp;            id = id,</b>
 <b class="fc">&nbsp;            name = name,</b>
 &nbsp;        )

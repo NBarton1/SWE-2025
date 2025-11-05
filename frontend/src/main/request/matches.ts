@@ -1,67 +1,77 @@
-export async function createMatch(
-    type: string,
-    homeTeamId: string,
-    awayTeamId: string,
-    time: string,
-    date: string
-) {
+export interface MatchRequestFields {
+    matchId: number
+    type: string;
+    homeTeamId: string;
+    awayTeamId: string;
+    date: string;
+    homeScore: number,
+    awayScore: number,
+    timeLeft: number,
+    toggleClock: boolean,
+    state: string,
+}
 
-    const res = await fetch("http://localhost:8080/api/matches", {
+export type CreateMatchRequest = Partial<MatchRequestFields>;
+export type UpdateMatchRequest = Partial<MatchRequestFields>;
+
+const URL = "http://localhost:8080/api/matches";
+
+
+export async function createMatch(req: CreateMatchRequest) {
+
+    const res = await fetch(URL, {
         method: "POST",
         credentials: "include",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            type,
-            homeTeamId,
-            awayTeamId,
-            date: `${date}T${time}`,
-        })
+        body: JSON.stringify(req)
     });
 
     return res.json();
 }
 
-export async function updateMatch(
-    matchId: number,
-    type: string,
-    homeTeamId: string,
-    awayTeamId: string,
-    time: string,
-    date: string) {
+export async function updateMatch(req: UpdateMatchRequest) {
 
-    const res = await fetch(`http://localhost:8080/api/matches/${matchId}`, {
+    const { matchId, ...fields } = req;
+
+    const res = await fetch(`${URL}/${req.matchId}`, {
         method: "PUT",
         credentials: "include",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            type,
-            homeTeamId,
-            awayTeamId,
-            date: `${date}T${time}`,
-        })
+        body: JSON.stringify(fields)
     });
 
     return res.json();
 }
 
 export async function deleteMatch(matchId: number) {
-    return fetch(`http://localhost:8080/api/matches/${matchId}`, {
+
+    return fetch(`${URL}/${matchId}`, {
         method: "DELETE",
         credentials: "include",
     });
 }
 
+export async function getMatch(matchId: number) {
+
+    const res = await fetch(`${URL}/${matchId}`, {
+        method: "GET",
+        credentials: "include"
+    });
+
+    return res.json();
+}
 
 export const getMatches = async () => {
     try {
-        const res = await fetch("http://localhost:8080/api/matches", {
+        const res = await fetch(URL, {
             method: "GET",
             credentials: "include"
         });
+
         return res.json();
     } catch (err) {
         console.error("Failed to get matches", err);

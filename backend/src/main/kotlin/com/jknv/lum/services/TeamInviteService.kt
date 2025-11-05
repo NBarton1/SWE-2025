@@ -41,7 +41,7 @@ class TeamInviteService (
     fun respondToInvite(username: String, teamId: Long, isAccepted: Boolean): PlayerDTO {
         val player = playerService.getPlayerByUsername(username)
         if (!player.hasPermission)
-            throw IllegalAccessException("You do not have permission to register for a team")
+            throw IllegalAccessException("You do not have permission to register for WebSocketSecurityConfig.kt team")
 
         val invite = getInviteById(player.id, teamId)
 

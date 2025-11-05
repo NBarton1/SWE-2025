@@ -7,6 +7,8 @@ import com.jknv.lum.model.request.match.MatchUpdateRequest
 import com.jknv.lum.repository.MatchRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
+import java.time.Duration
+import java.time.LocalDateTime
 
 @Service
 class MatchService (
@@ -27,8 +29,35 @@ class MatchService (
 
         req.date?.let { match.date = it }
         req.type?.let { match.type = it }
+        req.homeScore?.let { match.homeScore = it }
+        req.awayScore?.let { match.awayScore = it }
+        req.state?.let { match.state = it }
+
+        req.homeTeamId?.let {
+            val homeTeam = teamService.getTeamById(it)
+                ?: throw EntityNotFoundException("Home team not found")
+            match.homeTeam = homeTeam
+        }
+
+        req.awayTeamId?.let {
+            val awayTeam = teamService.getTeamById(it)
+                ?: throw EntityNotFoundException("Away team not found")
+            match.awayTeam = awayTeam
+        }
         req.homeTeamId?.let { match.homeTeam = teamService.getTeamById(it) }
         req.awayTeamId?.let { match.awayTeam = teamService.getTeamById(it) }
+
+        if (req.timeLeft != null) {
+            match.clockBase = req.timeLeft
+            match.clockTimestamp = null
+        } else if (req.toggleClock) {
+            if (match.clockTimestamp == null) {
+                match.clockTimestamp = LocalDateTime.now()
+            } else {
+                match.clockBase -= Duration.between(match.clockTimestamp, LocalDateTime.now()).seconds.toInt()
+                match.clockTimestamp = null
+            }
+        }
 
         return matchRepository.save(match).toDTO()
     }
