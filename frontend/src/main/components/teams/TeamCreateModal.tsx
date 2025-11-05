@@ -4,7 +4,7 @@ import {
     Modal,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { createTeam } from "../../request/teams.ts";
+import {assignCoachToTeam, createTeam} from "../../request/teams.ts";
 import type {Team} from "../../types/team.ts";
 
 interface TeamCreateModalProps {
@@ -24,10 +24,12 @@ const TeamCreateModal = ({ opened, onClose, onTeamCreated }: TeamCreateModalProp
 
     const handleSubmit = async () => {
         const response = await createTeam({ name: form.values.name });
-        if (response.ok) {
-            const createdTeam: Team = await response.json();
-            onTeamCreated(createdTeam); // pass the new team back
-        }
+        if (!response.ok) return;
+
+        const createdTeam: Team = await response.json();
+        await assignCoachToTeam(createdTeam.id);
+
+        onTeamCreated(createdTeam);
     };
 
     return (

@@ -40,6 +40,20 @@ export const getTeam = async (id: number): Promise<Team | null> => {
     }
 };
 
+export const assignCoachToTeam = async (teamId: number) => {
+    try {
+        const res = await fetch(`http://localhost:8080/api/teams/${teamId}/coaches`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+        });
+        return await res.json();
+    } catch (err) {
+        console.error(`Failed to set coaching team to ${teamId}`, err);
+        return null
+    }
+};
+
 export const getTeamPlayers = async (id: number): Promise<Player[]> => {
     try {
         const res = await fetch(`http://localhost:8080/api/teams/${id}/players`, {
