@@ -1,11 +1,13 @@
-import type {Account, Player, Role} from "../types/accountTypes.ts";
+import {type Account, type Player, Role} from "../types/accountTypes.ts";
+import type {Content} from "@tiptap/react";
 
-interface UpdateAccountRequest {
+
+export interface UpdateAccountRequest {
     name?: string,
     username?: string,
-    picture?: ArrayBuffer | null,
     email?: string | null
     role?: Role
+    password?: string
 }
 
 export const getAccounts = async (): Promise<Account[]> => {
@@ -67,3 +69,41 @@ export const getPlayers = async (): Promise<Player[]> => {
         return [];
     }
 };
+
+export const updateAccountPicture = async (file: File): Promise<Content | null> => {
+    try {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const res = await fetch(`http://localhost:8080/api/accounts/picture`, {
+            method: "PATCH",
+            credentials: "include",
+            body: formData,
+        });
+
+        if (!res.ok) {
+            console.error("Failed to upload picture", res.status, res.statusText);
+            return null;
+        }
+
+        return res.json();
+    } catch (err) {
+        console.error("Failed to update picture", err);
+        return null;
+    }
+};
+
+export const deleteAccount = async (): Promise<Account | null> => {
+    try {
+        const res = await fetch(`http://localhost:8080/api/accounts`, {
+            method: "DELETE",
+            credentials: 'include',
+        });
+        return await res.json();
+    } catch (err) {
+        console.error("Failed to delete", err);
+        return null;
+    }
+};
+
+
