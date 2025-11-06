@@ -6,6 +6,9 @@ import com.jknv.lum.repository.AccountRepository
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertThrows
+import org.springframework.security.core.userdetails.UsernameNotFoundException
+import java.util.Optional
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -27,10 +30,29 @@ class AccountDetailsServiceTest {
 
     @Test
     fun loadUserByUsernameTest() {
-        every { accountRepository.findByUsername("username") } returns account
+        every { accountRepository.findByUsername(any()) } answers {
+            if (firstArg<String>() == account.username)
+                Optional.of(account)
+            else Optional.empty()
+        }
 
-        val accountDetails = accountDetailsService.loadUserByUsername("username")
+        val accountDetails = accountDetailsService.loadUserByUsername(account.username)
 
         assertEquals(account, accountDetails.account)
+        assertThrows<UsernameNotFoundException> { accountDetailsService.loadUserByUsername("") }
+    }
+
+    @Test
+    fun loadUserByIdTest() {
+        every { accountRepository.findById(any()) } answers {
+            if (firstArg<Long>() == account.id)
+                Optional.of(account)
+            else Optional.empty()
+        }
+
+        val accountDetails = accountDetailsService.loadUserById(account.id)
+
+        assertEquals(account, accountDetails.account)
+        assertThrows<UsernameNotFoundException> { accountDetailsService.loadUserById(account.id + 1) }
     }
 }
