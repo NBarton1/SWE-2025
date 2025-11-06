@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Modal, Select, Button, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import type { Player } from "../../types/accountTypes";
-import {getPlayers} from "../../request/accounts.ts";
 import {invitePlayerFromTeam} from "../../request/teams.ts";
+import {getPlayers} from "../../request/players.ts";
 
 interface InvitePlayerModalProps {
     opened: boolean;

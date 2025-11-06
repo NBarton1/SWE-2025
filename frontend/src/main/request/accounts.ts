@@ -55,15 +55,15 @@ export const updateAccount = async (account: UpdateAccountRequest): Promise<Acco
     }
 };
 
-export const getPlayers = async (): Promise<Player[]> => {
+export const getDependents = async (): Promise<Player[]> => {
     try {
-        const res = await fetch("http://localhost:8080/api/players", {
+        const res = await fetch("http://localhost:8080/api/accounts/dependents", {
             method: "GET",
             credentials: 'include'
         });
         return await res.json();
     } catch (err) {
-        console.error("Failed to get players", err);
+        console.error("Failed to get dependents", err);
         return [];
     }
 };

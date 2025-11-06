@@ -47,22 +47,26 @@ const roleHierarchy: Record<Role, Role[]> = {
     [Role.PLAYER]: [Role.PLAYER],
 };
 
-function hasRole(account: Account, needs: Role): boolean {
-    return roleHierarchy[account.role].includes(needs);
+function hasRole(account: Account | null, needs: Role): boolean {
+    return account != null && roleHierarchy[account.role].includes(needs);
 }
 
-export function isAdmin(account: Account): boolean {
+export function isAdmin(account: Account | null): boolean {
     return hasRole(account, Role.ADMIN);
 }
 
-export function isCoach(account: Account): boolean {
+export function isCoach(account: Account | null): boolean {
     return hasRole(account, Role.COACH);
 }
 
-export function isGuardian(account: Account): boolean {
+export function isGuardian(account: Account | null): boolean {
     return hasRole(account, Role.GUARDIAN);
 }
 
-export function isPlayer(account: Account): boolean {
+export function isPlayer(account: Account | null): boolean {
     return hasRole(account, Role.PLAYER);
+}
+
+export function accountEquals(a0: Account | null, a1: Account | null): boolean {
+    return a0?.id === a1?.id;
 }
