@@ -8,6 +8,7 @@ import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.AccountService
+import com.jknv.lum.services.ContentService
 import com.jknv.lum.services.CookieService
 import io.mockk.every
 import io.mockk.justRun
@@ -31,8 +32,9 @@ import kotlin.test.assertNull
 class AccountControllerTest {
     var accountService: AccountService = mockk()
     var cookieService: CookieService = mockk()
+    var contentService: ContentService = mockk()
 
-    var accountController: AccountController = AccountController(accountService, cookieService)
+    var accountController: AccountController = AccountController(accountService, cookieService, contentService)
 
     lateinit var req: AccountCreateRequest
     lateinit var account: Account
@@ -78,7 +80,6 @@ class AccountControllerTest {
             name = "newname",
             username = "newusername",
             password = "newpassword",
-            picture = null
         )
         val expectedDTO = AccountDTO(
             id = account.id,

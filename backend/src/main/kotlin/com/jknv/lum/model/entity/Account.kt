@@ -29,8 +29,8 @@ class Account(
     @Column(nullable = false, unique = true, length = 32)
     var username: String,
 
-    @Column(nullable = true, columnDefinition = "bytea")
-    var picture: ByteArray? = null,
+    @Column(nullable = true, length = 32)
+    var email: String? = null,
 
     @Column(nullable = false, name = "hashed_password")
     var password: String,
@@ -52,13 +52,18 @@ class Account(
 
     @OneToOne(mappedBy = "account", cascade = [CascadeType.ALL], orphanRemoval = true)
     var player: Player? = null,
+
+    @OneToOne(orphanRemoval = true)
+    var picture: Content? = null,
 ) {
     fun toDTO(): AccountDTO {
         return AccountDTO(
             id = id,
             name = name,
+            email = email,
             username = username,
             role = role,
+            picture = picture?.toDTO()
         )
     }
 }
