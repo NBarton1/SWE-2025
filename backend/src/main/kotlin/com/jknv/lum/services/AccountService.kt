@@ -2,6 +2,7 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.entity.Content
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.model.request.account.AccountUpdateRequest
@@ -52,9 +53,13 @@ class AccountService(
 
         req.name?.let { account.name = it }
         req.username?.let { account.username = it }
-        req.picture?.let { account.picture = it }
         req.password?.let { account.password = bCryptPasswordEncoder.encode(it) }
 
+        return accountRepository.save(account).toDTO()
+    }
+
+    fun updatePictureForAccount(account: Account, picture: Content): AccountDTO {
+        account.picture = picture
         return accountRepository.save(account).toDTO()
     }
 

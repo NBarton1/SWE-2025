@@ -13,11 +13,12 @@
         private val contentService: ContentService,
     ) {
 
-        @PostMapping("/upload")
-        fun upload(@RequestParam("file") file: MultipartFile): ResponseEntity<ContentDTO> {
-            val metadata = contentService.upload(file)
-            return ResponseEntity.ok(metadata)
-        }
+        // Might need use in the future (generic file upload)
+//        @PostMapping("/upload")
+//        fun upload(@RequestParam("file") file: MultipartFile): ResponseEntity<ContentDTO> {
+//            val metadata = contentService.upload(file)
+//            return ResponseEntity.ok(metadata)
+//        }
 
         @GetMapping("/{fileId}")
         fun download(@PathVariable fileId: Long): ResponseEntity<ByteArray> {

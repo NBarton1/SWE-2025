@@ -19,7 +19,7 @@ class ContentService(
     private val storagePath: String,
     private val contentRepository: ContentRepository,
 ) {
-    fun upload(file: MultipartFile): ContentDTO {
+    fun upload(file: MultipartFile): Content {
         if (file.isEmpty) {
             throw IllegalArgumentException("file can not be empty")
         }
@@ -39,12 +39,12 @@ class ContentService(
             fileSize = file.size,
         )
 
-        val dto = contentRepository.save(content).toDTO()
+        val savedContent = contentRepository.save(content)
 
-        val targetPath = uploadPath.resolve(dto.id.toString())
+        val targetPath = uploadPath.resolve(content.id.toString())
         Files.copy(file.inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
-        return dto
+        return savedContent
     }
 
     fun getContent(id: Long): ContentDTO = getContentById(id).toDTO()
