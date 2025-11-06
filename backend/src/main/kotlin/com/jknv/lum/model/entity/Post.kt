@@ -1,5 +1,6 @@
 package com.jknv.lum.model.entity
 
+import com.jknv.lum.model.dto.PostDTO
 import jakarta.persistence.*
 
 
@@ -21,8 +22,17 @@ class Post (
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = true)
-    var parentId: Post? = null,
+    var parentPost: Post? = null,
 
-    @OneToMany(mappedBy = "parentId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY)
     var children: MutableSet<Post> = mutableSetOf(),
-)
+) {
+    fun toDTO(): PostDTO {
+        return PostDTO(
+            id = id,
+            content = content,
+            likeCount = likeCount,
+            dislikeCount = dislikeCount,
+        )
+    }
+}
