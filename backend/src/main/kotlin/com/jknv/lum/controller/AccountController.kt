@@ -1,5 +1,6 @@
 package com.jknv.lum.controller
 
+import com.jknv.lum.LOGGER
 import com.jknv.lum.config.PreAuthorizeGuardian
 import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.dto.PlayerDTO
@@ -68,6 +69,7 @@ class AccountController(
     fun delete(@PathVariable id: Long): ResponseEntity<Void> {
         accountService.deleteAccount(id)
         return ResponseEntity.ok().build()
+    }
 
     @PatchMapping("/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun updatePicture(

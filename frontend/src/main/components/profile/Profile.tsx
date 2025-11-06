@@ -17,14 +17,10 @@ import {
 import { useForm } from '@mantine/form';
 import '@mantine/core/styles.css';
 import { type Account, type Player, accountEquals, isPlayer } from "../../types/accountTypes.ts";
-import { useParams, useNavigate } from "react-router";
-import { getAccount, getDependents, updateAccount } from "../../request/accounts.ts";
-import { getInvites, respondToInvite } from "../../request/invites.ts";
-import type {Account} from "../../types/accountTypes.ts";
 import {useNavigate, useParams} from "react-router";
 import {
     deleteAccount,
-    getAccount,
+    getAccount, getDependents,
     updateAccount,
     updateAccountPicture,
     type UpdateAccountRequest
@@ -46,7 +42,6 @@ const ProfilePage = () => {
     const [dependents, setDependents] = useState<Player[]>([]);
     const [createPlayerModalOpen, setCreatePlayerModalOpen] = useState(false);
     const { currentAccount } = useLogin();
-    const navigate = useNavigate();
 
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
