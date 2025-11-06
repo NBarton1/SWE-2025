@@ -33,7 +33,7 @@ class TeamInviteService (
     fun getInvitesByPlayer(id: Long): List<TeamInviteDTO> {
         val player = playerService.getPlayerById(id)
 
-        return teamInviteRepository.findTeamInvitesByPlayer(player).map { it.toDTO() }
+        return teamInviteRepository.findTeamInvitesByPlayer(player).filter { it.status == InviteStatus.PENDING }.map { it.toDTO() }
     }
 
     fun countInvites(): Long =

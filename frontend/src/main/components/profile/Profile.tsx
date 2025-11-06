@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     Container,
     Paper,
@@ -10,20 +10,26 @@ import {
     Button,
     TextInput,
     FileButton,
-    PasswordInput
+    PasswordInput,
+    Title,
+    Divider,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import '@mantine/core/styles.css';
-import type {Account} from "../../types/accountTypes.ts";
+import { type Account, type Player, accountEquals, isPlayer } from "../../types/accountTypes.ts";
 import {useNavigate, useParams} from "react-router";
 import {
     deleteAccount,
-    getAccount,
+    getAccount, getDependents,
     updateAccount,
     updateAccountPicture,
     type UpdateAccountRequest
 } from "../../request/accounts.ts";
 import {logout} from "../../request/auth.ts";
+import {getInvites, respondToInvite} from "../../request/invites.ts";
+import useLogin from "../../hooks/useLogin.tsx";
+import type { TeamInvite } from "../../types/invite.ts";
+import PlayerCreateModal from "../signup/PlayerCreateModal.tsx";
 
 const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
@@ -32,6 +38,10 @@ const ProfilePage = () => {
     const navigate = useNavigate();
 
     const [account, setAccount] = useState<Account | null>(null);
+    const [invites, setInvites] = useState<TeamInvite[]>([]);
+    const [dependents, setDependents] = useState<Player[]>([]);
+    const [createPlayerModalOpen, setCreatePlayerModalOpen] = useState(false);
+    const { currentAccount } = useLogin();
 
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -70,6 +80,16 @@ const ProfilePage = () => {
         });
     }, [id]);
 
+    useEffect(() => {
+        if (!accountEquals(currentAccount, account)) return;
+
+        if (isPlayer(currentAccount)) {
+            getInvites().then(setInvites);
+        } else {
+            getDependents().then(setDependents);
+        }
+    }, [account, currentAccount]);
+
     const edit = useCallback(() => {
         if (!account) return;
         form.setValues({
@@ -105,7 +125,7 @@ const ProfilePage = () => {
         if (values.picture !== null) {
             await updateAccountPicture(values.picture)
         }
-        
+
         setAccount(updatedAccount)
         setIsEditing(false);
     }, [account, form]);
@@ -120,6 +140,13 @@ const ProfilePage = () => {
         await logout()
         navigate("/login")
     }, [navigate])
+
+    const handleRespond = async (teamId: number, accepted: boolean) => {
+        const res = await respondToInvite(teamId, {isAccepted: accepted});
+        if (!res) return;
+
+        setInvites((prev) => prev.filter((i) => i.team.id !== teamId));
+    };
 
     return (
         <Container size="md" py={40}>
@@ -239,7 +266,6 @@ const ProfilePage = () => {
                                             Delete Account
                                         </Button>
                                     </Stack>
-
                                 </Group>
                             )}
                         </Stack>
@@ -250,6 +276,83 @@ const ProfilePage = () => {
                     </Stack>
                 )}
             </Paper>
+
+            {accountEquals(currentAccount, account) && (
+                <Paper shadow="sm" radius="md" p="xl" mt="md" withBorder>
+                    <Stack>
+                        {isPlayer(currentAccount) ? (
+                            <>
+                                <Title order={3}>Team Invites</Title>
+                                <Divider />
+                                {invites.length === 0 ? (
+                                    <Text c="dimmed">You have no pending invites.</Text>
+                                ) : (
+                                    invites.map(invite => (
+                                        <Group
+                                            key={invite.team.id}
+                                            justify="space-between"
+                                            style={{ borderBottom: "1px solid #eee", paddingBottom: 8 }}
+                                        >
+                                            <Text>
+                                                You’ve been invited to join <b>{invite.team.name}</b>
+                                            </Text>
+                                            <Group>
+                                                <Button
+                                                    size="xs"
+                                                    color="green"
+                                                    onClick={() => handleRespond(invite.team.id, true)}
+                                                >
+                                                    Accept
+                                                </Button>
+                                                <Button
+                                                    size="xs"
+                                                    color="red"
+                                                    onClick={() => handleRespond(invite.team.id, false)}
+                                                >
+                                                    Decline
+                                                </Button>
+                                            </Group>
+                                        </Group>
+                                    ))
+                                )}
+                            </>
+                        ) : (
+                            <>
+                                <Group align="center" justify="space-between">
+                                    <Title order={3}>Your Dependents</Title>
+                                    <Button size="xs" onClick={() => setCreatePlayerModalOpen(true)}>
+                                        Create Player Account
+                                    </Button>
+                                </Group>
+                                <Divider />
+                                {dependents.length === 0 ? (
+                                    <Text c="dimmed">You have no dependents.</Text>
+                                ) : (
+                                    dependents.map(dependent => (
+                                        <Group
+                                            key={dependent.account.id}
+                                            justify="space-between"
+                                            style={{ borderBottom: "1px solid #eee", padding: 8, cursor: "pointer" }}
+                                            onClick={() => navigate(`/profile/${dependent.account.id}`)}
+                                        >
+                                            <Text>
+                                                {dependent.account.name} ({dependent.account.username})
+                                            </Text>
+                                        </Group>
+                                    ))
+                                )}
+                            </>
+                        )}
+                    </Stack>
+                </Paper>
+            )}
+
+            <PlayerCreateModal
+                opened={createPlayerModalOpen}
+                onClose={() => setCreatePlayerModalOpen(false)}
+                onAdded={() => getDependents().then(setDependents)}
+            />
+
         </Container>
     );
 };

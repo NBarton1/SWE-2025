@@ -1,6 +1,7 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.GuardianDTO
+import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Guardian
 import com.jknv.lum.repository.GuardianRepository
@@ -18,6 +19,9 @@ class GuardianService (
 
     fun getGuardians(): List<GuardianDTO> =
         guardianRepository.findAll().map { it.toDTO() }
+
+    fun getDependentsOf(id: Long): List<PlayerDTO> =
+        getGuardianById(id).children.map { it.toDTO() }
 
     fun countGuardians(): Long =
         guardianRepository.count()

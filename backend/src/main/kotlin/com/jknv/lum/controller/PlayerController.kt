@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.security.Principal
 
 @RestController
 @RequestMapping("/api/players")
@@ -37,6 +36,12 @@ class PlayerController (
     ): ResponseEntity<PlayerDTO> {
         val response = playerService.createPlayer(req, details.id)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
+    }
+
+    @GetMapping
+    fun getPlayers(): ResponseEntity<List<PlayerDTO>> {
+        val response = playerService.getPlayers()
+        return ResponseEntity.ok(response)
     }
 
     @PatchMapping("/{playerId}/permission")

@@ -1,53 +1,24 @@
-import {
-    TextInput,
-    PasswordInput,
-    Button,
-    Paper,
-    Title,
-    Stack,
-    useMantineTheme,
-    Box, Group
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import {useCallback} from "react";
-import {signup} from "../../request/signup.ts";
-import {useNavigate} from "react-router";
+import { Paper, Title, Box, useMantineTheme } from "@mantine/core";
+import { useNavigate } from "react-router";
+import { useCallback } from "react";
+import { signup } from "../../request/signup.ts";
 import useLogin from "../../hooks/useLogin.tsx";
-
-
-
+import CreateAccountForm from "./CreateAccountForm.tsx";
 
 const SignupPage = () => {
-    const theme = useMantineTheme(); // access Mantine theme
+    const theme = useMantineTheme();
+    const navigate = useNavigate();
+    const { tryLogin } = useLogin();
 
-    const navigate = useNavigate()
+    const handleSignup = useCallback(
+        async (values: { name: string; username: string; password: string }) => {
+            const signupRes = await signup(values);
+            if (!signupRes.ok) return;
 
-    const { tryLogin } = useLogin()
-
-    const form = useForm({
-        initialValues: { name: "", username: "", password: "" },
-        validate: {
-            name: (value) => (value.trim().length < 2 ? "Name must have at least 2 characters" : null),
-            username: (value) => (value.trim().length < 3 ? "Username must be at least 3 characters" : null),
-            password: (value) => (value.length < 8 ? "Password must be at least 8 characters" : null),
+            await tryLogin(values.username, values.password);
         },
-    });
-
-    const handleSignup = useCallback(async () => {
-
-        const signupRes = await signup({
-            name: form.values.name,
-            username: form.values.username,
-            password: form.values.password,
-        })
-
-        if (!signupRes.ok) {
-            return;
-        }
-
-        await tryLogin(form.values.username, form.values.password)
-
-    }, [form.values.name, form.values.password, form.values.username, navigate]);
+        [tryLogin]
+    );
 
     return (
         <Box
@@ -64,51 +35,12 @@ const SignupPage = () => {
                     Create an Account
                 </Title>
 
-                <form onSubmit={form.onSubmit(handleSignup)}>
-                    <Stack>
-                        <TextInput
-                            label="Full Name"
-                            placeholder="Enter your name..."
-                            {...form.getInputProps("name")}
-                            data-testid="signup-name"
-                            required
-                        />
-
-                        <TextInput
-                            label="Username"
-                            placeholder="Enter your username..."
-                            {...form.getInputProps("username")}
-                            data-testid="signup-username"
-                            required
-                        />
-
-                        <PasswordInput
-                            label="Password"
-                            placeholder="Enter your password..."
-                            {...form.getInputProps("password")}
-                            data-testid="signup-password"
-                            required
-                        />
-
-                        <Group mt="md" grow>
-                            <Button
-                                type="submit"
-                                variant="filled"
-                                data-testid="signup-submit"
-                            >
-                                Sign Up
-                            </Button>
-
-                            <Button
-                                variant="outline"
-                                onClick={() => navigate("/login")}
-                                data-testid="signup-login"
-                            >
-                                Login
-                            </Button>
-                        </Group>
-                    </Stack>
-                </form>
+                <CreateAccountForm
+                    onSubmit={handleSignup}
+                    submitLabel="Sign Up"
+                    onCancel={() => navigate("/login")}
+                    cancelLabel="Login"
+                />
             </Paper>
         </Box>
     );

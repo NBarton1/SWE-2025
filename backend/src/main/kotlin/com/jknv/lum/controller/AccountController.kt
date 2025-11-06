@@ -1,7 +1,9 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.LOGGER
+import com.jknv.lum.config.PreAuthorizeGuardian
 import com.jknv.lum.model.dto.AccountDTO
+import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.ContentDTO
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.account.AccountLoginRequest
@@ -10,6 +12,7 @@ import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.AccountService
 import com.jknv.lum.services.ContentService
 import com.jknv.lum.services.CookieService
+import com.jknv.lum.services.GuardianService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -24,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile
 class AccountController(
     private val accountService: AccountService,
     private val cookieService: CookieService,
+    private val guardianService: GuardianService,
     private val contentService: ContentService,
 ) {
 
@@ -50,11 +54,21 @@ class AccountController(
         @RequestBody updateInfo: AccountUpdateRequest,
         @AuthenticationPrincipal details: AccountDetails,
     ): ResponseEntity<AccountDTO> {
-
-        LOGGER.info("${details.id}")
-
         val response = accountService.updateAccount(details.id, updateInfo)
         return ResponseEntity.accepted().body(response)
+    }
+
+    @GetMapping("/dependents")
+    @PreAuthorizeGuardian
+    fun getDependents(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<List<PlayerDTO>> {
+        val response = guardianService.getDependentsOf(details.id)
+        return ResponseEntity.ok(response)
+    }
+
+    @DeleteMapping("/{id}")
+    fun delete(@PathVariable id: Long): ResponseEntity<Void> {
+        accountService.deleteAccount(id)
+        return ResponseEntity.ok().build()
     }
 
     @PatchMapping("/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
