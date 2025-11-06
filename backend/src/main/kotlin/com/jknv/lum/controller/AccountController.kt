@@ -68,9 +68,9 @@ class AccountController(
         return ResponseEntity.ok().body(picture.toDTO())
     }
 
-    @DeleteMapping("/{id}")
-    fun delete(@PathVariable id: Long): ResponseEntity<Void> {
-        accountService.deleteAccount(id)
+    @DeleteMapping
+    fun delete(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<Void> {
+        accountService.deleteAccount(details.id)
         return ResponseEntity.noContent().build()
     }
 

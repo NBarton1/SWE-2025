@@ -34,7 +34,7 @@ class ContentService(
 
         // TODO validate media type being uploaded
         val content = Content(
-            originalFilename = originalFilename,
+            filename = originalFilename,
             contentType = file.contentType ?: throw IllegalArgumentException("contentType must be provided"),
             fileSize = file.size,
         )

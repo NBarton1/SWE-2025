@@ -53,6 +53,7 @@ class AccountService(
 
         req.name?.let { account.name = it }
         req.username?.let { account.username = it }
+        req.email?.let { account.email = it }
         req.password?.let { account.password = bCryptPasswordEncoder.encode(it) }
 
         return accountRepository.save(account).toDTO()

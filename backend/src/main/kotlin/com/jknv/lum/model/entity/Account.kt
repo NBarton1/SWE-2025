@@ -29,6 +29,9 @@ class Account(
     @Column(nullable = false, unique = true, length = 32)
     var username: String,
 
+    @Column(nullable = true, length = 32)
+    var email: String? = null,
+
     @Column(nullable = false, name = "hashed_password")
     var password: String,
 
@@ -57,8 +60,10 @@ class Account(
         return AccountDTO(
             id = id,
             name = name,
+            email = email,
             username = username,
             role = role,
+            picture = picture?.toDTO()
         )
     }
 }

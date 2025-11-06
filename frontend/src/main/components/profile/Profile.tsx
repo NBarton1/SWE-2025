@@ -15,36 +15,50 @@ import {
 import { useForm } from '@mantine/form';
 import '@mantine/core/styles.css';
 import type {Account} from "../../types/accountTypes.ts";
-import {useParams} from "react-router";
-import {getAccount, updateAccount} from "../../request/accounts.ts";
+import {useNavigate, useParams} from "react-router";
+import {
+    deleteAccount,
+    getAccount,
+    updateAccount,
+    updateAccountPicture,
+    type UpdateAccountRequest
+} from "../../request/accounts.ts";
+import {logout} from "../../request/auth.ts";
 
 const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const { id } = useParams();
+
+    const navigate = useNavigate();
+
     const [account, setAccount] = useState<Account | null>(null);
+
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     const form = useForm({
         initialValues: {
-            name: '',
-            username: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
+            name: "",
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            picture: null as File | null
         },
         validate: {
-            name: (value) => (isEditing && value.trim().length === 0 ? 'Name is required' : null),
-            username: (value) => (isEditing && value.trim().length === 0 ? 'Username is required' : null),
-            email: (value) => (isEditing && value && !/^\S+@\S+$/.test(value) ? 'Invalid email' : null),
-            password: (value, _) => {
-                if (!value) return null;
-                if (value.length < 8) return 'Password must be at least 8 characters';
+            name: (value) => (isEditing && value.trim().length === 0 ? "Name is required" : null),
+            username: (value) => (isEditing && value.trim().length === 0 ? "Username is required" : null),
+            // email validation should maybe be changed
+            email: (value) => (value && value.trim().length > 0 && !/^\S+@\S+$/.test(value) ? "Invalid email" : null),
+            password: (value) => {
+                if (!value || value.trim().length === 0) return null;
+                if (value.length < 8) return "Password must be at least 8 characters";
                 return null;
             },
             confirmPassword: (value, values) => {
-                if (!values.password) return null;
-                return value !== values.password ? 'Passwords do not match' : null;
+                if (!values.password || values.password.trim().length === 0) return null;
+                return value !== values.password ? "Passwords do not match" : null;
             },
-        },
+        }
     });
 
     useEffect(() => {
@@ -53,13 +67,6 @@ const ProfilePage = () => {
         getAccount(id_num).then(account => {
             if (account == null) return
             setAccount(account);
-            form.setValues({
-                name: account.name,
-                username: account.username,
-                email: '',
-                password: '',
-                confirmPassword: '',
-            });
         });
     }, [id]);
 
@@ -68,33 +75,51 @@ const ProfilePage = () => {
         form.setValues({
             name: account.name,
             username: account.username,
-            email: '',
-            password: '',
-            confirmPassword: '',
+            email: account.email || "",
+            password: "",
+            confirmPassword: "",
+            picture: null
         });
         setIsEditing(true);
-    }, [account]);
+    }, [account, form]);
 
     const handleSubmit = useCallback(async (values: typeof form.values) => {
         if (!account) return;
 
-        const updatedAccount = {
+        const updatedAccountRequest: UpdateAccountRequest = {
             ...account,
             name: values.name,
             username: values.username,
-            password: values.password,
-            email: values.email,
         };
 
-        await updateAccount(updatedAccount);
-        setAccount(updatedAccount);
+        if (values.email && values.email.trim().length > 0) {
+            updatedAccountRequest.email = values.email;
+        }
+
+        if (values.password && values.password.trim().length > 0) {
+            updatedAccountRequest.password = values.password;
+        }
+
+        const updatedAccount: Account | null = await updateAccount(updatedAccountRequest);
+
+        if (values.picture !== null) {
+            await updateAccountPicture(values.picture)
+        }
+        
+        setAccount(updatedAccount)
         setIsEditing(false);
-    }, [account]);
+    }, [account, form]);
 
     const cancel = useCallback(() => {
         form.reset();
         setIsEditing(false);
-    }, []);
+    }, [form]);
+
+    const handleDelete = useCallback(async () => {
+        await deleteAccount()
+        await logout()
+        navigate("/login")
+    }, [navigate])
 
     return (
         <Container size="md" py={40}>
@@ -106,23 +131,34 @@ const ProfilePage = () => {
                                 <Group align="flex-start">
                                     <Stack gap="xs" align="center">
                                         <Avatar
-                                            src={null}
+                                            src={previewUrl ?? account?.picture?.downloadUrl}
                                             size={120}
                                             radius="md"
                                             name={account.name}
                                         />
-                                        {isEditing && (
-                                            <FileButton
-                                                onChange={() => {}}
-                                                accept="image/png,image/jpeg"
-                                            >
-                                                {(props) => (
-                                                    <Button {...props} size="xs" variant="light">
-                                                        Change Picture
-                                                    </Button>
-                                                )}
-                                            </FileButton>
-                                        )}
+                                        {isEditing &&
+                                        <FileButton
+
+                                            onChange={file => {
+                                                form.setFieldValue("picture", file);
+
+                                                if (file) {
+                                                    const url = URL.createObjectURL(file);
+                                                    setPreviewUrl(url);
+                                                } else {
+                                                    // this is only to empty the image since it's invalid
+                                                    setPreviewUrl(null);
+                                                }
+                                            }}
+                                            accept="image/png,image/jpeg,image/gif"
+                                        >
+                                            {(props) => (
+                                                <Button {...props} size="xs" variant="light">
+                                                    Change Picture
+                                                </Button>
+                                            )}
+                                        </FileButton>
+                                        }
                                     </Stack>
 
                                     <Stack gap="xs" style={{ flex: 1 }}>
@@ -133,20 +169,21 @@ const ProfilePage = () => {
                                                     placeholder="Name"
                                                     maxLength={32}
                                                     required
-                                                    {...form.getInputProps('name')}
+                                                    {...form.getInputProps("name")}
                                                 />
                                                 <TextInput
                                                     label="Username"
                                                     placeholder="Username"
                                                     maxLength={32}
                                                     required
-                                                    {...form.getInputProps('username')}
+                                                    {...form.getInputProps("username")}
                                                 />
                                             </>
                                         ) : (
                                             <>
                                                 <Text size="xl" fw={700}>{account.name}</Text>
                                                 <Text size="sm" c="dimmed">@{account.username}</Text>
+                                                {account.email && <Text size="sm" >{account.email}</Text>}
                                             </>
                                         )}
                                         <Group gap="xs">
@@ -194,7 +231,15 @@ const ProfilePage = () => {
                                             placeholder="Confirm new password"
                                             {...form.getInputProps('confirmPassword')}
                                         />
+                                        <Button
+                                            onClick={handleDelete}
+                                            color="red"
+                                            variant="filled"
+                                        >
+                                            Delete Account
+                                        </Button>
                                     </Stack>
+
                                 </Group>
                             )}
                         </Stack>
