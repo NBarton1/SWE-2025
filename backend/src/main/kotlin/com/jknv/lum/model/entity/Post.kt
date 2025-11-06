@@ -11,6 +11,10 @@ class Post (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    var account: Account,
+
     @Column(nullable = false)
     var likeCount: Int = 0,
 

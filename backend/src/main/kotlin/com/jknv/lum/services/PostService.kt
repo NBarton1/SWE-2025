@@ -13,14 +13,26 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class PostService (
     private val postRepository: PostRepository,
+    private val accountService: AccountService,
 ) {
-    fun createPost(req: PostCreateRequest): PostDTO {
-        val parentPost: Post? = req.parentId?.let { id ->
-            getPostById(id)
+    fun createPost(req: PostCreateRequest, accountId: Long, ): PostDTO {
+        val parentPost: Post? = req.parentId?.let { id -> getPostById(id) }
+        val account = accountService.getAccountById(accountId)
+
+        return postRepository.save(req.toEntity(account, parentPost)).toDTO()
+    }
+
+    fun isPostOwner(postId: Long, accountId: Long): Boolean =
+        accountId == getPostById(postId).account.id
+
+    fun deletePost(postId: Long, accountId: Long) {
+        if (!isPostOwner(postId, accountId)) {
+            throw EntityNotFoundException("Post $postId not owned by account $accountId")
         }
 
-        return postRepository.save(req.toEntity(parentPost)).toDTO()
+        postRepository.deleteById(postId)
     }
+
 
     fun getPostById(id: Long): Post =
         postRepository.findById(id).orElseThrow { EntityNotFoundException("Post $id not found") }
