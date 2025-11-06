@@ -48,7 +48,6 @@ const DatePopup = ({ date, matches, setMatches, teams }: DatePopupProps) => {
                     <Stack gap="md">
                         {dateMatches.map(match => (
                             <UpdateMatchForm
-                                key={match.id}
                                 match={match}
                                 teams={teams}
                                 date={date}

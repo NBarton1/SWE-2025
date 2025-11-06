@@ -21,22 +21,27 @@ class Post (
     @Column(nullable = false)
     var dislikeCount: Int = 0,
 
-    @Column(nullable = false)
-    var content: String,
+    @Column
+    var textContent: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = true)
     var parentPost: Post? = null,
 
     @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY)
-    var children: MutableSet<Post> = mutableSetOf(),
+    var children: MutableList<Post> = mutableListOf(),
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    var media: MutableList<Content> = mutableListOf(),
+
 ) {
     fun toDTO(): PostDTO {
         return PostDTO(
             id = id,
-            content = content,
+            textContent = textContent,
             likeCount = likeCount,
             dislikeCount = dislikeCount,
+            media = media.map { it.toDTO() }.toMutableList(),
         )
     }
 }

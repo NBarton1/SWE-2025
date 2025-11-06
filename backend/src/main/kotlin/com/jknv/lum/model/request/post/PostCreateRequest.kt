@@ -2,14 +2,16 @@ package com.jknv.lum.model.request.post
 
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Post
+import org.springframework.web.multipart.MultipartFile
 
 class PostCreateRequest (
-    var content: String,
+    var media: List<MultipartFile>?,
+    var textContent: String,
     var parentId: Long?,
 ) {
     fun toEntity(account: Account, parent: Post?): Post {
         return Post(
-            content = content,
+            textContent = textContent,
             parentPost = parent,
             account = account
         )

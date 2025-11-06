@@ -2,6 +2,7 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.ContentDTO
 import com.jknv.lum.model.entity.Content
+import com.jknv.lum.model.entity.Post
 import com.jknv.lum.repository.ContentRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Value
@@ -13,13 +14,11 @@ import java.nio.file.StandardCopyOption
 
 @Service
 class ContentService(
-
-
     @param:Value($$"${lum.storage.path}")
     private val storagePath: String,
     private val contentRepository: ContentRepository,
 ) {
-    fun upload(file: MultipartFile): Content {
+    fun uploadForPost(file: MultipartFile, post: Post?): Content {
         if (file.isEmpty) {
             throw IllegalArgumentException("file can not be empty")
         }
@@ -37,6 +36,7 @@ class ContentService(
             filename = originalFilename,
             contentType = file.contentType ?: throw IllegalArgumentException("contentType must be provided"),
             fileSize = file.size,
+            post = post,
         )
 
         val savedContent = contentRepository.save(content)
@@ -46,6 +46,9 @@ class ContentService(
 
         return savedContent
     }
+
+    fun upload(file: MultipartFile): Content =
+        uploadForPost(file, null)
 
     fun getContent(id: Long): ContentDTO = getContentById(id).toDTO()
 

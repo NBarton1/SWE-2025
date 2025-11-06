@@ -7,10 +7,9 @@ import TeamView from "./components/teams/TeamView.tsx";
 import Layout from "./components/layout/Layout.tsx";
 import LiveMatchEditPage from "./components/live_match/LiveMatchEditPage.tsx";
 import LiveMatchViewPage from "./components/live_match/LiveMatchViewPage.tsx";
-
 import Profile from "./components/profile/Profile.tsx";
-import EditPost from "./components/post/EditPost.tsx";
 import EditPostPage from "./components/post/EditPostPage.tsx";
+import ViewAllPosts from "./components/post/ViewAllPosts.tsx";
 
 function App() {
 
@@ -28,7 +27,8 @@ function App() {
                     <Route path="/teams/:id" element={<TeamView />} />
                     <Route path="/live/:id" element={<LiveMatchEditPage />} />
                     <Route path="/match/:id" element={(<LiveMatchViewPage />)}/>
-                    <Route path="/edit-post" element={(<EditPostPage />)} />
+                    <Route path="/create-post" element={(<EditPostPage />)} />
+                    <Route path="/feed" element={(<ViewAllPosts />)} />
                 </Route>
             </Routes>
         </BrowserRouter>

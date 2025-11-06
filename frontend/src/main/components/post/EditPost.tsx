@@ -6,7 +6,7 @@ import '@mantine/tiptap/styles.css';
 import {Button, FileButton, Paper, Image, Stack, Group, ActionIcon, rem, Title} from "@mantine/core";
 import {useState} from "react";
 import { IconX } from '@tabler/icons-react';
-import {createPost} from "../../request/post.ts";
+import {createPost, type PostCreateRequest} from "../../request/post.ts";
 
 
 function EditPost() {
@@ -15,34 +15,35 @@ function EditPost() {
         extensions: [StarterKit, Highlight],
     });
 
-    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
     const insertImage = (file: File | null) => {
-        if (previewUrl) {
-            URL.revokeObjectURL(previewUrl);
-        }
-
         if (file) {
             const url = URL.createObjectURL(file);
-            setPreviewUrl(url);
-        } else {
-            setPreviewUrl(null);
+            setMediaFiles([...mediaFiles, file]);
+            setPreviewUrls([...previewUrls, url]);
         }
     };
 
-    const removeImage = () => {
-        if (previewUrl) {
-            URL.revokeObjectURL(previewUrl);
-        }
-        setPreviewUrl(null);
+    const removeImage = (index: number) => {
+        URL.revokeObjectURL(previewUrls[index]);
+
+        setMediaFiles(mediaFiles.filter((_, i) => i !== index));
+        setPreviewUrls(previewUrls.filter((_, i) => i !== index));
     };
 
     const handleCreatePost = async () => {
         if (!editor) return;
 
-        const htmlContent = editor.getHTML();
-        const post = await createPost({ content: htmlContent, parentId: null })
+        const jsonContent = editor.getJSON();
+        const createPostReq: PostCreateRequest = {
+            mediaFiles: mediaFiles,
+            textContent: jsonContent,
+            parentId: null
+        };
 
+        const post = await createPost(createPostReq);
         console.log(post);
     };
 
@@ -51,24 +52,27 @@ function EditPost() {
             <Stack gap="md">
                 <Title order={3} ta="center">New Post</Title>
 
-                {previewUrl && (
+                {previewUrls.length > 0 && (
                     <Group gap="xs" align="flex-start">
-                        <Image
-                            src={previewUrl}
-                            alt="Preview"
-                            radius="md"
-                            fit="contain"
-                            h={rem(200)}
-                            w="auto"
-                        />
-                        <ActionIcon
-                            color="red"
-                            variant="light"
-                            onClick={removeImage}
-                            size="sm"
-                        >
-                            <IconX size={16} />
-                        </ActionIcon>
+                        {previewUrls.map((imageURL, index) => (
+                            <Group gap="xs" align="flex-start">
+                                <Image
+                                    src={imageURL}
+                                    radius="md"
+                                    fit="contain"
+                                    h={rem(200)}
+                                    w="auto"
+                                />
+                                <ActionIcon
+                                    color="red"
+                                    variant="light"
+                                    onClick={() => removeImage(index)}
+                                    size="sm"
+                                >
+                                    <IconX size={16} />
+                                </ActionIcon>
+                            </Group>
+                        ))}
                     </Group>
                 )}
 
@@ -94,7 +98,7 @@ function EditPost() {
                     >
                         {(props) => (
                             <Button {...props}>
-                                {previewUrl ? "Change Photo" : "Upload Photo"}
+                                Upload Photo
                             </Button>
                         )}
                     </FileButton>

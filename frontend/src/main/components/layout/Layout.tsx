@@ -17,6 +17,8 @@ function Layout() {
             label: 'Home',
             icon: Home,
             items: [
+                { label: 'Feed', href: '/feed' },
+                { label: 'Post', href: '/create-post' },
                 { label: 'Schedule', href: '/calendar' },
             ]
         },

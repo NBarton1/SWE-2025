@@ -1,5 +1,6 @@
 package com.jknv.lum.services
 
+import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.PostDTO
 import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.request.post.PostCreateRequest
@@ -14,13 +15,20 @@ import org.springframework.transaction.annotation.Transactional
 class PostService (
     private val postRepository: PostRepository,
     private val accountService: AccountService,
+    private val contentService: ContentService,
 ) {
-    fun createPost(req: PostCreateRequest, accountId: Long, ): PostDTO {
+    fun createPost(req: PostCreateRequest, accountId: Long): PostDTO {
         val parentPost: Post? = req.parentId?.let { id -> getPostById(id) }
         val account = accountService.getAccountById(accountId)
+        val createdPost = postRepository.save(req.toEntity(account, parentPost))
 
-        return postRepository.save(req.toEntity(account, parentPost)).toDTO()
+        req.media?.forEach { contentService.uploadForPost(it, createdPost) }
+
+        return createdPost.toDTO()
     }
+
+    fun getAllPosts(): List<PostDTO> =
+        postRepository.findAll().map { it.toDTO() }
 
     fun isPostOwner(postId: Long, accountId: Long): Boolean =
         accountId == getPostById(postId).account.id
@@ -32,7 +40,6 @@ class PostService (
 
         postRepository.deleteById(postId)
     }
-
 
     fun getPostById(id: Long): Post =
         postRepository.findById(id).orElseThrow { EntityNotFoundException("Post $id not found") }
