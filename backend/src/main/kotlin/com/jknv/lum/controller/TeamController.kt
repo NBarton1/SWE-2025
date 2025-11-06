@@ -6,9 +6,7 @@ import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
 import com.jknv.lum.model.request.team.TeamCreateRequest
-import com.jknv.lum.repository.TeamRepository
 import com.jknv.lum.security.AccountDetails
-import com.jknv.lum.services.AccountService
 import com.jknv.lum.services.CoachService
 import com.jknv.lum.services.PlayerService
 import com.jknv.lum.services.TeamInviteService
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.security.Principal
 
 @RestController
 @RequestMapping("/api/teams")
@@ -79,15 +76,19 @@ class TeamController (
     @PreAuthorizeCoach
     fun invitePlayer(
         @PathVariable playerId: Long,
-        @AuthenticationPrincipal details: AccountDetails): ResponseEntity<TeamInviteDTO> {
+        @AuthenticationPrincipal details: AccountDetails
+    ): ResponseEntity<TeamInviteDTO> {
         val response = teamInviteService.invitePlayerByCoach(playerId, details.id)
         return ResponseEntity.ok(response)
     }
 
     @DeleteMapping("/{playerId}")
     @PreAuthorizeCoach
-    fun removePlayer(@PathVariable playerId: Long): ResponseEntity<PlayerDTO> {
-        val response = playerService.removePlayerFromTeam(playerId)
+    fun removePlayer(
+        @PathVariable playerId: Long,
+        @AuthenticationPrincipal details: AccountDetails
+    ): ResponseEntity<PlayerDTO> {
+        val response = playerService.removePlayerFromTeam(playerId, details.id)
         return ResponseEntity.ok(response)
     }
 }

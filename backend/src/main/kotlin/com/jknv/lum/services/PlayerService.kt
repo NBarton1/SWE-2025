@@ -14,6 +14,7 @@ class PlayerService (
     private val playerRepository: PlayerRepository,
     private val accountService: AccountService,
     private val guardianService: GuardianService,
+    private val coachService: CoachService,
 ) {
     fun createPlayer(req: AccountCreateRequest, accountId: Long): PlayerDTO {
         val guardian = guardianService.getGuardianById(accountId)
@@ -40,8 +41,12 @@ class PlayerService (
         return updatePlayer(player)
     }
 
-    fun removePlayerFromTeam(playerId: Long): PlayerDTO {
+    fun removePlayerFromTeam(playerId: Long, coachId: Long): PlayerDTO {
+        val coach = coachService.getCoachById(coachId)
         val player = getPlayerById(playerId)
+
+        if (coach.coachingTeam?.id != player.playingTeam?.id)
+            throw IllegalAccessException("You cannot remove this player from your team")
 
         player.playingTeam = null
         return updatePlayer(player)

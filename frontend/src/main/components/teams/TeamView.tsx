@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {Box, Card, Divider, Group, ScrollArea, Stack, Table, Title, Text, Button} from "@mantine/core";
-import { getTeam, getTeamPlayers, getTeamCoaches } from "../../request/teams";
+import {getTeam, getTeamPlayers, getTeamCoaches, removePlayerFromTeam} from "../../request/teams";
 import {type Team} from "../../types/team";
 import {type Player, type Coach, isCoach} from "../../types/accountTypes";
 import { useParams } from "react-router-dom";
@@ -16,6 +16,8 @@ const TeamView = () => {
     const [coaches, setCoaches] = useState<Coach[]>([]);
     const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
+    const [isCoachingTeam, setIsCoachingTeam] = useState(false);
+
     useEffect(() => {
         if (!id) return;
         Promise.all([
@@ -30,10 +32,24 @@ const TeamView = () => {
     }, [id]);
 
     const {currentAccount} = useLogin();
-    const isCoachingTeam =
-        currentAccount &&
-        isCoach(currentAccount) &&
-        coaches.some(c => c.account.id == currentAccount.id)
+
+    useEffect(() => {
+        if (!currentAccount || !isCoach(currentAccount)) {
+            setIsCoachingTeam(false);
+            return;
+        }
+
+        const match = coaches.some(c => c.account.id === currentAccount.id);
+        setIsCoachingTeam(match);
+    }, [currentAccount, coaches]);
+
+    const handleRemovePlayer = async (playerId: number) => {
+        const res = await removePlayerFromTeam(playerId);
+        if (!res) return;
+
+        setPlayers(prev => prev.filter(p => p.account.id !== playerId));
+    };
+
 
     if (!team) return <Text>Team not found</Text>
 
@@ -95,6 +111,7 @@ const TeamView = () => {
                                     <Table.Th>Name</Table.Th>
                                     <Table.Th>Username</Table.Th>
                                     <Table.Th>Position</Table.Th>
+                                    {isCoachingTeam && <Table.Th>Actions</Table.Th>}
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>
@@ -103,6 +120,17 @@ const TeamView = () => {
                                         <Table.Td>{player.account.name}</Table.Td>
                                         <Table.Td>{player.account.username}</Table.Td>
                                         <Table.Td>{player.position}</Table.Td>
+                                        {isCoachingTeam && (
+                                            <Table.Td>
+                                                <Button
+                                                    color="red"
+                                                    size="xs"
+                                                    onClick={() => handleRemovePlayer(player.account.id)}
+                                                >
+                                                    Remove
+                                                </Button>
+                                            </Table.Td>
+                                        )}
                                     </Table.Tr>
                                 )}
                             </Table.Tbody>

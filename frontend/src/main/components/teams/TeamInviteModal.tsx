@@ -3,7 +3,7 @@ import { Modal, Select, Button, Stack, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import type { Player } from "../../types/accountTypes";
 import {getPlayers} from "../../request/accounts.ts";
-import {invitePlayer} from "../../request/teams.ts";
+import {invitePlayerFromTeam} from "../../request/teams.ts";
 
 interface InvitePlayerModalProps {
     opened: boolean;
@@ -28,7 +28,7 @@ const InvitePlayerModal = ({ opened, onClose }: InvitePlayerModalProps) => {
         const playerId = Number(form.values.playerId);
         if (!playerId) return;
 
-        const res = await invitePlayer(playerId);
+        const res = await invitePlayerFromTeam(playerId);
         if (!res.ok) {
             setError("Cannot send invite. They likely already have one from this team.");
             return;
