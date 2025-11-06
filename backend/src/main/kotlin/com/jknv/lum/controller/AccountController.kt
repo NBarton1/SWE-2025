@@ -3,19 +3,23 @@ package com.jknv.lum.controller
 import com.jknv.lum.config.PreAuthorizeGuardian
 import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.dto.PlayerDTO
+import com.jknv.lum.model.dto.ContentDTO
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.AccountService
+import com.jknv.lum.services.ContentService
 import com.jknv.lum.services.CookieService
 import com.jknv.lum.services.GuardianService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -23,6 +27,7 @@ class AccountController(
     private val accountService: AccountService,
     private val cookieService: CookieService,
     private val guardianService: GuardianService,
+    private val contentService: ContentService,
 ) {
 
     @PostMapping
@@ -63,6 +68,22 @@ class AccountController(
     fun delete(@PathVariable id: Long): ResponseEntity<Void> {
         accountService.deleteAccount(id)
         return ResponseEntity.ok().build()
+
+    @PatchMapping("/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun updatePicture(
+        @AuthenticationPrincipal details: AccountDetails,
+        @RequestParam("image") image: MultipartFile
+    ): ResponseEntity<ContentDTO> {
+        val picture = contentService.upload(image)
+        LOGGER.info("${picture.id}")
+        accountService.updatePictureForAccount(details.account, picture)
+        return ResponseEntity.ok().body(picture.toDTO())
+    }
+
+    @DeleteMapping
+    fun delete(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<Void> {
+        accountService.deleteAccount(details.id)
+        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/login")

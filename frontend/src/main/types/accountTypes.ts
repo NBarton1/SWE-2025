@@ -1,6 +1,7 @@
 import type {Team} from "./team.ts";
+import type {Content} from "./content.ts";
 
-// @ts-ignore
+// @ts-expect-error erasable
 export enum Role {
     ADMIN = "ADMIN",
     COACH = "COACH",
@@ -12,7 +13,7 @@ export interface Account {
     id: number
     name: string,
     username: string,
-    picture: ArrayBuffer | null,
+    picture: Content,
     email: string | null
     role: Role
 }
