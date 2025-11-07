@@ -40,9 +40,9 @@ export const getAccount = async (
 };
 
 
-export const updateAccount = async (account: UpdateAccountRequest): Promise<Account | null> => {
+export const updateAccount = async (id: number, account: UpdateAccountRequest): Promise<Account | null> => {
     try {
-        const res = await fetch(`http://localhost:8080/api/accounts`, {
+        const res = await fetch(`http://localhost:8080/api/accounts/${id}`, {
             method: "PUT",
             credentials: 'include',
             headers: {

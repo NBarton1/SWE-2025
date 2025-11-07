@@ -42,6 +42,7 @@ class AccountServiceTest {
         coachService,
         guardianService,
         adminService,
+        playerService,
     )
     lateinit var req: AccountCreateRequest
     lateinit var account: Account

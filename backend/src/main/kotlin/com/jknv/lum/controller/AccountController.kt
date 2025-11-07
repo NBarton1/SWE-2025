@@ -1,11 +1,13 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.LOGGER
+import com.jknv.lum.config.PreAuthorizeAdminOrAccountOwner
 import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.dto.ContentDTO
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
+import com.jknv.lum.model.type.Role
 import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.AccountService
 import com.jknv.lum.services.ContentService
@@ -45,19 +47,22 @@ class AccountController(
         return ResponseEntity.ok(response)
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
+    @PreAuthorizeAdminOrAccountOwner
     fun update(
         @RequestBody updateInfo: AccountUpdateRequest,
+        @PathVariable id: Long,
         @AuthenticationPrincipal details: AccountDetails,
     ): ResponseEntity<AccountDTO> {
-
-        LOGGER.info("${details.id}")
-
-        val response = accountService.updateAccount(details.id, updateInfo)
+        if (details.role != Role.ADMIN && updateInfo.role != null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+        }
+        val response = accountService.updateAccount(id, updateInfo)
         return ResponseEntity.accepted().body(response)
     }
 
     @PatchMapping("/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PreAuthorizeAdminOrAccountOwner
     fun updatePicture(
         @AuthenticationPrincipal details: AccountDetails,
         @RequestParam("image") image: MultipartFile
@@ -68,10 +73,11 @@ class AccountController(
         return ResponseEntity.ok().body(picture.toDTO())
     }
 
-    @DeleteMapping
-    fun delete(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<Void> {
-        accountService.deleteAccount(details.id)
-        return ResponseEntity.noContent().build()
+    @DeleteMapping("/{id}")
+    @PreAuthorizeAdminOrAccountOwner
+    fun delete(@PathVariable id: Long): ResponseEntity<Void> {
+        accountService.deleteAccount(id)
+        return ResponseEntity.ok().build()
     }
 
     @PostMapping("/login")

@@ -67,3 +67,4 @@ export function isGuardian(account: Account): boolean {
 export function isPlayer(account: Account): boolean {
     return hasRole(account, Role.PLAYER);
 }
+

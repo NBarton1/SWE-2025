@@ -12,23 +12,24 @@ import {
     FileButton,
     PasswordInput,
     Title,
-    Divider,
+    Divider, Select,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import '@mantine/core/styles.css';
-import type {Account} from "../../types/accountTypes.ts";
+import {type Account, isAdmin, isPlayer, Role} from "../../types/accountTypes.ts";
 import {useNavigate, useParams} from "react-router";
+
+import {logout} from "../../request/auth.ts";
+import {getInvites, respondToInvite} from "../../request/invites.ts";
+import useLogin from "../../hooks/useLogin.tsx";
+import type {TeamInvite} from "../../types/invite.ts";
 import {
     deleteAccount,
     getAccount,
     updateAccount,
     updateAccountPicture,
-    type UpdateAccountRequest
+    type UpdateAccountRequest,
 } from "../../request/accounts.ts";
-import {logout} from "../../request/auth.ts";
-import {getInvites, respondToInvite} from "../../request/invites.ts";
-import useLogin from "../../hooks/useLogin.tsx";
-import type {TeamInvite} from "../../types/invite.ts";
 
 const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
@@ -49,6 +50,7 @@ const ProfilePage = () => {
             email: "",
             password: "",
             confirmPassword: "",
+            role: null as Role | null,
             picture: null as File | null
         },
         validate: {
@@ -89,6 +91,7 @@ const ProfilePage = () => {
             name: account.name,
             username: account.username,
             email: account.email || "",
+            role: account.role,
             password: "",
             confirmPassword: "",
             picture: null
@@ -98,6 +101,7 @@ const ProfilePage = () => {
 
     const handleSubmit = useCallback(async (values: typeof form.values) => {
         if (!account) return;
+        if (!currentAccount) return;
 
         const updatedAccountRequest: UpdateAccountRequest = {
             ...account,
@@ -113,7 +117,11 @@ const ProfilePage = () => {
             updatedAccountRequest.password = values.password;
         }
 
-        const updatedAccount: Account | null = await updateAccount(updatedAccountRequest);
+        if (values.role !== null && values.role !== account.role) {
+            updatedAccountRequest.role = values.role
+        }
+
+        const updatedAccount: Account | null = await updateAccount(account.id, updatedAccountRequest);
 
         if (values.picture !== null) {
             await updateAccountPicture(values.picture)
@@ -206,27 +214,40 @@ const ProfilePage = () => {
                                                 {account.email && <Text size="sm" >{account.email}</Text>}
                                             </>
                                         )}
+
                                         <Group gap="xs">
-                                            <Badge variant="light">
-                                                {account.role}
-                                            </Badge>
+                                            {!isEditing || (currentAccount && !isAdmin(currentAccount)) ?
+                                                <Badge variant="light">
+                                                    {account.role}
+                                                </Badge>
+                                                :
+                                                <Select
+                                                    defaultValue={account.role}
+                                                    data={Object.values(Role)}
+                                                    searchable
+                                                    {...form.getInputProps("role")}
+                                                >
+
+                                                </Select>
+                                            }
                                         </Group>
                                     </Stack>
                                 </Group>
-
-                                {!isEditing ? (
-                                    <Button variant="light" size="sm" onClick={edit}>
-                                        Edit Profile
-                                    </Button>
-                                ) : (
-                                    <Group gap="xs">
-                                        <Button variant="light" color="green" size="sm" type="submit">
-                                            Save
+                                {currentAccount && ((account && account.id === currentAccount.id) || isAdmin(currentAccount)) && (
+                                    !isEditing ? (
+                                        <Button variant="light" size="sm" onClick={edit}>
+                                            Edit Profile
                                         </Button>
-                                        <Button variant="light" color="red" size="sm" onClick={cancel}>
-                                            Cancel
-                                        </Button>
-                                    </Group>
+                                    ) : (
+                                        <Group gap="xs">
+                                            <Button variant="light" color="green" size="sm" type="submit">
+                                                Save
+                                            </Button>
+                                            <Button variant="light" color="red" size="sm" onClick={cancel}>
+                                                Cancel
+                                            </Button>
+                                        </Group>
+                                    )
                                 )}
                             </Group>
 
@@ -237,19 +258,19 @@ const ProfilePage = () => {
                                             label="Email"
                                             size="sm"
                                             placeholder="user@example.com"
-                                            {...form.getInputProps('email')}
+                                            {...form.getInputProps("email")}
                                         />
                                         <PasswordInput
                                             label="Password"
                                             size="sm"
                                             placeholder="Leave blank to keep current"
-                                            {...form.getInputProps('password')}
+                                            {...form.getInputProps("password")}
                                         />
                                         <PasswordInput
                                             label="Confirm Password"
                                             size="sm"
                                             placeholder="Confirm new password"
-                                            {...form.getInputProps('confirmPassword')}
+                                            {...form.getInputProps("confirmPassword")}
                                         />
                                         <Button
                                             onClick={handleDelete}
