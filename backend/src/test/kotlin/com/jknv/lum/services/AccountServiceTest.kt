@@ -224,6 +224,8 @@ class AccountServiceTest {
         every { auth.principal } returns details
         every { jwtService.giveToken(account.id) } returns expected
 
+        val result = accountService.verifyLogin(loginRequest)
+
         verify {
             authenticationManager.authenticate(any())
             auth.isAuthenticated
@@ -231,7 +233,7 @@ class AccountServiceTest {
             jwtService.giveToken(account.id)
         }
 
-        assertEquals(expected, accountService.verifyLogin(loginRequest))
+        assertEquals(expected, result)
     }
 
 
