@@ -1,19 +1,22 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.PlayerDTO
+import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.entity.Guardian
 import com.jknv.lum.model.entity.Player
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.repository.PlayerRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.context.annotation.Lazy
 
 @Service
 @Transactional
 class PlayerService (
     private val playerRepository: PlayerRepository,
-    private val accountService: AccountService,
     private val guardianService: GuardianService,
+    @param:Lazy private val accountService: AccountService,
     private val coachService: CoachService,
 ) {
     fun createPlayer(req: AccountCreateRequest, accountId: Long): PlayerDTO {
@@ -23,6 +26,9 @@ class PlayerService (
         val player = Player(account = account, guardian = guardian)
         return playerRepository.save(player).toDTO()
     }
+
+    fun createPlayer(account: Account): PlayerDTO = playerRepository.save(Player(account = account)).toDTO()
+
 
     fun getPlayers(): List<PlayerDTO> =
         playerRepository.findAll().map { it.toDTO() }
@@ -34,7 +40,7 @@ class PlayerService (
         val player = getPlayerById(playerId)
         val guardian = guardianService.getGuardianById(accountId)
 
-        if (player.guardian.id != guardian.id)
+        if (player.guardian?.id != guardian.id)
             throw IllegalAccessException("You do not have permission to modify this player")
 
         player.hasPermission = hasPermission
