@@ -129,7 +129,7 @@ class MatchServiceTest {
 
     @Test
     fun getMatchesTest() {
-        every { matchRepository.findAll() } returns listOf(match);
+        every { matchRepository.findAll() } returns listOf(match)
 
         val matches = matchService.getMatches()
 

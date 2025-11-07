@@ -1,6 +1,5 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
 import com.jknv.lum.model.entity.Player
 import com.jknv.lum.model.entity.Team

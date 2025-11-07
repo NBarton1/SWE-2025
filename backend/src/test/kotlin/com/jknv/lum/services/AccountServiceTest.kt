@@ -23,7 +23,6 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.util.Optional
-import kotlin.math.exp
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
