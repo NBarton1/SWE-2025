@@ -16,7 +16,7 @@ class Admin (
 
     @Id
     @Column(name = "id")
-    var id: Long? = null,
+    var id: Long = 0,
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
