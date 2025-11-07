@@ -9,8 +9,23 @@ import LiveMatchEditPage from "./components/live_match/LiveMatchEditPage.tsx";
 import LiveMatchViewPage from "./components/live_match/LiveMatchViewPage.tsx";
 
 import Profile from "./components/profile/Profile.tsx";
+import {type Account, isAdmin} from "./types/accountTypes.ts";
+import {useEffect, useState} from "react";
+import {getAccount} from "./request/accounts.ts";
+import AdminAccountsPage from "./components/users/AdminAccountsPage.tsx";
 
 function App() {
+
+    // TODO refactor this, we need this top level now, get rid of useLogin
+    const [currentAccount, setCurrentAccount] = useState<Account | null>(null)
+
+    useEffect(() => {
+        const idString = sessionStorage.getItem("account_id")
+        const accountId = Number(idString)
+        if (isNaN(accountId)) return
+        getAccount(accountId).then(setCurrentAccount)
+    }, []);
+
 
     return (
         <BrowserRouter>
@@ -26,6 +41,10 @@ function App() {
                     <Route path="/teams/:id" element={<TeamView />} />
                     <Route path="/live/:id" element={<LiveMatchEditPage />} />
                     <Route path="/match/:id" element={(<LiveMatchViewPage />)}/>
+
+                    {currentAccount && isAdmin(currentAccount) && (
+                        <Route path="/users" element={(<AdminAccountsPage/>)}/>
+                    )}
                 </Route>
             </Routes>
         </BrowserRouter>

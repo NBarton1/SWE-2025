@@ -221,7 +221,7 @@ const ProfilePage = () => {
                                                     {account.role}
                                                 </Badge>
                                                 :
-                                                <Select
+                                                 <Select
                                                     defaultValue={account.role}
                                                     data={Object.values(Role)}
                                                     searchable
