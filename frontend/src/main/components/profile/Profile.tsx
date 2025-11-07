@@ -12,7 +12,7 @@ import {
     FileButton,
     PasswordInput,
     Title,
-    Divider,
+    Divider, Checkbox,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import '@mantine/core/styles.css';
@@ -30,6 +30,7 @@ import {getInvites, respondToInvite} from "../../request/invites.ts";
 import useLogin from "../../hooks/useLogin.tsx";
 import type { TeamInvite } from "../../types/invite.ts";
 import PlayerCreateModal from "../signup/PlayerCreateModal.tsx";
+import {setPlayerPermission} from "../../request/players.ts";
 
 const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
@@ -44,6 +45,7 @@ const ProfilePage = () => {
     const { currentAccount } = useLogin();
 
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
 
     const form = useForm({
         initialValues: {
@@ -325,6 +327,7 @@ const ProfilePage = () => {
                                     </Button>
                                 </Group>
                                 <Divider />
+
                                 {dependents.length === 0 ? (
                                     <Text c="dimmed">You have no dependents.</Text>
                                 ) : (
@@ -333,11 +336,52 @@ const ProfilePage = () => {
                                             key={dependent.account.id}
                                             justify="space-between"
                                             style={{ borderBottom: "1px solid #eee", padding: 8, cursor: "pointer" }}
-                                            onClick={() => navigate(`/profile/${dependent.account.id}`)}
+                                            onClick={(event) => {
+                                                // only navigate if the click was NOT on the checkbox
+                                                if (!(event.target as HTMLElement).closest('.permission-checkbox')) {
+                                                    navigate(`/profile/${dependent.account.id}`);
+                                                }
+                                            }}
                                         >
                                             <Text>
                                                 {dependent.account.name} ({dependent.account.username})
                                             </Text>
+
+                                            <Checkbox
+                                                className="permission-checkbox"
+                                                label="Allow to accept invites"
+                                                checked={!!dependent.hasPermission}
+                                                onChange={async (event) => {
+                                                    event.stopPropagation();
+                                                    const newValue = event.currentTarget.checked;
+
+                                                    // optimistic update
+                                                    setDependents((prev) =>
+                                                        prev.map((d) =>
+                                                            d.account.id === dependent.account.id
+                                                                ? { ...d, hasPermission: newValue }
+                                                                : d
+                                                        )
+                                                    );
+
+                                                    const result = await setPlayerPermission(dependent.account.id, newValue);
+                                                    console.log("Backend response:", result);
+                                                    if (!result) {
+                                                        // rollback on failure
+                                                        setDependents((prev) =>
+                                                            prev.map((d) =>
+                                                                d.account.id === dependent.account.id
+                                                                    ? { ...d, hasPermission: !newValue }
+                                                                    : d
+                                                            )
+                                                        );
+                                                    }
+
+                                                }}
+                                                onClick={(event) => event.stopPropagation()}
+                                            />
+
+
                                         </Group>
                                     ))
                                 )}
