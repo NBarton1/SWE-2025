@@ -2,6 +2,7 @@ export interface SignupRequest {
     name: string,
     username: string,
     password: string,
+    role?: string;
 }
 
 export const signup = async (signupRequest: SignupRequest) => {

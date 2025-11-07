@@ -32,25 +32,13 @@ class MatchService (
         req.homeScore?.let { match.homeScore = it }
         req.awayScore?.let { match.awayScore = it }
         req.state?.let { match.state = it }
-
-        req.homeTeamId?.let {
-            val homeTeam = teamService.getTeamById(it)
-                ?: throw EntityNotFoundException("Home team not found")
-            match.homeTeam = homeTeam
-        }
-
-        req.awayTeamId?.let {
-            val awayTeam = teamService.getTeamById(it)
-                ?: throw EntityNotFoundException("Away team not found")
-            match.awayTeam = awayTeam
-        }
         req.homeTeamId?.let { match.homeTeam = teamService.getTeamById(it) }
         req.awayTeamId?.let { match.awayTeam = teamService.getTeamById(it) }
-
-        if (req.timeLeft != null) {
+        req.timeLeft?.let {
             match.clockBase = req.timeLeft
             match.clockTimestamp = null
-        } else if (req.toggleClock) {
+        }
+        req.toggleClock?.let {
             if (match.clockTimestamp == null) {
                 match.clockTimestamp = LocalDateTime.now()
             } else {

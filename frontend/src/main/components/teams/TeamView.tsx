@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import {Box, Card, Divider, Group, ScrollArea, Stack, Table, Title, Text} from "@mantine/core";
-import { getTeam, getTeamPlayers, getTeamCoaches } from "../../request/teams";
+import {Box, Card, Divider, Group, ScrollArea, Stack, Table, Title, Text, Button} from "@mantine/core";
+import {getTeam, getTeamPlayers, getTeamCoaches, removePlayerFromTeam} from "../../request/teams";
 import {type Team} from "../../types/team";
-import type { Player, Coach } from "../../types/accountTypes";
+import {type Player, type Coach, isCoach} from "../../types/accountTypes";
 import { useParams } from "react-router-dom";
 import {formatLikePCT, getLikePCT} from "../../types/util.ts";
+import useLogin from "../../hooks/useLogin.tsx";
+import InvitePlayerModal from "./TeamInviteModal.tsx";
 
 const TeamView = () => {
     const { id } = useParams<{ id: string }>();
@@ -12,6 +14,9 @@ const TeamView = () => {
     const [team, setTeam] = useState<Team | null>(null);
     const [players, setPlayers] = useState<Player[]>([]);
     const [coaches, setCoaches] = useState<Coach[]>([]);
+    const [inviteModalOpen, setInviteModalOpen] = useState(false);
+
+    const [isCoachingTeam, setIsCoachingTeam] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -25,6 +30,26 @@ const TeamView = () => {
             setCoaches(coachData);
         });
     }, [id]);
+
+    const {currentAccount} = useLogin();
+
+    useEffect(() => {
+        if (!currentAccount || !isCoach(currentAccount)) {
+            setIsCoachingTeam(false);
+            return;
+        }
+
+        const match = coaches.some(c => c.account.id === currentAccount.id);
+        setIsCoachingTeam(match);
+    }, [currentAccount, coaches]);
+
+    const handleRemovePlayer = async (playerId: number) => {
+        const res = await removePlayerFromTeam(playerId);
+        if (!res) return;
+
+        setPlayers(prev => prev.filter(p => p.account.id !== playerId));
+    };
+
 
     if (!team) return <Text>Team not found</Text>
 
@@ -73,7 +98,12 @@ const TeamView = () => {
                 </Card>
 
                 <Card withBorder>
-                    <Title order={4}>Players</Title>
+                    <Group justify="space-between" mb="xs">
+                        <Title order={4}>Players</Title>
+                        {isCoachingTeam && (
+                            <Button onClick={() => setInviteModalOpen(true)}>Invite</Button>
+                        )}
+                    </Group>
                     <ScrollArea h={300}>
                         <Table striped highlightOnHover>
                             <Table.Thead>
@@ -81,6 +111,7 @@ const TeamView = () => {
                                     <Table.Th>Name</Table.Th>
                                     <Table.Th>Username</Table.Th>
                                     <Table.Th>Position</Table.Th>
+                                    {isCoachingTeam && <Table.Th>Actions</Table.Th>}
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>
@@ -89,6 +120,17 @@ const TeamView = () => {
                                         <Table.Td>{player.account.name}</Table.Td>
                                         <Table.Td>{player.account.username}</Table.Td>
                                         <Table.Td>{player.position}</Table.Td>
+                                        {isCoachingTeam && (
+                                            <Table.Td>
+                                                <Button
+                                                    color="red"
+                                                    size="xs"
+                                                    onClick={() => handleRemovePlayer(player.account.id)}
+                                                >
+                                                    Remove
+                                                </Button>
+                                            </Table.Td>
+                                        )}
                                     </Table.Tr>
                                 )}
                             </Table.Tbody>
@@ -96,6 +138,11 @@ const TeamView = () => {
                     </ScrollArea>
                 </Card>
             </Stack>
+
+            <InvitePlayerModal
+                opened={inviteModalOpen}
+                onClose={() => setInviteModalOpen(false)}
+            />
         </Box>
     );
 };

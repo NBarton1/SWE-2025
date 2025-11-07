@@ -1,6 +1,5 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
 import com.jknv.lum.model.entity.Player
 import com.jknv.lum.model.entity.Team
@@ -19,41 +18,39 @@ class TeamInviteService (
     private val playerService: PlayerService,
     private val coachService: CoachService,
 ) {
-    fun invitePlayerByCoach(playerId: Long, username: String): TeamInviteDTO {
-        val team = coachService.getCoachByUsername(username).coachingTeam
+    fun invitePlayerByCoach(playerId: Long, accountId: Long): TeamInviteDTO {
+        val team = coachService.getCoachById(accountId).coachingTeam
             ?: throw EntityNotFoundException("You are not coaching a team")
         val player = playerService.getPlayerById(playerId)
 
         return createInvite(team, player)
     }
 
-    fun updateInvite(invite: TeamInvite): TeamInviteDTO =
-        teamInviteRepository.save(invite).toDTO()
+    fun getInvitesByPlayer(id: Long): List<TeamInviteDTO> {
+        val player = playerService.getPlayerById(id)
 
-    fun getInvitesByPlayer(username: String): List<TeamInviteDTO> {
-        val player = playerService.getPlayerByUsername(username)
-        return teamInviteRepository.findTeamInvitesByPlayer(player).map { it.toDTO() }
+        return teamInviteRepository.findTeamInvitesByPlayer(player).filter { it.status == InviteStatus.PENDING }.map { it.toDTO() }
     }
 
     fun countInvites(): Long =
         teamInviteRepository.count()
 
-    fun respondToInvite(username: String, teamId: Long, isAccepted: Boolean): PlayerDTO {
-        val player = playerService.getPlayerByUsername(username)
+    fun respondToInvite(id: Long, teamId: Long, isAccepted: Boolean): TeamInviteDTO {
+        val player = playerService.getPlayerById(id)
         if (!player.hasPermission)
-            throw IllegalAccessException("You do not have permission to register for WebSocketSecurityConfig.kt team")
+            throw IllegalAccessException("You do not have permission to register for a team")
 
         val invite = getInviteById(player.id, teamId)
 
         if (isAccepted) {
             player.playingTeam = invite.team
             invite.status = InviteStatus.ACCEPTED
+            playerService.updatePlayer(player)
         } else {
             invite.status = InviteStatus.DECLINED
         }
 
-        updateInvite(invite)
-        return playerService.updatePlayer(player)
+        return updateInvite(invite)
     }
 
     internal fun createInvite(team: Team, player: Player): TeamInviteDTO =
@@ -61,4 +58,7 @@ class TeamInviteService (
 
     internal fun getInviteById(playerId: Long, teamId: Long): TeamInvite =
         teamInviteRepository.findTeamInviteById(TeamInvitePK(teamId, playerId)).orElseThrow { EntityNotFoundException("Invite $teamId -> $playerId not found") }
+
+    internal fun updateInvite(invite: TeamInvite): TeamInviteDTO =
+        teamInviteRepository.save(invite).toDTO()
 }

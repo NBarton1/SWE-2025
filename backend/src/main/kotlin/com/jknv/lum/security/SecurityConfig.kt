@@ -53,7 +53,6 @@ class SecurityConfig(
                     .requestMatchers(HttpMethod.POST,"/api/accounts/logout").permitAll()
                     .anyRequest().authenticated() // Otherwise everything else needs authentication
             }
-            .httpBasic(Customizer.withDefaults())
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()
@@ -87,7 +86,7 @@ class SecurityConfig(
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
         configuration.allowedOrigins = listOf("http://localhost:5173")
-        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE")
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "PATCH")
         configuration.allowCredentials = true
         configuration.allowedHeaders = listOf("*")
         val source = UrlBasedCorsConfigurationSource()

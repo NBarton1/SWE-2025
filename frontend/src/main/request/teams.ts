@@ -79,3 +79,24 @@ export const getTeamCoaches = async (id: number): Promise<Coach[]> => {
         return [];
     }
 };
+
+export const invitePlayerFromTeam = async (playerId: number) => {
+    return await fetch(`http://localhost:8080/api/teams/${playerId}/invite`, {
+        method: "POST",
+        credentials: "include",
+    });
+};
+
+export const removePlayerFromTeam = async (playerId: number): Promise<boolean> => {
+    try {
+        await fetch(`http://localhost:8080/api/teams/${playerId}`, {
+            method: "DELETE",
+            credentials: "include",
+        });
+
+        return true;
+    } catch (err) {
+        console.error(`Failed to remove player ${playerId}`, err);
+        return false;
+    }
+};

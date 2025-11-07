@@ -1,6 +1,7 @@
 import type {Team} from "./team.ts";
+import type {Content} from "./content.ts";
 
-// @ts-ignore
+// @ts-expect-error erasable
 export enum Role {
     ADMIN = "ADMIN",
     COACH = "COACH",
@@ -12,7 +13,7 @@ export interface Account {
     id: number
     name: string,
     username: string,
-    picture: ArrayBuffer | null,
+    picture: Content,
     email: string | null
     role: Role
 }
@@ -47,6 +48,26 @@ const roleHierarchy: Record<Role, Role[]> = {
     [Role.PLAYER]: [Role.PLAYER],
 };
 
-export function hasPermission(account: Account, needs: Role): boolean {
-    return roleHierarchy[account.role].includes(needs);
+function hasRole(account: Account | null, needs: Role): boolean {
+    return account != null && roleHierarchy[account.role].includes(needs);
+}
+
+export function isAdmin(account: Account | null): boolean {
+    return hasRole(account, Role.ADMIN);
+}
+
+export function isCoach(account: Account | null): boolean {
+    return hasRole(account, Role.COACH);
+}
+
+export function isGuardian(account: Account | null): boolean {
+    return hasRole(account, Role.GUARDIAN);
+}
+
+export function isPlayer(account: Account | null): boolean {
+    return hasRole(account, Role.PLAYER);
+}
+
+export function accountEquals(a0: Account | null, a1: Account | null): boolean {
+    return a0?.id === a1?.id;
 }

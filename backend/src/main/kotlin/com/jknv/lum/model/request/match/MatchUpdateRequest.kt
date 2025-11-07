@@ -5,13 +5,13 @@ import com.jknv.lum.model.type.MatchType
 import java.time.LocalDateTime
 
 class MatchUpdateRequest (
-    val date: LocalDateTime?,
-    val type: MatchType?,
-    var homeTeamId: Long?,
-    var awayTeamId: Long?,
-    val homeScore: Int?,
-    val awayScore: Int?,
-    val timeLeft: Int?,
-    val toggleClock: Boolean = false,
-    val state: MatchState?
+    val date: LocalDateTime? = null,
+    val type: MatchType? = null,
+    var homeTeamId: Long? = null,
+    var awayTeamId: Long? = null,
+    val homeScore: Int? = null,
+    val awayScore: Int? = null,
+    val timeLeft: Int? = null,
+    val toggleClock: Boolean? = null,
+    val state: MatchState? = null
 )

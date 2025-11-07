@@ -1,10 +1,10 @@
 package com.jknv.lum.services
 
+import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.dto.PlayerDTO
+import com.jknv.lum.model.dto.TeamDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
-import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Coach
-import com.jknv.lum.model.entity.Guardian
 import com.jknv.lum.model.entity.Player
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.entity.TeamInvite
@@ -15,70 +15,68 @@ import io.mockk.*
 import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.util.Optional
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class TeamInviteServiceTest {
+    val teamInviteRepository: TeamInviteRepository = mockk()
+    val playerService: PlayerService = mockk()
+    val coachService: CoachService = mockk()
 
-    private val teamInviteRepository: TeamInviteRepository = mockk()
-    private val teamService: TeamService = mockk()
-    private val playerService: PlayerService = mockk()
-    private val coachService: CoachService = mockk()
+    val teamInviteService: TeamInviteService = TeamInviteService(teamInviteRepository, playerService, coachService)
 
-    var teamInviteService: TeamInviteService = TeamInviteService(
-        teamInviteRepository,
-        teamService,
-        playerService,
-        coachService
-    )
+    val team: Team = mockk()
+    val teamDTO: TeamDTO = mockk()
+    val player: Player = mockk()
+    val playerDTO: PlayerDTO = mockk()
+    val accountDTO: AccountDTO = mockk()
 
-    private lateinit var team: Team
-    private lateinit var player: Player
-    private lateinit var invite: TeamInvite
-    private lateinit var inviteDTO: TeamInviteDTO
-    private lateinit var playerDTO: PlayerDTO
+    lateinit var invite: TeamInvite
+
+    val playerId = 1L
+    val teamId = 1L
 
     @BeforeEach
     fun setup() {
-        team = Team(name = "team")
-        player = Player(
-            account = Account(name = "player", username = "player", password = "password"),
-            guardian = Guardian(account = Account(name = "guardian", username = "guardian", password = "password")),
-            hasPermission = true
-        )
         invite = TeamInvite(team = team, player = player)
-        inviteDTO = invite.toDTO()
-        playerDTO = player.toDTO()
+
+        every { team.id } returns teamId
+        every { team.toDTO() } returns teamDTO
+
+        every { player.id } returns playerId
+        every { player.account.toDTO() } returns accountDTO
+        every { player.hasPermission } returns true
     }
 
     @Test
     fun createInviteTest() {
-        every { teamService.getTeamById(team.id) } returns team
-        every { playerService.getPlayerById(player.id) } returns player
         every { teamInviteRepository.save(any()) } returns invite
 
-        val result = teamInviteService.createInvite(team.id, player.id)
+        val result = teamInviteService.createInvite(team, player)
 
-        verify { teamInviteRepository.save(invite) }
-        assertEquals(inviteDTO, result)
+        verify { teamInviteRepository.save(any()) }
+
+        assertEquals(invite.toDTO(), result)
     }
 
     @Test
-    fun invitePlayerByCoachTest() {
-        val coach = Coach(
-            account = Account(name = "coach", username = "coach", password = "password"),
-            coachingTeam = team
-        )
+    fun getInviteByIdTest() {
+        val pk = TeamInvitePK(teamId = team.id, playerId = player.id)
 
-        every { coachService.getCoachByUsername("coach") } returns coach
-        every { playerService.getPlayerById(player.id) } returns player
-        every { teamService.getTeamById(team.id) } returns team
-        every { teamInviteRepository.save(any()) } returns invite
+        every { teamInviteRepository.findTeamInviteById(any()) } answers {
+            if (firstArg<TeamInvitePK>() == pk)
+                Optional.of(invite)
+            else Optional.empty()
+        }
 
-        val result = teamInviteService.invitePlayerByCoach(player.id, "coach")
+        val result = teamInviteService.getInviteById(team.id, player.id)
 
-        verify { teamInviteRepository.save(invite) }
-        assertEquals(inviteDTO, result)
+        verify { teamInviteRepository.findTeamInviteById(pk) }
+
+        assertEquals(invite, result)
+        assertThrows<EntityNotFoundException> { teamInviteService.getInviteById(team.id, player.id + 1) }
+        assertThrows<EntityNotFoundException> { teamInviteService.getInviteById(team.id + 1, player.id) }
     }
 
     @Test
@@ -88,47 +86,110 @@ class TeamInviteServiceTest {
         val result = teamInviteService.updateInvite(invite)
 
         verify { teamInviteRepository.save(invite) }
-        assertEquals(inviteDTO, result)
+
+        assertEquals(invite.toDTO(), result)
+    }
+
+    @Test
+    fun invitePlayerByCoachTest() {
+        val coachId = 1L
+
+        val coach: Coach = mockk()
+        every { coach.id } returns coachId
+        every { coach.coachingTeam } returns team
+
+        every { coachService.getCoachById(coachId) } returns coach
+        every { playerService.getPlayerById(playerId) } returns player
+        every { teamInviteRepository.save(any()) } returns invite
+
+        val result = teamInviteService.invitePlayerByCoach(player.id, coach.id)
+
+        verify {
+            coachService.getCoachById(coachId)
+            playerService.getPlayerById(playerId)
+            teamInviteRepository.save(any())
+        }
+
+        assertEquals(invite.toDTO(), result)
     }
 
     @Test
     fun getInvitesByPlayerTest() {
-        every { playerService.getPlayerByUsername(player.account.username) } returns player
+        every { playerService.getPlayerById(playerId) } returns player
         every { teamInviteRepository.findTeamInvitesByPlayer(player) } returns listOf(invite)
 
-        val result = teamInviteService.getInvitesByPlayer(player.account.username)
+        val result = teamInviteService.getInvitesByPlayer(player.id)
 
-        assertEquals(listOf(inviteDTO), result)
-    }
+        verify {
+            playerService.getPlayerById(playerId)
+            teamInviteRepository.findTeamInvitesByPlayer(player)
+        }
 
-    @Test
-    fun getInviteByIdTest() {
-        every { teamInviteRepository.findTeamInviteById(TeamInvitePK(team.id, player.id)) } returns invite
-
-        val result = teamInviteService.getInviteById(player.id, team.id)
-
-        assertEquals(invite, result)
+        assertEquals(listOf(invite.toDTO()), result)
     }
 
     @Test
     fun countInvitesTest() {
-        every { teamInviteRepository.count() } returns 1
+        val expected = 1L
+
+        every { teamInviteRepository.count() } returns expected
 
         val count = teamInviteService.countInvites()
 
-        assertEquals(1, count)
+        verify { teamInviteRepository.count() }
+
+        assertEquals(expected, count)
     }
 
     @Test
-    fun respondToInviteTest() {
-        every { playerService.getPlayerByUsername(player.account.username) } returns player
-        every { teamInviteService.getInviteById(player.id, team.id) } returns invite
-        every { teamInviteService.updateInvite(invite) } returns inviteDTO
+    fun acceptInviteTest() {
+        every { playerService.getPlayerById(playerId) } returns player
+        every { teamInviteRepository.findTeamInviteById(any()) } returns Optional.of(invite)
+        every { teamInviteRepository.save(invite) } returns invite
         every { playerService.updatePlayer(player) } returns playerDTO
+        justRun { player.playingTeam = team }
 
-        val result = teamInviteService.respondToInvite(player.account.username, team.id, true)
+        val expected = TeamInviteDTO(
+            team = teamDTO,
+            player = accountDTO,
+            status = InviteStatus.ACCEPTED,
+        )
 
-        assertEquals(InviteStatus.ACCEPTED, invite.status)
-        assertEquals(playerDTO, result)
+        val result = teamInviteService.respondToInvite(player.id, team.id, true)
+
+        verify {
+            playerService.getPlayerById(playerId)
+            teamInviteRepository.findTeamInviteById(any())
+            teamInviteRepository.save(invite)
+            playerService.updatePlayer(player)
+            player.playingTeam = team
+        }
+
+        assertEquals(expected, result)
+        assertEquals(expected, invite.toDTO())
+    }
+
+    @Test
+    fun declineInviteTest() {
+        every { playerService.getPlayerById(playerId) } returns player
+        every { teamInviteRepository.findTeamInviteById(any()) } returns Optional.of(invite)
+        every { teamInviteRepository.save(invite) } returns invite
+
+        val expected = TeamInviteDTO(
+            team = teamDTO,
+            player = accountDTO,
+            status = InviteStatus.DECLINED,
+        )
+
+        val result = teamInviteService.respondToInvite(player.id, team.id, false)
+
+        verify {
+            playerService.getPlayerById(playerId)
+            teamInviteRepository.findTeamInviteById(any())
+            teamInviteRepository.save(invite)
+        }
+
+        assertEquals(expected, result)
+        assertEquals(expected, invite.toDTO())
     }
 }

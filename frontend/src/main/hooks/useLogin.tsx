@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from "react";
 import {login} from "../request/auth.ts";
 import {useNavigate} from "react-router";
 import {getAccount} from "../request/accounts.ts";
-import type {Account} from "../types/account.ts";
+import type {Account} from "../types/accountTypes.ts";
 
 const useLogin = () => {
 

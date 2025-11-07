@@ -1,20 +1,20 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.entity.Content
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.repository.AccountRepository
 import com.jknv.lum.model.request.account.AccountLoginRequest
+import com.jknv.lum.security.AccountDetails
 import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
-import kotlin.jvm.optionals.getOrNull
 
 @Service
 @Transactional
@@ -41,23 +41,27 @@ class AccountService(
         return account.toDTO()
     }
 
+    fun getAccount(id: Long): AccountDTO =
+        getAccountById(id).toDTO()
+
     fun getAccounts(): List<AccountDTO> =
         accountRepository.findAll().map { it.toDTO() }
 
-    fun getAccount(id: Long): AccountDTO? =
-        accountRepository.findById(id).getOrNull()?.toDTO()
+    fun updateAccount(id: Long, req: AccountUpdateRequest): AccountDTO {
 
-    fun updateAccount(username: String, req: AccountUpdateRequest): AccountDTO {
-
-        val account = getAccountByUsername(username)
-
+        val account = getAccountById(id)
 
         req.name?.let { account.name = it }
         req.username?.let { account.username = it }
-        req.picture?.let { account.picture = it }
+        req.email?.let { account.email = it }
         req.password?.let { account.password = bCryptPasswordEncoder.encode(it) }
 
-        return accountRepository.save(account).toDTO()
+        return updateAccount(account)
+    }
+
+    fun updatePictureForAccount(account: Account, picture: Content): AccountDTO {
+        account.picture = picture
+        return updateAccount(account)
     }
 
     fun deleteAccount(id: Long) =
@@ -71,11 +75,11 @@ class AccountService(
             )
         )
 
-        if (authentication.isAuthenticated) {
-            return jwtService.giveToken(loginRequest.username)
-        }
+        if (!authentication.isAuthenticated)
+            return null
 
-        return null
+        val userId = (authentication.principal as? AccountDetails)?.account?.id ?: return null
+        return jwtService.giveToken(userId)
     }
 
     fun countAccounts(): Long =
@@ -93,9 +97,15 @@ class AccountService(
     private fun createCoach(account: Account) = coachService.createCoach(account)
     private fun createGuardian(account: Account) = guardianService.createGuardian(account)
 
+    internal fun updateAccount(account: Account): AccountDTO =
+        accountRepository.save(account).toDTO()
+
     internal fun createAccount(req: AccountCreateRequest): Account =
         accountRepository.save(req.toEntity())
 
     internal fun getAccountByUsername(username: String): Account =
         accountRepository.findByUsername(username).orElseThrow { EntityNotFoundException("User $username not found") }
+
+    internal fun getAccountById(id: Long): Account =
+        accountRepository.findById(id).orElseThrow { EntityNotFoundException("User $id not found") }
 }

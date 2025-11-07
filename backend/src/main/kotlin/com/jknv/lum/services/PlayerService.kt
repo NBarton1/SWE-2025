@@ -14,9 +14,10 @@ class PlayerService (
     private val playerRepository: PlayerRepository,
     private val accountService: AccountService,
     private val guardianService: GuardianService,
+    private val coachService: CoachService,
 ) {
-    fun createPlayer(req: AccountCreateRequest, username: String): PlayerDTO {
-        val guardian = guardianService.getGuardianByUsername(username)
+    fun createPlayer(req: AccountCreateRequest, accountId: Long): PlayerDTO {
+        val guardian = guardianService.getGuardianById(accountId)
 
         val account = accountService.createAccount(req)
         val player = Player(account = account, guardian = guardian)
@@ -29,9 +30,9 @@ class PlayerService (
     fun countPlayers(): Long =
         playerRepository.count()
 
-    fun updatePlayerPermission(playerId: Long, username: String, hasPermission: Boolean): PlayerDTO {
+    fun updatePlayerPermission(playerId: Long, accountId: Long, hasPermission: Boolean): PlayerDTO {
         val player = getPlayerById(playerId)
-        val guardian = guardianService.getGuardianByUsername(username)
+        val guardian = guardianService.getGuardianById(accountId)
 
         if (player.guardian.id != guardian.id)
             throw IllegalAccessException("You do not have permission to modify this player")
@@ -40,8 +41,12 @@ class PlayerService (
         return updatePlayer(player)
     }
 
-    fun removePlayerFromTeam(playerId: Long): PlayerDTO {
+    fun removePlayerFromTeam(playerId: Long, coachId: Long): PlayerDTO {
+        val coach = coachService.getCoachById(coachId)
         val player = getPlayerById(playerId)
+
+        if (coach.coachingTeam?.id != player.playingTeam?.id)
+            throw IllegalAccessException("You cannot remove this player from your team")
 
         player.playingTeam = null
         return updatePlayer(player)
@@ -51,8 +56,8 @@ class PlayerService (
         playerRepository.save(player).toDTO()
 
     internal fun getPlayerById(playerId: Long): Player =
-        playerRepository.findPlayerByAccount_Id(playerId).orElseThrow { EntityNotFoundException("Player $playerId not found") }
+        playerRepository.findById(playerId).orElseThrow { EntityNotFoundException("Player $playerId not found") }
 
     internal fun getPlayerByUsername(username: String): Player =
-        playerRepository.findPlayerByAccount_Username(username).orElseThrow { EntityNotFoundException("Player $username not found") }
+        playerRepository.findPlayerByAccountUsername(username).orElseThrow { EntityNotFoundException("Player $username not found") }
 }

@@ -1,30 +1,51 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.model.dto.TeamDTO
+import com.jknv.lum.model.dto.CoachDTO
+import com.jknv.lum.model.dto.PlayerDTO
+import com.jknv.lum.model.entity.Coach
+import com.jknv.lum.model.entity.Player
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.request.team.TeamCreateRequest
 import com.jknv.lum.repository.TeamRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertThrows
 import java.util.Optional
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class TeamServiceTest {
-    private val teamRepository: TeamRepository = mockk()
-    private val teamService = TeamService(teamRepository)
+    val teamRepository: TeamRepository = mockk()
+    val teamService = TeamService(teamRepository)
 
-    private lateinit var req: TeamCreateRequest
-    private lateinit var team: Team
-    private lateinit var teamDTO: TeamDTO
+    val req: TeamCreateRequest = mockk()
+
+    lateinit var team: Team
 
     @BeforeEach
     fun setup() {
-        req = TeamCreateRequest(name = "name")
-        team = req.toEntity()
-        teamDTO = team.toDTO()
+        team = Team(name = "name")
+
+        every { req.toEntity() } returns team
+    }
+
+    @Test
+    fun getTeamByIdTest() {
+        every { teamRepository.findById(any()) } answers {
+            if (firstArg<Long>() == team.id)
+                Optional.of(team)
+            else Optional.empty()
+        }
+
+        val result = teamService.getTeamById(team.id)
+
+        verify { teamRepository.findById(team.id) }
+
+        assertEquals(result, team)
+        assertThrows<EntityNotFoundException> { teamService.getTeamById(team.id + 1) }
     }
 
     @Test
@@ -33,18 +54,9 @@ class TeamServiceTest {
 
         val result = teamService.createTeam(req)
 
-        verify(exactly = 1) { teamRepository.save(team) }
-        assertEquals(teamDTO, result)
-    }
+        verify { teamRepository.save(team) }
 
-    @Test
-    fun getTeamByIdTest() {
-        every { teamRepository.findById(1) } returns Optional.of(team)
-
-        val fetchedTeam = teamService.getTeamById(1)
-
-        verify(exactly = 1) { teamRepository.findById(1) }
-        assertEquals(fetchedTeam, team)
+        assertEquals(team.toDTO(), result)
     }
 
     @Test
@@ -53,19 +65,66 @@ class TeamServiceTest {
 
         val teamList = teamService.getTeams()
 
-        verify(exactly = 1) { teamRepository.findAll() }
-        assertEquals(teamList, listOf(teamDTO))
+        verify { teamRepository.findAll() }
+
+        assertEquals(teamList, listOf(team.toDTO()))
+    }
+
+    @Test
+    fun getTeamTest() {
+        every { teamRepository.findById(team.id) } returns Optional.of(team)
+
+        val result = teamService.getTeam(team.id)
+
+        verify { teamRepository.findById(team.id) }
+
+        assertEquals(result, team.toDTO())
+    }
+
+    @Test
+    fun getPlayersByTeamTest() {
+        val player: Player = mockk()
+        val playerDTO: PlayerDTO = mockk()
+        every { player.toDTO() } returns playerDTO
+
+        team.players.add(player)
+
+        every { teamRepository.findById(team.id) } returns Optional.of(team)
+
+        val result = teamService.getPlayersByTeam(team.id)
+
+        verify { teamRepository.findById(team.id) }
+
+        assertEquals(result, listOf(playerDTO))
+    }
+
+    @Test
+    fun getCoachesByTeamTest() {
+        val coach: Coach = mockk()
+        val coachDTO: CoachDTO = mockk()
+        every { coach.toDTO() } returns coachDTO
+
+        team.coaches.add(coach)
+
+        every { teamRepository.findById(team.id) } returns Optional.of(team)
+
+        val result = teamService.getCoachesByTeam(team.id)
+
+        verify { teamRepository.findById(team.id) }
+
+        assertEquals(result, listOf(coachDTO))
     }
 
     @Test
     fun countTest() {
-        val expectedCount = 1L
+        val expected = 1L
 
-        every { teamRepository.count() } returns expectedCount
+        every { teamRepository.count() } returns expected
 
         val count = teamService.countTeams()
 
-        verify(exactly = 1) { teamRepository.count() }
-        assertEquals(count, expectedCount)
+        verify { teamRepository.count() }
+
+        assertEquals(count, expected)
     }
 }

@@ -6,12 +6,14 @@ import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
 import com.jknv.lum.model.request.team.TeamCreateRequest
+import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.CoachService
 import com.jknv.lum.services.PlayerService
 import com.jknv.lum.services.TeamInviteService
 import com.jknv.lum.services.TeamService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -20,7 +22,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.security.Principal
 
 @RestController
 @RequestMapping("/api/teams")
@@ -63,22 +64,31 @@ class TeamController (
 
     @PutMapping("/{teamId}/coaches")
     @PreAuthorizeCoach
-    fun addCoach(@PathVariable teamId: Long, principal: Principal): ResponseEntity<CoachDTO> {
-        val response = coachService.setCoachingTeam(teamId, principal.name)
+    fun addCoach(
+        @PathVariable teamId: Long,
+        @AuthenticationPrincipal details: AccountDetails
+    ): ResponseEntity<CoachDTO> {
+        val response = coachService.setCoachingTeam(teamId, details.id)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @PostMapping("/{playerId}/invite")
     @PreAuthorizeCoach
-    fun invitePlayer(@PathVariable playerId: Long, principal: Principal): ResponseEntity<TeamInviteDTO> {
-        val response = teamInviteService.invitePlayerByCoach(playerId, principal.name)
+    fun invitePlayer(
+        @PathVariable playerId: Long,
+        @AuthenticationPrincipal details: AccountDetails
+    ): ResponseEntity<TeamInviteDTO> {
+        val response = teamInviteService.invitePlayerByCoach(playerId, details.id)
         return ResponseEntity.ok(response)
     }
 
     @DeleteMapping("/{playerId}")
     @PreAuthorizeCoach
-    fun removePlayer(@PathVariable playerId: Long): ResponseEntity<PlayerDTO> {
-        val response = playerService.removePlayerFromTeam(playerId)
+    fun removePlayer(
+        @PathVariable playerId: Long,
+        @AuthenticationPrincipal details: AccountDetails
+    ): ResponseEntity<PlayerDTO> {
+        val response = playerService.removePlayerFromTeam(playerId, details.id)
         return ResponseEntity.ok(response)
     }
 }

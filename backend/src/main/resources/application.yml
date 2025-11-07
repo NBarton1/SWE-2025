@@ -31,3 +31,5 @@ lum:
   cookie:
     name: authToken
     expires-in: 3600
+
+  storage.path: "content-storage"

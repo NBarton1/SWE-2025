@@ -24,14 +24,17 @@ class CoachService (
     fun countCoaches(): Long =
         coachRepository.count()
 
-    fun setCoachingTeam(teamId: Long, username: String): CoachDTO {
+    fun setCoachingTeam(teamId: Long, accountId: Long): CoachDTO {
         val team = teamService.getTeamById(teamId)
-        val coach = getCoachByUsername(username)
+        val coach = getCoachById(accountId)
 
         coach.coachingTeam = team
         return coachRepository.save(coach).toDTO()
     }
 
     internal fun getCoachByUsername(username: String): Coach =
-        coachRepository.getCoachByAccount_Username(username).orElseThrow { EntityNotFoundException("Coach $username not found") }
+        coachRepository.getCoachByAccountUsername(username).orElseThrow { EntityNotFoundException("Coach $username not found") }
+
+    internal fun getCoachById(id: Long): Coach =
+        coachRepository.getCoachById(id).orElseThrow { EntityNotFoundException("Coach $id not found") }
 }

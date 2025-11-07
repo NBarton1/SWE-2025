@@ -7,6 +7,6 @@ import java.util.Optional
 
 @Repository
 interface PlayerRepository : JpaRepository<Player, Long> {
-    fun findPlayerByAccount_Id(accountId: Long): Optional<Player>
-    fun findPlayerByAccount_Username(accountUsername: String): Optional<Player>
+    fun findPlayerByAccountId(accountId: Long): Optional<Player>
+    fun findPlayerByAccountUsername(accountUsername: String): Optional<Player>
 }

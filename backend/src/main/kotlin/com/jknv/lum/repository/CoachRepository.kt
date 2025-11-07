@@ -7,5 +7,6 @@ import java.util.Optional
 
 @Repository
 interface CoachRepository : JpaRepository<Coach, Int> {
-    fun getCoachByAccount_Username(accountUsername: String): Optional<Coach>
+    fun getCoachById(accountId: Long): Optional<Coach>
+    fun getCoachByAccountUsername(accountUsername: String): Optional<Coach>
 }
