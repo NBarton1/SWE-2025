@@ -56,12 +56,12 @@ class AccountService(
         req.email?.let { account.email = it }
         req.password?.let { account.password = bCryptPasswordEncoder.encode(it) }
 
-        return accountRepository.save(account).toDTO()
+        return updateAccount(account)
     }
 
     fun updatePictureForAccount(account: Account, picture: Content): AccountDTO {
         account.picture = picture
-        return accountRepository.save(account).toDTO()
+        return updateAccount(account)
     }
 
     fun deleteAccount(id: Long) =
@@ -75,12 +75,11 @@ class AccountService(
             )
         )
 
-        if (authentication.isAuthenticated) {
-            val userId = (authentication.principal as? AccountDetails)?.account?.id ?: return null
-            return jwtService.giveToken(userId)
-        }
+        if (!authentication.isAuthenticated)
+            return null
 
-        return null
+        val userId = (authentication.principal as? AccountDetails)?.account?.id ?: return null
+        return jwtService.giveToken(userId)
     }
 
     fun countAccounts(): Long =
@@ -97,6 +96,9 @@ class AccountService(
     private fun createAdmin(account: Account) = adminService.createAdmin(account)
     private fun createCoach(account: Account) = coachService.createCoach(account)
     private fun createGuardian(account: Account) = guardianService.createGuardian(account)
+
+    internal fun updateAccount(account: Account): AccountDTO =
+        accountRepository.save(account).toDTO()
 
     internal fun createAccount(req: AccountCreateRequest): Account =
         accountRepository.save(req.toEntity())

@@ -5,6 +5,7 @@ import com.jknv.lum.model.dto.AdminDTO
 import com.jknv.lum.model.dto.CoachDTO
 import com.jknv.lum.model.dto.GuardianDTO
 import com.jknv.lum.model.entity.Account
+import com.jknv.lum.model.entity.Content
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
@@ -15,11 +16,14 @@ import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
+import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertThrows
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import java.util.Optional
+import kotlin.math.exp
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -43,136 +47,184 @@ class AccountServiceTest {
         guardianService,
         adminService,
     )
-    lateinit var req: AccountCreateRequest
+
+    val req: AccountCreateRequest = mockk()
     lateinit var account: Account
-    lateinit var accountDTO: AccountDTO
     lateinit var details: AccountDetails
 
     @BeforeEach
     fun setup() {
-        req = AccountCreateRequest(
-            name = "name",
-            username = "username",
-            password = "password",
-            role = Role.ADMIN,
-        )
-        account = req.toEntity()
-        accountDTO = account.toDTO()
+        account = Account(name = "name", username = "username", password = "password", role = Role.ADMIN)
         details = AccountDetails(account)
+
+        every { req.toEntity() } returns account
     }
 
     @Test
     fun createAccountTest() {
-        every { accountRepository.save(any()) } returns account
+        every { accountRepository.save(account) } returns account
 
         val result = accountService.createAccount(req)
 
-        verify(exactly = 1) { accountRepository.save(any()) }
+        verify { accountRepository.save(account) }
         assertEquals(account.username, result.username)
     }
 
     @Test
-    fun createAccountWithRolesTest() {
-        val adminDTO = AdminDTO(account.toDTO())
-        val coachDTO = CoachDTO(account.toDTO())
-        val guardianDTO = GuardianDTO(account.toDTO())
+    fun getAccountByUsernameTest() {
+        every { accountRepository.findByUsername(any()) } answers {
+            if (firstArg<String>() == account.username)
+                Optional.of(account)
+            else Optional.empty()
+        }
 
-        every { accountRepository.save(any()) } returns account
-        every { adminService.createAdmin(account) } returns adminDTO
-        every { coachService.createCoach(account) } returns coachDTO
-        every { guardianService.createGuardian(account) } returns guardianDTO
+        val result = accountService.getAccountByUsername(account.username)
+
+        verify { accountRepository.findByUsername(account.username) }
+        assertEquals(account, result)
+        assertThrows<EntityNotFoundException> { accountService.getAccountByUsername("") }
+    }
+
+    @Test
+    fun getAccountByIdTest() {
+        every { accountRepository.findById(any()) } answers {
+            if (firstArg<Long>() == account.id)
+                Optional.of(account)
+            else Optional.empty()
+        }
+
+        val result = accountService.getAccountById(account.id)
+
+        verify { accountRepository.findById(account.id) }
+        assertEquals(account, result)
+        assertThrows<EntityNotFoundException> { accountService.getAccountById(account.id + 1) }
+    }
+
+    @Test
+    fun createAccountWithRolesTest() {
+        every { accountRepository.save(account) } returns account
+        every { adminService.createAdmin(account) } returns AdminDTO(account.toDTO())
+        every { coachService.createCoach(account) } returns CoachDTO(account.toDTO())
+        every { guardianService.createGuardian(account) } returns GuardianDTO(account.toDTO())
 
         val result = accountService.createAccountWithRoles(req)
 
-        verify(exactly = 1) { accountRepository.save(any()) }
-        verify(exactly = 1) { adminService.createAdmin(account) }
-        verify(exactly = 1) { coachService.createCoach(account) }
-        verify(exactly = 1) { guardianService.createGuardian(account) }
-        assertEquals(accountDTO, result)
+        verify { accountRepository.save(account) }
+        verify { adminService.createAdmin(account) }
+        verify { coachService.createCoach(account) }
+        verify { guardianService.createGuardian(account) }
+        assertEquals(account.toDTO(), result)
     }
 
     @Test
-    fun getAccountByUsernameTest() {
-        every { accountRepository.findByUsername("username") } returns account
+    fun getAccountTest() {
+        every { accountRepository.findById(account.id) } returns Optional.of(account)
 
-        val result = accountService.getAccountByUsername("username")
+        val result = accountService.getAccount(account.id)
 
-        verify(exactly = 1) { accountRepository.findByUsername("username") }
-        assertEquals(account, result)
+        verify { accountRepository.findById(account.id) }
+        assertEquals(result, account.toDTO())
     }
 
     @Test
-    fun getAccounts() {
+    fun getAccountsTest() {
         every { accountRepository.findAll() } returns listOf(account)
 
-        val accountList = accountService.getAccounts()
+        val result = accountService.getAccounts()
 
-        assertEquals(accountList, listOf(accountDTO))
+        verify { accountRepository.findAll() }
+        assertEquals(result, listOf(account.toDTO()))
     }
 
     @Test
     fun updateAccountTest() {
         val update = AccountUpdateRequest(
             name = "newname",
-            username = "newuser",
-            password = "newpass",
-            picture = ByteArray(0),
+            username = "newusername",
+            password = "newpassword",
         )
 
-        every { accountRepository.findById(account.id) } returns java.util.Optional.of(account)
-        every { bCryptPasswordEncoder.encode("newpass") } returns "hashedpass"
+        every { accountRepository.findById(account.id) } returns Optional.of(account)
+        every { bCryptPasswordEncoder.encode(update.password) } returns update.password
         every { accountRepository.save(account) } returns account
+
+        val expected = AccountDTO(
+            id = account.id,
+            name = update.name ?: account.name,
+            username = update.username ?: account.username,
+            email = update.email ?: account.email,
+            role = account.role,
+            picture = account.picture?.toDTO()
+        )
 
         val result = accountService.updateAccount(account.id, update)
 
-        val expectedDTO = AccountDTO(
-            id = account.id,
-            name = "newname",
-            username = "newuser",
-            role = account.role
+        verify { accountRepository.findById(account.id) }
+        verify { bCryptPasswordEncoder.encode(update.password) }
+        verify { accountRepository.save(account) }
+        assertEquals(expected, result)
+        assertEquals(expected, account.toDTO())
+    }
+
+    @Test
+    fun updatePictureTest() {
+        val picture = Content(
+            filename = "filename",
+            fileSize = 0xff,
+            contentType = "png"
         )
 
-        verify(exactly = 1) { accountRepository.save(account) }
-        assertEquals(expectedDTO, result)
-        assertEquals("newname", account.name)
-        assertEquals("newuser", account.username)
+        every { accountRepository.save(account) } returns account
+
+        val expected = AccountDTO(
+            id = account.id,
+            name = account.name,
+            username = account.username,
+            email = account.email,
+            role = account.role,
+            picture = picture.toDTO()
+        )
+
+        val result = accountService.updatePictureForAccount(account, picture)
+
+        verify { accountRepository.save(account) }
+        assertEquals(expected, result)
+        assertEquals(expected, account.toDTO())
     }
 
     @Test
     fun deleteAccountTest() {
-        val accountId = 1L
+        justRun { accountService.deleteAccount(account.id) }
+        accountService.deleteAccount(account.id)
 
-        justRun { accountService.deleteAccount(accountId) }
-        accountService.deleteAccount(accountId)
-
-        verify(exactly = 1) { accountRepository.deleteById(accountId) }
+        verify { accountRepository.deleteById(account.id) }
     }
 
     @Test
     fun verifyLoginTest() {
-        val loginRequest = AccountLoginRequest(username = "username", password = "password")
+        val loginRequest = AccountLoginRequest(account.username, account.password)
         val auth: Authentication = mockk()
 
+        val expected = "token"
+
+        every { authenticationManager.authenticate(any()) } returns auth
         every { auth.isAuthenticated } returns true
         every { auth.principal } returns details
-        every { authenticationManager.authenticate(any<UsernamePasswordAuthenticationToken>()) } returns auth
-        every { jwtService.giveToken(account.id) } returns "token"
+        every { jwtService.giveToken(account.id) } returns expected
 
-        val result = accountService.verifyLogin(loginRequest)
-
-        assertEquals("token", result)
+        assertEquals(expected, accountService.verifyLogin(loginRequest))
     }
+
 
     @Test
     fun countAccountsTest() {
-        val expectedCount = 1L
+        val expected = 1L
 
-        every { accountRepository.count() } returns expectedCount
+        every { accountRepository.count() } returns expected
 
-        val count = accountService.countAccounts()
+        val result = accountService.countAccounts()
 
-        verify(exactly = 1) { accountRepository.count() }
-
-        assertEquals(expectedCount, count)
+        verify { accountRepository.count() }
+        assertEquals(expected, result)
     }
 }
