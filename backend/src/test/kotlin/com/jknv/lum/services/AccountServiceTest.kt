@@ -67,6 +67,7 @@ class AccountServiceTest {
         val result = accountService.createAccount(req)
 
         verify { accountRepository.save(account) }
+
         assertEquals(account.username, result.username)
     }
 
@@ -81,6 +82,7 @@ class AccountServiceTest {
         val result = accountService.getAccountByUsername(account.username)
 
         verify { accountRepository.findByUsername(account.username) }
+
         assertEquals(account, result)
         assertThrows<EntityNotFoundException> { accountService.getAccountByUsername("") }
     }
@@ -96,6 +98,7 @@ class AccountServiceTest {
         val result = accountService.getAccountById(account.id)
 
         verify { accountRepository.findById(account.id) }
+
         assertEquals(account, result)
         assertThrows<EntityNotFoundException> { accountService.getAccountById(account.id + 1) }
     }
@@ -109,10 +112,13 @@ class AccountServiceTest {
 
         val result = accountService.createAccountWithRoles(req)
 
-        verify { accountRepository.save(account) }
-        verify { adminService.createAdmin(account) }
-        verify { coachService.createCoach(account) }
-        verify { guardianService.createGuardian(account) }
+        verify {
+            accountRepository.save(account)
+            adminService.createAdmin(account)
+            coachService.createCoach(account)
+            guardianService.createGuardian(account)
+        }
+
         assertEquals(account.toDTO(), result)
     }
 
@@ -123,6 +129,7 @@ class AccountServiceTest {
         val result = accountService.getAccount(account.id)
 
         verify { accountRepository.findById(account.id) }
+
         assertEquals(result, account.toDTO())
     }
 
@@ -133,6 +140,7 @@ class AccountServiceTest {
         val result = accountService.getAccounts()
 
         verify { accountRepository.findAll() }
+
         assertEquals(result, listOf(account.toDTO()))
     }
 
@@ -159,9 +167,12 @@ class AccountServiceTest {
 
         val result = accountService.updateAccount(account.id, update)
 
-        verify { accountRepository.findById(account.id) }
-        verify { bCryptPasswordEncoder.encode(update.password) }
-        verify { accountRepository.save(account) }
+        verify {
+            accountRepository.findById(account.id)
+            bCryptPasswordEncoder.encode(update.password)
+            accountRepository.save(account)
+        }
+
         assertEquals(expected, result)
         assertEquals(expected, account.toDTO())
     }
@@ -188,6 +199,7 @@ class AccountServiceTest {
         val result = accountService.updatePictureForAccount(account, picture)
 
         verify { accountRepository.save(account) }
+
         assertEquals(expected, result)
         assertEquals(expected, account.toDTO())
     }
@@ -212,6 +224,13 @@ class AccountServiceTest {
         every { auth.principal } returns details
         every { jwtService.giveToken(account.id) } returns expected
 
+        verify {
+            authenticationManager.authenticate(any())
+            auth.isAuthenticated
+            auth.principal
+            jwtService.giveToken(account.id)
+        }
+
         assertEquals(expected, accountService.verifyLogin(loginRequest))
     }
 
@@ -225,6 +244,7 @@ class AccountServiceTest {
         val result = accountService.countAccounts()
 
         verify { accountRepository.count() }
+
         assertEquals(expected, result)
     }
 }
