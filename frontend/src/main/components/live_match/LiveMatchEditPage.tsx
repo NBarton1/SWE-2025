@@ -31,7 +31,10 @@ const LiveMatchEditPage = () => {
     };
 
     return (
-        <Container py="md">
+        <Container
+            py="md"
+            data-testid="live-match-edit-page-container"
+        >
             {match && <LiveMatchEdit match={match} updateLiveMatch={updateLiveMatch} />}
         </Container>
     );

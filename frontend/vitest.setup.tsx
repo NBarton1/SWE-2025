@@ -4,7 +4,7 @@ import * as matchers from '@testing-library/jest-dom/matchers'
 import {createTheme, MantineProvider} from "@mantine/core";
 import {BrowserRouter} from "react-router";
 import type {Team} from "./src/main/types/team.ts";
-import {type Match, MatchType} from "./src/main/types/match.ts";
+import {type Match, MatchState, MatchType} from "./src/main/types/match.ts";
 
 expect.extend(matchers)
 
@@ -51,14 +51,47 @@ export const mockTeams: Team[] = [
 
 export const mockDate = "2026-03-14";
 
-export const mockMatches: Match[] = [
-    {
+export const mockScheduledMatch: Match = {
         id: 1,
         type: MatchType.STANDARD,
         date: `${mockDate}T03:00`,
         homeTeam: mockTeams[0],
-        awayTeam: mockTeams[1]
-    }
+        awayTeam: mockTeams[1],
+        homeScore: 0,
+        awayScore: 0,
+        clockTimestamp: 3600,
+        timeRunning: false,
+        state: MatchState.SCHEDULED,
+}
+
+export const mockLiveTimeStoppedMatch: Match = {
+    id: 1,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 3600,
+    timeRunning: false,
+    state: MatchState.LIVE,
+}
+
+export const mockLiveTimeRunningMatch: Match = {
+    id: 1,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 3600,
+    timeRunning: true,
+    state: MatchState.LIVE,
+}
+
+export const mockMatches: Match[] = [
+    mockScheduledMatch
 ];
 
 
