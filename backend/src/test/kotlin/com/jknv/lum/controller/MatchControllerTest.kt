@@ -5,24 +5,20 @@ import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.request.match.MatchCreateRequest
 import com.jknv.lum.model.request.match.MatchUpdateRequest
+import com.jknv.lum.model.type.MatchState
 import com.jknv.lum.model.type.MatchType
 import com.jknv.lum.services.MatchService
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 class MatchControllerTest {
-
     var matchService: MatchService = mockk()
 
     var matchController: MatchController = MatchController(matchService)
@@ -30,74 +26,92 @@ class MatchControllerTest {
     lateinit var homeTeam: Team
     lateinit var awayTeam: Team
 
-    lateinit var req: MatchCreateRequest
     lateinit var match: Match
-    lateinit var matchDTO: MatchDTO
 
     @BeforeEach
     fun setUp() {
-        homeTeam = Team(name = "home")
-        awayTeam = Team(name = "away")
-        req = MatchCreateRequest(
+        homeTeam = Team(id = 0, name = "home")
+        awayTeam = Team(id = 1, name = "away")
+
+        match = Match(
             date = LocalDateTime.now(),
             type = MatchType.STANDARD,
-            homeTeamId = homeTeam.id,
-            awayTeamId = awayTeam.id,
+            homeTeam = homeTeam,
+            awayTeam = awayTeam,
         )
-        match = req.toEntity(homeTeam, awayTeam)
-        matchDTO = match.toDTO()
     }
 
     @Test
     fun createMatchTest() {
-        every { matchService.createMatch(req) } returns matchDTO
+        val req: MatchCreateRequest = mockk()
 
-        val result = matchController.createMatch(req)
+        every { matchService.createMatch(req) } returns match.toDTO()
 
-        assertEquals(HttpStatus.CREATED, result.statusCode)
-        assertEquals(matchDTO, result.body)
+        val response = matchController.createMatch(req)
+
         verify { matchService.createMatch(req) }
+
+        assertEquals(HttpStatus.CREATED, response.statusCode)
+        assertEquals(match.toDTO(), response.body)
     }
 
     @Test
     fun deleteMatchTest() {
         justRun { matchService.deleteMatch(match.id) }
 
-        val result = matchController.deleteMatch(match.id)
+        val response = matchController.deleteMatch(match.id)
 
-        assertEquals(HttpStatus.OK, result.statusCode)
         verify { matchService.deleteMatch(match.id) }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
     }
 
     @Test
     fun updateMatchTest() {
-        val req = MatchUpdateRequest(null, MatchType.PLAYOFF, null, null)
+        val req: MatchUpdateRequest = mockk()
 
-        val updatedDTO = MatchDTO(
+        val expected = MatchDTO(
             id = match.id,
-            date = req.date ?: match.date,
-            type = req.type ?: match.type,
+            date = match.date,
+            type = match.type,
             homeTeam = homeTeam.toDTO(),
-            awayTeam = awayTeam.toDTO()
+            awayTeam = awayTeam.toDTO(),
+            state = MatchState.LIVE,
+            homeScore = match.homeScore + 7,
+            awayScore = match.awayScore + 3,
         )
 
-        every { matchService.updateMatch(match.id, req) } returns updatedDTO
+        every { matchService.updateMatch(match.id, req) } returns expected
 
-        val result = matchController.updateMatch(match.id, req)
+        val response = matchController.updateMatch(match.id, req)
 
-        assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals(updatedDTO, result.body)
         verify { matchService.updateMatch(match.id, req) }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(expected, response.body)
+    }
+
+    @Test
+    fun getMatchTest() {
+        every { matchService.getMatch(match.id) } returns match.toDTO()
+
+        val response = matchController.getMatch(match.id)
+
+        verify { matchService.getMatch(match.id) }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(match.toDTO(), response.body)
     }
 
     @Test
     fun getMatchesTest() {
-        every { matchService.getMatches() } returns listOf(matchDTO)
+        every { matchService.getMatches() } returns listOf(match.toDTO())
 
-        val result = matchController.getMatches()
+        val response = matchController.getMatches()
 
-        assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals(listOf(matchDTO), result.body)
         verify { matchService.getMatches() }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(listOf(match.toDTO()), response.body)
     }
 }

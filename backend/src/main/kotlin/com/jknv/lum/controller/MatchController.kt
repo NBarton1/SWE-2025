@@ -46,7 +46,7 @@ class MatchController (
 
     @GetMapping("/{matchId}")
     fun getMatch(@PathVariable matchId: Long): ResponseEntity<MatchDTO> {
-        val response = matchService.getMatchById(matchId).toDTO()
+        val response = matchService.getMatch(matchId)
         return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 
