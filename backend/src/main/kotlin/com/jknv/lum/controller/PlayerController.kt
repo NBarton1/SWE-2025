@@ -68,7 +68,7 @@ class PlayerController (
         @PathVariable teamId: Long,
         @RequestBody req: PlayerInviteRequest,
         @AuthenticationPrincipal details: AccountDetails
-    ): ResponseEntity<PlayerDTO> {
+    ): ResponseEntity<TeamInviteDTO> {
         val response = teamInviteService.respondToInvite(details.id, teamId, req.isAccepted)
         return ResponseEntity.ok(response)
     }

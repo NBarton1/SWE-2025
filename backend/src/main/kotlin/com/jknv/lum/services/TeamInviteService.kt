@@ -27,9 +27,6 @@ class TeamInviteService (
         return createInvite(team, player)
     }
 
-    fun updateInvite(invite: TeamInvite): TeamInviteDTO =
-        teamInviteRepository.save(invite).toDTO()
-
     fun getInvitesByPlayer(id: Long): List<TeamInviteDTO> {
         val player = playerService.getPlayerById(id)
 
@@ -39,22 +36,22 @@ class TeamInviteService (
     fun countInvites(): Long =
         teamInviteRepository.count()
 
-    fun respondToInvite(id: Long, teamId: Long, isAccepted: Boolean): PlayerDTO {
+    fun respondToInvite(id: Long, teamId: Long, isAccepted: Boolean): TeamInviteDTO {
         val player = playerService.getPlayerById(id)
         if (!player.hasPermission)
-            throw IllegalAccessException("You do not have permission to register for WebSocketSecurityConfig.kt team")
+            throw IllegalAccessException("You do not have permission to register for a team")
 
         val invite = getInviteById(player.id, teamId)
 
         if (isAccepted) {
             player.playingTeam = invite.team
             invite.status = InviteStatus.ACCEPTED
+            playerService.updatePlayer(player)
         } else {
             invite.status = InviteStatus.DECLINED
         }
 
-        updateInvite(invite)
-        return playerService.updatePlayer(player)
+        return updateInvite(invite)
     }
 
     internal fun createInvite(team: Team, player: Player): TeamInviteDTO =
@@ -62,4 +59,7 @@ class TeamInviteService (
 
     internal fun getInviteById(playerId: Long, teamId: Long): TeamInvite =
         teamInviteRepository.findTeamInviteById(TeamInvitePK(teamId, playerId)).orElseThrow { EntityNotFoundException("Invite $teamId -> $playerId not found") }
+
+    internal fun updateInvite(invite: TeamInvite): TeamInviteDTO =
+        teamInviteRepository.save(invite).toDTO()
 }
