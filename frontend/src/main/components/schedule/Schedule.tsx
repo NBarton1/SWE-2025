@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { Container, Paper, Modal, Title, Box } from "@mantine/core";
+import {Container, Paper, Modal, Title, Box, Button} from "@mantine/core";
 import DatePopup from "./DatePopup.tsx";
 import { type Match, matchStr } from "../../types/match.ts";
 import type { Team } from "../../types/team.ts";
@@ -30,6 +30,11 @@ const Schedule = () => {
     return (
         <Container py="md">
             <Paper shadow="md" p="md" radius="md" data-testid="schedule-paper">
+
+                <Button component="a" href="/calendar/list">
+                    List View
+                </Button>
+
                 <Title order={2} mb="md" ta="center" data-testid="schedule-title">
                     Schedule
                 </Title>

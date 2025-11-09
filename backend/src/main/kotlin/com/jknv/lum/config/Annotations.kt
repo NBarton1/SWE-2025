@@ -21,3 +21,8 @@ annotation class PreAuthorizeCoach
 @Retention(AnnotationRetention.RUNTIME)
 @PreAuthorize("hasRole('ADMIN')")
 annotation class PreAuthorizeAdmin
+
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
+annotation class PreAuthorizeAdminOrAccountOwner

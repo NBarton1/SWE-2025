@@ -45,6 +45,7 @@ class AccountServiceTest {
         coachService,
         guardianService,
         adminService,
+        playerService,
     )
 
     val req: AccountCreateRequest = mockk()
