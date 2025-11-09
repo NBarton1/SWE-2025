@@ -50,7 +50,6 @@ const ScheduleList = () => {
 
             </Paper>
 
-
         </Container>
     );
 };
