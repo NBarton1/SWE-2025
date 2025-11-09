@@ -1,10 +1,10 @@
 import { vi } from "vitest";
-import {mockLiveTimeStoppedMatch, renderWithWrap} from "../../vitest.setup.tsx";
+import {mockLiveTimeStoppedMatch, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import '@testing-library/jest-dom';
-import type {Match} from "../main/types/match.ts";
-import type {UpdateMatchRequest} from "../main/request/matches.ts";
-import LiveMatchClockEdit from "../main/components/live_match/LiveMatchClockEdit.tsx";
+import type {Match} from "../../../main/types/match.ts";
+import type {UpdateMatchRequest} from "../../../main/request/matches.ts";
+import LiveMatchClockEdit from "../../../main/components/live_match/LiveMatchClockEdit.tsx";
 
 const mockUpdateLiveMatch = vi.fn();
 

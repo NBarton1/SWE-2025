@@ -29,7 +29,7 @@ class LiveMatchController(
     ) {
         // TODO: workaround for now, @AuthenticationPrincipal not working
         if (!(principal as UsernamePasswordAuthenticationToken).authorities.any { it.authority == "ROLE_ADMIN" }) {
-            throw IllegalAccessError("Only admin allowed")
+            throw IllegalAccessError("Only admin allowed to updated live matches")
         }
 
         val updatedMatch = matchService.updateMatch(matchId, req)

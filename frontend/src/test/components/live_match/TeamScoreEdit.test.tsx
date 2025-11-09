@@ -1,8 +1,8 @@
 import {expect, vi} from "vitest";
-import {mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
+import {mockTeams, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {fireEvent, screen, waitFor} from "@testing-library/react";
-import TeamScoreEdit from "../main/components/live_match/TeamScoreEdit.tsx";
-import type {Team} from "../main/types/team.ts";
+import TeamScoreEdit from "../../../main/components/live_match/TeamScoreEdit.tsx";
+import type {Team} from "../../../main/types/team.ts";
 import userEvent from "@testing-library/user-event";
 
 

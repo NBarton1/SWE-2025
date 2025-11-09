@@ -52,20 +52,20 @@ export const mockTeams: Team[] = [
 export const mockDate = "2026-03-14";
 
 export const mockScheduledMatch: Match = {
-        id: 1,
-        type: MatchType.STANDARD,
-        date: `${mockDate}T03:00`,
-        homeTeam: mockTeams[0],
-        awayTeam: mockTeams[1],
-        homeScore: 0,
-        awayScore: 0,
-        clockTimestamp: 3600,
-        timeRunning: false,
-        state: MatchState.SCHEDULED,
+    id: 1,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 3600,
+    timeRunning: false,
+    state: MatchState.SCHEDULED,
 }
 
 export const mockLiveTimeStoppedMatch: Match = {
-    id: 1,
+    id: 2,
     type: MatchType.STANDARD,
     date: `${mockDate}T03:00`,
     homeTeam: mockTeams[0],
@@ -78,7 +78,7 @@ export const mockLiveTimeStoppedMatch: Match = {
 }
 
 export const mockLiveTimeRunningMatch: Match = {
-    id: 1,
+    id: 3,
     type: MatchType.STANDARD,
     date: `${mockDate}T03:00`,
     homeTeam: mockTeams[0],
@@ -90,8 +90,24 @@ export const mockLiveTimeRunningMatch: Match = {
     state: MatchState.LIVE,
 }
 
+export const mockFinishedMatch: Match = {
+    id: 4,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 0,
+    timeRunning: true,
+    state: MatchState.FINISHED,
+}
+
 export const mockMatches: Match[] = [
-    mockScheduledMatch
+    mockScheduledMatch,
+    mockLiveTimeRunningMatch,
+    mockLiveTimeStoppedMatch,
+    mockFinishedMatch
 ];
 
 

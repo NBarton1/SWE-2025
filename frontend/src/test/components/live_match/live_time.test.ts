@@ -1,18 +1,17 @@
 import {vi} from "vitest";
-import {mockLiveTimeStoppedMatch} from "../../vitest.setup.tsx";
-import {updateLiveTime} from "../main/components/live_match/live_time.ts";
+import {mockLiveTimeRunningMatch} from "../../../../vitest.setup.tsx";
+import {updateLiveTime} from "../../../main/components/live_match/live_time.ts";
 
 
-describe("LiveMatchClockEdit", () => {
+describe("live_time", () => {
     beforeEach(() => {
         vi.clearAllMocks();
         vi.useFakeTimers();
     });
 
-    test('interval runs and counts down time', () => {
-        mockLiveTimeStoppedMatch.timeRunning = true;
+    test("match time counts downwards", () => {
 
-        let initial_time = mockLiveTimeStoppedMatch.clockTimestamp
+        let initial_time = mockLiveTimeRunningMatch.clockTimestamp
         let currentTime = initial_time;
 
         const setTimeLeft = vi.fn((updater) => {
@@ -23,7 +22,7 @@ describe("LiveMatchClockEdit", () => {
             }
         });
 
-        updateLiveTime(mockLiveTimeStoppedMatch, setTimeLeft);
+        updateLiveTime(mockLiveTimeRunningMatch, setTimeLeft);
 
         expect(setTimeLeft).toHaveBeenCalledWith(currentTime);
         expect(currentTime).toBe(initial_time);

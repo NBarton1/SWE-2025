@@ -1,8 +1,8 @@
 import {expect, vi} from "vitest";
-import {mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
+import {mockTeams, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import type {Team} from "../main/types/team.ts";
-import TeamScoreView from "../main/components/live_match/TeamScoreView.tsx";
+import type {Team} from "../../../main/types/team.ts";
+import TeamScoreView from "../../../main/components/live_match/TeamScoreView.tsx";
 
 
 let mockProps: {

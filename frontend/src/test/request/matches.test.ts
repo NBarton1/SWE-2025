@@ -1,5 +1,5 @@
 import { vi, beforeEach } from 'vitest';
-import {MatchType} from "../main/types/match.ts";
+import {MatchType} from "../../main/types/match.ts";
 import {waitFor} from "@testing-library/react";
 import {
     createMatch,
@@ -8,22 +8,19 @@ import {
     getMatches,
     updateMatch,
     type UpdateMatchRequest
-} from "../main/request/matches.ts";
-import {mockScheduledMatch} from "../../vitest.setup.tsx";
+} from "../../main/request/matches.ts";
+import {mockScheduledMatch} from "../../../vitest.setup.tsx";
 
-global.fetch = vi.fn();
 
 describe("matches", () => {
     beforeEach(() => {
-        vi.mocked(global.fetch).mockClear();
-    });
-
-    test("createMatch test", async () => {
-
-        vi.mocked(global.fetch).mockResolvedValue({
+        global.fetch = vi.fn().mockResolvedValue({
             ok: true,
             json: async () => mockScheduledMatch,
         } as Response);
+    });
+
+    test("createMatch test", async () => {
 
         let req: CreateMatchRequest = {
             type: MatchType.STANDARD,

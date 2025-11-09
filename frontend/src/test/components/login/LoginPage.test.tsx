@@ -1,13 +1,14 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
-import LoginPage from "../main/components/login/LoginPage.tsx";
-import * as loginRequest from "../main/request/login";
-import {MOCK_OK, MOCK_UNAUTHORIZED, mockNavigate, renderWithWrap} from "../../vitest.setup.tsx";
+import LoginPage from "../../../main/components/login/LoginPage.tsx";
+import * as authRequest from "../../../main/request/auth";
+import {MOCK_OK, MOCK_UNAUTHORIZED, mockNavigate, renderWithWrap} from "../../../../vitest.setup.tsx";
 
 
 describe("LoginPage", () => {
     beforeEach(() => {
         vi.clearAllMocks();
+
         renderWithWrap(<LoginPage />);
     });
 
@@ -30,10 +31,10 @@ describe("LoginPage", () => {
         expect(usernameInput).toHaveValue("user");
         expect(passwordInput).toHaveValue("password");
     });
-
+    //
     test("calls login function with correct credentials", async () => {
         const user = userEvent.setup();
-        const mockLogin = vi.spyOn(loginRequest, "login").mockResolvedValue(MOCK_OK);
+        const mockLogin = vi.spyOn(authRequest, "login").mockResolvedValue(MOCK_OK);
 
         const usernameInput = screen.getByTestId("login-username");
         const passwordInput = screen.getByTestId("login-password");
@@ -50,10 +51,10 @@ describe("LoginPage", () => {
             });
         });
     });
-
+    //
     test("navigate on success", async () => {
         const user = userEvent.setup();
-        vi.spyOn(loginRequest, "login").mockResolvedValue(MOCK_OK);
+        vi.spyOn(authRequest, "login").mockResolvedValue(MOCK_OK);
 
         const usernameInput = screen.getByTestId("login-username");
         const passwordInput = screen.getByTestId("login-password");
@@ -64,7 +65,7 @@ describe("LoginPage", () => {
         await user.click(submitButton);
 
         await waitFor(() => {
-            expect(loginRequest.login).toHaveBeenCalledWith({
+            expect(authRequest.login).toHaveBeenCalledWith({
                 username: "user",
                 password: "password"
             });
@@ -78,7 +79,7 @@ describe("LoginPage", () => {
 
     test("no navigate on fail", async () => {
         const user = userEvent.setup();
-        vi.spyOn(loginRequest, "login").mockResolvedValue(MOCK_UNAUTHORIZED);
+        vi.spyOn(authRequest, "login").mockResolvedValue(MOCK_UNAUTHORIZED);
 
         const usernameInput = screen.getByTestId("login-username");
         const passwordInput = screen.getByTestId("login-password");
@@ -89,7 +90,7 @@ describe("LoginPage", () => {
         await user.click(submitButton);
 
         await waitFor(() => {
-            expect(loginRequest.login).toHaveBeenCalledWith({
+            expect(authRequest.login).toHaveBeenCalledWith({
                 username: "user",
                 password: "incorrect"
             });

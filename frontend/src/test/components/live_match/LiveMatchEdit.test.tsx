@@ -1,9 +1,9 @@
 import {vi} from "vitest";
-import {mockLiveTimeStoppedMatch, mockScheduledMatch, renderWithWrap} from "../../vitest.setup.tsx";
+import {mockLiveTimeStoppedMatch, mockScheduledMatch, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import {type Match} from "../main/types/match.ts";
-import type {UpdateMatchRequest} from "../main/request/matches.ts";
-import LiveMatchEdit from "../main/components/live_match/LiveMatchEdit.tsx";
+import {type Match} from "../../../main/types/match.ts";
+import type {UpdateMatchRequest} from "../../../main/request/matches.ts";
+import LiveMatchEdit from "../../../main/components/live_match/LiveMatchEdit.tsx";
 
 
 const mockUpdateLiveMatch = vi.fn();

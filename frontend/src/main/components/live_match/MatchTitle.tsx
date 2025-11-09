@@ -18,20 +18,40 @@ const MatchTitle = ({ match }: MatchTitleProps) => {
     });
 
     return (
-        <Title order={3} ta="center">
+        <Title
+            order={3}
+            ta="center"
+            data-testid="match-title"
+        >
             {`${match.awayTeam.name} @ ${match.homeTeam.name}`}
             {match.state == MatchState.SCHEDULED && (
-                <Text span ml={8} inherit>
+                <Text
+                    span
+                    ml={8}
+                    inherit
+                    data-testid="match-title-scheduled"
+                >
                     ● {dateStr}
                 </Text>
             )}
             {match.state == MatchState.LIVE && (
-                <Text span c="red" ml={8} inherit>
+                <Text
+                    span
+                    c="red"
+                    ml={8}
+                    inherit
+                    data-testid="match-title-live"
+                >
                     ● LIVE!
                 </Text>
             )}
             {match.state == MatchState.FINISHED && (
-                <Text span ml={8} inherit>
+                <Text
+                    span
+                    ml={8}
+                    inherit
+                    data-testid="match-title-finished"
+                >
                     ● Final
                 </Text>
             )}
