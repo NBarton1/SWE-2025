@@ -57,7 +57,12 @@ export const mockMatches: Match[] = [
         type: MatchType.STANDARD,
         date: `${mockDate}T03:00`,
         homeTeam: mockTeams[0],
-        awayTeam: mockTeams[1]
+        awayTeam: mockTeams[1],
+        homeScore: 0,
+        awayScore: 7,
+        clockTimestamp: 60,
+        timeRunning: false,
+        state: "SCHEDULED",
     }
 ];
 
