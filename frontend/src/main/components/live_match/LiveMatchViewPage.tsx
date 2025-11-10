@@ -21,7 +21,7 @@ const LiveMatchViewPage = () => {
             data-testid="live-match-view-page"
             py="md"
         >
-            {match && <LiveMatchView match={match} />}
+            {match && <LiveMatchView match={match} navigable={false} />}
         </Container>
     );
 };

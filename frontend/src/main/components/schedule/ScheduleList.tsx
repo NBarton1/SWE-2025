@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import {Container, Paper, Title, Button, Divider, Stack} from "@mantine/core";
+import {Container, Paper, Title, Button, Stack} from "@mantine/core";
 import { type Match } from "../../types/match.ts";
 import {getMatches} from "../../request/matches.ts";
-import MatchTitle from "../live_match/MatchTitle.tsx";
-import TeamScoreView from "../live_match/TeamScoreView.tsx";
-import LiveMatchClockView from "../live_match/LiveMatchClockView.tsx";
+import LiveMatchView from "../live_match/LiveMatchView.tsx";
 
 
 const ScheduleList = () => {
@@ -27,25 +25,9 @@ const ScheduleList = () => {
                 </Title>
 
                 <Stack gap="md">
-                {matches.map((match) => (
-                    <Paper shadow="xs" p="xl" bg="dark.8">
-                        <Stack gap="md">
-
-                            <MatchTitle match={match} />
-
-                            <Divider labelPosition="center" />
-
-                            <Stack gap="xs">
-                                <TeamScoreView team={match.awayTeam} score={match.awayScore} />
-                                <TeamScoreView team={match.homeTeam} score={match.homeScore} />
-                            </Stack>
-
-                            <Divider />
-
-                            <LiveMatchClockView match={match} />
-                        </Stack>
-                    </Paper>
-                ))}
+                    {matches.map((match) => (
+                        <LiveMatchView match={match} navigable={true} />
+                    ))}
                 </Stack>
 
             </Paper>
