@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > AccountDTO</title>
+  <title>Coverage Report > AccountController</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,21 +19,22 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.model.dto</a>
+    <a href="../index.html">com.jknv.lum.controller</a>
 </div>
 
-<h1>Coverage Summary for Class: AccountDTO (com.jknv.lum.model.dto)</h1>
+<h1>Coverage Summary for Class: AccountController (com.jknv.lum.controller)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
 <th class="coverageStat 
 ">
-  Class, %
+  Method, %
 </th>
 <th class="coverageStat 
 ">
-  Method, %
+  Branch, %
 </th>
 <th class="coverageStat 
 ">
@@ -41,13 +42,21 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">AccountDTO</td>
+  <td class="name">AccountController</td>
 <td class="coverageStat">
   <span class="percent">
     100%
   </span>
   <span class="absValue">
-    (1/1)
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
   </span>
 </td>
 <td class="coverageStat">
@@ -55,19 +64,40 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (1/1)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (5/5)
+    (26/26)
   </span>
 </td>
 </tr>
-
+  <tr>
+    <td class="name">AccountController$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (26/26)
+  </span>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -75,16 +105,109 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.dto
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.controller
 &nbsp;
-&nbsp;import com.jknv.lum.model.type.Role
+&nbsp;import com.jknv.lum.config.Require
+&nbsp;import com.jknv.lum.model.dto.AccountDTO
+&nbsp;import com.jknv.lum.model.dto.PlayerDTO
+&nbsp;import com.jknv.lum.model.request.account.AccountCreateRequest
+&nbsp;import com.jknv.lum.model.request.account.AccountLoginRequest
+&nbsp;import com.jknv.lum.model.request.account.AccountUpdateRequest
+&nbsp;import com.jknv.lum.security.AccountDetails
+&nbsp;import com.jknv.lum.services.AccountService
+&nbsp;import com.jknv.lum.services.CookieService
+&nbsp;import com.jknv.lum.services.GuardianService
+&nbsp;import jakarta.servlet.http.HttpServletResponse
+&nbsp;import org.springframework.http.HttpHeaders
+&nbsp;import org.springframework.http.HttpStatus
+&nbsp;import org.springframework.http.MediaType
+&nbsp;import org.springframework.http.ResponseEntity
+&nbsp;import org.springframework.security.core.annotation.AuthenticationPrincipal
+&nbsp;import org.springframework.web.bind.annotation.*
+&nbsp;import org.springframework.web.multipart.MultipartFile
 &nbsp;
-<b class="fc">&nbsp;data class AccountDTO (</b>
-<b class="fc">&nbsp;    val id: Long,</b>
-<b class="fc">&nbsp;    val name: String,</b>
-<b class="fc">&nbsp;    val username: String,</b>
-<b class="fc">&nbsp;    val role: Role,</b>
-&nbsp;)
+<b class="fc">&nbsp;@RestController</b>
+&nbsp;@RequestMapping(&quot;/api/accounts&quot;)
+&nbsp;class AccountController(
+<b class="fc">&nbsp;    private val accountService: AccountService,</b>
+<b class="fc">&nbsp;    private val cookieService: CookieService,</b>
+<b class="fc">&nbsp;    private val guardianService: GuardianService,</b>
+&nbsp;) {
+&nbsp;
+&nbsp;    @PostMapping
+&nbsp;    fun create(@RequestBody req: AccountCreateRequest): ResponseEntity&lt;AccountDTO&gt; {
+<b class="fc">&nbsp;        val response = accountService.createAccountWithRoles(req)</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.CREATED).body(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    fun getAll(): ResponseEntity&lt;List&lt;AccountDTO&gt;&gt; {
+<b class="fc">&nbsp;        val response = accountService.getAccounts()</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    fun get(@PathVariable id: Long): ResponseEntity&lt;AccountDTO?&gt; {
+<b class="fc">&nbsp;        val response = accountService.getAccount(id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PutMapping(&quot;/{id}&quot;)
+&nbsp;    @Require.AdminOrAccountOwner
+&nbsp;    fun update(
+&nbsp;        @RequestBody updateInfo: AccountUpdateRequest,
+&nbsp;        @PathVariable id: Long,
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;    ): ResponseEntity&lt;AccountDTO&gt; {
+<b class="fc">&nbsp;        val response = accountService.updateAccount(id, details.id, updateInfo)</b>
+<b class="fc">&nbsp;        return ResponseEntity.accepted().body(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/dependents&quot;)
+&nbsp;    @Require.Guardian
+&nbsp;    fun getDependents(@AuthenticationPrincipal details: AccountDetails): ResponseEntity&lt;List&lt;PlayerDTO&gt;&gt; {
+<b class="fc">&nbsp;        val response = guardianService.getDependentsOf(details.id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PatchMapping(&quot;/{id}/picture&quot;, consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+&nbsp;    @Require.AdminOrAccountOwner
+&nbsp;    fun updatePicture(
+&nbsp;        @PathVariable id: Long,
+&nbsp;        @RequestParam(&quot;image&quot;) image: MultipartFile
+&nbsp;    ): ResponseEntity&lt;AccountDTO&gt; {
+<b class="fc">&nbsp;        val response = accountService.updatePictureForAccount(id, image)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok().body(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    @Require.AdminOrAccountOwner
+&nbsp;    fun delete(@PathVariable id: Long): ResponseEntity&lt;Void&gt; {
+<b class="fc">&nbsp;        accountService.deleteAccount(id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok().build()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/login&quot;)
+&nbsp;    fun login(@RequestBody loginRequest: AccountLoginRequest, response: HttpServletResponse): ResponseEntity&lt;Long&gt; {
+<b class="pc">&nbsp;        val token = accountService.verifyLogin(loginRequest) ?: return ResponseEntity.notFound().build()</b>
+&nbsp;
+<b class="fc">&nbsp;        val id = accountService.getAccountByUsername(loginRequest.username).id</b>
+&nbsp;
+<b class="fc">&nbsp;        val cookie = cookieService.giveLoginCookie(token)</b>
+&nbsp;
+<b class="fc">&nbsp;        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())</b>
+&nbsp;
+<b class="fc">&nbsp;        return ResponseEntity.ok(id)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/logout&quot;)
+&nbsp;    fun logout(response: HttpServletResponse): ResponseEntity&lt;Void&gt; {
+&nbsp;
+<b class="fc">&nbsp;        val cookie = cookieService.giveLogoutCookie()</b>
+<b class="fc">&nbsp;        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString())</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok().build()</b>
+&nbsp;    }
+&nbsp;}
 </code>
 </pre>
 </div>
@@ -108,7 +231,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

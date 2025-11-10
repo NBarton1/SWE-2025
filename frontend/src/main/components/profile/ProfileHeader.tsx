@@ -117,7 +117,7 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
 
         setIsEditing(false);
         setAccount(updatedAccount)
-    }, [account, form]);
+    }, [account, form, setAccount]);
 
     const cancel = useCallback(() => {
         form.reset();
@@ -141,12 +141,12 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                 .then(() => navigate("/login"))
         }
         setAccount(null)
-    }, [account, currentAccount?.id, navigate])
+    }, [account, currentAccount?.id, navigate, setAccount])
 
     return (
-        <Paper shadow="md" radius="md" p="xl" withBorder>
+        <Paper shadow="md" radius="md" p="xl" withBorder data-testid="profile-header">
             {account ? (
-                <form onSubmit={form.onSubmit(handleSubmit)}>
+                <form onSubmit={form.onSubmit(handleSubmit)} data-testid="profile-form">
                     <Stack gap="lg">
                         <Group justify="space-between" align="flex-start">
                             <Group align="flex-start">
@@ -156,10 +156,10 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                                         size={120}
                                         radius="md"
                                         name={account.name}
+                                        data-testid="profile-avatar"
                                     />
                                     {isEditing &&
                                         <FileButton
-
                                             onChange={file => {
                                                 form.setFieldValue("picture", file);
 
@@ -167,14 +167,14 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                                                     const url = URL.createObjectURL(file);
                                                     setPreviewUrl(url);
                                                 } else {
-                                                    // this is only to empty the image since it's invalid
                                                     setPreviewUrl(null);
                                                 }
                                             }}
                                             accept="image/png,image/jpeg,image/gif"
+                                            data-testid="profile-picture-button"
                                         >
                                             {(props) => (
-                                                <Button {...props} size="xs" variant="light">
+                                                <Button {...props} size="xs" variant="light" data-testid="change-picture-button">
                                                     Change Picture
                                                 </Button>
                                             )}
@@ -191,6 +191,7 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                                                 maxLength={32}
                                                 required
                                                 {...form.getInputProps("name")}
+                                                data-testid="form-name"
                                             />
                                             <TextInput
                                                 label="Username"
@@ -198,20 +199,21 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                                                 maxLength={32}
                                                 required
                                                 {...form.getInputProps("username")}
+                                                data-testid="form-username"
                                             />
                                         </>
                                     ) : (
                                         <>
-                                            <Text size="xl" fw={700}>{account.name}</Text>
-                                            <Text size="sm" c="dimmed">@{account.username}</Text>
+                                            <Text size="xl" fw={700} data-testid="account-name">{account.name}</Text>
+                                            <Text size="sm" c="dimmed" data-testid="account-username">@{account.username}</Text>
                                             {account.email && isPlayer(account) &&
-                                                <Text size="sm">{account.email}</Text>}
+                                                <Text size="sm" data-testid="account-email">{account.email}</Text>}
                                         </>
                                     )}
 
-                                    <Group gap="xs">
+                                    <Group gap="xs" data-testid="role-section">
                                         {!isEditing || (currentAccount && !isAdmin(currentAccount)) ?
-                                            <Badge variant="light">
+                                            <Badge variant="light" data-testid="account-role">
                                                 {account.role}
                                             </Badge>
                                             :
@@ -220,24 +222,24 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                                                 data={Object.values(Role)}
                                                 searchable
                                                 {...form.getInputProps("role")}
-                                            >
-
-                                            </Select>
+                                                data-testid="form-role-select"
+                                            />
                                         }
                                     </Group>
                                 </Stack>
                             </Group>
+
                             {currentAccount && ((account && account.id === currentAccount.id) || isAdmin(currentAccount)) && (
                                 !isEditing ? (
-                                    <Button variant="light" size="sm" onClick={edit}>
+                                    <Button variant="light" size="sm" onClick={edit} data-testid="edit-profile-button">
                                         Edit Profile
                                     </Button>
                                 ) : (
                                     <Group gap="xs">
-                                        <Button variant="light" color="green" size="sm" type="submit">
+                                        <Button variant="light" color="green" size="sm" type="submit" data-testid="save-button">
                                             Save
                                         </Button>
-                                        <Button variant="light" color="red" size="sm" onClick={cancel}>
+                                        <Button variant="light" color="red" size="sm" onClick={cancel} data-testid="cancel-button">
                                             Cancel
                                         </Button>
                                     </Group>
@@ -254,6 +256,7 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                                             size="sm"
                                             placeholder="user@example.com"
                                             {...form.getInputProps("email")}
+                                            data-testid="form-email"
                                         />
                                     }
                                     <PasswordInput
@@ -261,17 +264,20 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                                         size="sm"
                                         placeholder="Leave blank to keep current"
                                         {...form.getInputProps("password")}
+                                        data-testid="form-password"
                                     />
                                     <PasswordInput
                                         label="Confirm Password"
                                         size="sm"
                                         placeholder="Confirm new password"
                                         {...form.getInputProps("confirmPassword")}
+                                        data-testid="form-confirm-password"
                                     />
                                     <Button
                                         onClick={handleDelete}
                                         color="red"
                                         variant="filled"
+                                        data-testid="delete-account-button"
                                     >
                                         Delete Account
                                     </Button>
@@ -281,7 +287,7 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                     </Stack>
                 </form>
             ) : (
-                <Stack align="center">
+                <Stack align="center" data-testid="no-account">
                     <Text size="lg">The user you are looking for does not exist</Text>
                 </Stack>
             )}

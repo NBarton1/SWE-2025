@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > PreAuthorizeGuardian</title>
+  <title>Coverage Report > AccountDetailsService</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,17 +19,53 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.config</a>
+    <a href="../index.html">com.jknv.lum.services</a>
 </div>
 
-<h1>Coverage Summary for Class: PreAuthorizeGuardian (com.jknv.lum.config)</h1>
+<h1>Coverage Summary for Class: AccountDetailsService (com.jknv.lum.services)</h1>
 
 <table class="coverageStats">
 <tr>
   <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
 </tr>
 <tr>
-  <td class="name">PreAuthorizeGuardian</td>
+  <td class="name">AccountDetailsService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
 </tr>
 
 </table>
@@ -39,29 +75,37 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.config
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
 &nbsp;
-&nbsp;import org.springframework.security.access.prepost.PreAuthorize
+&nbsp;import com.jknv.lum.LOGGER
+&nbsp;import com.jknv.lum.repository.AccountRepository
+&nbsp;import com.jknv.lum.security.AccountDetails
+&nbsp;import org.springframework.security.core.userdetails.UserDetailsService
+&nbsp;import org.springframework.security.core.userdetails.UsernameNotFoundException
+&nbsp;import org.springframework.stereotype.Service
 &nbsp;
-&nbsp;@Target(AnnotationTarget.FUNCTION)
-&nbsp;@Retention(AnnotationRetention.RUNTIME)
-&nbsp;@PreAuthorize(&quot;hasRole(&#39;PLAYER&#39;) and !hasAnyRole(&#39;GUARDIAN&#39;,&#39;COACH&#39;,&#39;ADMIN&#39;)&quot;)
-&nbsp;annotation class PreAuthorizePlayerOnly
+<b class="fc">&nbsp;@Service</b>
+&nbsp;class AccountDetailsService(
+<b class="fc">&nbsp;    val accountRepository: AccountRepository,</b>
+&nbsp;) : UserDetailsService {
 &nbsp;
-&nbsp;@Target(AnnotationTarget.FUNCTION)
-&nbsp;@Retention(AnnotationRetention.RUNTIME)
-&nbsp;@PreAuthorize(&quot;hasRole(&#39;GUARDIAN&#39;)&quot;)
-&nbsp;annotation class PreAuthorizeGuardian
 &nbsp;
-&nbsp;@Target(AnnotationTarget.FUNCTION)
-&nbsp;@Retention(AnnotationRetention.RUNTIME)
-&nbsp;@PreAuthorize(&quot;hasRole(&#39;COACH&#39;)&quot;)
-&nbsp;annotation class PreAuthorizeCoach
+&nbsp;    override fun loadUserByUsername(username: String): AccountDetails {
+<b class="fc">&nbsp;        val account = accountRepository.findByUsername(username).orElseThrow { UsernameNotFoundException(&quot;User $username not found&quot;) }</b>
 &nbsp;
-&nbsp;@Target(AnnotationTarget.FUNCTION)
-&nbsp;@Retention(AnnotationRetention.RUNTIME)
-&nbsp;@PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;)&quot;)
-&nbsp;annotation class PreAuthorizeAdmin
+<b class="fc">&nbsp;        val accountDetails = AccountDetails(account)</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;Found account with username: $username&quot;)</b>
+&nbsp;
+<b class="fc">&nbsp;        return accountDetails</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun loadUserById(id: Long): AccountDetails {
+<b class="fc">&nbsp;        val account = accountRepository.findById(id).orElseThrow {</b>
+<b class="fc">&nbsp;            UsernameNotFoundException(&quot;User not found with id: $id&quot;)</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return AccountDetails(account)</b>
+&nbsp;    }
+&nbsp;}
 </code>
 </pre>
 </div>
@@ -85,7 +129,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

@@ -13,14 +13,14 @@ export interface Account {
     id: number
     name: string,
     username: string,
-    picture: Content,
+    picture: Content | null,
     email: string | null
     role: Role
 }
 
 export interface Player {
     account: Account;
-    guardian: Account;
+    guardian?: Account;
     team?: Team;
     hasPermission: boolean;
     position?: string;
