@@ -12,7 +12,7 @@ import Profile from "./components/profile/Profile.tsx";
 import {type Account, isAdmin} from "./types/accountTypes.ts";
 import {useEffect, useState} from "react";
 import {getAccount} from "./request/accounts.ts";
-import AdminAccountsPage from "./components/users/AdminAccountsPage.tsx";
+import AdminAccountsPage from "./components/admin/AdminAccountsPage.tsx";
 import ScheduleList from "./components/schedule/ScheduleList.tsx";
 
 function App() {

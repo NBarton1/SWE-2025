@@ -6,8 +6,8 @@ export interface UpdateAccountRequest {
     name?: string,
     username?: string,
     email?: string | null
-    role?: Role
-    password?: string
+    role?: Role | null
+    password?: string | null
 }
 
 export const getAccounts = async (): Promise<Account[]> => {
@@ -70,12 +70,12 @@ export const getDependents = async (): Promise<Player[]> => {
     }
 };
 
-export const updateAccountPicture = async (file: File): Promise<Content | null> => {
+export const updateAccountPicture = async (id: number, file: File): Promise<Content | null> => {
     try {
         const formData = new FormData();
         formData.append("image", file);
 
-        const res = await fetch(`http://localhost:8080/api/accounts/picture`, {
+        const res = await fetch(`http://localhost:8080/api/accounts/${id}/picture`, {
             method: "PATCH",
             credentials: "include",
             body: formData,
@@ -93,9 +93,9 @@ export const updateAccountPicture = async (file: File): Promise<Content | null> 
     }
 };
 
-export const deleteAccount = async (): Promise<Account | null> => {
+export const deleteAccount = async (id: number): Promise<Account | null> => {
     try {
-        const res = await fetch(`http://localhost:8080/api/accounts`, {
+        const res = await fetch(`http://localhost:8080/api/accounts/${id}`, {
             method: "DELETE",
             credentials: 'include',
         });

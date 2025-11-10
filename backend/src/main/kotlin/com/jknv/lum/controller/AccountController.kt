@@ -58,7 +58,7 @@ class AccountController(
         @PathVariable id: Long,
         @AuthenticationPrincipal details: AccountDetails,
     ): ResponseEntity<AccountDTO> {
-        val response = accountService.updateAccount(details.id, updateInfo)
+        val response = accountService.updateAccount(id, updateInfo)
         if (details.role != Role.ADMIN && updateInfo.role != null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         }
@@ -72,15 +72,14 @@ class AccountController(
         return ResponseEntity.ok(response)
     }
 
-    @PatchMapping("/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PatchMapping("/{id}/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     @PreAuthorizeAdminOrAccountOwner
     fun updatePicture(
-        @AuthenticationPrincipal details: AccountDetails,
+        @PathVariable id: Long,
         @RequestParam("image") image: MultipartFile
     ): ResponseEntity<ContentDTO> {
         val picture = contentService.upload(image)
-        LOGGER.info("${picture.id}")
-        accountService.updatePictureForAccount(details.account, picture)
+        accountService.updatePictureForAccount(id, picture)
         return ResponseEntity.ok().body(picture.toDTO())
     }
 
@@ -94,6 +93,7 @@ class AccountController(
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: AccountLoginRequest, response: HttpServletResponse): ResponseEntity<Long> {
         val token = accountService.verifyLogin(loginRequest) ?: return ResponseEntity.notFound().build()
+
 
         val id = accountService.getAccountByUsername(loginRequest.username).id
 
