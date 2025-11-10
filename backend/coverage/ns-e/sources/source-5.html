@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > AdminRepository</title>
+  <title>Coverage Report > AccountRepository</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,7 +22,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">com.jknv.lum.repository</a>
 </div>
 
-<h1>Coverage Summary for Class: AdminRepository (com.jknv.lum.repository)</h1>
+<h1>Coverage Summary for Class: AccountRepository (com.jknv.lum.repository)</h1>
 
 <table class="coverageStats">
 
@@ -30,22 +30,22 @@ Current scope:     <a href="../../index.html">all classes</a>
   <th class="name">Class</th>
 </tr>
   <tr>
-    <td class="name">AdminRepository$Subclass13</td>
+    <td class="name">AccountRepository$Subclass10</td>
   </tr>
   <tr>
-    <td class="name">AdminRepository$Subclass13$auxiliary$ggW4rlky</td>
+    <td class="name">AccountRepository$Subclass10$auxiliary$eQQjEIZ4</td>
   </tr>
   <tr>
-    <td class="name">AdminRepository$Subclass13$auxiliary$J8tn1dRj</td>
+    <td class="name">AccountRepository$Subclass10$auxiliary$miJ49k13</td>
   </tr>
   <tr>
-    <td class="name">AdminRepository$Subclass13$auxiliary$KItusU5a</td>
+    <td class="name">AccountRepository$Subclass10$auxiliary$PsxSfYTr</td>
   </tr>
   <tr>
-    <td class="name">AdminRepository$Subclass13$auxiliary$l1otwgDM</td>
+    <td class="name">AccountRepository$Subclass10$auxiliary$SwrPN3jx</td>
   </tr>
   <tr>
-    <td class="name">AdminRepository$Subclass13$auxiliary$OTrt6CZr</td>
+    <td class="name">AccountRepository$Subclass10$auxiliary$Xp5wfXXw</td>
   </tr>
 <tr>
   <td class="name"><strong>Total</strong></td>
@@ -59,12 +59,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.repository
 &nbsp;
-&nbsp;import com.jknv.lum.model.entity.Admin
+&nbsp;import com.jknv.lum.model.entity.Account
 &nbsp;import org.springframework.data.jpa.repository.JpaRepository
 &nbsp;import org.springframework.stereotype.Repository
+&nbsp;import java.util.Optional
 &nbsp;
 &nbsp;@Repository
-&nbsp;interface AdminRepository : JpaRepository&lt;Admin, Long&gt;
+&nbsp;interface AccountRepository : JpaRepository&lt;Account, Long&gt; {
+&nbsp;    fun findByUsername(username: String): Optional&lt;Account&gt;
+&nbsp;}
 </code>
 </pre>
 </div>
@@ -88,7 +91,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > TeamService</title>
+  <title>Coverage Report > Content</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.services</a>
+    <a href="../index.html">com.jknv.lum.model.entity</a>
 </div>
 
-<h1>Coverage Summary for Class: TeamService (com.jknv.lum.services)</h1>
+<h1>Coverage Summary for Class: Content (com.jknv.lum.model.entity)</h1>
 
 <table class="coverageStats">
 
@@ -38,7 +38,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">TeamService</td>
+  <td class="name">Content</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -52,12 +52,12 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (6/6)
+    (15/15)
   </span>
 </td>
 </tr>
   <tr>
-    <td class="name">TeamService$$SpringCGLIB$$0</td>
+    <td class="name">Content$HibernateInstantiator</td>
   </tr>
 <tr>
   <td class="name"><strong>Total</strong></td>
@@ -74,7 +74,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (6/6)
+    (15/15)
   </span>
 </td>
 </tr>
@@ -85,32 +85,41 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.entity
 &nbsp;
-&nbsp;import com.jknv.lum.model.entity.Team
-&nbsp;import com.jknv.lum.repository.TeamRepository
-&nbsp;import jakarta.transaction.Transactional
-&nbsp;import org.springframework.stereotype.Service
+&nbsp;import com.jknv.lum.model.dto.ContentDTO
+&nbsp;import jakarta.persistence.Column
+&nbsp;import jakarta.persistence.Entity
+&nbsp;import jakarta.persistence.GeneratedValue
+&nbsp;import jakarta.persistence.GenerationType
+&nbsp;import jakarta.persistence.Id
+&nbsp;import jakarta.persistence.Table
 &nbsp;
-<b class="fc">&nbsp;@Service</b>
-&nbsp;@Transactional
-&nbsp;class TeamService (
-<b class="fc">&nbsp;    private val teamRepository: TeamRepository,</b>
-&nbsp;) {
-&nbsp;    fun createTeam(team: Team): Team {
-<b class="fc">&nbsp;        return teamRepository.save(team)</b>
-&nbsp;    }
+<b class="fc">&nbsp;@Entity</b>
+&nbsp;@Table(name = &quot;Content&quot;)
+&nbsp;class Content (
+<b class="fc">&nbsp;    @Id</b>
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<b class="fc">&nbsp;    val id: Long = 0,</b>
 &nbsp;
-&nbsp;    fun getTeams(): List&lt;Team&gt; {
-<b class="fc">&nbsp;        return teamRepository.findAll()</b>
-&nbsp;    }
+<b class="fc">&nbsp;    @Column(nullable = false)</b>
+<b class="fc">&nbsp;    val filename: String,</b>
 &nbsp;
-&nbsp;    fun getTeamById(id: Long): Team? {
-<b class="fc">&nbsp;        return teamRepository.findById(id).orElse(null)</b>
-&nbsp;    }
+<b class="fc">&nbsp;    @Column(nullable = false)</b>
+<b class="fc">&nbsp;    val fileSize: Long,</b>
 &nbsp;
-&nbsp;    fun countTeams(): Long {
-<b class="fc">&nbsp;        return teamRepository.count()</b>
+<b class="fc">&nbsp;    @Column(nullable = false)</b>
+<b class="fc">&nbsp;    val contentType: String,</b>
+&nbsp;
+&nbsp;    ) {
+&nbsp;    fun toDTO(): ContentDTO {
+<b class="fc">&nbsp;        return ContentDTO (</b>
+<b class="fc">&nbsp;            id = id,</b>
+<b class="fc">&nbsp;            filename = filename,</b>
+<b class="fc">&nbsp;            contentType = contentType,</b>
+<b class="fc">&nbsp;            fileSize = fileSize,</b>
+<b class="fc">&nbsp;            downloadUrl = &quot;http://localhost:8080/api/content/${id}&quot;</b>
+&nbsp;        )
 &nbsp;    }
 &nbsp;}
 </code>
@@ -136,7 +145,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-24 22:03</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

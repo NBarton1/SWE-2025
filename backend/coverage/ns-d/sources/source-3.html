@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > PreAuthorizeAdmin</title>
+  <title>Coverage Report > AdminService</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,19 +19,65 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.config</a>
+    <a href="../index.html">com.jknv.lum.services</a>
 </div>
 
-<h1>Coverage Summary for Class: PreAuthorizeAdmin (com.jknv.lum.config)</h1>
+<h1>Coverage Summary for Class: AdminService (com.jknv.lum.services)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
 </tr>
 <tr>
-  <td class="name">PreAuthorizeAdmin</td>
+  <td class="name">AdminService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
 </tr>
-
+  <tr>
+    <td class="name">AdminService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -39,29 +85,26 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.config
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
 &nbsp;
-&nbsp;import org.springframework.security.access.prepost.PreAuthorize
+&nbsp;import com.jknv.lum.model.dto.AdminDTO
+&nbsp;import com.jknv.lum.model.entity.Account
+&nbsp;import com.jknv.lum.model.entity.Admin
+&nbsp;import com.jknv.lum.repository.AdminRepository
+&nbsp;import org.springframework.stereotype.Service
+&nbsp;import org.springframework.transaction.annotation.Transactional
 &nbsp;
-&nbsp;@Target(AnnotationTarget.FUNCTION)
-&nbsp;@Retention(AnnotationRetention.RUNTIME)
-&nbsp;@PreAuthorize(&quot;hasRole(&#39;PLAYER&#39;) and !hasAnyRole(&#39;GUARDIAN&#39;,&#39;COACH&#39;,&#39;ADMIN&#39;)&quot;)
-&nbsp;annotation class PreAuthorizePlayerOnly
+<b class="fc">&nbsp;@Service</b>
+&nbsp;@Transactional
+&nbsp;class AdminService (
+<b class="fc">&nbsp;    private val adminRepository: AdminRepository</b>
+&nbsp;) {
+&nbsp;    fun createAdmin(account: Account): AdminDTO =
+<b class="fc">&nbsp;        adminRepository.save(Admin(account = account)).toDTO()</b>
 &nbsp;
-&nbsp;@Target(AnnotationTarget.FUNCTION)
-&nbsp;@Retention(AnnotationRetention.RUNTIME)
-&nbsp;@PreAuthorize(&quot;hasRole(&#39;GUARDIAN&#39;)&quot;)
-&nbsp;annotation class PreAuthorizeGuardian
-&nbsp;
-&nbsp;@Target(AnnotationTarget.FUNCTION)
-&nbsp;@Retention(AnnotationRetention.RUNTIME)
-&nbsp;@PreAuthorize(&quot;hasRole(&#39;COACH&#39;)&quot;)
-&nbsp;annotation class PreAuthorizeCoach
-&nbsp;
-&nbsp;@Target(AnnotationTarget.FUNCTION)
-&nbsp;@Retention(AnnotationRetention.RUNTIME)
-&nbsp;@PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;)&quot;)
-&nbsp;annotation class PreAuthorizeAdmin
+&nbsp;    fun countAdmins(): Long =
+<b class="fc">&nbsp;        adminRepository.count()</b>
+&nbsp;}
 </code>
 </pre>
 </div>
@@ -85,7 +128,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

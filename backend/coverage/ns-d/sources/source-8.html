@@ -112,7 +112,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;    @param:Value($$&quot;${lum.jwt.issuer}&quot;)</b>
 &nbsp;    private val jwtIssuer: String,
 &nbsp;) {
-&nbsp;    fun giveToken(username: String): String {
+&nbsp;    fun giveToken(id: Long): String {
 <b class="fc">&nbsp;        val claims = mapOf&lt;String, Any&gt;()</b>
 &nbsp;
 <b class="fc">&nbsp;        val issuedAt = Date.from(Instant.now())</b>
@@ -121,7 +121,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return Jwts.builder()</b>
 <b class="fc">&nbsp;            .claims()</b>
 <b class="fc">&nbsp;            .add(claims)</b>
-<b class="fc">&nbsp;            .subject(username)</b>
+<b class="fc">&nbsp;            .subject(id.toString())</b>
 <b class="fc">&nbsp;            .issuedAt(issuedAt)</b>
 <b class="fc">&nbsp;            .issuer(jwtIssuer)</b>
 <b class="fc">&nbsp;            .expiration(expiration)</b>
@@ -146,8 +146,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    fun isValidToken(jwt: Claims, accountDetails: AccountDetails): Boolean {
-<b class="fc">&nbsp;        return jwt.subject.equals(accountDetails.username) &amp;&amp;</b>
-<b class="pc">&nbsp;                jwt.issuer.equals(jwtIssuer) &amp;&amp;</b>
+<b class="fc">&nbsp;        return jwt.subject == accountDetails.id.toString() &amp;&amp;</b>
+<b class="pc">&nbsp;                jwt.issuer == jwtIssuer &amp;&amp;</b>
 <b class="fc">&nbsp;                !isTokenExpired(jwt)</b>
 &nbsp;    }
 &nbsp;
@@ -179,7 +179,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-24 22:03</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

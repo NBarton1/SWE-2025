@@ -53,18 +53,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    50%
+    62.5%
   </span>
   <span class="absValue">
-    (10/20)
+    (5/8)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    82.4%
+    91.7%
   </span>
   <span class="absValue">
-    (28/34)
+    (22/24)
   </span>
 </td>
 </tr>
@@ -83,18 +83,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    50%
+    62.5%
   </span>
   <span class="absValue">
-    (10/20)
+    (5/8)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    82.4%
+    91.7%
   </span>
   <span class="absValue">
-    (28/34)
+    (22/24)
   </span>
 </td>
 </tr>
@@ -107,10 +107,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
 &nbsp;
-&nbsp;import com.jknv.lum.model.dto.PlayerDTO
 &nbsp;import com.jknv.lum.model.dto.TeamInviteDTO
+&nbsp;import com.jknv.lum.model.entity.Player
+&nbsp;import com.jknv.lum.model.entity.Team
 &nbsp;import com.jknv.lum.model.entity.TeamInvite
-&nbsp;import com.jknv.lum.model.entity.TeamInvitePK
 &nbsp;import com.jknv.lum.model.type.InviteStatus
 &nbsp;import com.jknv.lum.repository.TeamInviteRepository
 &nbsp;import jakarta.persistence.EntityNotFoundException
@@ -121,65 +121,52 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;@Transactional
 &nbsp;class TeamInviteService (
 <b class="fc">&nbsp;    private val teamInviteRepository: TeamInviteRepository,</b>
-<b class="fc">&nbsp;    private val teamService: TeamService,</b>
 <b class="fc">&nbsp;    private val playerService: PlayerService,</b>
 <b class="fc">&nbsp;    private val coachService: CoachService,</b>
 &nbsp;) {
-&nbsp;    fun createInvite(teamId: Long, playerId: Long): TeamInviteDTO {
-<b class="fc">&nbsp;        val team = teamService.getTeamById(teamId)</b>
+&nbsp;    fun invitePlayerByCoach(playerId: Long, accountId: Long): TeamInviteDTO {
+<b class="pc">&nbsp;        val team = coachService.getCoachById(accountId).coachingTeam</b>
+<b class="nc">&nbsp;            ?: throw EntityNotFoundException(&quot;You are not coaching a team&quot;)</b>
 <b class="fc">&nbsp;        val player = playerService.getPlayerById(playerId)</b>
 &nbsp;
-<b class="pc">&nbsp;        if (team == null || player == null)</b>
-<b class="nc">&nbsp;            throw EntityNotFoundException()</b>
-&nbsp;
-<b class="fc">&nbsp;        val invite = TeamInvite(team = team, player = player)</b>
-<b class="fc">&nbsp;        return teamInviteRepository.save(invite).toDTO()</b>
+<b class="fc">&nbsp;        return createInvite(team, player)</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    fun invitePlayerByCoach(playerId: Long, username: String): TeamInviteDTO {
-<b class="pc">&nbsp;        val team = coachService.getCoachByUsername(username)?.coachingTeam</b>
-<b class="fc">&nbsp;        val player = playerService.getPlayerById(playerId)</b>
+&nbsp;    fun getInvitesByPlayer(id: Long): List&lt;TeamInviteDTO&gt; {
+<b class="fc">&nbsp;        val player = playerService.getPlayerById(id)</b>
 &nbsp;
-<b class="pc">&nbsp;        if (team == null || player == null)</b>
-<b class="nc">&nbsp;            throw EntityNotFoundException()</b>
-&nbsp;
-<b class="fc">&nbsp;        return createInvite(team.id, player.id)</b>
+<b class="pc">&nbsp;        return teamInviteRepository.findTeamInvitesByPlayer(player).filter { it.status == InviteStatus.PENDING }.map { it.toDTO() }</b>
 &nbsp;    }
-&nbsp;
-&nbsp;    fun updateInvite(invite: TeamInvite): TeamInviteDTO =
-<b class="fc">&nbsp;        teamInviteRepository.save(invite).toDTO()</b>
-&nbsp;
-&nbsp;    fun getInvitesByPlayer(username: String): List&lt;TeamInviteDTO&gt; {
-<b class="pc">&nbsp;        val player = playerService.getPlayerByUsername(username)</b>
-<b class="nc">&nbsp;            ?: throw EntityNotFoundException(&quot;Player not found&quot;)</b>
-&nbsp;
-<b class="fc">&nbsp;        return teamInviteRepository.findTeamInvitesByPlayer(player).map { it.toDTO() }</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    internal fun getInviteById(playerId: Long, teamId: Long): TeamInvite? =
-<b class="fc">&nbsp;        teamInviteRepository.findTeamInviteById(TeamInvitePK(teamId = teamId, playerId = playerId))</b>
 &nbsp;
 &nbsp;    fun countInvites(): Long =
 <b class="fc">&nbsp;        teamInviteRepository.count()</b>
 &nbsp;
-&nbsp;    fun respondToInvite(username: String, teamId: Long, isAccepted: Boolean): PlayerDTO {
-<b class="pc">&nbsp;        val player = playerService.getPlayerByUsername(username)</b>
-<b class="nc">&nbsp;            ?: throw EntityNotFoundException(&quot;Could not find player&quot;)</b>
+&nbsp;    fun respondToInvite(id: Long, teamId: Long, isAccepted: Boolean): TeamInviteDTO {
+<b class="fc">&nbsp;        val player = playerService.getPlayerById(id)</b>
 <b class="pc">&nbsp;        if (!player.hasPermission)</b>
 <b class="nc">&nbsp;            throw IllegalAccessException(&quot;You do not have permission to register for a team&quot;)</b>
 &nbsp;
-<b class="pc">&nbsp;        val invite = getInviteById(player.id, teamId)</b>
-<b class="nc">&nbsp;            ?: throw EntityNotFoundException(&quot;Could not find invite for player from team $teamId&quot;)</b>
+<b class="fc">&nbsp;        val invite = getInviteById(player.id, teamId)</b>
 &nbsp;
-<b class="fc">&nbsp;        invite.status = InviteStatus.DECLINED</b>
-<b class="pc">&nbsp;        if (isAccepted) {</b>
+<b class="fc">&nbsp;        if (isAccepted) {</b>
 <b class="fc">&nbsp;            player.playingTeam = invite.team</b>
 <b class="fc">&nbsp;            invite.status = InviteStatus.ACCEPTED</b>
+<b class="fc">&nbsp;            playerService.updatePlayer(player)</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            invite.status = InviteStatus.DECLINED</b>
 &nbsp;        }
 &nbsp;
-<b class="fc">&nbsp;        updateInvite(invite)</b>
-<b class="fc">&nbsp;        return playerService.updatePlayer(player)</b>
+<b class="fc">&nbsp;        return updateInvite(invite)</b>
 &nbsp;    }
+&nbsp;
+&nbsp;    internal fun createInvite(team: Team, player: Player): TeamInviteDTO =
+<b class="fc">&nbsp;        teamInviteRepository.save(TeamInvite(team = team, player = player)).toDTO()</b>
+&nbsp;
+&nbsp;    internal fun getInviteById(playerId: Long, teamId: Long): TeamInvite =
+<b class="fc">&nbsp;        teamInviteRepository.findTeamInviteById(TeamInvite.PK(teamId, playerId)).orElseThrow { EntityNotFoundException(&quot;Invite $teamId -&gt; $playerId not found&quot;) }</b>
+&nbsp;
+&nbsp;    internal fun updateInvite(invite: TeamInvite): TeamInviteDTO =
+<b class="fc">&nbsp;        teamInviteRepository.save(invite).toDTO()</b>
 &nbsp;}
 </code>
 </pre>
@@ -204,7 +191,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

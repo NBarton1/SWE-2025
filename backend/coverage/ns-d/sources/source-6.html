@@ -55,7 +55,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (3/3)
+    (4/4)
   </span>
 </td>
 <td class="coverageStat">
@@ -63,7 +63,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (11/11)
+    (18/18)
   </span>
 </td>
 </tr>
@@ -91,12 +91,22 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    private val cookieExpiration: Long,
 &nbsp;) {
 &nbsp;
-&nbsp;    fun giveCookie(jwt: String): ResponseCookie {
+&nbsp;    fun giveLoginCookie(jwt: String): ResponseCookie {
 <b class="fc">&nbsp;        return ResponseCookie.from(cookieName, jwt)</b>
 <b class="fc">&nbsp;            .httpOnly(true)</b>
 <b class="fc">&nbsp;            .secure(true)</b>
 <b class="fc">&nbsp;            .path(&quot;/&quot;)</b>
 <b class="fc">&nbsp;            .maxAge(cookieExpiration)</b>
+<b class="fc">&nbsp;            .sameSite(SameSiteCookies.STRICT.toString())</b>
+<b class="fc">&nbsp;            .build()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun giveLogoutCookie(): ResponseCookie {
+<b class="fc">&nbsp;        return ResponseCookie.from(cookieName, &quot;&quot;)</b>
+<b class="fc">&nbsp;            .httpOnly(true)</b>
+<b class="fc">&nbsp;            .secure(true)</b>
+<b class="fc">&nbsp;            .path(&quot;/&quot;)</b>
+<b class="fc">&nbsp;            .maxAge(0)</b>
 <b class="fc">&nbsp;            .sameSite(SameSiteCookies.STRICT.toString())</b>
 <b class="fc">&nbsp;            .build()</b>
 &nbsp;    }
@@ -128,7 +138,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

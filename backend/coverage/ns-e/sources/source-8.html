@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > MatchRepository</title>
+  <title>Coverage Report > TeamInviteRepository</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,7 +22,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">com.jknv.lum.repository</a>
 </div>
 
-<h1>Coverage Summary for Class: MatchRepository (com.jknv.lum.repository)</h1>
+<h1>Coverage Summary for Class: TeamInviteRepository (com.jknv.lum.repository)</h1>
 
 <table class="coverageStats">
 
@@ -30,22 +30,22 @@ Current scope:     <a href="../../index.html">all classes</a>
   <th class="name">Class</th>
 </tr>
   <tr>
-    <td class="name">MatchRepository$Subclass16</td>
+    <td class="name">TeamInviteRepository$Subclass20</td>
   </tr>
   <tr>
-    <td class="name">MatchRepository$Subclass16$auxiliary$fKIjd3Sp</td>
+    <td class="name">TeamInviteRepository$Subclass20$auxiliary$6KPNEWCY</td>
   </tr>
   <tr>
-    <td class="name">MatchRepository$Subclass16$auxiliary$hGlcxucR</td>
+    <td class="name">TeamInviteRepository$Subclass20$auxiliary$RDO3b1yV</td>
   </tr>
   <tr>
-    <td class="name">MatchRepository$Subclass16$auxiliary$sg2gDOGA</td>
+    <td class="name">TeamInviteRepository$Subclass20$auxiliary$rtdWGcnR</td>
   </tr>
   <tr>
-    <td class="name">MatchRepository$Subclass16$auxiliary$ycPA3cSN</td>
+    <td class="name">TeamInviteRepository$Subclass20$auxiliary$UoCY5BHx</td>
   </tr>
   <tr>
-    <td class="name">MatchRepository$Subclass16$auxiliary$ZiDKzB1S</td>
+    <td class="name">TeamInviteRepository$Subclass20$auxiliary$v5lbvNBZ</td>
   </tr>
 <tr>
   <td class="name"><strong>Total</strong></td>
@@ -59,13 +59,16 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.repository
 &nbsp;
-&nbsp;import com.jknv.lum.model.entity.Match
+&nbsp;import com.jknv.lum.model.entity.Player
+&nbsp;import com.jknv.lum.model.entity.TeamInvite
 &nbsp;import org.springframework.data.jpa.repository.JpaRepository
 &nbsp;import org.springframework.stereotype.Repository
+&nbsp;import java.util.Optional
 &nbsp;
 &nbsp;@Repository
-&nbsp;interface MatchRepository : JpaRepository&lt;Match, Long&gt; {
-&nbsp;
+&nbsp;interface TeamInviteRepository : JpaRepository&lt;TeamInvite, Long&gt; {
+&nbsp;    fun findTeamInvitesByPlayer(player: Player): List&lt;TeamInvite&gt;
+&nbsp;    fun findTeamInviteById(id: TeamInvite.PK): Optional&lt;TeamInvite&gt;
 &nbsp;}
 </code>
 </pre>
@@ -90,7 +93,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

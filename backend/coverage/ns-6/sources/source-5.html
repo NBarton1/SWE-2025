@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > GuardianService</title>
+  <title>Coverage Report > Guardian</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.services</a>
+    <a href="../index.html">com.jknv.lum.model.entity</a>
 </div>
 
-<h1>Coverage Summary for Class: GuardianService (com.jknv.lum.services)</h1>
+<h1>Coverage Summary for Class: Guardian (com.jknv.lum.model.entity)</h1>
 
 <table class="coverageStats">
 
@@ -38,13 +38,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">GuardianService</td>
+  <td class="name">Guardian</td>
 <td class="coverageStat">
   <span class="percent">
     100%
   </span>
   <span class="absValue">
-    (5/5)
+    (3/3)
   </span>
 </td>
 <td class="coverageStat">
@@ -52,12 +52,12 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (6/6)
+    (9/9)
   </span>
 </td>
 </tr>
   <tr>
-    <td class="name">GuardianService$$SpringCGLIB$$0</td>
+    <td class="name">Guardian$HibernateInstantiator</td>
   </tr>
 <tr>
   <td class="name"><strong>Total</strong></td>
@@ -66,7 +66,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (5/5)
+    (3/3)
   </span>
 </td>
 <td class="coverageStat">
@@ -74,7 +74,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (6/6)
+    (9/9)
   </span>
 </td>
 </tr>
@@ -85,31 +85,43 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
+<code class="sourceCode" id="sourceCode">&nbsp;// note: this entity is currently useless, but may have unique fields in the future
+&nbsp;
+&nbsp;package com.jknv.lum.model.entity
 &nbsp;
 &nbsp;import com.jknv.lum.model.dto.GuardianDTO
-&nbsp;import com.jknv.lum.model.entity.Account
-&nbsp;import com.jknv.lum.model.entity.Guardian
-&nbsp;import com.jknv.lum.repository.GuardianRepository
-&nbsp;import org.springframework.stereotype.Service
-&nbsp;import org.springframework.transaction.annotation.Transactional
+&nbsp;import jakarta.persistence.Column
+&nbsp;import jakarta.persistence.Entity
+&nbsp;import jakarta.persistence.FetchType
+&nbsp;import jakarta.persistence.Id
+&nbsp;import jakarta.persistence.JoinColumn
+&nbsp;import jakarta.persistence.MapsId
+&nbsp;import jakarta.persistence.OneToMany
+&nbsp;import jakarta.persistence.OneToOne
+&nbsp;import jakarta.persistence.Table
 &nbsp;
-<b class="fc">&nbsp;@Service</b>
-&nbsp;@Transactional
-&nbsp;class GuardianService (
-<b class="fc">&nbsp;    private val guardianRepository: GuardianRepository</b>
+<b class="fc">&nbsp;@Entity</b>
+&nbsp;@Table(name = &quot;Guardian&quot;)
+&nbsp;class Guardian (
+&nbsp;
+<b class="fc">&nbsp;    @Id</b>
+&nbsp;    @Column(name = &quot;id&quot;)
+<b class="fc">&nbsp;    var id: Long = 0,</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToOne(fetch = FetchType.LAZY)</b>
+&nbsp;    @MapsId
+&nbsp;    @JoinColumn(name = &quot;id&quot;)
+<b class="fc">&nbsp;    var account: Account,</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToMany(mappedBy = &quot;guardian&quot;, fetch = FetchType.LAZY)</b>
+<b class="fc">&nbsp;    var children: MutableSet&lt;Player&gt; = mutableSetOf()</b>
+&nbsp;
 &nbsp;) {
-&nbsp;    fun createGuardian(account: Account): GuardianDTO =
-<b class="fc">&nbsp;        guardianRepository.save(Guardian(account = account)).toDTO()</b>
-&nbsp;
-&nbsp;    internal fun getGuardianByUsername(username: String): Guardian? =
-<b class="fc">&nbsp;        guardianRepository.findByAccount_Username(username)</b>
-&nbsp;
-&nbsp;    fun getGuardians(): List&lt;GuardianDTO&gt; =
-<b class="fc">&nbsp;        guardianRepository.findAll().map { it.toDTO() }</b>
-&nbsp;
-&nbsp;    fun countGuardians(): Long =
-<b class="fc">&nbsp;        guardianRepository.count()</b>
+&nbsp;    fun toDTO(): GuardianDTO {
+<b class="fc">&nbsp;        return GuardianDTO(</b>
+<b class="fc">&nbsp;            account = account.toDTO(),</b>
+&nbsp;        )
+&nbsp;    }
 &nbsp;}
 </code>
 </pre>
@@ -134,7 +146,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>
