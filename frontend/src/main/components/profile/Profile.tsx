@@ -32,8 +32,8 @@ import {
 import {logout} from "../../request/auth.ts";
 import {getInvites, respondToInvite} from "../../request/invites.ts";
 import useLogin from "../../hooks/useLogin.tsx";
-import PlayerCreateModal from "../signup/PlayerCreateModal.tsx";
-import {setPlayerPermission} from "../../request/players.ts";
+import {adoptPlayer, setPlayerPermission} from "../../request/players.ts";
+import PlayerSelectorModal from "./PlayerSelectModal.tsx";
 
 const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
@@ -44,7 +44,7 @@ const ProfilePage = () => {
     const [account, setAccount] = useState<Account | null>(null);
     const [invites, setInvites] = useState<TeamInvite[]>([]);
     const [dependents, setDependents] = useState<Player[]>([]);
-    const [createPlayerModalOpen, setCreatePlayerModalOpen] = useState(false);
+    const [addPlayerModalOpen, setAddPlayerModalOpen] = useState(false);
     const { currentAccount } = useLogin();
 
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -345,8 +345,8 @@ const ProfilePage = () => {
                             <>
                                 <Group align="center" justify="space-between">
                                     <Title order={3}>Your Dependents</Title>
-                                    <Button size="xs" onClick={() => setCreatePlayerModalOpen(true)}>
-                                        Create Player Account
+                                    <Button variant="light" size="sm" onClick={() => setAddPlayerModalOpen(true)}>
+                                        Add Player
                                     </Button>
                                 </Group>
                                 <Divider />
@@ -414,12 +414,20 @@ const ProfilePage = () => {
                 </Paper>
             )}
 
-            <PlayerCreateModal
-                opened={createPlayerModalOpen}
-                onClose={() => setCreatePlayerModalOpen(false)}
-                onAdded={() => getDependents().then(setDependents)}
-            />
+            <PlayerSelectorModal
+                opened={addPlayerModalOpen}
+                onClose={() => setAddPlayerModalOpen(false)}
+                title="Add Player"
+                filter={{ isOrphan: true }}
+                onConfirm={async (playerId: number) => {
+                    const res = await adoptPlayer(playerId);
+                    if (!res) throw new Error();
 
+                    const updatedDependents = await getDependents();
+                    setDependents(updatedDependents);
+                }}
+                errorMessage="Failed to add player. Please try again."
+            />
         </Container>
     );
 };

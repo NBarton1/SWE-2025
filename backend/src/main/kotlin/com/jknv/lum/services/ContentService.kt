@@ -19,7 +19,27 @@ class ContentService(
     private val storagePath: String,
     private val contentRepository: ContentRepository,
 ) {
-    fun upload(file: MultipartFile): Content {
+    fun upload(file: MultipartFile): ContentDTO =
+        uploadContent(file).toDTO()
+
+        fun getContent(id: Long): ContentDTO =
+        getContentById(id).toDTO()
+
+    fun download(content: ContentDTO): ByteArray {
+        val downloadPath = Paths.get(storagePath).resolve(content.downloadUrl)
+        val fileBytes = Files.readAllBytes(downloadPath)
+
+        return fileBytes
+    }
+
+    internal fun createContent(content: Content): Content {
+        return contentRepository.save(content)
+    }
+
+    internal fun getContentById(id: Long): Content =
+        contentRepository.findById(id).orElseThrow { EntityNotFoundException("Content $id not found") }
+
+    internal fun uploadContent(file: MultipartFile): Content {
         if (file.isEmpty) {
             throw IllegalArgumentException("file can not be empty")
         }
@@ -29,35 +49,24 @@ class ContentService(
             Files.createDirectories(uploadPath)
         }
 
-        val originalFilename = file.originalFilename
+        val originalFilename = file.originalFilename?.takeIf { it.isNotBlank() }
             ?: throw IllegalArgumentException("Filename can not be empty")
 
+        val contentType = file.contentType?.takeIf { it.isNotBlank() }
+            ?: throw IllegalArgumentException("Content type must be provided")
+
         // TODO validate media type being uploaded
-        val content = Content(
-            filename = originalFilename,
-            contentType = file.contentType ?: throw IllegalArgumentException("contentType must be provided"),
-            fileSize = file.size,
+        val content = createContent(
+            Content(
+                filename = originalFilename,
+                contentType = contentType,
+                fileSize = file.size
+            )
         )
 
-        val savedContent = contentRepository.save(content)
-
-        val targetPath = uploadPath.resolve(content.id.toString())
+        val targetPath = uploadPath.resolve(content.toDTO().downloadUrl)
         Files.copy(file.inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
-        return savedContent
+        return content
     }
-
-    fun getContent(id: Long): ContentDTO = getContentById(id).toDTO()
-
-    fun download(content: ContentDTO): ByteArray {
-
-        val downloadPath = Paths.get(storagePath).resolve(content.id.toString())
-
-        val fileBytes = Files.readAllBytes(downloadPath)
-
-        return fileBytes
-    }
-
-    internal fun getContentById(id: Long): Content =
-        contentRepository.findById(id).orElseThrow { EntityNotFoundException("Content $id not found") }
 }
