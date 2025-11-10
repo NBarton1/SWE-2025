@@ -1,10 +1,13 @@
-import {expect, afterEach, vi} from 'vitest'
+import {afterEach, expect, vi} from 'vitest'
 import {cleanup, render} from '@testing-library/react'
 import * as matchers from '@testing-library/jest-dom/matchers'
 import {createTheme, MantineProvider} from "@mantine/core";
 import {BrowserRouter} from "react-router";
 import type {Team} from "./src/main/types/team.ts";
-import {type Match, MatchType} from "./src/main/types/match.ts";
+import {type Match, MatchState, MatchType} from "./src/main/types/match.ts";
+import {type Account, type Coach, type Player, Role} from "./src/main/types/accountTypes.ts";
+import type {Content} from "./src/main/types/content.ts";
+import {InviteStatus, type TeamInvite} from "./src/main/types/invite.ts";
 
 expect.extend(matchers)
 
@@ -19,16 +22,18 @@ export const testTheme = createTheme({
     primaryShade: 6,
 });
 
+export const mockTeamDK: Team = {
+    id: 1,
+    name: "DK",
+    win: 2,
+    loss: 0,
+    draw: 0,
+    pointsFor: 999,
+    pointsAllowed: 0,
+};
+
 export const mockTeams: Team[] = [
-    {
-        id: 1,
-        name: "DK",
-        win: 2,
-        loss: 0,
-        draw: 0,
-        pointsFor: 999,
-        pointsAllowed: 0,
-    },
+    mockTeamDK,
     {
         id: 2,
         name: "Chickens",
@@ -51,15 +56,157 @@ export const mockTeams: Team[] = [
 
 export const mockDate = "2026-03-14";
 
+export const mockScheduledMatch: Match = {
+    id: 1,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 3600,
+    timeRunning: false,
+    state: MatchState.SCHEDULED,
+}
+
+export const mockLiveTimeStoppedMatch: Match = {
+    id: 2,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 3600,
+    timeRunning: false,
+    state: MatchState.LIVE,
+}
+
+export const mockLiveTimeRunningMatch: Match = {
+    id: 3,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 3600,
+    timeRunning: true,
+    state: MatchState.LIVE,
+}
+
+export const mockFinishedMatch: Match = {
+    id: 4,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 0,
+    timeRunning: true,
+    state: MatchState.FINISHED,
+}
+
 export const mockMatches: Match[] = [
-    {
-        id: 1,
-        type: MatchType.STANDARD,
-        date: `${mockDate}T03:00`,
-        homeTeam: mockTeams[0],
-        awayTeam: mockTeams[1]
-    }
+    mockScheduledMatch,
+    mockLiveTimeRunningMatch,
+    mockLiveTimeStoppedMatch,
+    mockFinishedMatch
 ];
+
+export const mockContent: Content = {
+    id: 1,
+    filename: "",
+    fileSize: 0,
+    contentType: "",
+    downloadUrl: "",
+}
+
+export const mockPlayerAccount: Account = {
+    id: 2,
+    name: "Diddy Kong",
+    username: "diddyk",
+    // @ts-ignore
+    picture: mockContent,
+    email: null,
+    role: Role.PLAYER
+}
+
+export const mockAdminAccount: Account = {
+    id: 1,
+    name: "Donkey Kong",
+    username: "dk",
+    // @ts-ignore
+    picture: mockContent,
+    email: "dkwon@dk.com",
+    role: Role.ADMIN
+}
+
+export const mockPlayer: Player = {
+    account: mockPlayerAccount,
+    guardian: mockAdminAccount,
+    team: mockTeamDK,
+    hasPermission: true,
+    position: "QB",
+}
+
+export const coachDK: Coach = {
+    account: mockAdminAccount,
+    team: mockTeamDK,
+    likes: Infinity,
+    dislikes: -Infinity,
+}
+
+export const mockTeamInvite: TeamInvite = {
+    team: mockTeamDK,
+    player: mockPlayer,
+    status: InviteStatus.PENDING,
+}
+
+export const mockDependents: Player[] = [
+    {
+        account: {
+            id: 2,
+            name: "Diddy Kong",
+            username: "diddyk",
+            email: null,
+            picture: null,
+            role: Role.PLAYER,
+        },
+        hasPermission: true,
+    },
+    {
+        account: {
+            id: 3,
+            name: "Dixie Kong",
+            username: "dixiek",
+            email: null,
+            picture: null,
+            role: Role.PLAYER
+        },
+        hasPermission: false,
+    },
+    {
+        account: {
+            id: 4,
+            name: "Chunky Kong",
+            username: "chunkyk",
+            email: null,
+            picture: null,
+            role: Role.PLAYER
+        },
+        hasPermission: false,
+    },
+];
+
+export const mockContentImage: Content = {
+    id: 1,
+    filename: "dk.png",
+    fileSize: -Infinity,
+    contentType: "image/png",
+    downloadUrl: "http://localhost:8080/api/content/1",
+}
 
 
 afterEach(() => {
@@ -92,6 +239,7 @@ vi.mock("../main/request/signup");
 vi.mock("../main/request/teams.ts", () => ({
     getTeams: vi.fn(),
 }));
+
 
 export const mockNavigate = vi.fn();
 vi.mock('react-router', () => ({

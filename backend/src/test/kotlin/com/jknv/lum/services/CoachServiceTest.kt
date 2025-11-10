@@ -1,15 +1,17 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.CoachDTO
-import com.jknv.lum.model.dto.TeamDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.CoachRepository
 import io.mockk.every
-import io.mockk.excludeRecords
 import io.mockk.mockk
+import io.mockk.verify
+import jakarta.persistence.EntityNotFoundException
+import org.junit.jupiter.api.assertThrows
+import java.util.Optional
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,24 +21,56 @@ class CoachServiceTest {
     val teamService: TeamService = mockk()
     val coachService = CoachService(coachRepository, teamService)
 
+    lateinit var account: Account
     lateinit var coach: Coach
-    lateinit var coachDTO: CoachDTO
 
     @BeforeTest
     fun setUp() {
-        coach = Coach(
-            account = Account(name = "coach", username = "coach", password = "password", role = Role.ADMIN)
-        )
-        coachDTO = coach.toDTO()
+        account = Account(name = "coach", username = "coach", password = "password", role = Role.COACH)
+        coach = Coach(account = account)
+    }
+
+    @Test
+    fun getCoachByUsernameTest() {
+        every { coachRepository.getCoachByAccountUsername(any()) } answers {
+            if (firstArg<String>() == account.username)
+                Optional.of(coach)
+            else Optional.empty()
+        }
+
+        val accountDetails = coachService.getCoachByUsername(account.username)
+
+        verify { coachRepository.getCoachByAccountUsername(account.username) }
+
+        assertEquals(account, accountDetails.account)
+        assertThrows<EntityNotFoundException> { coachService.getCoachByUsername("") }
+    }
+
+    @Test
+    fun getCoachByIdTest() {
+        every { coachRepository.getCoachById(any()) } answers {
+            if (firstArg<Long>() == account.id)
+                Optional.of(coach)
+            else Optional.empty()
+        }
+
+        val accountDetails = coachService.getCoachById(account.id)
+
+        verify { coachRepository.getCoachById(account.id) }
+
+        assertEquals(account, accountDetails.account)
+        assertThrows<EntityNotFoundException> { coachService.getCoachById(account.id + 1) }
     }
 
     @Test
     fun createCoachTest() {
         every { coachRepository.save(any()) } returns coach
 
-        val result = coachService.createCoach(coach.account)
+        val result = coachService.createCoach(account)
 
-        assertEquals(result, coachDTO)
+        verify { coachRepository.save(any()) }
+
+        assertEquals(result, coach.toDTO())
     }
 
     @Test
@@ -45,38 +79,46 @@ class CoachServiceTest {
 
         val result = coachService.getCoaches()
 
-        assertEquals(result, listOf(coachDTO))
-    }
+        verify { coachRepository.findAll() }
 
-    @Test
-    fun getCoachByUsernameTest() {
-        every { coachRepository.getCoachByAccount_Username("coach") } returns coach
-
-        val result = coachService.getCoachByUsername("coach")
-
-        assertEquals(result, coach)
+        assertEquals(result, listOf(coach.toDTO()))
     }
 
     @Test
     fun countCoachesTest() {
-        every { coachRepository.count() } returns 1
+        val expected = 1L
+
+        every { coachRepository.count() } returns expected
 
         val count = coachService.countCoaches()
 
-        assertEquals(count, 1)
+        verify { coachRepository.count() }
+
+        assertEquals(count, expected)
     }
 
     @Test
     fun setCoachingTeamTest() {
         val team = Team(name = "team")
-        val expectedDTO = CoachDTO(account = coach.account.toSummary(), team = team.toSummary())
 
-        every { teamService.getTeamById(any()) } returns team
-        every { coachRepository.getCoachByAccount_Username(coach.account.username) } returns coach
+        every { teamService.getTeamById(team.id) } returns team
+        every { coachRepository.getCoachById(account.id) } returns Optional.of(coach)
         every { coachRepository.save(coach) } returns coach
 
-        val result = coachService.setCoachingTeam(team.id, coach.account.username)
+        val expected = CoachDTO(
+            account = account.toDTO(),
+            team = team.toDTO()
+        )
 
-        assertEquals(result, expectedDTO)
+        val result = coachService.setCoachingTeam(team.id, coach.account.id)
+
+        verify {
+            teamService.getTeamById(team.id)
+            coachRepository.getCoachById(account.id)
+            coachRepository.save(coach)
+        }
+
+        assertEquals(expected, result)
+        assertEquals(expected, coach.toDTO())
     }
 }

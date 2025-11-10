@@ -1,24 +1,20 @@
 package com.jknv.lum.controller
 
 import com.jknv.lum.model.dto.MatchDTO
-import com.jknv.lum.model.dto.TeamSummary
 import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.request.match.MatchCreateRequest
 import com.jknv.lum.model.request.match.MatchUpdateRequest
+import com.jknv.lum.model.type.MatchState
 import com.jknv.lum.model.type.MatchType
 import com.jknv.lum.services.MatchService
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
-import io.mockk.impl.annotations.MockK
-import io.mockk.junit5.MockKExtension
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
@@ -78,8 +74,9 @@ class MatchControllerTest {
             id = match.id,
             date = req.date ?: match.date,
             type = req.type ?: match.type,
-            homeTeam = homeTeam.toSummary(),
-            awayTeam = awayTeam.toSummary()
+            homeTeam = homeTeam.toDTO(),
+            awayTeam = awayTeam.toDTO(),
+            state = MatchState.SCHEDULED,
         )
 
         every { matchService.updateMatch(match.id, req) } returns updatedDTO
@@ -89,6 +86,17 @@ class MatchControllerTest {
         assertEquals(HttpStatus.OK, result.statusCode)
         assertEquals(updatedDTO, result.body)
         verify { matchService.updateMatch(match.id, req) }
+    }
+
+    @Test
+    fun getMatchTest() {
+        every { matchService.getMatch(match.id) } returns matchDTO
+
+        val result = matchController.getMatch(match.id)
+
+        assertEquals(HttpStatus.OK, result.statusCode)
+        assertEquals(matchDTO, result.body)
+        verify { matchService.getMatch(match.id) }
     }
 
     @Test

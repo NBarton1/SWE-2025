@@ -1,6 +1,6 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.config.PreAuthorizeAdmin
+import com.jknv.lum.config.Require
 import com.jknv.lum.model.request.match.MatchCreateRequest
 import com.jknv.lum.model.request.match.MatchUpdateRequest
 import com.jknv.lum.model.dto.MatchDTO
@@ -23,23 +23,30 @@ class MatchController (
     private val matchService: MatchService,
 ) {
     @PostMapping
-    @PreAuthorizeAdmin
+    @Require.Admin
     fun createMatch(@RequestBody req: MatchCreateRequest): ResponseEntity<MatchDTO> {
         val response = matchService.createMatch(req)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @DeleteMapping("/{matchId}")
-    @PreAuthorizeAdmin
+    @Require.Admin
     fun deleteMatch(@PathVariable matchId: Long): ResponseEntity<Void> {
         matchService.deleteMatch(matchId)
         return ResponseEntity.status(HttpStatus.OK).build()
     }
 
     @PutMapping("/{matchId}")
-    @PreAuthorizeAdmin
+    @Require.Admin
     fun updateMatch(@PathVariable matchId: Long, @RequestBody req: MatchUpdateRequest): ResponseEntity<MatchDTO> {
         val response = matchService.updateMatch(matchId, req)
+        return ResponseEntity.status(HttpStatus.OK).body(response)
+    }
+
+
+    @GetMapping("/{matchId}")
+    fun getMatch(@PathVariable matchId: Long): ResponseEntity<MatchDTO> {
+        val response = matchService.getMatch(matchId)
         return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 

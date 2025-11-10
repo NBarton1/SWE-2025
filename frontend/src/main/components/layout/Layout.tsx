@@ -1,27 +1,55 @@
 import {AppShell, Group, Text, Menu, Button, ActionIcon, useMantineColorScheme} from '@mantine/core';
-import {Home, BarChart3, Settings, ChevronDown, Sun, Moon} from 'lucide-react';
-import { Outlet } from "react-router";
+import {Home, BarChart3, Settings, ChevronDown, Sun, Moon, UserStar} from 'lucide-react';
+import {Outlet, useNavigate} from "react-router";
+import useLogin from "../../hooks/useLogin.tsx";
+import {logout} from "../../request/auth.ts";
+import {useMemo} from "react";
+import {isAdmin} from "../../types/accountTypes.ts";
 
 function Layout() {
 
+    const navigate = useNavigate()
+
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-    const menuItems = [
-        {
-            label: 'Home',
-            icon: Home,
-            items: [
-                { label: 'Schedule', href: '/calendar' },
-            ]
-        },
-        {
-            label: 'Stats',
-            icon: BarChart3,
-            items: [
-                {label: 'Team Stats', href: '/teams'},
-            ]
+    const { currentAccount } = useLogin()
+
+    const menuItems = useMemo(() => {
+
+        const items = [
+            {
+                label: "Home",
+                icon: Home,
+                items: [
+                    { label: 'Schedule', href: "/calendar" },
+                ]
+            },
+            {
+                label: "Stats",
+                icon: BarChart3,
+                items: [
+                    {label: "Team Stats", href: "/teams"},
+                ]
+            }
+        ]
+
+
+        const adminItems = [
+            {
+                label: 'Admin',
+                icon: UserStar,
+                items: [
+                    { label: "Users", href: "/users"}
+                ]
+            }
+        ]
+
+        if (currentAccount && isAdmin(currentAccount)) {
+            items.push(...adminItems)
         }
-    ];
+
+        return items
+    }, [currentAccount])
 
     return (
         <AppShell
@@ -93,19 +121,34 @@ function Layout() {
                                 </Button>
                             </Menu.Target>
                             <Menu.Dropdown>
-                                <Menu.Item
-                                    component="a"
-                                    href="/profile"
-                                >
-                                    Profile
-                                </Menu.Item>
-                                <Menu.Divider />
-                                <Menu.Item
-                                    component="a"
-                                    href="/login"
-                                >
-                                    Logout
-                                </Menu.Item>
+                                {currentAccount &&
+                                    <>
+                                        <Menu.Item
+                                            component="a"
+                                            href={`/profile/${currentAccount.id}`}
+                                        >
+                                            Profile
+                                        </Menu.Item>
+                                        <Menu.Divider />
+                                    </>
+                                }
+                                {currentAccount ?
+                                    <Menu.Item
+                                        onClick={async () => {
+                                            await logout();
+                                            navigate("/login")
+                                        }}
+                                    >
+                                        Logout
+                                    </Menu.Item>
+                                    :
+                                    <Menu.Item
+                                        component="a"
+                                        href="/login"
+                                    >
+                                        Login
+                                    </Menu.Item>
+                                }
                             </Menu.Dropdown>
                         </Menu>
                     </Group>

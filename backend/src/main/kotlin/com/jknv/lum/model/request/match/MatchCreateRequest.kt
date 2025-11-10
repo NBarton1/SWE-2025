@@ -2,6 +2,7 @@ package com.jknv.lum.model.request.match
 
 import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.entity.Team
+import com.jknv.lum.model.type.MatchState
 import com.jknv.lum.model.type.MatchType
 import java.time.LocalDateTime
 
@@ -15,14 +16,15 @@ class MatchCreateRequest (
     val awayScore: Int = 0,
 ) {
     fun toEntity(homeTeam: Team, awayTeam: Team): Match {
-        return Match (
+        return Match(
             date = date,
             type = type,
+            state = MatchState.SCHEDULED,
             homeTeam = homeTeam,
             awayTeam = awayTeam,
-            timeLeft = timeLeft,
             homeScore = homeScore,
             awayScore = awayScore,
+            clockTimestamp = null,
         )
     }
 }

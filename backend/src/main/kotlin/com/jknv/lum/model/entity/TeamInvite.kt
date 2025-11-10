@@ -16,10 +16,10 @@ import jakarta.persistence.Table
 
 @Entity
 @Table(name = "TeamInvite")
-data class TeamInvite (
+class TeamInvite (
 
     @EmbeddedId
-    var id: TeamInvitePK = TeamInvitePK(),
+    var id: PK = PK(),
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("teamId")
@@ -36,17 +36,18 @@ data class TeamInvite (
     var status: InviteStatus = InviteStatus.PENDING,
 
 ) {
+
+    @Embeddable
+    data class PK (
+        var teamId: Long? = null,
+        var playerId: Long? = null,
+    )
+
     fun toDTO(): TeamInviteDTO {
         return TeamInviteDTO(
-            team = team.toSummary(),
-            player = player.account.toSummary(),
+            team = team.toDTO(),
+            player = player.account.toDTO(),
             status = status,
         )
     }
 }
-
-@Embeddable
-data class TeamInvitePK (
-    var teamId: Long? = null,
-    var playerId: Long? = null,
-)

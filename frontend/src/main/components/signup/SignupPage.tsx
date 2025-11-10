@@ -1,59 +1,54 @@
 import {
-    TextInput,
-    PasswordInput,
+    Box,
     Button,
+    Group,
     Paper,
-    Title,
+    PasswordInput,
+    Radio,
+    RadioGroup,
     Stack,
-    useMantineTheme,
-    Box, Group
+    TextInput,
+    Title,
+    useMantineTheme
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import {useCallback} from "react";
-import {signup} from "../../request/signup.ts";
-import {login} from "../../request/login.ts";
 import {useNavigate} from "react-router";
-
+import {useCallback, useState} from "react";
+import {signup} from "../../request/signup.ts";
+import useLogin from "../../hooks/useLogin.tsx";
+import {useForm} from "@mantine/form";
+import {Role} from "../../types/accountTypes.ts";
 
 const SignupPage = () => {
-    const theme = useMantineTheme(); // access Mantine theme
-
-    const navigate = useNavigate()
+    const theme = useMantineTheme();
+    const navigate = useNavigate();
+    const { tryLogin } = useLogin();
+    const [accountType, setAccountType] = useState<string>(Role.PLAYER);
 
     const form = useForm({
-        initialValues: { name: "", username: "", password: "" },
+        initialValues: {
+            name: "",
+            username: "",
+            email: "",
+            password: "",
+        },
+
         validate: {
             name: (value) => (value.trim().length < 2 ? "Name must have at least 2 characters" : null),
             username: (value) => (value.trim().length < 3 ? "Username must be at least 3 characters" : null),
+            email: (value) => (accountType === Role.GUARDIAN && !(value && /^\S+@\S+\.\S+$/.test(value)) ? "Invalid email address" : null),
             password: (value) => (value.length < 8 ? "Password must be at least 8 characters" : null),
         },
     });
 
-    const handleSignup = useCallback(async () => {
+    const handleSubmit = useCallback(
+        async (values: { name: string; username: string; email: string; password: string }) => {
+            const signupRes = await signup({ ...values, role: accountType });
+            if (!signupRes.ok) return;
 
-        const signupRes = await signup({
-            name: form.values.name,
-            username: form.values.username,
-            password: form.values.password,
-        })
-
-        if (!signupRes.ok) {
-            return;
-        }
-
-
-        const loginRes = await login({
-            username: form.values.username,
-            password: form.values.password,
-        })
-
-        if (!loginRes.ok) {
-            return;
-        }
-
-        navigate("/calendar")
-
-    }, [form.values.name, form.values.password, form.values.username, navigate]);
+            await tryLogin(values.username, values.password);
+        },
+        [tryLogin, accountType]
+    );
 
     return (
         <Box
@@ -62,7 +57,7 @@ const SignupPage = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: theme.colors[theme.primaryColor][theme.primaryShade as number], // use Mantine primary color
+                backgroundColor: theme.colors[theme.primaryColor][theme.primaryShade as number],
             }}
         >
             <Paper shadow="md" p="xl" radius="md" withBorder style={{ width: 480 }}>
@@ -70,27 +65,55 @@ const SignupPage = () => {
                     Create an Account
                 </Title>
 
-                <form onSubmit={form.onSubmit(handleSignup)}>
+                <form onSubmit={form.onSubmit(handleSubmit)}>
                     <Stack>
+                        <RadioGroup
+                            label="Account Type"
+                            value={accountType}
+                            onChange={(value) => {
+                                setAccountType(value as Role);
+                                if (value === Role.PLAYER) form.setFieldValue("email", "");
+                            }}
+                        >
+                            <Radio
+                                value={Role.PLAYER}
+                                label="Player"
+                                data-testid="signup-radio-player"
+                            />
+                            <Radio
+                                value={Role.GUARDIAN}
+                                label="Guardian"
+                                data-testid="signup-radio-guardian"
+                            />
+                        </RadioGroup>
+
+                        {accountType === Role.GUARDIAN && (
+                            <TextInput
+                                label="Email"
+                                placeholder="Enter email"
+                                type="email"
+                                {...form.getInputProps("email")}
+                                data-testid="signup-email"
+                                required
+                            />
+                        )}
                         <TextInput
                             label="Full Name"
-                            placeholder="Enter your name..."
+                            placeholder="Enter name"
                             {...form.getInputProps("name")}
                             data-testid="signup-name"
                             required
                         />
-
                         <TextInput
                             label="Username"
-                            placeholder="Enter your username..."
+                            placeholder="Enter username"
                             {...form.getInputProps("username")}
                             data-testid="signup-username"
                             required
                         />
-
                         <PasswordInput
                             label="Password"
-                            placeholder="Enter your password..."
+                            placeholder="Enter password"
                             {...form.getInputProps("password")}
                             data-testid="signup-password"
                             required
@@ -104,7 +127,6 @@ const SignupPage = () => {
                             >
                                 Sign Up
                             </Button>
-
                             <Button
                                 variant="outline"
                                 onClick={() => navigate("/login")}

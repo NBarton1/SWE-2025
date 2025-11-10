@@ -1,6 +1,5 @@
 package com.jknv.lum.model.entity
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.jknv.lum.model.dto.AdminDTO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -8,17 +7,16 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.MapsId
-import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
 @Entity
 @Table(name = "Admin")
-data class Admin (
+class Admin (
 
     @Id
     @Column(name = "id")
-    var id: Long? = null,
+    var id: Long = 0,
 
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
@@ -27,7 +25,7 @@ data class Admin (
 ) {
     fun toDTO(): AdminDTO {
         return AdminDTO(
-            account = account.toSummary(),
+            account = account.toDTO(),
         )
     }
 }

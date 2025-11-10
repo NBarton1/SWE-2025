@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > AdminDTO</title>
+  <title>Coverage Report > LiveMatchController</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.model.dto</a>
+    <a href="../index.html">com.jknv.lum.controller</a>
 </div>
 
-<h1>Coverage Summary for Class: AdminDTO (com.jknv.lum.model.dto)</h1>
+<h1>Coverage Summary for Class: LiveMatchController (com.jknv.lum.controller)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -37,19 +37,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 <th class="coverageStat 
 ">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
   Line, %
 </th>
 </tr>
 <tr>
-  <td class="name">AdminDTO</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (1/1)
-  </span>
-</td>
+  <td class="name">LiveMatchController</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -66,6 +62,22 @@ Current scope:     <a href="../../index.html">all classes</a>
     (2/2)
   </span>
 </td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
 </tr>
 
 </table>
@@ -75,11 +87,43 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.dto
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.controller
 &nbsp;
-<b class="fc">&nbsp;data class AdminDTO (</b>
-<b class="fc">&nbsp;    var account: AccountSummary,</b>
-&nbsp;)
+&nbsp;import com.jknv.lum.model.dto.MatchDTO
+&nbsp;import com.jknv.lum.model.request.match.MatchUpdateRequest
+&nbsp;import com.jknv.lum.model.type.Role
+&nbsp;import com.jknv.lum.security.AccountDetails
+&nbsp;import com.jknv.lum.services.MatchService
+&nbsp;import org.springframework.messaging.handler.annotation.DestinationVariable
+&nbsp;import org.springframework.messaging.handler.annotation.MessageMapping
+&nbsp;import org.springframework.messaging.handler.annotation.Payload
+&nbsp;import org.springframework.messaging.simp.SimpMessagingTemplate
+&nbsp;import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+&nbsp;import org.springframework.security.core.annotation.AuthenticationPrincipal
+&nbsp;import org.springframework.stereotype.Controller
+&nbsp;import java.security.Principal
+&nbsp;
+<b class="fc">&nbsp;@Controller</b>
+&nbsp;class LiveMatchController(
+<b class="fc">&nbsp;    private val matchService: MatchService,</b>
+<b class="fc">&nbsp;    private val simpMessagingTemplate: SimpMessagingTemplate,</b>
+&nbsp;) {
+&nbsp;
+&nbsp;    @MessageMapping(&quot;/match/live-update/{matchId}&quot;)
+&nbsp;    fun liveUpdate(
+&nbsp;        @DestinationVariable matchId: Long,
+&nbsp;        @Payload req: MatchUpdateRequest,
+&nbsp;        principal: Principal,
+&nbsp;    ) {
+&nbsp;        // TODO: workaround for now, @AuthenticationPrincipal not working
+<b class="pc">&nbsp;        if (!(principal as UsernamePasswordAuthenticationToken).authorities.any { it.authority == &quot;ROLE_ADMIN&quot; }) {</b>
+<b class="nc">&nbsp;            throw IllegalAccessError(&quot;Only admin allowed to updated live matches&quot;)</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        val updatedMatch = matchService.updateMatch(matchId, req)</b>
+<b class="fc">&nbsp;        simpMessagingTemplate.convertAndSend(&quot;/topic/match/${matchId}&quot;, updatedMatch)</b>
+&nbsp;    }
+&nbsp;}
 </code>
 </pre>
 </div>
@@ -103,7 +147,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

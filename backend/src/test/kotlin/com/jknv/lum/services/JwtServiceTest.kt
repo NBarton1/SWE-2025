@@ -31,23 +31,23 @@ class JwtServiceTest {
 
     @Test
     fun giveTokenTest() {
-        val token = jwtService.giveToken(account.username)
+        val token = jwtService.giveToken(account.id)
 
         assertNotNull(token)
     }
 
     @Test
     fun getClaimsFromValidJwtTest() {
-        val token = jwtService.giveToken(account.username)
+        val token = jwtService.giveToken(account.id)
 
         val claims = jwtService.getClaimsFromJwt(token)
 
-        assertTrue(claims?.subject.equals(account.username))
+        assertTrue(claims?.subject.equals(account.id.toString()))
     }
 
     @Test
     fun getClaimsFromInvalidJwtTest() {
-        val token = jwtService.giveToken(account.username)
+        val token = jwtService.giveToken(account.id)
 
         val claims = jwtService.getClaimsFromJwt(token + " ")
 
@@ -56,7 +56,7 @@ class JwtServiceTest {
 
     @Test
     fun validTokenTest() {
-        val token = jwtService.giveToken(account.username)
+        val token = jwtService.giveToken(account.id)
 
         val claims = jwtService.getClaimsFromJwt(token)!!
 
@@ -65,11 +65,11 @@ class JwtServiceTest {
 
     @Test
     fun invalidTokenTest() {
-        val token = jwtService.giveToken(account.username)
+        val token = jwtService.giveToken(account.id)
 
         val claims = jwtService.getClaimsFromJwt(token)!!
 
-        account.username = " "
+        account.id = 10
 
         assertFalse(jwtService.isValidToken(claims, AccountDetails(account)))
     }

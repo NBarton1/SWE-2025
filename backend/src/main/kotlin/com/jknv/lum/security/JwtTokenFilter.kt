@@ -1,6 +1,7 @@
 package com.jknv.lum.security
 
 import com.jknv.lum.services.AccountDetailsService
+import com.jknv.lum.services.CookieService
 import com.jknv.lum.services.JwtService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -14,12 +15,11 @@ import org.springframework.web.filter.OncePerRequestFilter
 
 
 @Component
-class JwtTokenFilter(private val accountDetailsService: AccountDetailsService, private val jwtService: JwtService) : OncePerRequestFilter() {
-
-
-    companion object {
-        const val JWT_BEARER_AUTH_HEADER_START = "Bearer "
-    }
+class JwtTokenFilter(
+    private val accountDetailsService: AccountDetailsService,
+    private val jwtService: JwtService,
+    private val cookieService: CookieService,
+) : OncePerRequestFilter() {
 
     public override fun doFilterInternal(
         request: HttpServletRequest,
@@ -30,16 +30,19 @@ class JwtTokenFilter(private val accountDetailsService: AccountDetailsService, p
         val claims = if (jwt != null) jwtService.getClaimsFromJwt(jwt) else null
 
         if (claims != null) {
-            val username = claims.subject
-            val accountDetails = accountDetailsService.loadUserByUsername(username)
-            if (jwtService.isValidToken(claims, accountDetails)) {
-                val token = UsernamePasswordAuthenticationToken(
-                    accountDetails,
-                    null,
-                    accountDetails.authorities
-                )
-                token.details = WebAuthenticationDetailsSource().buildDetails(request)
-                SecurityContextHolder.getContext().authentication = token
+            val id = claims.subject.toLongOrNull()
+
+            if (id != null) {
+                val accountDetails = accountDetailsService.loadUserById(id)
+                if (jwtService.isValidToken(claims, accountDetails)) {
+                    val token = UsernamePasswordAuthenticationToken(
+                        accountDetails,
+                        null,
+                        accountDetails.authorities
+                    )
+                    token.details = WebAuthenticationDetailsSource().buildDetails(request)
+                    SecurityContextHolder.getContext().authentication = token
+                }
             }
         }
 
@@ -48,10 +51,11 @@ class JwtTokenFilter(private val accountDetailsService: AccountDetailsService, p
 
 
     private fun parseJwtHeader(request: HttpServletRequest): String? {
-        val headerAuth = request.getHeader(HttpHeaders.AUTHORIZATION)
-        if (headerAuth != null && headerAuth.startsWith(JWT_BEARER_AUTH_HEADER_START)) {
-            return headerAuth.substring(JWT_BEARER_AUTH_HEADER_START.length)
+        val cookieJwt = request.cookies?.firstOrNull { it.name == cookieService.getCookieName() }?.value
+        if (cookieJwt != null) {
+            return cookieJwt
         }
+
         return null
     }
 }

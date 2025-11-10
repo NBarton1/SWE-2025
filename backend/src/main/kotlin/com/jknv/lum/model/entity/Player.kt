@@ -1,20 +1,23 @@
 package com.jknv.lum.model.entity
 
 import com.jknv.lum.model.dto.PlayerDTO
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.MapsId
+import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
 
 @Entity
 @Table(name = "Player")
-data class Player (
+class Player (
 
     @Id
     @Column(name = "id")
@@ -26,8 +29,8 @@ data class Player (
     var account: Account,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "guardian_id", nullable = false)
-    var guardian: Guardian,
+    @JoinColumn(name = "guardian_id", nullable = true)
+    var guardian: Guardian? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = true)
@@ -38,12 +41,16 @@ data class Player (
 
     @Column(nullable = true)
     var position: String? = null,
+
+    @OneToMany(mappedBy = "player", cascade = [CascadeType.ALL])
+    var invites: MutableSet<TeamInvite> = mutableSetOf(),
+
 ) {
     fun toDTO() : PlayerDTO {
         return PlayerDTO(
-            account = account.toSummary(),
-            guardian = guardian.account.toSummary(),
-            team = playingTeam?.toSummary(),
+            account = account.toDTO(),
+            guardian = guardian?.account?.toDTO(),
+            team = playingTeam?.toDTO(),
             hasPermission = hasPermission,
             position = position,
         )

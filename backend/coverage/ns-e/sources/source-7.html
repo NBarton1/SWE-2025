@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > GuardianRepository</title>
+  <title>Coverage Report > CoachRepository</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,7 +22,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">com.jknv.lum.repository</a>
 </div>
 
-<h1>Coverage Summary for Class: GuardianRepository (com.jknv.lum.repository)</h1>
+<h1>Coverage Summary for Class: CoachRepository (com.jknv.lum.repository)</h1>
 
 <table class="coverageStats">
 
@@ -30,22 +30,22 @@ Current scope:     <a href="../../index.html">all classes</a>
   <th class="name">Class</th>
 </tr>
   <tr>
-    <td class="name">GuardianRepository$Subclass15</td>
+    <td class="name">CoachRepository$Subclass15</td>
   </tr>
   <tr>
-    <td class="name">GuardianRepository$Subclass15$auxiliary$g5CeG7A5</td>
+    <td class="name">CoachRepository$Subclass15$auxiliary$5MGzFHot</td>
   </tr>
   <tr>
-    <td class="name">GuardianRepository$Subclass15$auxiliary$lMTslCNm</td>
+    <td class="name">CoachRepository$Subclass15$auxiliary$71y6A22R</td>
   </tr>
   <tr>
-    <td class="name">GuardianRepository$Subclass15$auxiliary$p3xsrQgX</td>
+    <td class="name">CoachRepository$Subclass15$auxiliary$DUj0u0v5</td>
   </tr>
   <tr>
-    <td class="name">GuardianRepository$Subclass15$auxiliary$qKZs9qUq</td>
+    <td class="name">CoachRepository$Subclass15$auxiliary$GhURrNdI</td>
   </tr>
   <tr>
-    <td class="name">GuardianRepository$Subclass15$auxiliary$wmxgWRdR</td>
+    <td class="name">CoachRepository$Subclass15$auxiliary$SKQzvH6e</td>
   </tr>
 <tr>
   <td class="name"><strong>Total</strong></td>
@@ -59,13 +59,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.repository
 &nbsp;
-&nbsp;import com.jknv.lum.model.entity.Guardian
+&nbsp;import com.jknv.lum.model.entity.Coach
 &nbsp;import org.springframework.data.jpa.repository.JpaRepository
 &nbsp;import org.springframework.stereotype.Repository
+&nbsp;import java.util.Optional
 &nbsp;
 &nbsp;@Repository
-&nbsp;interface GuardianRepository: JpaRepository&lt;Guardian, Long&gt; {
-&nbsp;    fun findByAccount_Username(accountUsername: String): Guardian?
+&nbsp;interface CoachRepository : JpaRepository&lt;Coach, Int&gt; {
+&nbsp;    fun getCoachById(accountId: Long): Optional&lt;Coach&gt;
+&nbsp;    fun getCoachByAccountUsername(accountUsername: String): Optional&lt;Coach&gt;
 &nbsp;}
 </code>
 </pre>
@@ -90,7 +92,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

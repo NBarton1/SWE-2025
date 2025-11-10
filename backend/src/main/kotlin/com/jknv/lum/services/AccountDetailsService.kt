@@ -14,16 +14,18 @@ class AccountDetailsService(
 
 
     override fun loadUserByUsername(username: String): AccountDetails {
-        val account = accountRepository.findByUsername(username)
-
-        if (account == null) {
-            LOGGER.info("No account with username: $username")
-            throw UsernameNotFoundException(username)
-        }
+        val account = accountRepository.findByUsername(username).orElseThrow { UsernameNotFoundException("User $username not found") }
 
         val accountDetails = AccountDetails(account)
-        LOGGER.info("Found account with username: $accountDetails")
+        LOGGER.info("Found account with username: $username")
 
         return accountDetails
+    }
+
+    fun loadUserById(id: Long): AccountDetails {
+        val account = accountRepository.findById(id).orElseThrow {
+            UsernameNotFoundException("User not found with id: $id")
+        }
+        return AccountDetails(account)
     }
 }

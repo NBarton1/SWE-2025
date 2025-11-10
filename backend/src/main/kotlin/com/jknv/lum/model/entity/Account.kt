@@ -1,9 +1,6 @@
 package com.jknv.lum.model.entity
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.jknv.lum.model.dto.AccountDTO
-import com.jknv.lum.model.dto.AccountSummary
-import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.model.type.Role
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -13,13 +10,13 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Entity
 @Table(name = "Account")
-data class Account(
+class Account(
 
     /* columns */
 
@@ -33,8 +30,8 @@ data class Account(
     @Column(nullable = false, unique = true, length = 32)
     var username: String,
 
-    @Column(nullable = true, columnDefinition = "bytea")
-    var picture: ByteArray? = null,
+    @Column(nullable = true, length = 32)
+    var email: String? = null,
 
     @Column(nullable = false, name = "hashed_password")
     var password: String,
@@ -42,6 +39,10 @@ data class Account(
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     var role: Role = Role.GUARDIAN,
+
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "picture_id", nullable = true)
+    var picture: Content? = null,
 
     /* relationships */
 
@@ -61,16 +62,10 @@ data class Account(
         return AccountDTO(
             id = id,
             name = name,
+            email = email,
             username = username,
             role = role,
-        )
-    }
-
-    fun toSummary(): AccountSummary {
-        return AccountSummary(
-            id = id,
-            name = name,
-            username = username,
+            picture = picture?.toDTO()
         )
     }
 }

@@ -4,7 +4,7 @@ import {type Match} from "../../types/match.ts";
 import type { Team } from "../../types/team.ts";
 import {useForm} from "@mantine/form";
 import MatchFormFields from "./MatchFormFields.tsx";
-import {createMatch} from "../../request/matches.ts";
+import {createMatch, type UpdateMatchRequest} from "../../request/matches.ts";
 
 interface CreateMatchFormProps {
     teams: Team[];
@@ -28,7 +28,14 @@ const CreateMatchForm = ({ teams, date, matches, setMatches }: CreateMatchFormPr
         try {
             const { type, homeTeamId, awayTeamId, time } = matchForm.values;
 
-            let createdMatch: Match = await createMatch(type, homeTeamId, awayTeamId, time, date);
+            const req: UpdateMatchRequest = {
+                type,
+                homeTeamId,
+                awayTeamId,
+                date: `${date}T${time}`,
+            };
+
+            let createdMatch: Match = await createMatch(req);
 
             console.log(createdMatch);
 

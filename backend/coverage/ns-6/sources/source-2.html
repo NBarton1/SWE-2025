@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > AccountLoginRequest</title>
+  <title>Coverage Report > Admin</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,18 +19,15 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.model.request.account</a>
+    <a href="../index.html">com.jknv.lum.model.entity</a>
 </div>
 
-<h1>Coverage Summary for Class: AccountLoginRequest (com.jknv.lum.model.request.account)</h1>
+<h1>Coverage Summary for Class: Admin (com.jknv.lum.model.entity)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
-<th class="coverageStat 
-">
-  Class, %
-</th>
 <th class="coverageStat 
 ">
   Method, %
@@ -41,23 +38,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">AccountLoginRequest</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (1/1)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (1/1)
-  </span>
-</td>
+  <td class="name">Admin</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -66,8 +47,37 @@ Current scope:     <a href="../../index.html">all classes</a>
     (3/3)
   </span>
 </td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
 </tr>
-
+  <tr>
+    <td class="name">Admin$HibernateInstantiator</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -75,12 +85,37 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.request.account
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.entity
 &nbsp;
-<b class="fc">&nbsp;data class AccountLoginRequest (</b>
-<b class="fc">&nbsp;    val username: String,</b>
-<b class="fc">&nbsp;    val password: String,</b>
-&nbsp;)
+&nbsp;import com.jknv.lum.model.dto.AdminDTO
+&nbsp;import jakarta.persistence.Column
+&nbsp;import jakarta.persistence.Entity
+&nbsp;import jakarta.persistence.FetchType
+&nbsp;import jakarta.persistence.Id
+&nbsp;import jakarta.persistence.JoinColumn
+&nbsp;import jakarta.persistence.MapsId
+&nbsp;import jakarta.persistence.OneToOne
+&nbsp;import jakarta.persistence.Table
+&nbsp;
+<b class="fc">&nbsp;@Entity</b>
+&nbsp;@Table(name = &quot;Admin&quot;)
+&nbsp;class Admin (
+&nbsp;
+<b class="fc">&nbsp;    @Id</b>
+&nbsp;    @Column(name = &quot;id&quot;)
+<b class="fc">&nbsp;    var id: Long = 0,</b>
+&nbsp;
+<b class="fc">&nbsp;    @OneToOne(fetch = FetchType.LAZY)</b>
+&nbsp;    @MapsId
+&nbsp;    @JoinColumn(name = &quot;id&quot;)
+<b class="fc">&nbsp;    var account: Account,</b>
+&nbsp;) {
+&nbsp;    fun toDTO(): AdminDTO {
+<b class="fc">&nbsp;        return AdminDTO(</b>
+<b class="fc">&nbsp;            account = account.toDTO(),</b>
+&nbsp;        )
+&nbsp;    }
+&nbsp;}
 </code>
 </pre>
 </div>
@@ -104,7 +139,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>
