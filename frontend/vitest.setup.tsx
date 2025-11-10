@@ -19,16 +19,18 @@ export const testTheme = createTheme({
     primaryShade: 6,
 });
 
+export const mockTeamDK: Team = {
+    id: 1,
+    name: "DK",
+    win: 2,
+    loss: 0,
+    draw: 0,
+    pointsFor: 999,
+    pointsAllowed: 0,
+};
+
 export const mockTeams: Team[] = [
-    {
-        id: 1,
-        name: "DK",
-        win: 2,
-        loss: 0,
-        draw: 0,
-        pointsFor: 999,
-        pointsAllowed: 0,
-    },
+    mockTeamDK,
     {
         id: 2,
         name: "Chickens",

@@ -39,8 +39,13 @@ const InvitePlayerModal = ({ opened, onClose }: InvitePlayerModalProps) => {
     };
 
     return (
-        <Modal opened={opened} onClose={onClose} title="Invite Player">
-            <form onSubmit={form.onSubmit(handleInvite)}>
+        <Modal
+            opened={opened}
+            onClose={onClose}
+            title="Invite Player"
+            data-testid="team-invite-modal"
+        >
+            <form data-testid="team-invite-modal-form" onSubmit={form.onSubmit(handleInvite)}>
                 <Stack>
                     <Select
                         label="Select Player"
@@ -53,6 +58,7 @@ const InvitePlayerModal = ({ opened, onClose }: InvitePlayerModalProps) => {
                         }))}
                         {...form.getInputProps("playerId")}
                         required
+                        data-testid="player-select"
                     />
 
                     {error && (
@@ -61,7 +67,12 @@ const InvitePlayerModal = ({ opened, onClose }: InvitePlayerModalProps) => {
                         </Text>
                     )}
 
-                    <Button type="submit">Send Invite</Button>
+                    <Button
+                        type="submit"
+                        data-testid="team-invite-modal-submit-button"
+                    >
+                        Send Invite
+                    </Button>
                 </Stack>
             </form>
         </Modal>

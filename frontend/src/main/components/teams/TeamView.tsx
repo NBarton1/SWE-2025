@@ -54,7 +54,10 @@ const TeamView = () => {
     if (!team) return <Text>Team not found</Text>
 
     return (
-        <Box p="xl">
+        <Box
+            p="xl"
+            data-testid="team-view"
+        >
             <Stack gap="md">
                 <Card withBorder>
                     <Group justify="space-between">
