@@ -23,7 +23,14 @@ const TeamInvitesTable = ({ account }: TeamInvitesTableProps) => {
     };
 
     return (
-        <Paper shadow="sm" radius="md" p="xl" mt="md" withBorder>
+        <Paper
+            shadow="sm"
+            radius="md"
+            p="xl"
+            mt="md"
+            withBorder
+            data-testid="team-invites-table"
+        >
             <Stack>
                 <Title order={3}>Team Invites</Title>
                 <Divider />
@@ -32,6 +39,7 @@ const TeamInvitesTable = ({ account }: TeamInvitesTableProps) => {
                 ) : (
                     invites.map((invite) => (
                         <Group
+                            data-testid={`team-invitation-${invite.team.id}-${invite.player.account.id}`}
                             key={invite.team.id}
                             justify="space-between"
                             style={{ borderBottom: "1px solid #eee", paddingBottom: 8 }}
@@ -41,6 +49,7 @@ const TeamInvitesTable = ({ account }: TeamInvitesTableProps) => {
                             </Text>
                             <Group>
                                 <Button
+                                    data-testid="accept-button"
                                     size="xs"
                                     color="green"
                                     onClick={() => handleRespond(invite.team.id, true)}

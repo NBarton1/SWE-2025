@@ -24,7 +24,11 @@ const ProfilePage = () => {
     }, [id]);
 
     return (
-        <Container size="md" py={40}>
+        <Container
+            size="md"
+            py={40}
+            data-testid="profile-page-container"
+        >
             <ProfileHeader account={account} currentAccount={currentAccount} setAccount={setAccount} />
 
             {accountEquals(currentAccount, account) && (
