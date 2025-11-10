@@ -1,11 +1,13 @@
 package com.jknv.lum.security
 
 import com.jknv.lum.services.AccountDetailsService
+import com.jknv.lum.services.CookieService
 import com.jknv.lum.services.JwtService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import jakarta.servlet.FilterChain
+import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.junit.jupiter.api.BeforeEach
@@ -18,8 +20,12 @@ class JwtTokenFilterTest {
 
     val accountDetailsService: AccountDetailsService = mockk()
     val jwtService: JwtService = mockk()
+    val cookieService: CookieService = CookieService(
+        cookieName = "dkwon",
+        cookieExpiration = 1
+    )
 
-    val filter: JwtTokenFilter = JwtTokenFilter(accountDetailsService, jwtService)
+    val filter: JwtTokenFilter = JwtTokenFilter(accountDetailsService, jwtService, cookieService)
 
     lateinit var request: HttpServletRequest
     lateinit var response: HttpServletResponse
@@ -38,10 +44,10 @@ class JwtTokenFilterTest {
     fun doFilterInternalTest() {
         val jwt = "DK"
         val userId = 1L
-
         val accountDetails = mockk<AccountDetails>(relaxed = true)
 
-        every { request.getHeader("Authorization") } returns "Bearer $jwt"
+        every { request.cookies } returns arrayOf(Cookie(cookieService.getCookieName(), jwt))
+
         every { jwtService.getClaimsFromJwt(jwt) } returns mockk {
             every { subject } returns userId.toString()
         }
@@ -57,7 +63,7 @@ class JwtTokenFilterTest {
 
     @Test
     fun doFilterInternalNoAuthTest() {
-        every { request.getHeader("Authorization") } returns null
+        every { request.cookies } returns null
 
         filter.doFilterInternal(request, response, filterChain)
 
