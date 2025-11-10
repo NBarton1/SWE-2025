@@ -17,7 +17,7 @@
         @PostMapping("/upload")
         fun upload(@RequestParam("file") file: MultipartFile): ResponseEntity<ContentDTO> {
             val metadata = contentService.upload(file)
-            return ResponseEntity.ok(metadata.toDTO())
+            return ResponseEntity.ok(metadata)
         }
 
         @GetMapping("/{fileId}")

@@ -3,14 +3,11 @@ package com.jknv.lum.controller
 import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.dto.PlayerDTO
-import com.jknv.lum.model.dto.ContentDTO
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
-import com.jknv.lum.model.type.Role
 import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.AccountService
-import com.jknv.lum.services.ContentService
 import com.jknv.lum.services.CookieService
 import com.jknv.lum.services.GuardianService
 import jakarta.servlet.http.HttpServletResponse
@@ -28,7 +25,6 @@ class AccountController(
     private val accountService: AccountService,
     private val cookieService: CookieService,
     private val guardianService: GuardianService,
-    private val contentService: ContentService,
 ) {
 
     @PostMapping
@@ -56,10 +52,7 @@ class AccountController(
         @PathVariable id: Long,
         @AuthenticationPrincipal details: AccountDetails,
     ): ResponseEntity<AccountDTO> {
-        val response = accountService.updateAccount(id, updateInfo)
-        if (details.role != Role.ADMIN && updateInfo.role != null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
-        }
+        val response = accountService.updateAccount(id, details.id, updateInfo)
         return ResponseEntity.accepted().body(response)
     }
 
@@ -75,10 +68,9 @@ class AccountController(
     fun updatePicture(
         @PathVariable id: Long,
         @RequestParam("image") image: MultipartFile
-    ): ResponseEntity<ContentDTO> {
-        val picture = contentService.upload(image)
-        accountService.updatePictureForAccount(id, picture)
-        return ResponseEntity.ok().body(picture.toDTO())
+    ): ResponseEntity<AccountDTO> {
+        val response = accountService.updatePictureForAccount(id, image)
+        return ResponseEntity.ok().body(response)
     }
 
     @DeleteMapping("/{id}")
@@ -91,7 +83,6 @@ class AccountController(
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: AccountLoginRequest, response: HttpServletResponse): ResponseEntity<Long> {
         val token = accountService.verifyLogin(loginRequest) ?: return ResponseEntity.notFound().build()
-
 
         val id = accountService.getAccountByUsername(loginRequest.username).id
 

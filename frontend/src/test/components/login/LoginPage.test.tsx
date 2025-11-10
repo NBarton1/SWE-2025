@@ -31,7 +31,7 @@ describe("LoginPage", () => {
         expect(usernameInput).toHaveValue("user");
         expect(passwordInput).toHaveValue("password");
     });
-    //
+
     test("calls login function with correct credentials", async () => {
         const user = userEvent.setup();
         const mockLogin = vi.spyOn(authRequest, "login").mockResolvedValue(MOCK_OK);
@@ -51,10 +51,13 @@ describe("LoginPage", () => {
             });
         });
     });
-    //
+
     test("navigate on success", async () => {
         const user = userEvent.setup();
-        vi.spyOn(authRequest, "login").mockResolvedValue(MOCK_OK);
+        vi.spyOn(authRequest, "login").mockResolvedValue({
+            ok: true,
+            text: () => 1
+        } as unknown as Response);
 
         const usernameInput = screen.getByTestId("login-username");
         const passwordInput = screen.getByTestId("login-password");
@@ -98,4 +101,14 @@ describe("LoginPage", () => {
 
         expect(mockNavigate).not.toHaveBeenCalled();
     });
+
+    test("navigate to signup page", async () => {
+        const user = userEvent.setup();
+        const signupButton = screen.getByTestId("login-signup");
+        await user.click(signupButton)
+
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith("/signup")
+        });
+    })
 });
