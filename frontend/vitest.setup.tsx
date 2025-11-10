@@ -7,6 +7,7 @@ import type {Team} from "./src/main/types/team.ts";
 import {type Match, MatchState, MatchType} from "./src/main/types/match.ts";
 import {type Account, type Coach, type Player, Role} from "./src/main/types/accountTypes.ts";
 import type {Content} from "./src/main/types/content.ts";
+import {InviteStatus, type TeamInvite} from "./src/main/types/invite.ts";
 
 expect.extend(matchers)
 
@@ -155,6 +156,12 @@ export const coachDK: Coach = {
     team: mockTeamDK,
     likes: Infinity,
     dislikes: -Infinity,
+}
+
+export const mockTeamInvite: TeamInvite = {
+    team: mockTeamDK,
+    player: mockPlayer,
+    status: InviteStatus.PENDING,
 }
 
 export const mockDependents: Player[] = [

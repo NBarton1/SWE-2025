@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1762772641618" clover="3.2.0">
-  <project timestamp="1762772641618" name="All files">
-    <metrics statements="559" coveredstatements="507" conditionals="217" coveredconditionals="161" methods="197" coveredmethods="173" elements="973" coveredelements="841" complexity="0" loc="559" ncloc="559" packages="11" files="44" classes="44"/>
+<coverage generated="1762773224619" clover="3.2.0">
+  <project timestamp="1762773224619" name="All files">
+    <metrics statements="585" coveredstatements="529" conditionals="229" coveredconditionals="169" methods="208" coveredmethods="181" elements="1022" coveredelements="879" complexity="0" loc="585" ncloc="585" packages="11" files="47" classes="47"/>
     <package name="components.admin">
       <metrics statements="7" coveredstatements="7" conditionals="4" coveredconditionals="4" methods="4" coveredmethods="4"/>
       <file name="AdminAccountsPage.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/admin/AdminAccountsPage.tsx">
@@ -184,10 +184,10 @@
       </file>
     </package>
     <package name="components.profile">
-      <metrics statements="100" coveredstatements="85" conditionals="93" coveredconditionals="63" methods="33" coveredmethods="30"/>
+      <metrics statements="122" coveredstatements="102" conditionals="103" coveredconditionals="69" methods="43" coveredmethods="36"/>
       <file name="DependentsTable.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/profile/DependentsTable.tsx">
         <metrics statements="24" coveredstatements="24" conditionals="10" coveredconditionals="7" methods="12" coveredmethods="12"/>
-        <line num="13" count="1" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
         <line num="14" count="20" type="stmt"/>
         <line num="15" count="20" type="stmt"/>
         <line num="17" count="20" type="stmt"/>
@@ -214,7 +214,7 @@
       </file>
       <file name="PlayerSelectModal.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/profile/PlayerSelectModal.tsx">
         <metrics statements="19" coveredstatements="19" conditionals="9" coveredconditionals="9" methods="5" coveredmethods="4"/>
-        <line num="17" count="3" type="stmt"/>
+        <line num="17" count="4" type="stmt"/>
         <line num="26" count="17" type="stmt"/>
         <line num="27" count="17" type="stmt"/>
         <line num="29" count="17" type="stmt"/>
@@ -234,13 +234,26 @@
         <line num="52" count="17" type="stmt"/>
         <line num="66" count="2" type="stmt"/>
       </file>
+      <file name="Profile.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/profile/Profile.tsx">
+        <metrics statements="10" coveredstatements="10" conditionals="6" coveredconditionals="4" methods="3" coveredmethods="3"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="20" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+      </file>
       <file name="ProfileHeader.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/profile/ProfileHeader.tsx">
         <metrics statements="57" coveredstatements="42" conditionals="74" coveredconditionals="47" methods="16" coveredmethods="14"/>
-        <line num="43" count="1" type="stmt"/>
-        <line num="44" count="28" type="stmt"/>
-        <line num="45" count="28" type="stmt"/>
-        <line num="47" count="28" type="stmt"/>
-        <line num="49" count="28" type="stmt"/>
+        <line num="43" count="2" type="stmt"/>
+        <line num="44" count="30" type="stmt"/>
+        <line num="45" count="30" type="stmt"/>
+        <line num="47" count="30" type="stmt"/>
+        <line num="49" count="30" type="stmt"/>
         <line num="60" count="1" type="cond" truecount="3" falsecount="1"/>
         <line num="61" count="1" type="cond" truecount="3" falsecount="1"/>
         <line num="62" count="1" type="cond" truecount="2" falsecount="3"/>
@@ -251,12 +264,12 @@
         <line num="70" count="1" type="stmt"/>
         <line num="73" count="1" type="cond" truecount="2" falsecount="2"/>
         <line num="74" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="79" count="28" type="stmt"/>
+        <line num="79" count="30" type="stmt"/>
         <line num="80" count="4" type="cond" truecount="1" falsecount="1"/>
         <line num="81" count="4" type="stmt"/>
         <line num="89" count="4" type="stmt"/>
         <line num="90" count="4" type="stmt"/>
-        <line num="93" count="28" type="stmt"/>
+        <line num="93" count="30" type="stmt"/>
         <line num="94" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="96" count="1" type="stmt"/>
         <line num="99" count="1" type="stmt"/>
@@ -271,13 +284,13 @@
         <line num="116" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="118" count="1" type="stmt"/>
         <line num="119" count="1" type="stmt"/>
-        <line num="122" count="28" type="stmt"/>
+        <line num="122" count="30" type="stmt"/>
         <line num="123" count="1" type="stmt"/>
         <line num="124" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="125" count="0" type="stmt"/>
         <line num="126" count="0" type="stmt"/>
         <line num="128" count="1" type="stmt"/>
-        <line num="131" count="28" type="stmt"/>
+        <line num="131" count="30" type="stmt"/>
         <line num="132" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="134" count="1" type="stmt"/>
         <line num="135" count="1" type="stmt"/>
@@ -286,13 +299,28 @@
         <line num="140" count="0" type="stmt"/>
         <line num="141" count="0" type="stmt"/>
         <line num="143" count="0" type="stmt"/>
-        <line num="146" count="28" type="stmt"/>
+        <line num="146" count="30" type="stmt"/>
         <line num="164" count="0" type="stmt"/>
         <line num="166" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="167" count="0" type="stmt"/>
         <line num="168" count="0" type="stmt"/>
         <line num="170" count="0" type="stmt"/>
         <line num="177" count="19" type="stmt"/>
+      </file>
+      <file name="TeamInvitesTable.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/profile/TeamInvitesTable.tsx">
+        <metrics statements="12" coveredstatements="7" conditionals="4" coveredconditionals="2" methods="7" coveredmethods="3"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="12" count="5" type="stmt"/>
+        <line num="14" count="5" type="stmt"/>
+        <line num="15" count="3" type="stmt"/>
+        <line num="18" count="5" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="25" count="5" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
       </file>
     </package>
     <package name="components.schedule">
@@ -573,20 +601,20 @@
       </file>
       <file name="auth.ts" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/request/auth.ts">
         <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
-        <line num="6" count="4" type="stmt"/>
+        <line num="6" count="5" type="stmt"/>
         <line num="7" count="1" type="stmt"/>
-        <line num="15" count="4" type="stmt"/>
+        <line num="15" count="5" type="stmt"/>
         <line num="16" count="1" type="stmt"/>
       </file>
       <file name="invites.ts" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/request/invites.ts">
         <metrics statements="12" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
-        <line num="4" count="1" type="stmt"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
         <line num="11" count="1" type="stmt"/>
-        <line num="13" count="1" type="stmt"/>
-        <line num="14" count="1" type="stmt"/>
-        <line num="22" count="1" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="22" count="2" type="stmt"/>
         <line num="23" count="2" type="stmt"/>
         <line num="24" count="2" type="stmt"/>
         <line num="30" count="1" type="stmt"/>
@@ -613,19 +641,19 @@
       </file>
       <file name="players.ts" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/request/players.ts">
         <metrics statements="18" coveredstatements="18" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="3"/>
-        <line num="7" count="5" type="stmt"/>
+        <line num="7" count="6" type="stmt"/>
         <line num="8" count="6" type="stmt"/>
         <line num="9" count="6" type="stmt"/>
         <line num="15" count="1" type="stmt"/>
         <line num="17" count="5" type="stmt"/>
         <line num="18" count="5" type="stmt"/>
-        <line num="22" count="5" type="stmt"/>
+        <line num="22" count="6" type="stmt"/>
         <line num="23" count="2" type="stmt"/>
         <line num="24" count="2" type="stmt"/>
         <line num="29" count="1" type="stmt"/>
         <line num="31" count="1" type="stmt"/>
         <line num="32" count="1" type="stmt"/>
-        <line num="36" count="5" type="stmt"/>
+        <line num="36" count="6" type="stmt"/>
         <line num="37" count="2" type="stmt"/>
         <line num="38" count="2" type="stmt"/>
         <line num="45" count="1" type="stmt"/>
@@ -682,33 +710,40 @@
       </file>
     </package>
     <package name="types">
-      <metrics statements="30" coveredstatements="28" conditionals="12" coveredconditionals="10" methods="17" coveredmethods="15"/>
+      <metrics statements="34" coveredstatements="33" conditionals="14" coveredconditionals="12" methods="18" coveredmethods="17"/>
       <file name="accountTypes.ts" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/types/accountTypes.ts">
-        <metrics statements="14" coveredstatements="12" conditionals="4" coveredconditionals="4" methods="8" coveredmethods="6"/>
-        <line num="5" count="35" type="cond" truecount="2" falsecount="0"/>
-        <line num="6" count="35" type="stmt"/>
-        <line num="7" count="35" type="stmt"/>
-        <line num="8" count="35" type="stmt"/>
-        <line num="9" count="35" type="stmt"/>
-        <line num="44" count="35" type="stmt"/>
-        <line num="52" count="47" type="cond" truecount="2" falsecount="0"/>
+        <metrics statements="14" coveredstatements="13" conditionals="4" coveredconditionals="4" methods="8" coveredmethods="7"/>
+        <line num="5" count="37" type="cond" truecount="2" falsecount="0"/>
+        <line num="6" count="37" type="stmt"/>
+        <line num="7" count="37" type="stmt"/>
+        <line num="8" count="37" type="stmt"/>
+        <line num="9" count="37" type="stmt"/>
+        <line num="44" count="37" type="stmt"/>
+        <line num="52" count="48" type="cond" truecount="2" falsecount="0"/>
         <line num="56" count="22" type="stmt"/>
         <line num="60" count="6" type="stmt"/>
         <line num="64" count="0" type="stmt"/>
-        <line num="68" count="19" type="stmt"/>
-        <line num="72" count="0" type="stmt"/>
-        <line num="75" count="35" type="stmt"/>
+        <line num="68" count="20" type="stmt"/>
+        <line num="72" count="2" type="stmt"/>
+        <line num="75" count="37" type="stmt"/>
         <line num="78" count="1" type="stmt"/>
+      </file>
+      <file name="invite.ts" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/types/invite.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="5" count="37" type="cond" truecount="2" falsecount="0"/>
+        <line num="6" count="37" type="stmt"/>
+        <line num="7" count="37" type="stmt"/>
+        <line num="8" count="37" type="stmt"/>
       </file>
       <file name="match.ts" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/types/match.ts">
         <metrics statements="10" coveredstatements="10" conditionals="4" coveredconditionals="4" methods="5" coveredmethods="5"/>
-        <line num="19" count="35" type="cond" truecount="2" falsecount="0"/>
-        <line num="20" count="35" type="stmt"/>
-        <line num="21" count="35" type="stmt"/>
-        <line num="25" count="35" type="cond" truecount="2" falsecount="0"/>
-        <line num="26" count="35" type="stmt"/>
-        <line num="27" count="35" type="stmt"/>
-        <line num="28" count="35" type="stmt"/>
+        <line num="19" count="37" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="37" type="stmt"/>
+        <line num="21" count="37" type="stmt"/>
+        <line num="25" count="37" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="37" type="stmt"/>
+        <line num="27" count="37" type="stmt"/>
+        <line num="28" count="37" type="stmt"/>
         <line num="32" count="8" type="stmt"/>
         <line num="36" count="11" type="stmt"/>
         <line num="40" count="4" type="stmt"/>

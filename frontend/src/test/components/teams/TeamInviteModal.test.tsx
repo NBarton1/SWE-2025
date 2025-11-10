@@ -10,14 +10,6 @@ let mockProps: {
     onClose: () => void;
 }
 
-vi.mock("react-router-dom", async () => {
-    const actual = await vi.importActual("react-router-dom");
-    return {
-        ...actual,
-        useParams: vi.fn(() => ({ id: "1" })),
-    };
-});
-
 vi.mock("../../../main/request/teams.ts", () => ({
     invitePlayerFromTeam: vi.fn(),
 }));
