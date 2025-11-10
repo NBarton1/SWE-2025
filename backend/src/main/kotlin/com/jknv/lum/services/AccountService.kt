@@ -99,7 +99,6 @@ class AccountService(
         req.username?.let { account.username = it }
         req.email?.let { account.email = it }
 
-        LOGGER.info("TEST $req")
         req.role?.let {
             setAccountToRole(account, it)
         }
@@ -109,7 +108,8 @@ class AccountService(
         return updateAccount(account)
     }
 
-    fun updatePictureForAccount(account: Account, picture: Content): AccountDTO {
+    fun updatePictureForAccount(id: Long, picture: Content): AccountDTO {
+        val account = getAccountById(id)
         account.picture = picture
         return updateAccount(account)
     }
