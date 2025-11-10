@@ -57,7 +57,7 @@ const SignupPage = () => {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: theme.colors[theme.primaryColor][theme.primaryShade as number], // use Mantine primary color
+                backgroundColor: theme.colors[theme.primaryColor][theme.primaryShade as number],
             }}
         >
             <Paper shadow="md" p="xl" radius="md" withBorder style={{ width: 480 }}>
@@ -75,22 +75,63 @@ const SignupPage = () => {
                                 if (value === Role.PLAYER) form.setFieldValue("email", "");
                             }}
                         >
-                            <Radio value={Role.PLAYER} label="Player" />
-                            <Radio value={Role.GUARDIAN} label="Guardian" />
+                            <Radio
+                                value={Role.PLAYER}
+                                label="Player"
+                                data-testid="signup-radio-player"
+                            />
+                            <Radio
+                                value={Role.GUARDIAN}
+                                label="Guardian"
+                                data-testid="signup-radio-guardian"
+                            />
                         </RadioGroup>
 
                         {accountType === Role.GUARDIAN && (
-                            <TextInput label="Email" placeholder="Enter email" type="email"{...form.getInputProps("email")} required/>
+                            <TextInput
+                                label="Email"
+                                placeholder="Enter email"
+                                type="email"
+                                {...form.getInputProps("email")}
+                                data-testid="signup-email"
+                                required
+                            />
                         )}
-                        <TextInput label="Full Name" placeholder="Enter name" {...form.getInputProps("name")} required />
-                        <TextInput label="Username" placeholder="Enter username" {...form.getInputProps("username")} required />
-                        <PasswordInput label="Password" placeholder="Enter password" {...form.getInputProps("password")} required />
+                        <TextInput
+                            label="Full Name"
+                            placeholder="Enter name"
+                            {...form.getInputProps("name")}
+                            data-testid="signup-name"
+                            required
+                        />
+                        <TextInput
+                            label="Username"
+                            placeholder="Enter username"
+                            {...form.getInputProps("username")}
+                            data-testid="signup-username"
+                            required
+                        />
+                        <PasswordInput
+                            label="Password"
+                            placeholder="Enter password"
+                            {...form.getInputProps("password")}
+                            data-testid="signup-password"
+                            required
+                        />
 
                         <Group mt="md" grow>
-                            <Button type="submit" variant="filled">
+                            <Button
+                                type="submit"
+                                variant="filled"
+                                data-testid="signup-submit"
+                            >
                                 Sign Up
                             </Button>
-                            <Button variant="outline" onClick={() => navigate("/login")}>
+                            <Button
+                                variant="outline"
+                                onClick={() => navigate("/login")}
+                                data-testid="signup-login"
+                            >
                                 Login
                             </Button>
                         </Group>
