@@ -1,10 +1,9 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.config.PreAuthorizeGuardian
-import com.jknv.lum.config.PreAuthorizePlayerOnly
+import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
-import com.jknv.lum.model.request.account.AccountCreateRequest
+import com.jknv.lum.model.request.player.PlayerFilter
 import com.jknv.lum.model.request.player.PlayerPermissionUpdateRequest
 import com.jknv.lum.model.request.player.PlayerInviteRequest
 import com.jknv.lum.security.AccountDetails
@@ -28,24 +27,26 @@ class PlayerController (
     private val playerService: PlayerService,
     private val teamInviteService: TeamInviteService,
 ) {
-    @PostMapping
-    @PreAuthorizeGuardian
-    fun createPlayer(
-        @RequestBody req: AccountCreateRequest,
+    @PostMapping("/{playerId}/adopt")
+    @Require.Guardian
+    fun adoptPlayer(
+        @PathVariable playerId: Long,
         @AuthenticationPrincipal details: AccountDetails
     ): ResponseEntity<PlayerDTO> {
-        val response = playerService.createPlayer(req, details.id)
+        val response = playerService.setPlayerGuardian(playerId, details.id)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
-    @GetMapping
-    fun getPlayers(): ResponseEntity<List<PlayerDTO>> {
-        val response = playerService.getPlayers()
+    @PostMapping
+    fun searchPlayers(
+        @RequestBody(required = false) filter: PlayerFilter?
+    ): ResponseEntity<List<PlayerDTO>> {
+        val response = playerService.getPlayers(filter)
         return ResponseEntity.ok(response)
     }
 
     @PatchMapping("/{playerId}/permission")
-    @PreAuthorizeGuardian
+    @Require.Guardian
     fun setPermission(
         @PathVariable playerId: Long,
         @RequestBody req: PlayerPermissionUpdateRequest,
@@ -56,14 +57,14 @@ class PlayerController (
     }
 
     @GetMapping("/invites")
-    @PreAuthorizePlayerOnly
+    @Require.PlayerOnly
     fun getInvites(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<List<TeamInviteDTO>> {
         val response = teamInviteService.getInvitesByPlayer(details.id)
         return ResponseEntity.ok(response)
     }
 
     @PutMapping("/invites/{teamId}")
-    @PreAuthorizePlayerOnly
+    @Require.PlayerOnly
     fun respondToInvite(
         @PathVariable teamId: Long,
         @RequestBody req: PlayerInviteRequest,

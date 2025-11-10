@@ -12,7 +12,8 @@ import Profile from "./components/profile/Profile.tsx";
 import {type Account, isAdmin} from "./types/accountTypes.ts";
 import {useEffect, useState} from "react";
 import {getAccount} from "./request/accounts.ts";
-import AdminAccountsPage from "./components/users/AdminAccountsPage.tsx";
+import AdminAccountsPage from "./components/admin/AdminAccountsPage.tsx";
+import ScheduleList from "./components/schedule/ScheduleList.tsx";
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
                     <Route path="/teams/:id" element={<TeamView />} />
                     <Route path="/live/:id" element={<LiveMatchEditPage />} />
                     <Route path="/match/:id" element={(<LiveMatchViewPage />)}/>
+                    <Route path="/calendar/list" element={(<ScheduleList />)}/>
 
                     {currentAccount && isAdmin(currentAccount) && (
                         <Route path="/users" element={(<AdminAccountsPage/>)}/>

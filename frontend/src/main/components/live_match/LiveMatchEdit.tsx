@@ -14,7 +14,13 @@ interface LiveMatchEditProps {
 const LiveMatchEdit = ({ match, updateLiveMatch }: LiveMatchEditProps) => {
 
     return (
-        <Paper shadow="sm" p="md" radius="md" withBorder>
+        <Paper
+            data-testid="live-match-edit"
+            shadow="sm"
+            p="md"
+            radius="md"
+            withBorder
+        >
             <Stack gap="md">
                 <MatchTitle match={match} />
 
@@ -22,7 +28,7 @@ const LiveMatchEdit = ({ match, updateLiveMatch }: LiveMatchEditProps) => {
 
                 <MatchEditState match={match} updateLiveMatch={updateLiveMatch} />
 
-                {match && match.state == MatchState.LIVE && <Stack gap="md">
+                {match && match.state == MatchState.LIVE && <Stack gap="md" data-testid="team-scores-stack">
                     <TeamScoreEdit
                         team={match.awayTeam}
                         score={match.awayScore}

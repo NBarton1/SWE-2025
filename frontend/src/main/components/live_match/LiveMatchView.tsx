@@ -3,16 +3,32 @@ import {type Match} from "../../types/match.ts";
 import TeamScoreView from "./TeamScoreView.tsx";
 import LiveMatchClockView from "./LiveMatchClockView.tsx";
 import MatchTitle from "./MatchTitle.tsx";
+import {useNavigate} from "react-router";
 
-interface LiveMatchEditProps {
-    match: Match,
+interface LiveMatchViewProps {
+    match: null | Match,
+    navigable: boolean
 }
 
-const LiveMatchView = ({ match }: LiveMatchEditProps) => {
+const LiveMatchView = ({ match, navigable }: LiveMatchViewProps) => {
     if (!match) return null;
 
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        if (navigable) {
+            navigate(`/match/${match.id}`);
+        }
+    };
+
     return (
-        <Paper shadow="md" p="lg" radius="lg" withBorder>
+        <Paper
+            shadow="md"
+            p="lg"
+            radius="lg" withBorder
+            data-testid={`live-match-view-${match.id}`}
+            onClick={handleClick}
+        >
             <Stack gap="md">
                 <MatchTitle match={match} />
 

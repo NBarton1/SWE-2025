@@ -13,12 +13,6 @@ interface TeamCreateModalProps {
     onTeamCreated: (team: Team) => void;
 }
 
-interface TeamCreateModalProps {
-    opened: boolean;
-    onClose: () => void;
-    onTeamCreated: (team: Team) => void; // new team callback
-}
-
 const TeamCreateModal = ({ opened, onClose, onTeamCreated }: TeamCreateModalProps) => {
     const form = useForm({ initialValues: { name: "" } });
 
@@ -33,10 +27,28 @@ const TeamCreateModal = ({ opened, onClose, onTeamCreated }: TeamCreateModalProp
     };
 
     return (
-        <Modal opened={opened} onClose={onClose} title="Create Team">
-            <form onSubmit={form.onSubmit(handleSubmit)}>
-                <TextInput label="Team Name" {...form.getInputProps("name")} required />
-                <Button type="submit" mt="md">Create</Button>
+        <Modal
+            opened={opened}
+            onClose={onClose}
+            title="Create Team"
+            data-testid="team-create-modal"
+        >
+            <form
+                onSubmit={form.onSubmit(handleSubmit)}>
+
+                <TextInput
+                    label="Team Name"
+                    {...form.getInputProps("name")}
+                    required
+                    data-testid="team-create-modal-team-name"
+                />
+                <Button
+                    type="submit"
+                    mt="md"
+                    data-testid="team-create-modal-submit-button"
+                >
+                    Create
+                </Button>
             </form>
         </Modal>
     );

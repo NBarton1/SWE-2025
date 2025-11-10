@@ -1,8 +1,8 @@
 import {screen, waitFor} from "@testing-library/react";
 import {beforeEach, vi} from "vitest";
-import {mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
-import TeamsPage from "../main/components/teams/TeamStandings.tsx";
-import * as teamsRequest from "../main/request/teams.ts";
+import {mockTeams, renderWithWrap} from "../../../../vitest.setup.tsx";
+import TeamsPage from "../../../main/components/teams/TeamStandings.tsx";
+import * as teamsRequest from "../../../main/request/teams.ts";
 
 
 describe("TeamsPage", () => {

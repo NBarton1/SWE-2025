@@ -16,12 +16,14 @@ import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
+import jakarta.mail.Multipart
 import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.Authentication
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.web.multipart.MultipartFile
 import java.util.Optional
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -36,6 +38,8 @@ class AccountServiceTest {
     val coachService: CoachService = mockk()
     val guardianService: GuardianService = mockk()
     val adminService: AdminService = mockk()
+    val playerService: PlayerService = mockk()
+    val contentService: ContentService = mockk()
 
     val accountService: AccountService = AccountService(
         accountRepository,
@@ -46,6 +50,7 @@ class AccountServiceTest {
         guardianService,
         adminService,
         playerService,
+        contentService
     )
 
     val req: AccountCreateRequest = mockk()
@@ -105,6 +110,8 @@ class AccountServiceTest {
 
     @Test
     fun createAccountWithRolesTest() {
+        every { req.role } returns Role.ADMIN
+
         every { accountRepository.save(account) } returns account
         every { adminService.createAdmin(account) } returns AdminDTO(account.toDTO())
         every { coachService.createCoach(account) } returns CoachDTO(account.toDTO())
@@ -165,7 +172,7 @@ class AccountServiceTest {
             picture = account.picture?.toDTO()
         )
 
-        val result = accountService.updateAccount(account.id, update)
+        val result = accountService.updateAccount(account.id, account.id, update)
 
         verify {
             accountRepository.findById(account.id)
@@ -178,13 +185,46 @@ class AccountServiceTest {
     }
 
     @Test
+    fun updateAccountRoleTest() {
+        val update = AccountUpdateRequest(
+            role = Role.PLAYER,
+        )
+
+        every { accountRepository.findById(account.id) } returns Optional.of(account)
+        every { accountRepository.save(account) } returns account
+        every { playerService.createPlayer(any()) } returns mockk()
+
+        val expected = AccountDTO(
+            id = account.id,
+            name = update.name ?: account.name,
+            username = update.username ?: account.username,
+            email = update.email ?: account.email,
+            role = update.role ?: account.role,
+            picture = account.picture?.toDTO()
+        )
+
+        val result = accountService.updateAccount(account.id, account.id, update)
+
+        verify {
+            accountRepository.findById(account.id)
+            accountRepository.save(account)
+        }
+
+        assertEquals(expected, result)
+        assertEquals(expected, account.toDTO())
+    }
+
+    @Test
     fun updatePictureTest() {
+        val image: MultipartFile = mockk()
         val picture = Content(
             filename = "filename",
             fileSize = 0xff,
             contentType = "png"
         )
 
+        every { contentService.uploadContent(image) } returns picture
+        every { accountRepository.findById(account.id) } returns Optional.of(account)
         every { accountRepository.save(account) } returns account
 
         val expected = AccountDTO(
@@ -196,7 +236,7 @@ class AccountServiceTest {
             picture = picture.toDTO()
         )
 
-        val result = accountService.updatePictureForAccount(account, picture)
+        val result = accountService.updatePictureForAccount(account.id, image)
 
         verify { accountRepository.save(account) }
 
@@ -232,20 +272,6 @@ class AccountServiceTest {
             auth.principal
             jwtService.giveToken(account.id)
         }
-
-        assertEquals(expected, result)
-    }
-
-
-    @Test
-    fun countAccountsTest() {
-        val expected = 1L
-
-        every { accountRepository.count() } returns expected
-
-        val result = accountService.countAccounts()
-
-        verify { accountRepository.count() }
 
         assertEquals(expected, result)
     }

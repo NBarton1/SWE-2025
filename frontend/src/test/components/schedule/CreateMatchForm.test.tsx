@@ -1,11 +1,11 @@
 import { vi } from "vitest";
-import {mockDate, mockMatches, mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
+import {mockDate, mockMatches, mockTeams, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import '@testing-library/jest-dom';
-import CreateMatchForm from "../main/components/schedule/CreateMatchForm.tsx";
-import * as matchRequest from "../main/request/matches.ts";
-import type {Team} from "../main/types/team.ts";
-import type {Match} from "../main/types/match.ts";
+import CreateMatchForm from "../../../main/components/schedule/CreateMatchForm.tsx";
+import * as matchRequest from "../../../main/request/matches.ts";
+import type {Team} from "../../../main/types/team.ts";
+import type {Match} from "../../../main/types/match.ts";
 import React, {type Dispatch} from "react";
 
 const mockSetMatches = vi.fn();

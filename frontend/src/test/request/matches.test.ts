@@ -1,31 +1,35 @@
 import { vi, beforeEach } from 'vitest';
-import type {Team} from "../main/types/team.ts";
-import type {Match} from "../main/types/match.ts";
+import {MatchType} from "../../main/types/match.ts";
 import {waitFor} from "@testing-library/react";
-import {createMatch, deleteMatch, getMatches, updateMatch} from "../main/request/matches.ts";
+import {
+    createMatch,
+    type CreateMatchRequest,
+    deleteMatch, getMatch,
+    getMatches,
+    updateMatch,
+    type UpdateMatchRequest
+} from "../../main/request/matches.ts";
+import {mockScheduledMatch} from "../../../vitest.setup.tsx";
 
-global.fetch = vi.fn();
 
 describe("matches", () => {
     beforeEach(() => {
-        vi.mocked(global.fetch).mockClear();
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: async () => mockScheduledMatch,
+        } as Response);
     });
 
     test("createMatch test", async () => {
-        const mockCreatedMatch: Match = {
-            id: 1,
-            type: "regular",
-            date: "2024-03-15",
-            homeTeam: { id: 1, name: "Team A" } as Team,
-            awayTeam: { id: 2, name: "Team B" } as Team,
-        };
 
-        vi.mocked(global.fetch).mockResolvedValue({
-            ok: true,
-            json: async () => mockCreatedMatch,
-        } as Response);
+        let req: CreateMatchRequest = {
+            type: MatchType.STANDARD,
+            homeTeamId: "1",
+            awayTeamId: "2",
+            date: "2026-03-14TT12:00",
+        }
 
-        await createMatch("STANDARD", "1", "2", "12:00", "3-14-26");
+        await createMatch(req);
 
         await waitFor(() => {
             expect(global.fetch).toHaveBeenCalledWith(
@@ -42,7 +46,12 @@ describe("matches", () => {
     })
 
     test("updateMatch test", async () => {
-        await updateMatch(1, "STANDARD", "1", "2", "12:00", "3-14-26");
+        let req: UpdateMatchRequest = {
+            matchId: 1,
+            type: MatchType.STANDARD,
+        }
+
+        await updateMatch(req);
 
         await waitFor(() => {
             expect(global.fetch).toHaveBeenCalledWith(
@@ -78,6 +87,20 @@ describe("matches", () => {
         await waitFor(() => {
             expect(global.fetch).toHaveBeenCalledWith(
                 "http://localhost:8080/api/matches",
+                expect.objectContaining({
+                    method: "GET",
+                    credentials: "include",
+                })
+            );
+        });
+    })
+
+    test("getMatch", async () => {
+        await getMatch(1);
+
+        await waitFor(() => {
+            expect(global.fetch).toHaveBeenCalledWith(
+                "http://localhost:8080/api/matches/1",
                 expect.objectContaining({
                     method: "GET",
                     credentials: "include",

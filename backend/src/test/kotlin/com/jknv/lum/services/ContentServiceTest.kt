@@ -67,7 +67,7 @@ class ContentServiceTest {
 
         assertEquals(content.id, saved.id)
 
-        val targetFile = Path.of(storagePath, content.id.toString())
+        val targetFile = Path.of(storagePath, content.filename)
         assert(Files.exists(targetFile))
         assertEquals(fileBytes.toList(), Files.readAllBytes(targetFile).toList())
 
@@ -87,7 +87,7 @@ class ContentServiceTest {
 
     @Test
     fun contentDownloadTest() {
-        val targetFile = Path.of(storagePath, content.id.toString())
+        val targetFile = Path.of(storagePath, content.filename)
         val fileBytes = "hello".toByteArray()
         Files.write(targetFile, fileBytes)
 

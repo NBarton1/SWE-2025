@@ -7,15 +7,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 data class AccountCreateRequest (
     val name: String,
     val username: String,
+    val email: String? = null,
     val password: String,
-    val role: Role = Role.GUARDIAN, // standard creation role
-    private val bCryptPasswordEncoder: BCryptPasswordEncoder = BCryptPasswordEncoder(),
-    ) {
+    val role: Role,
+) {
     fun toEntity(): Account {
         return Account(
             name = name,
             username = username,
-            password = bCryptPasswordEncoder.encode(password),
+            email = email,
+            password = BCryptPasswordEncoder().encode(password),
             role = role,
         )
     }

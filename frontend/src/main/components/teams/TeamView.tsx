@@ -50,11 +50,13 @@ const TeamView = () => {
         setPlayers(prev => prev.filter(p => p.account.id !== playerId));
     };
 
-
     if (!team) return <Text>Team not found</Text>
 
     return (
-        <Box p="xl">
+        <Box
+            p="xl"
+            data-testid="team-view"
+        >
             <Stack gap="md">
                 <Card withBorder>
                     <Group justify="space-between">
@@ -126,6 +128,7 @@ const TeamView = () => {
                                                     color="red"
                                                     size="xs"
                                                     onClick={() => handleRemovePlayer(player.account.id)}
+                                                    data-testid="remove-player-button"
                                                 >
                                                     Remove
                                                 </Button>
