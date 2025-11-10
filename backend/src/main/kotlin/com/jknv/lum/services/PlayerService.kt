@@ -27,7 +27,7 @@ class PlayerService (
         return updatePlayer(player)
     }
 
-    fun getPlayers(filter: PlayerFilter?): List<PlayerDTO> =
+    fun getPlayers(filter: PlayerFilter? = null): List<PlayerDTO> =
         playerRepository.findAll()
             .filter { player -> filter?.let { f ->
                 f.isOrphan?.let { it == (player.guardian == null) } ?: true
