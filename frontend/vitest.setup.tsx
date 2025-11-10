@@ -1,4 +1,4 @@
-import {expect, afterEach, vi} from 'vitest'
+import {afterEach, expect, vi} from 'vitest'
 import {cleanup, render} from '@testing-library/react'
 import * as matchers from '@testing-library/jest-dom/matchers'
 import {createTheme, MantineProvider} from "@mantine/core";
@@ -6,7 +6,7 @@ import {BrowserRouter} from "react-router";
 import type {Team} from "./src/main/types/team.ts";
 import {type Match, MatchState, MatchType} from "./src/main/types/match.ts";
 import {type Account, type Coach, type Player, Role} from "./src/main/types/accountTypes.ts";
-import type {Content} from "@tiptap/react";
+import type {Content} from "./src/main/types/content.ts";
 
 expect.extend(matchers)
 
@@ -157,6 +157,51 @@ export const coachDK: Coach = {
     dislikes: -Infinity,
 }
 
+export const mockDependents: Player[] = [
+    {
+        account: {
+            id: 2,
+            name: "Diddy Kong",
+            username: "diddyk",
+            email: null,
+            picture: null,
+            role: Role.PLAYER,
+        },
+        hasPermission: true,
+    },
+    {
+        account: {
+            id: 3,
+            name: "Dixie Kong",
+            username: "dixiek",
+            email: null,
+            picture: null,
+            role: Role.PLAYER
+        },
+        hasPermission: false,
+    },
+    {
+        account: {
+            id: 4,
+            name: "Chunky Kong",
+            username: "chunkyk",
+            email: null,
+            picture: null,
+            role: Role.PLAYER
+        },
+        hasPermission: false,
+    },
+];
+
+export const mockContentImage: Content = {
+    id: 1,
+    filename: "dk.png",
+    fileSize: -Infinity,
+    contentType: "image/png",
+    downloadUrl: "http://localhost:8080/api/content/1",
+}
+
+
 afterEach(() => {
     cleanup()
 })
@@ -187,6 +232,7 @@ vi.mock("../main/request/signup");
 vi.mock("../main/request/teams.ts", () => ({
     getTeams: vi.fn(),
 }));
+
 
 export const mockNavigate = vi.fn();
 vi.mock('react-router', () => ({

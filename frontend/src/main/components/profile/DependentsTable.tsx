@@ -37,15 +37,25 @@ const DependentsTable = ({account}: DependentsTableProps) => {
         <Paper shadow="sm" radius="md" p="xl" mt="md" withBorder>
             <Stack>
                 <Group align="center" justify="space-between">
-                    <Title order={3}>Your Dependents</Title>
-                    <Button variant="light" size="sm" onClick={() => setAddPlayerModalOpen(true)}>
+                    <Title
+                        data-testid="dependents-title"
+                        order={3}
+                    >
+                        Your Dependents
+                    </Title>
+                    <Button
+                        variant="light"
+                        size="sm"
+                        onClick={() => setAddPlayerModalOpen(true)}
+                        data-testid="add-player-button"
+                    >
                         Add Player
                     </Button>
                 </Group>
                 <Divider/>
 
                 {dependents.length === 0 ? (
-                    <Text c="dimmed">You have no dependents.</Text>
+                    <Text data-testid="empty-state" c="dimmed">You have no dependents.</Text>
                 ) : (
                     dependents.map((dependent) => (
                         <Group
@@ -57,6 +67,7 @@ const DependentsTable = ({account}: DependentsTableProps) => {
                                     navigate(`/profile/${dependent.account.id}`);
                                 }
                             }}
+                            data-testid={`dependent-${dependent.account.id}`}
                         >
                             <Text>
                                 {dependent.account.name} ({dependent.account.username})
@@ -70,6 +81,7 @@ const DependentsTable = ({account}: DependentsTableProps) => {
                                     handlePermissionChange(dependent.account.id, event.currentTarget.checked)
                                 }
                                 onClick={(event) => event.stopPropagation()}
+                                data-testid={`permission-checkbox-${dependent.account.id}`}
                             />
                         </Group>
                     ))
@@ -89,6 +101,7 @@ const DependentsTable = ({account}: DependentsTableProps) => {
                     setDependents(updatedDependents);
                 }}
                 errorMessage="Failed to add player. Please try again."
+                data-testid="player-selector-modal"
             />
         </Paper>
     );
