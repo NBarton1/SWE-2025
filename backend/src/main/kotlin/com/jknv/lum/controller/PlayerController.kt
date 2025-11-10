@@ -1,6 +1,5 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.config.PreAuthorizeGuardian
 import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
@@ -29,7 +28,7 @@ class PlayerController (
     private val teamInviteService: TeamInviteService,
 ) {
     @PostMapping("/{playerId}/adopt")
-    @PreAuthorizeGuardian
+    @Require.Guardian
     fun adoptPlayer(
         @PathVariable playerId: Long,
         @AuthenticationPrincipal details: AccountDetails

@@ -10,23 +10,23 @@ import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.util.*
 
 @Service
 class ContentService(
 
-
-    @param:Value($$"${lum.storage.path}")
+    @param:Value("\${lum.storage.path}")
     private val storagePath: String,
     private val contentRepository: ContentRepository,
 ) {
     fun upload(file: MultipartFile): ContentDTO =
         uploadContent(file).toDTO()
 
-        fun getContent(id: Long): ContentDTO =
+    fun getContent(id: Long): ContentDTO =
         getContentById(id).toDTO()
 
     fun download(content: ContentDTO): ByteArray {
-        val downloadPath = Paths.get(storagePath).resolve(content.downloadUrl)
+        val downloadPath = Paths.get(storagePath).resolve(content.filename)
         val fileBytes = Files.readAllBytes(downloadPath)
 
         return fileBytes
@@ -64,7 +64,7 @@ class ContentService(
             )
         )
 
-        val targetPath = uploadPath.resolve(content.toDTO().downloadUrl)
+        val targetPath = uploadPath.resolve(content.filename)
         Files.copy(file.inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
         return content

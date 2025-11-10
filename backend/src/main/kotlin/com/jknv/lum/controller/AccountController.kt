@@ -69,7 +69,7 @@ class AccountController(
         @PathVariable id: Long,
         @RequestParam("image") image: MultipartFile
     ): ResponseEntity<AccountDTO> {
-        val response = accountService.updatePictureForAccount(details.account, image)
+        val response = accountService.updatePictureForAccount(id, image)
         return ResponseEntity.ok().body(response)
     }
 

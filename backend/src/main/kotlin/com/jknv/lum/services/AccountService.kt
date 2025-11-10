@@ -1,5 +1,6 @@
 package com.jknv.lum.services
 
+import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.request.account.AccountCreateRequest
@@ -67,9 +68,12 @@ class AccountService(
         return updateAccount(account)
     }
 
-    fun updatePictureForAccount(account: Account, image: MultipartFile): AccountDTO {
+    fun updatePictureForAccount(id: Long, image: MultipartFile): AccountDTO {
         val picture = contentService.uploadContent(image)
+        val account = getAccountById(id)
         account.picture = picture
+
+        LOGGER.info("Account $id added picture ${picture.toDTO()}")
 
         return updateAccount(account)
     }
