@@ -5,7 +5,7 @@ import type {Account} from "../../types/accountTypes.ts";
 import {getAccounts} from "../../request/accounts.ts";
 
 
- const AdminAccountsPage = () => {
+const AdminAccountsPage = () => {
     const [users, setUsers] = useState<Account[]>([]);
 
     useEffect(() => {
@@ -13,7 +13,9 @@ import {getAccounts} from "../../request/accounts.ts";
     }, []);
 
     const rows = users.sort((a, b) => a.id - b.id).map((user) => (
-        <Table.Tr key={user.id}>
+        <Table.Tr
+            key={user.id}
+        >
             <Table.Td>{user.id}</Table.Td>
             <Table.Td><Link to={`/profile/${user.id}`}>{user.name}</Link></Table.Td>
             <Table.Td>{user.username}</Table.Td>
@@ -33,7 +35,11 @@ import {getAccounts} from "../../request/accounts.ts";
     ));
 
     return (
-        <Container size="xl" py="xl">
+        <Container
+            data-testid="admin-accounts-page-table"
+            size="xl"
+            py="xl"
+        >
             <Paper shadow="sm" p="md" withBorder>
                 <Title order={2} mb="md">Users</Title>
 
@@ -65,3 +71,4 @@ import {getAccounts} from "../../request/accounts.ts";
 }
 
 export default AdminAccountsPage;
+
