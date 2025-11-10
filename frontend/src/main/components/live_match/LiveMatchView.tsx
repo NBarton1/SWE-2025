@@ -26,7 +26,7 @@ const LiveMatchView = ({ match, navigable }: LiveMatchViewProps) => {
             shadow="md"
             p="lg"
             radius="lg" withBorder
-            data-testid="live-match-view"
+            data-testid={`live-match-view-${match.id}`}
             onClick={handleClick}
         >
             <Stack gap="md">

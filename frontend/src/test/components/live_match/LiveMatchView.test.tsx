@@ -21,7 +21,7 @@ describe("LiveMatchView", () => {
         renderWithWrap(<LiveMatchView {...mockProps} navigable={false} />);
 
         await waitFor(() => {
-            expect(screen.getByTestId("live-match-view")).toBeInTheDocument();
+            expect(screen.getByTestId(`live-match-view-${mockLiveTimeStoppedMatch.id}`)).toBeInTheDocument();
         });
     });
 
@@ -32,7 +32,7 @@ describe("LiveMatchView", () => {
         renderWithWrap(<LiveMatchView {...mockProps} navigable={false} />);
 
         await waitFor(() => {
-            expect(screen.queryByTestId("live-match-view")).not.toBeInTheDocument();
+            expect(screen.queryByTestId(`live-match-view-${mockLiveTimeStoppedMatch.id}`)).not.toBeInTheDocument();
         });
     });
 });

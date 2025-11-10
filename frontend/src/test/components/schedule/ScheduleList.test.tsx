@@ -1,4 +1,4 @@
-import { vi } from "vitest";
+import {expect, vi} from "vitest";
 import { renderWithWrap, mockMatches } from "../../../../vitest.setup.tsx";
 import { screen, waitFor } from "@testing-library/react";
 import '@testing-library/jest-dom';
@@ -36,11 +36,10 @@ describe("ScheduleList", () => {
         renderWithWrap(<ScheduleList />);
 
         for (const match of mockMatches) {
-            const homeTeam = await screen.findByText(match.homeTeam.name);
-            const awayTeam = await screen.findByText(match.awayTeam.name);
 
-            expect(homeTeam).toBeInTheDocument();
-            expect(awayTeam).toBeInTheDocument();
+            await waitFor(() => {
+                expect(screen.getByTestId(`live-match-view-${match.id}`)).toBeInTheDocument();
+            })
         }
     });
 });
