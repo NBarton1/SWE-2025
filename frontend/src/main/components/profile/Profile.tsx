@@ -16,17 +16,24 @@ import {
     Checkbox,
     Select,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import {useForm, type UseFormReturnType} from '@mantine/form';
 import '@mantine/core/styles.css';
-import {type Account, type Player, accountEquals, isPlayer, isAdmin, Role} from "../../types/accountTypes.ts";
+import {
+    type Account,
+    type Player,
+    accountEquals,
+    isPlayer,
+    isAdmin,
+    Role,
+    isValidRoleString,
+} from "../../types/accountTypes.ts";
 import {useNavigate, useParams} from "react-router";
 
 import type {TeamInvite} from "../../types/invite.ts";
 import {
     deleteAccount,
     getAccount, getDependents,
-    updateAccount,
-    updateAccountPicture,
+    updateAccount, updateAccountPicture,
     type UpdateAccountRequest,
 } from "../../request/accounts.ts";
 import {logout} from "../../request/auth.ts";
@@ -34,6 +41,16 @@ import {getInvites, respondToInvite} from "../../request/invites.ts";
 import useLogin from "../../hooks/useLogin.tsx";
 import {adoptPlayer, setPlayerPermission} from "../../request/players.ts";
 import PlayerSelectorModal from "./PlayerSelectModal.tsx";
+
+interface ProfileUpdateForm {
+    name: string,
+    username: string,
+    email: string,
+    password: string,
+    confirmPassword: string,
+    role: string,
+    picture: File | null,
+}
 
 const ProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
@@ -50,25 +67,28 @@ const ProfilePage = () => {
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
 
-    const form = useForm({
+    const form: UseFormReturnType<ProfileUpdateForm> = useForm({
         initialValues: {
             name: "",
             username: "",
             email: "",
             password: "",
             confirmPassword: "",
-            role: null as Role | null,
+            role: "GUARDIAN",
             picture: null as File | null
         },
         validate: {
             name: (value) => (isEditing && value.trim().length === 0 ? "Name is required" : null),
             username: (value) => (isEditing && value.trim().length === 0 ? "Username is required" : null),
-            // email validation should maybe be changed
             email: (value) => (value && value.trim().length > 0 && !/^\S+@\S+$/.test(value) ? "Invalid email" : null),
             password: (value) => {
-                if (!value || value.trim().length === 0) return null;
+                if (!value) return null;
                 if (value.length < 8) return "Password must be at least 8 characters";
                 return null;
+            },
+            role: (value) => {
+                if (!isValidRoleString(value)) return "Please select a valid role";
+                return null
             },
             confirmPassword: (value, values) => {
                 if (!values.password || values.password.trim().length === 0) return null;
@@ -77,14 +97,17 @@ const ProfilePage = () => {
         }
     });
 
-    useEffect(() => {
+    const tryShowAccount = useCallback(() => {
         const id_num = Number(id);
         if (isNaN(id_num)) return;
         getAccount(id_num).then(account => {
-            if (account == null) return
             setAccount(account);
         });
     }, [id]);
+
+    useEffect(() => {
+        tryShowAccount();
+    }, [tryShowAccount]);
 
     useEffect(() => {
         if (!accountEquals(currentAccount, account)) return;
@@ -105,53 +128,58 @@ const ProfilePage = () => {
             role: account.role,
             password: "",
             confirmPassword: "",
-            picture: null
         });
+        form.resetDirty()
         setIsEditing(true);
     }, [account, form]);
 
     const handleSubmit = useCallback(async (values: typeof form.values) => {
         if (!account) return;
-        if (!currentAccount) return;
 
-        const updatedAccountRequest: UpdateAccountRequest = {
-            ...account,
-            name: values.name,
-            username: values.username,
-        };
+        const formStatus = form.getDirty()
 
-        if (values.email && values.email.trim().length > 0) {
-            updatedAccountRequest.email = values.email;
+        // Picture needs to be handled separately
+        const { picture: pictureDirty, ...statusNoPicture} = formStatus
+
+        const dirtyV = Object.fromEntries(
+            Object.entries(statusNoPicture)
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                .filter(([_, isDirty]) => isDirty)
+                .map(([key]) => [key, values[key as keyof typeof values]])
+        ) as Partial<typeof values>;
+
+        const updateAccountRequest: UpdateAccountRequest = dirtyV as UpdateAccountRequest
+        console.log(updateAccountRequest)
+        const updatedAccount: Account | null = await updateAccount(account.id, updateAccountRequest);
+
+        if (pictureDirty && values.picture) {
+            await updateAccountPicture(account.id, values.picture)
         }
 
-        if (values.password && values.password.trim().length > 0) {
-            updatedAccountRequest.password = values.password;
-        }
+        if (updatedAccount === null) return
 
-        if (values.role !== null && values.role !== account.role) {
-            updatedAccountRequest.role = values.role
-        }
-
-        const updatedAccount: Account | null = await updateAccount(account.id, updatedAccountRequest);
-
-        if (values.picture !== null) {
-            await updateAccountPicture(values.picture)
-        }
-
-        setAccount(updatedAccount)
         setIsEditing(false);
+        setAccount(updatedAccount)
     }, [account, form]);
 
     const cancel = useCallback(() => {
         form.reset();
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+            setPreviewUrl(null)
+        }
         setIsEditing(false);
-    }, [form]);
+    }, [form, previewUrl]);
 
     const handleDelete = useCallback(async () => {
-        await deleteAccount()
-        await logout()
-        navigate("/login")
-    }, [navigate])
+        if (!account) return
+        await deleteAccount(account.id)
+            .then(tryShowAccount)
+        if (account.id === currentAccount?.id) {
+            await logout()
+                .then(() => navigate("/login"))
+        }
+    }, [account, currentAccount?.id, navigate, tryShowAccount])
 
     const handleRespond = async (teamId: number, accepted: boolean) => {
         const res = await respondToInvite(teamId, {isAccepted: accepted});
@@ -222,7 +250,7 @@ const ProfilePage = () => {
                                             <>
                                                 <Text size="xl" fw={700}>{account.name}</Text>
                                                 <Text size="sm" c="dimmed">@{account.username}</Text>
-                                                {account.email && <Text size="sm" >{account.email}</Text>}
+                                                {account.email && isPlayer(account) && <Text size="sm" >{account.email}</Text>}
                                             </>
                                         )}
 
@@ -265,12 +293,14 @@ const ProfilePage = () => {
                             {isEditing && (
                                 <Group align="flex-start">
                                     <Stack style={{ flex: 1 }}>
-                                        <TextInput
-                                            label="Email"
-                                            size="sm"
-                                            placeholder="user@example.com"
-                                            {...form.getInputProps("email")}
-                                        />
+                                        {!isPlayer(currentAccount) &&
+                                            <TextInput
+                                                label="Email"
+                                                size="sm"
+                                                placeholder="user@example.com"
+                                                {...form.getInputProps("email")}
+                                            />
+                                        }
                                         <PasswordInput
                                             label="Password"
                                             size="sm"
@@ -373,7 +403,7 @@ const ProfilePage = () => {
                                             <Checkbox
                                                 className="permission-checkbox"
                                                 label="Allow to accept invites"
-                                                checked={!!dependent.hasPermission}
+                                                checked={dependent.hasPermission}
                                                 onChange={async (event) => {
                                                     event.stopPropagation();
                                                     const newValue = event.currentTarget.checked;

@@ -15,7 +15,7 @@ export function live_match_websocket(
         debug: (str) => console.log(str),
     });
 
-    stompClient.onConnect = () => {
+    stompClient.onConnect = (_) => {
 
         stompClient.subscribe(`/topic/match/${matchId}`, (message: IMessage) => {
             const receivedMatch: Match = JSON.parse(message.body);
@@ -26,7 +26,7 @@ export function live_match_websocket(
     };
 
     stompClient.onStompError = (frame) => {
-        console.error('Broker error: ' + frame.headers['message']);
+        console.error(frame.headers['message']);
     };
 
     stompClient.activate();

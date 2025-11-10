@@ -9,11 +9,20 @@ interface TeamScoreViewProps {
 const TeamScoreView = ({ team, score }: TeamScoreViewProps) => {
 
     return (
-        <Group justify="space-between" align="center" p="xs">
-            <Text fz="lg">
+        <Group
+            data-testid="team-score-view"
+            justify="space-between" align="center" p="xs"
+        >
+            <Text
+                data-testid="team-name"
+                fz="lg"
+            >
                 {team.name}
             </Text>
-            <Text fz="xl">
+            <Text
+                data-testid="team-score"
+                fz="xl"
+            >
                 {score}
             </Text>
         </Group>

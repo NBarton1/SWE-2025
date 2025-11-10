@@ -4,7 +4,6 @@ import com.jknv.lum.model.dto.TeamInviteDTO
 import com.jknv.lum.model.entity.Player
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.entity.TeamInvite
-import com.jknv.lum.model.entity.TeamInvitePK
 import com.jknv.lum.model.type.InviteStatus
 import com.jknv.lum.repository.TeamInviteRepository
 import jakarta.persistence.EntityNotFoundException
@@ -57,7 +56,7 @@ class TeamInviteService (
         teamInviteRepository.save(TeamInvite(team = team, player = player)).toDTO()
 
     internal fun getInviteById(playerId: Long, teamId: Long): TeamInvite =
-        teamInviteRepository.findTeamInviteById(TeamInvitePK(teamId, playerId)).orElseThrow { EntityNotFoundException("Invite $teamId -> $playerId not found") }
+        teamInviteRepository.findTeamInviteById(TeamInvite.PK(teamId, playerId)).orElseThrow { EntityNotFoundException("Invite $teamId -> $playerId not found") }
 
     internal fun updateInvite(invite: TeamInvite): TeamInviteDTO =
         teamInviteRepository.save(invite).toDTO()

@@ -4,7 +4,7 @@ import * as matchers from '@testing-library/jest-dom/matchers'
 import {createTheme, MantineProvider} from "@mantine/core";
 import {BrowserRouter} from "react-router";
 import type {Team} from "./src/main/types/team.ts";
-import {type Match, MatchType} from "./src/main/types/match.ts";
+import {type Match, MatchState, MatchType} from "./src/main/types/match.ts";
 
 expect.extend(matchers)
 
@@ -19,16 +19,18 @@ export const testTheme = createTheme({
     primaryShade: 6,
 });
 
+export const mockTeamDK: Team = {
+    id: 1,
+    name: "DK",
+    win: 2,
+    loss: 0,
+    draw: 0,
+    pointsFor: 999,
+    pointsAllowed: 0,
+};
+
 export const mockTeams: Team[] = [
-    {
-        id: 1,
-        name: "DK",
-        win: 2,
-        loss: 0,
-        draw: 0,
-        pointsFor: 999,
-        pointsAllowed: 0,
-    },
+    mockTeamDK,
     {
         id: 2,
         name: "Chickens",
@@ -51,19 +53,63 @@ export const mockTeams: Team[] = [
 
 export const mockDate = "2026-03-14";
 
+export const mockScheduledMatch: Match = {
+    id: 1,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 3600,
+    timeRunning: false,
+    state: MatchState.SCHEDULED,
+}
+
+export const mockLiveTimeStoppedMatch: Match = {
+    id: 2,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 3600,
+    timeRunning: false,
+    state: MatchState.LIVE,
+}
+
+export const mockLiveTimeRunningMatch: Match = {
+    id: 3,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 3600,
+    timeRunning: true,
+    state: MatchState.LIVE,
+}
+
+export const mockFinishedMatch: Match = {
+    id: 4,
+    type: MatchType.STANDARD,
+    date: `${mockDate}T03:00`,
+    homeTeam: mockTeams[0],
+    awayTeam: mockTeams[1],
+    homeScore: 0,
+    awayScore: 0,
+    clockTimestamp: 0,
+    timeRunning: true,
+    state: MatchState.FINISHED,
+}
+
 export const mockMatches: Match[] = [
-    {
-        id: 1,
-        type: MatchType.STANDARD,
-        date: `${mockDate}T03:00`,
-        homeTeam: mockTeams[0],
-        awayTeam: mockTeams[1],
-        homeScore: 0,
-        awayScore: 7,
-        clockTimestamp: 60,
-        timeRunning: false,
-        state: "SCHEDULED",
-    }
+    mockScheduledMatch,
+    mockLiveTimeRunningMatch,
+    mockLiveTimeStoppedMatch,
+    mockFinishedMatch
 ];
 
 

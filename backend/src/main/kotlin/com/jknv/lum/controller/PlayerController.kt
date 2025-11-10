@@ -1,11 +1,9 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.LOGGER
 import com.jknv.lum.config.PreAuthorizeGuardian
-import com.jknv.lum.config.PreAuthorizePlayerOnly
+import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
-import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.player.PlayerFilter
 import com.jknv.lum.model.request.player.PlayerPermissionUpdateRequest
 import com.jknv.lum.model.request.player.PlayerInviteRequest
@@ -45,12 +43,11 @@ class PlayerController (
         @RequestBody(required = false) filter: PlayerFilter?
     ): ResponseEntity<List<PlayerDTO>> {
         val response = playerService.getPlayers(filter)
-        LOGGER.info("Returning ${response.size} players for filter=$filter")
         return ResponseEntity.ok(response)
     }
 
     @PatchMapping("/{playerId}/permission")
-    @PreAuthorizeGuardian
+    @Require.Guardian
     fun setPermission(
         @PathVariable playerId: Long,
         @RequestBody req: PlayerPermissionUpdateRequest,
@@ -61,14 +58,14 @@ class PlayerController (
     }
 
     @GetMapping("/invites")
-    @PreAuthorizePlayerOnly
+    @Require.PlayerOnly
     fun getInvites(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<List<TeamInviteDTO>> {
         val response = teamInviteService.getInvitesByPlayer(details.id)
         return ResponseEntity.ok(response)
     }
 
     @PutMapping("/invites/{teamId}")
-    @PreAuthorizePlayerOnly
+    @Require.PlayerOnly
     fun respondToInvite(
         @PathVariable teamId: Long,
         @RequestBody req: PlayerInviteRequest,

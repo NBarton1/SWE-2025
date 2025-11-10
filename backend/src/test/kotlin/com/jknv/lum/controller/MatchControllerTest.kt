@@ -5,6 +5,7 @@ import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.request.match.MatchCreateRequest
 import com.jknv.lum.model.request.match.MatchUpdateRequest
+import com.jknv.lum.model.type.MatchState
 import com.jknv.lum.model.type.MatchType
 import com.jknv.lum.services.MatchService
 import io.mockk.every
@@ -78,7 +79,8 @@ class MatchControllerTest {
             date = req.date ?: match.date,
             type = req.type ?: match.type,
             homeTeam = homeTeam.toDTO(),
-            awayTeam = awayTeam.toDTO()
+            awayTeam = awayTeam.toDTO(),
+            state = MatchState.SCHEDULED,
         )
 
         every { matchService.updateMatch(match.id, req) } returns updatedDTO

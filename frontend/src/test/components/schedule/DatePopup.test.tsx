@@ -1,11 +1,11 @@
 import { vi } from "vitest";
-import {mockDate, mockMatches, mockTeams, renderWithWrap} from "../../vitest.setup.tsx";
+import {mockDate, mockMatches, mockTeams, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import DatePopup from "../main/components/schedule/DatePopup.tsx";
+import DatePopup from "../../../main/components/schedule/DatePopup.tsx";
 import '@testing-library/jest-dom';
-import type {Match} from "../main/types/match.ts";
+import type {Match} from "../../../main/types/match.ts";
 import React, {type Dispatch} from "react";
-import type {Team} from "../main/types/team.ts";
+import type {Team} from "../../../main/types/team.ts";
 
 const mockSetMatches = vi.fn();
 
@@ -53,8 +53,12 @@ describe("DatePopup", () => {
     test("update match form displayed", async () => {
         renderWithWrap(<DatePopup {...mockProps} />);
 
+        screen.debug(undefined, Infinity);
+
         await waitFor(() => {
-            expect(screen.getByTestId("update-match-form-1")).toBeInTheDocument();
+            for (let i = 1; i <= mockMatches.length; i++) {
+                expect(screen.getByTestId(`update-match-form-${i}`)).toBeInTheDocument();
+            }
         });
     });
 });

@@ -8,7 +8,6 @@ import com.jknv.lum.model.entity.Coach
 import com.jknv.lum.model.entity.Player
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.entity.TeamInvite
-import com.jknv.lum.model.entity.TeamInvitePK
 import com.jknv.lum.model.type.InviteStatus
 import com.jknv.lum.repository.TeamInviteRepository
 import io.mockk.*
@@ -62,10 +61,10 @@ class TeamInviteServiceTest {
 
     @Test
     fun getInviteByIdTest() {
-        val pk = TeamInvitePK(teamId = team.id, playerId = player.id)
+        val pk = TeamInvite.PK(teamId = team.id, playerId = player.id)
 
         every { teamInviteRepository.findTeamInviteById(any()) } answers {
-            if (firstArg<TeamInvitePK>() == pk)
+            if (firstArg<TeamInvite.PK>() == pk)
                 Optional.of(invite)
             else Optional.empty()
         }

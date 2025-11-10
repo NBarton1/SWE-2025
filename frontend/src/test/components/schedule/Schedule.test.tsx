@@ -1,9 +1,9 @@
 import { vi } from "vitest";
-import {mockDate, mockMatches, renderWithWrap} from "../../vitest.setup.tsx";
+import {mockDate, mockMatches, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import Schedule from "../main/components/schedule/Schedule.tsx";
-import * as matchRequest from "../main/request/matches.ts";
-import * as teamRequest from "../main/request/teams.ts";
+import Schedule from "../../../main/components/schedule/Schedule.tsx";
+import * as matchRequest from "../../../main/request/matches.ts";
+import * as teamRequest from "../../../main/request/teams.ts";
 import type {DateClickArg} from "@fullcalendar/interaction";
 
 let mockDateClick: ((arg: DateClickArg) => void) | undefined;
@@ -63,7 +63,7 @@ describe("Schedule", () => {
         renderWithWrap(<Schedule />);
 
         await waitFor(() => {
-            expect(mockEvents.length).toBe(1);
+            expect(mockEvents.length).toBe(mockMatches.length);
         });
     });
 });

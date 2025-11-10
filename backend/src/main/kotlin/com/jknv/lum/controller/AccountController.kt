@@ -1,7 +1,6 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.config.PreAuthorizeGuardian
-import com.jknv.lum.config.PreAuthorizeAdminOrAccountOwner
+import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.request.account.AccountCreateRequest
@@ -47,6 +46,7 @@ class AccountController(
     }
 
     @PutMapping("/{id}")
+    @Require.AdminOrAccountOwner
     fun update(
         @RequestBody updateInfo: AccountUpdateRequest,
         @PathVariable id: Long,
@@ -57,16 +57,16 @@ class AccountController(
     }
 
     @GetMapping("/dependents")
-    @PreAuthorizeGuardian
+    @Require.Guardian
     fun getDependents(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<List<PlayerDTO>> {
         val response = guardianService.getDependentsOf(details.id)
         return ResponseEntity.ok(response)
     }
 
-    @PatchMapping("/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-    @PreAuthorizeAdminOrAccountOwner
+    @PatchMapping("/{id}/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @Require.AdminOrAccountOwner
     fun updatePicture(
-        @AuthenticationPrincipal details: AccountDetails,
+        @PathVariable id: Long,
         @RequestParam("image") image: MultipartFile
     ): ResponseEntity<AccountDTO> {
         val response = accountService.updatePictureForAccount(details.account, image)
@@ -74,7 +74,7 @@ class AccountController(
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorizeAdminOrAccountOwner
+    @Require.AdminOrAccountOwner
     fun delete(@PathVariable id: Long): ResponseEntity<Void> {
         accountService.deleteAccount(id)
         return ResponseEntity.ok().build()
