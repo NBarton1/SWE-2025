@@ -53,6 +53,9 @@ class MatchService (
     fun deleteMatch(id: Long) =
         matchRepository.deleteById(id)
 
+    fun getMatch(id: Long): MatchDTO =
+        getMatchById(id).toDTO()
+
     fun getMatches(): List<MatchDTO> =
         matchRepository.findAll().map { it.toDTO() }
 
