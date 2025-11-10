@@ -5,8 +5,8 @@ import type {Content} from "./content.ts";
 export enum Role {
     ADMIN = "ADMIN",
     COACH = "COACH",
-    PLAYER = "PLAYER",
     GUARDIAN = "GUARDIAN",
+    PLAYER = "PLAYER",
 }
 
 export interface Account {
