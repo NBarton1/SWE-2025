@@ -25,9 +25,9 @@ const ScheduleList = () => {
                 </Title>
 
                 <Stack gap="md">
-                {matches.map((match) => (
-                    <LiveMatchView match={match} navigable={true} />
-                ))}
+                    {matches.map((match) => (
+                        <LiveMatchView match={match} navigable={true} />
+                    ))}
                 </Stack>
 
             </Paper>
