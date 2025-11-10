@@ -11,12 +11,17 @@ const TeamScoreEdit = ({ team, score, updateScore }: TeamScoreEditProps) => {
     const updateScoreBy = (amount: number) => () => updateScore(score + amount);
 
     return (
-        <Group align="center" wrap="nowrap">
+        <Group
+            align="center"
+            wrap="nowrap"
+            data-testid="team-score-edit"
+        >
             <Text style={{ width: rem(150), flexShrink: 0 }} fw={700}>
                 {team.name}
             </Text>
 
             <NumberInput
+                data-testid="score-input"
                 min={0}
                 value={score}
                 onChange={(newScore) => updateScore(newScore as number)}
@@ -24,11 +29,36 @@ const TeamScoreEdit = ({ team, score, updateScore }: TeamScoreEditProps) => {
             />
 
             <Group gap="xs">
-                <Button onClick={updateScoreBy(6)}>Touchdown</Button>
-                <Button onClick={updateScoreBy(1)}>Extra Point</Button>
-                <Button onClick={updateScoreBy(2)}>2PT</Button>
-                <Button onClick={updateScoreBy(3)}>Field Goal</Button>
-                <Button onClick={updateScoreBy(2)}>Safety</Button>
+                <Button
+                    data-testid="touchdown-button"
+                    onClick={updateScoreBy(6)}
+                >
+                    Touchdown
+                </Button>
+                <Button
+                    data-testid="extra-point-button"
+                    onClick={updateScoreBy(1)}
+                >
+                    Extra Point
+                </Button>
+                <Button
+                    data-testid="2pt-button"
+                    onClick={updateScoreBy(2)}
+                >
+                    2PT
+                </Button>
+                <Button
+                    data-testid="field-goal-button"
+                    onClick={updateScoreBy(3)}
+                >
+                    Field Goal
+                </Button>
+                <Button
+                    data-testid="safety-button"
+                    onClick={updateScoreBy(2)}
+                >
+                    Safety
+                </Button>
             </Group>
         </Group>
     );

@@ -4,15 +4,20 @@ import TeamScoreView from "./TeamScoreView.tsx";
 import LiveMatchClockView from "./LiveMatchClockView.tsx";
 import MatchTitle from "./MatchTitle.tsx";
 
-interface LiveMatchEditProps {
-    match: Match,
+interface LiveMatchViewProps {
+    match: null | Match,
 }
 
-const LiveMatchView = ({ match }: LiveMatchEditProps) => {
+const LiveMatchView = ({ match }: LiveMatchViewProps) => {
     if (!match) return null;
 
     return (
-        <Paper shadow="md" p="lg" radius="lg" withBorder>
+        <Paper
+            shadow="md"
+            p="lg"
+            radius="lg" withBorder
+            data-testid="live-match-view"
+        >
             <Stack gap="md">
                 <MatchTitle match={match} />
 

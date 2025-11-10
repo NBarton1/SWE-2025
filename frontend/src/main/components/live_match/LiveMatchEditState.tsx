@@ -16,12 +16,21 @@ const MatchEditState = ({ match, updateLiveMatch }: MatchEditStateProps) => {
     ];
 
     return (
-        <Group align="center" wrap="nowrap">
-            <Text style={{ width: rem(150), flexShrink: 0 }} fw={700}>
+        <Group
+            data-testid="match-edit-state"
+            align="center"
+            wrap="nowrap"
+        >
+            <Text
+                data-testid="match-edit-state-label"
+                style={{ width: rem(150), flexShrink: 0 }}
+                fw={700}
+            >
                 State
             </Text>
 
             <Select
+                data-testid="match-edit-state-select"
                 value={match.state}
                 data={matchStateOptions}
                 required

@@ -20,8 +20,15 @@ const LiveMatchClockView = ({ match }: LiveMatchClockViewProps) => {
     const seconds = String(timeLeft % 60).padStart(2, "0");
 
     return (
-        <Box ta="center" mt="md">
-            <Title c={match.timeRunning ? "green" : "gray"}>
+        <Box
+            ta="center"
+            mt="md"
+            data-testid="live-match-clock-view"
+        >
+            <Title
+                data-testid="live-match-time-remaining"
+                c={match.timeRunning ? "green" : "gray"}
+            >
                 {`${Math.floor(timeLeft / 60)}:${seconds}`}
             </Title>
         </Box>

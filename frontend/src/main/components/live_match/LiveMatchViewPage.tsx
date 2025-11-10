@@ -17,7 +17,10 @@ const LiveMatchViewPage = () => {
     useEffect(() => live_match_websocket(matchId, setMatch, clientRef), []);
 
     return (
-        <Container py="md">
+        <Container
+            data-testid="live-match-view-page"
+            py="md"
+        >
             {match && <LiveMatchView match={match} />}
         </Container>
     );

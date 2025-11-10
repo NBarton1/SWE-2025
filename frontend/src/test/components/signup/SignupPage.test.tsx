@@ -1,10 +1,10 @@
-import SignupPage from "../main/components/signup/SignupPage.tsx";
+import SignupPage from "../../../main/components/signup/SignupPage.tsx";
 import {expect, vi} from "vitest";
-import {MOCK_OK, MOCK_UNAUTHORIZED, renderWithWrap} from "../../vitest.setup.tsx";
+import {MOCK_OK, MOCK_UNAUTHORIZED, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import * as signupRequest from "../main/request/signup.ts";
-import * as loginRequest from "../main/request/login.ts";
+import * as signupRequest from "../../../main/request/signup.ts";
+import * as authRequest from "../../../main/request/auth.ts";
 
 describe("SignupPage", () => {
     beforeEach(() => {
@@ -50,8 +50,7 @@ describe("SignupPage", () => {
     test("signup and login function success login", async () => {
         const user = userEvent.setup();
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_OK);
-        const mockLogin = vi.spyOn(loginRequest, "login").mockResolvedValue(MOCK_OK);
-
+        const mockLogin = vi.spyOn(authRequest, "login").mockResolvedValue(MOCK_OK);
 
         const nameInput = screen.getByTestId("signup-name") as HTMLInputElement;
         const usernameInput = screen.getByTestId("signup-username") as HTMLInputElement;
@@ -84,7 +83,7 @@ describe("SignupPage", () => {
     test("signup and login function fail login", async () => {
         const user = userEvent.setup();
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_UNAUTHORIZED);
-        const mockLogin = vi.spyOn(loginRequest, "login").mockResolvedValue(MOCK_OK);
+        const mockLogin = vi.spyOn(authRequest, "login").mockResolvedValue(MOCK_OK);
 
         const nameInput = screen.getByTestId("signup-name") as HTMLInputElement;
         const usernameInput = screen.getByTestId("signup-username") as HTMLInputElement;
