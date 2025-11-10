@@ -8,7 +8,7 @@ describe("auth", () => {
         global.fetch = vi.fn().mockResolvedValue({
             ok: true,
             json: async () => null,
-        } as Response);;
+        } as Response);
     });
 
     test("login", async () => {
