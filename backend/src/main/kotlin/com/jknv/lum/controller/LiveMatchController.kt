@@ -1,7 +1,6 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.LOGGER
-import com.jknv.lum.config.PreAuthorizeAdmin
+import com.jknv.lum.model.dto.MatchDTO
 import com.jknv.lum.model.request.match.MatchUpdateRequest
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.security.AccountDetails

@@ -1,6 +1,6 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.config.PreAuthorizeCoach
+import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.CoachDTO
 import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamDTO
@@ -32,7 +32,7 @@ class TeamController (
     private val playerService: PlayerService
 ) {
     @PostMapping
-    @PreAuthorizeCoach
+    @Require.Coach
     fun create(@RequestBody req: TeamCreateRequest): ResponseEntity<TeamDTO> {
         val response = teamService.createTeam(req)
         return ResponseEntity.status(HttpStatus.CREATED).body(response)
@@ -63,7 +63,7 @@ class TeamController (
     }
 
     @PutMapping("/{teamId}/coaches")
-    @PreAuthorizeCoach
+    @Require.Coach
     fun addCoach(
         @PathVariable teamId: Long,
         @AuthenticationPrincipal details: AccountDetails
@@ -73,7 +73,7 @@ class TeamController (
     }
 
     @PostMapping("/{playerId}/invite")
-    @PreAuthorizeCoach
+    @Require.Coach
     fun invitePlayer(
         @PathVariable playerId: Long,
         @AuthenticationPrincipal details: AccountDetails
@@ -83,7 +83,7 @@ class TeamController (
     }
 
     @DeleteMapping("/{playerId}")
-    @PreAuthorizeCoach
+    @Require.Coach
     fun removePlayer(
         @PathVariable playerId: Long,
         @AuthenticationPrincipal details: AccountDetails

@@ -1,7 +1,6 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.config.PreAuthorizeGuardian
-import com.jknv.lum.config.PreAuthorizePlayerOnly
+import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.PlayerDTO
 import com.jknv.lum.model.dto.TeamInviteDTO
 import com.jknv.lum.model.request.account.AccountCreateRequest
@@ -29,7 +28,7 @@ class PlayerController (
     private val teamInviteService: TeamInviteService,
 ) {
     @PostMapping
-    @PreAuthorizeGuardian
+    @Require.Guardian
     fun createPlayer(
         @RequestBody req: AccountCreateRequest,
         @AuthenticationPrincipal details: AccountDetails
@@ -45,7 +44,7 @@ class PlayerController (
     }
 
     @PatchMapping("/{playerId}/permission")
-    @PreAuthorizeGuardian
+    @Require.Guardian
     fun setPermission(
         @PathVariable playerId: Long,
         @RequestBody req: PlayerPermissionUpdateRequest,
@@ -56,14 +55,14 @@ class PlayerController (
     }
 
     @GetMapping("/invites")
-    @PreAuthorizePlayerOnly
+    @Require.PlayerOnly
     fun getInvites(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<List<TeamInviteDTO>> {
         val response = teamInviteService.getInvitesByPlayer(details.id)
         return ResponseEntity.ok(response)
     }
 
     @PutMapping("/invites/{teamId}")
-    @PreAuthorizePlayerOnly
+    @Require.PlayerOnly
     fun respondToInvite(
         @PathVariable teamId: Long,
         @RequestBody req: PlayerInviteRequest,
