@@ -4,7 +4,7 @@ import {waitFor} from "@testing-library/react";
 import {
     createMatch,
     type CreateMatchRequest,
-    deleteMatch,
+    deleteMatch, getMatch,
     getMatches,
     updateMatch,
     type UpdateMatchRequest
@@ -87,6 +87,20 @@ describe("matches", () => {
         await waitFor(() => {
             expect(global.fetch).toHaveBeenCalledWith(
                 "http://localhost:8080/api/matches",
+                expect.objectContaining({
+                    method: "GET",
+                    credentials: "include",
+                })
+            );
+        });
+    })
+
+    test("getMatch", async () => {
+        await getMatch(1);
+
+        await waitFor(() => {
+            expect(global.fetch).toHaveBeenCalledWith(
+                "http://localhost:8080/api/matches/1",
                 expect.objectContaining({
                     method: "GET",
                     credentials: "include",

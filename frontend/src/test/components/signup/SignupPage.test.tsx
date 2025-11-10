@@ -4,8 +4,18 @@ import {MOCK_OK, MOCK_UNAUTHORIZED, mockNavigate, renderWithWrap} from "../../..
 import {screen, waitFor} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as signupRequest from "../../../main/request/signup.ts";
-import * as authRequest from "../../../main/request/auth.ts";
 import {Role} from "../../../main/types/accountTypes.ts";
+import {login} from "../../../main/request/auth.ts";
+
+
+vi.mock("../../../main/request/auth.ts", () => {
+    return {
+        login: vi.fn().mockResolvedValue({
+            ok: true,
+            text: async () => "dkwon",
+        }),
+    };
+})
 
 describe("SignupPage", () => {
     beforeEach(() => {
@@ -51,7 +61,6 @@ describe("SignupPage", () => {
     test("signup and login function success login", async () => {
         const user = userEvent.setup();
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_OK);
-        const mockLogin = vi.spyOn(authRequest, "login").mockResolvedValue(MOCK_OK);
 
         const nameInput = screen.getByTestId("signup-name") as HTMLInputElement;
         const usernameInput = screen.getByTestId("signup-username") as HTMLInputElement;
@@ -74,7 +83,7 @@ describe("SignupPage", () => {
         });
 
         await waitFor(() => {
-            expect(mockLogin).toHaveBeenCalledWith({
+            expect(login).toHaveBeenCalledWith({
                 username: "user",
                 password: "password",
             });
@@ -86,7 +95,6 @@ describe("SignupPage", () => {
     test("signup and login function fail login", async () => {
         const user = userEvent.setup();
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_UNAUTHORIZED);
-        const mockLogin = vi.spyOn(authRequest, "login").mockResolvedValue(MOCK_OK);
 
         const nameInput = screen.getByTestId("signup-name") as HTMLInputElement;
         const usernameInput = screen.getByTestId("signup-username") as HTMLInputElement;
@@ -109,7 +117,7 @@ describe("SignupPage", () => {
         });
 
         await waitFor(() => {
-            expect(mockLogin).not.toHaveBeenCalled();
+            expect(login).not.toHaveBeenCalled();
         });
     });
 
