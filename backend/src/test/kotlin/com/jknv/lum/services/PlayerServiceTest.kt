@@ -7,8 +7,10 @@ import com.jknv.lum.model.entity.Guardian
 import com.jknv.lum.model.entity.Player
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.request.account.AccountCreateRequest
+import com.jknv.lum.model.request.player.PlayerFilter
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.PlayerRepository
+import io.mockk.awaits
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -21,10 +23,14 @@ import kotlin.test.assertEquals
 
 class PlayerServiceTest {
     val playerRepository: PlayerRepository = mockk()
-    val accountService: AccountService = mockk()
     val guardianService: GuardianService = mockk()
     val coachService: CoachService = mockk()
-    val playerService = PlayerService(playerRepository, accountService, guardianService, coachService)
+
+    val playerService = PlayerService(
+        playerRepository,
+        guardianService,
+        coachService
+    )
 
     val req: AccountCreateRequest = mockk()
 
@@ -36,9 +42,26 @@ class PlayerServiceTest {
     fun setUp() {
         account = Account(name = "player", username = "player", password = "password", role = Role.PLAYER)
         guardian = Guardian(account = Account(name = "guardian", username = "guardian", password = "password", role = Role.GUARDIAN))
-        player = Player(account = account, guardian = guardian)
+        player = Player(account = account)
 
         every { req.toEntity() } returns account
+    }
+
+    @Test
+    fun setPlayerGuardianTest() {
+        every { playerRepository.findById(player.id) } returns Optional.of(player)
+        every { guardianService.getGuardianById(guardian.id) } returns guardian
+        every { playerRepository.save(player) } returns player
+
+        val result = playerService.setPlayerGuardian(player.id, guardian.id)
+
+        verify {
+            playerRepository.findById(player.id)
+            guardianService.getGuardianById(guardian.id)
+            playerRepository.save(player)
+        }
+
+        assertEquals(player.toDTO(), result)
     }
 
     @Test
@@ -50,22 +73,6 @@ class PlayerServiceTest {
         verify { playerRepository.save(player) }
 
         assertEquals(result, player.toDTO())
-    }
-
-    @Test
-    fun getPlayerByUsernameTest() {
-        every { playerRepository.findPlayerByAccountUsername(any()) } answers {
-            if (firstArg<String>() == account.username)
-                Optional.of(player)
-            else Optional.empty()
-        }
-
-        val result = playerService.getPlayerByUsername(account.username)
-
-        verify { playerRepository.findPlayerByAccountUsername(account.username) }
-
-        assertEquals(account, result.account)
-        assertThrows<EntityNotFoundException> { playerService.getPlayerByUsername("") }
     }
 
     @Test
@@ -86,17 +93,11 @@ class PlayerServiceTest {
 
     @Test
     fun createPlayerTest() {
-        every { guardianService.getGuardianById(guardian.account.id) } returns guardian
-        every { accountService.createAccount(req) } returns account
         every { playerRepository.save(any()) } returns player
 
-        val result = playerService.createPlayer(req, guardian.account.id)
+        val result = playerService.createPlayer(account)
 
-        verify {
-            guardianService.getGuardianById(guardian.account.id)
-            accountService.createAccount(req)
-            playerRepository.save(any())
-        }
+        verify { playerRepository.save(any()) }
 
         assertEquals(result, player.toDTO())
     }
@@ -113,20 +114,20 @@ class PlayerServiceTest {
     }
 
     @Test
-    fun countPlayersTest() {
-        val expected = 1L
+    fun getPlayersWithFilterTest() {
+        every { playerRepository.findAll() } returns listOf(player)
 
-        every { playerRepository.count() } returns expected
+        val result = playerService.getPlayers(PlayerFilter(isOrphan = true))
 
-        val count = playerService.countPlayers()
+        verify { playerRepository.findAll() }
 
-        verify { playerRepository.count() }
-
-        assertEquals(count, expected)
+        assertEquals(result, listOf(player.toDTO()))
     }
 
     @Test
     fun updatePlayerPermissionTest() {
+        player.guardian = guardian
+
         every { playerRepository.findById(account.id) } returns Optional.of(player)
         every { guardianService.getGuardianById(guardian.account.id) } returns guardian
         every { playerRepository.save(player) } returns player
@@ -169,7 +170,7 @@ class PlayerServiceTest {
 
         val expected = PlayerDTO(
             account = player.account.toDTO(),
-            guardian = guardian.account.toDTO(),
+            guardian = null,
             team = null,
             hasPermission = player.hasPermission,
             position = player.position,
