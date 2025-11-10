@@ -50,7 +50,12 @@ const PlayerSelectorModal = ({
     };
 
     return (
-        <Modal opened={opened} onClose={onClose} title={title}>
+        <Modal
+            opened={opened}
+            onClose={onClose}
+            title={title}
+            data-testid="player-selector-modal"
+        >
             <form onSubmit={form.onSubmit(handleConfirm)}>
                 <Stack>
                     <Select
@@ -72,7 +77,12 @@ const PlayerSelectorModal = ({
                         </Text>
                     )}
 
-                    <Button type="submit">{confirmLabel}</Button>
+                    <Button
+                        type="submit"
+                        data-testid="player-select-submit-form"
+                    >
+                        {confirmLabel}
+                    </Button>
                 </Stack>
             </form>
         </Modal>

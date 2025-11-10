@@ -8,17 +8,19 @@ interface InvitePlayerModalProps {
 
 const InvitePlayerModal = ({ opened, onClose }: InvitePlayerModalProps) => {
     return (
-        <PlayerSelectorModal
-            opened={opened}
-            onClose={onClose}
-            title="Invite Player"
-            confirmLabel="Send Invite"
-            onConfirm={async (playerId) => {
-                const res = await invitePlayerFromTeam(playerId);
-                if (!res.ok) throw new Error();
-            }}
-            errorMessage="Cannot send invite — player likely already has one from this team."
-        />
+        <div data-testid="team-invite-modal">
+            <PlayerSelectorModal
+                opened={opened}
+                onClose={onClose}
+                title="Invite Player"
+                confirmLabel="Send Invite"
+                onConfirm={async (playerId) => {
+                    const res = await invitePlayerFromTeam(playerId);
+                    if (!res.ok) throw new Error();
+                }}
+                errorMessage="Cannot send invite — player likely already has one from this team."
+            />
+        </div>
     );
 };
 

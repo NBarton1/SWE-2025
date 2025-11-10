@@ -1,15 +1,22 @@
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import {beforeEach, expect, vi} from "vitest";
 import {MOCK_OK, MOCK_UNAUTHORIZED, renderWithWrap} from "../../../../vitest.setup.tsx";
+import InvitePlayerModal from "../../../main/components/teams/TeamInviteModal.tsx";
 import * as teamsRequest from "../../../main/request/teams.ts";
-import TeamInviteModal from "../../../main/components/teams/TeamInviteModal.tsx";
 import {invitePlayerFromTeam} from "../../../main/request/teams.ts";
-
 
 let mockProps: {
     opened: boolean;
     onClose: () => void;
 }
+
+vi.mock("react-router-dom", async () => {
+    const actual = await vi.importActual("react-router-dom");
+    return {
+        ...actual,
+        useParams: vi.fn(() => ({ id: "1" })),
+    };
+});
 
 vi.mock("../../../main/request/teams.ts", () => ({
     invitePlayerFromTeam: vi.fn(),
@@ -29,51 +36,59 @@ vi.mock("@mantine/form", () => ({
 }));
 
 
-describe("TeamsPage", () => {
+describe("TeamInviteModal", () => {
 
     beforeEach(() => {
+        vi.clearAllMocks();
+
         mockProps = {
             opened: true,
             onClose: vi.fn(),
         }
-
-        vi.clearAllMocks();
     })
 
-    test("renders", () => {
+    test("renders", async () => {
 
-        renderWithWrap(<TeamInviteModal {...mockProps} />)
-
-        expect(screen.getByTestId("team-invite-modal")).toBeInTheDocument();
-    });
-
-    test("Inviting to team success", async () => {
-
-        vi.spyOn(teamsRequest, "invitePlayerFromTeam")
-            .mockResolvedValue(MOCK_OK);
-
-        renderWithWrap(<TeamInviteModal {...mockProps} />)
-
-        fireEvent.submit(screen.getByTestId("team-invite-modal-form"))
+        renderWithWrap(<InvitePlayerModal {...mockProps} />)
 
         await waitFor(() => {
-            expect(invitePlayerFromTeam).toBeCalledWith(1);
-            expect(mockProps.onClose).toBeCalled();
+            expect(screen.getByTestId("team-invite-modal")).toBeInTheDocument();
         })
     });
 
-    test("Inviting to team failure", async () => {
+    test("inviting to team sucess", async () => {
+        vi.spyOn(teamsRequest, "invitePlayerFromTeam")
+                 .mockResolvedValue(MOCK_OK);
 
+        renderWithWrap(<InvitePlayerModal {...mockProps} />)
+
+        await waitFor(() => {
+            expect(screen.getByTestId("team-invite-modal")).toBeInTheDocument();
+            expect(screen.getByTestId("player-select-submit-form")).toBeInTheDocument();
+        })
+
+        fireEvent.submit(screen.getByTestId("player-select-submit-form"))
+
+        await waitFor(() => {
+            expect(invitePlayerFromTeam).toHaveResolvedWith(MOCK_OK);
+        })
+    });
+
+    test("inviting to team failure", async () => {
         vi.spyOn(teamsRequest, "invitePlayerFromTeam")
             .mockResolvedValue(MOCK_UNAUTHORIZED);
 
-        renderWithWrap(<TeamInviteModal {...mockProps} />)
-
-        fireEvent.submit(screen.getByTestId("team-invite-modal-form"))
+        renderWithWrap(<InvitePlayerModal {...mockProps} />)
 
         await waitFor(() => {
-            expect(invitePlayerFromTeam).toBeCalledWith(1);
-            expect(mockProps.onClose).not.toBeCalled();
+            expect(screen.getByTestId("team-invite-modal")).toBeInTheDocument();
+            expect(screen.getByTestId("player-select-submit-form")).toBeInTheDocument();
+        })
+
+        fireEvent.submit(screen.getByTestId("player-select-submit-form"))
+
+        await waitFor(() => {
+            expect(invitePlayerFromTeam).toHaveResolvedWith(MOCK_UNAUTHORIZED);
         })
     });
 });

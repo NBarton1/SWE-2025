@@ -5,6 +5,8 @@ import {createTheme, MantineProvider} from "@mantine/core";
 import {BrowserRouter} from "react-router";
 import type {Team} from "./src/main/types/team.ts";
 import {type Match, MatchState, MatchType} from "./src/main/types/match.ts";
+import {type Account, type Coach, type Player, Role} from "./src/main/types/accountTypes.ts";
+import type {Content} from "@tiptap/react";
 
 expect.extend(matchers)
 
@@ -112,6 +114,48 @@ export const mockMatches: Match[] = [
     mockFinishedMatch
 ];
 
+export const mockContent: Content = {
+    id: 1,
+    filename: "",
+    fileSize: 0,
+    contentType: "",
+    downloadUrl: "",
+}
+
+export const mockPlayerAccount: Account = {
+    id: 2,
+    name: "Diddy Kong",
+    username: "diddyk",
+    // @ts-ignore
+    picture: mockContent,
+    email: null,
+    role: Role.PLAYER
+}
+
+export const mockAdminAccount: Account = {
+    id: 1,
+    name: "Donkey Kong",
+    username: "dk",
+    // @ts-ignore
+    picture: mockContent,
+    email: "dkwon@dk.com",
+    role: Role.ADMIN
+}
+
+export const mockPlayer: Player = {
+    account: mockPlayerAccount,
+    guardian: mockAdminAccount,
+    team: mockTeamDK,
+    hasPermission: true,
+    position: "QB",
+}
+
+export const coachDK: Coach = {
+    account: mockAdminAccount,
+    team: mockTeamDK,
+    likes: Infinity,
+    dislikes: -Infinity,
+}
 
 afterEach(() => {
     cleanup()
