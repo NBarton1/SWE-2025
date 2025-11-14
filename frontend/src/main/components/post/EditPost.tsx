@@ -3,10 +3,12 @@ import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { RichTextEditor } from '@mantine/tiptap';
 import '@mantine/tiptap/styles.css';
-import {Button, FileButton, Paper, Image, Stack, Group, ActionIcon, rem, Title} from "@mantine/core";
+import {Button, FileButton, Paper, Stack, Group, ActionIcon, Title} from "@mantine/core";
 import {useState} from "react";
 import { IconX } from '@tabler/icons-react';
 import {createPost, type PostCreateRequest} from "../../request/post.ts";
+import PostMediaPreview from "./PostMediaPreview.tsx";
+import type {ContentPreview} from "../../types/content.ts";
 
 
 function EditPost() {
@@ -15,22 +17,25 @@ function EditPost() {
         extensions: [StarterKit, Highlight],
     });
 
-    const [mediaFiles, setMediaFiles] = useState<File[]>([]);
-    const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+    const [previewFiles, setPreviewFiles] = useState<ContentPreview[]>([]);
 
-    const insertImage = (file: File | null) => {
+    const insertMedia = (file: File | null) => {
         if (file) {
             const url = URL.createObjectURL(file);
-            setMediaFiles([...mediaFiles, file]);
-            setPreviewUrls([...previewUrls, url]);
+
+            const contentPreview: ContentPreview = {
+                file: file,
+                previewUrl: url,
+            }
+
+            setPreviewFiles([...previewFiles, contentPreview])
         }
     };
 
-    const removeImage = (index: number) => {
-        URL.revokeObjectURL(previewUrls[index]);
+    const removeMedia = (index: number) => {
+        URL.revokeObjectURL(previewFiles[index].previewUrl);
 
-        setMediaFiles(mediaFiles.filter((_, i) => i !== index));
-        setPreviewUrls(previewUrls.filter((_, i) => i !== index));
+        setPreviewFiles(previewFiles.filter((_, i) => i !== index));
     };
 
     const handleCreatePost = async () => {
@@ -38,13 +43,11 @@ function EditPost() {
 
         const jsonContent = editor.getJSON();
         const createPostReq: PostCreateRequest = {
-            mediaFiles: mediaFiles,
+            mediaFiles: previewFiles.map(preview => preview.file),
             textContent: jsonContent,
-            parentId: null
         };
 
-        const post = await createPost(createPostReq);
-        console.log(post);
+        await createPost(createPostReq);
     };
 
     return (
@@ -52,21 +55,15 @@ function EditPost() {
             <Stack gap="md">
                 <Title order={3} ta="center">New Post</Title>
 
-                {previewUrls.length > 0 && (
+                {previewFiles.length > 0 && (
                     <Group gap="xs" align="flex-start">
-                        {previewUrls.map((imageURL, index) => (
+                        {previewFiles.map((preview, index) => (
                             <Group gap="xs" align="flex-start">
-                                <Image
-                                    src={imageURL}
-                                    radius="md"
-                                    fit="contain"
-                                    h={rem(200)}
-                                    w="auto"
-                                />
+                                <PostMediaPreview contentPreview={preview} />
                                 <ActionIcon
                                     color="red"
                                     variant="light"
-                                    onClick={() => removeImage(index)}
+                                    onClick={() => removeMedia(index)}
                                     size="sm"
                                 >
                                     <IconX size={16} />
@@ -93,12 +90,12 @@ function EditPost() {
 
                 <Group>
                     <FileButton
-                        onChange={insertImage}
+                        onChange={insertMedia}
                         accept="image/png,image/jpeg,image/gif"
                     >
                         {(props) => (
                             <Button {...props}>
-                                Upload Photo
+                                Upload Media
                             </Button>
                         )}
                     </FileButton>

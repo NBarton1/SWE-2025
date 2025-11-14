@@ -5,3 +5,8 @@ export interface Content {
     contentType: string,
     downloadUrl: string,
 }
+
+export interface ContentPreview {
+    file: File,
+    previewUrl: string,
+}
