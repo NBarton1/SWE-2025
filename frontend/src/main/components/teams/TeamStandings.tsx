@@ -10,9 +10,9 @@ import {
 import {formatTeamPCT, getTeamPCT, type Team} from "../../types/team.ts";
 import {getTeams} from "../../request/teams.ts";
 import {useNavigate} from "react-router";
-import useLogin from "../../hooks/useLogin.tsx";
 import {isCoach} from "../../types/accountTypes.ts";
 import TeamCreateModal from "./TeamCreateModal.tsx";
+import {useAuth} from "../../hooks/useAuth.tsx";
 
 
 const TeamStandings = () => {
@@ -21,7 +21,7 @@ const TeamStandings = () => {
     const [modalOpen, setModalOpen] = useState(false);
 
     const navigate = useNavigate()
-    const {currentAccount} = useLogin()
+    const {currentAccount} = useAuth()
 
     useEffect(() => {
         getTeams().then(setTeams)
@@ -51,7 +51,7 @@ const TeamStandings = () => {
                 <Flex justify="space-between" align="center" style={{ marginBottom: "1rem", gap: "12px" }}>
                     <Title order={2} data-testid="teams-title">Team Standings</Title>
 
-                    {currentAccount && isCoach(currentAccount) && (
+                    {isCoach(currentAccount) && (
                         <Button onClick={() => setModalOpen(true)}>Create Team</Button>
                     )}
                 </Flex>

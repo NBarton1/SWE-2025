@@ -4,14 +4,14 @@ import '@mantine/core/styles.css';
 import {type Account, accountEquals, isPlayer} from "../../types/accountTypes.ts";
 import {useParams} from "react-router";
 import {getAccount} from "../../request/accounts.ts";
-import useLogin from "../../hooks/useLogin.tsx";
 import ProfileHeader from "./ProfileHeader.tsx";
 import TeamInvitesTable from "./TeamInvitesTable.tsx";
 import DependentsTable from "./DependentsTable.tsx";
+import {useAuth} from "../../hooks/useAuth.tsx";
 
 const ProfilePage = () => {
     const { id } = useParams();
-    const { currentAccount } = useLogin();
+    const { currentAccount } = useAuth();
 
     const [account, setAccount] = useState<Account | null>(null);
 
@@ -29,7 +29,7 @@ const ProfilePage = () => {
             py={40}
             data-testid="profile-page-container"
         >
-            <ProfileHeader account={account} currentAccount={currentAccount} setAccount={setAccount} />
+            <ProfileHeader account={account} setAccount={setAccount} />
 
             {accountEquals(currentAccount, account) && (
                 isPlayer(account) ? (
