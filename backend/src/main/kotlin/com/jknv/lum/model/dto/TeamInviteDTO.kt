@@ -4,6 +4,6 @@ import com.jknv.lum.model.type.InviteStatus
 
 data class TeamInviteDTO (
     var team: TeamDTO,
-    var player: AccountDTO,
+    var player: PlayerDTO,
     var status: InviteStatus,
 )
