@@ -1,14 +1,15 @@
 import Highlight from '@tiptap/extension-highlight';
-import { useEditor } from '@tiptap/react';
+import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { RichTextEditor } from '@mantine/tiptap';
 import '@mantine/tiptap/styles.css';
 import {Button, FileButton, Paper, Stack, Group, ActionIcon, Title} from "@mantine/core";
 import {useState} from "react";
-import { IconX } from '@tabler/icons-react';
+import {IconX} from '@tabler/icons-react';
 import {createPost, type PostCreateRequest} from "../../request/post.ts";
 import PostMediaPreview from "./PostMediaPreview.tsx";
 import type {ContentPreview} from "../../types/content.ts";
+import PostStatusPopup from "./PostStatusPopup.tsx";
+import PostTextEditor from "./PostTextEditor.tsx";
 
 
 function EditPost() {
@@ -18,8 +19,10 @@ function EditPost() {
     });
 
     const [previewFiles, setPreviewFiles] = useState<ContentPreview[]>([]);
+    const [statusPopupOpen, setStatusPopupOpen] = useState<boolean>(false);
+    const [postCreateError, setPostCreateError] = useState<boolean>(false);
 
-    const insertMedia = (file: File | null) => {
+    const addMedia = (file: File | null) => {
         if (file) {
             const url = URL.createObjectURL(file);
 
@@ -47,7 +50,13 @@ function EditPost() {
             textContent: jsonContent,
         };
 
-        await createPost(createPostReq);
+        if (await createPost(createPostReq)) {
+            setPostCreateError(false);
+        } else {
+            setPostCreateError(true);
+        }
+
+        setStatusPopupOpen(true);
     };
 
     return (
@@ -59,38 +68,25 @@ function EditPost() {
                     <Group gap="xs" align="flex-start">
                         {previewFiles.map((preview, index) => (
                             <Group gap="xs" align="flex-start">
-                                <PostMediaPreview contentPreview={preview} />
+                                <PostMediaPreview contentPreview={preview}/>
                                 <ActionIcon
                                     color="red"
                                     variant="light"
                                     onClick={() => removeMedia(index)}
                                     size="sm"
                                 >
-                                    <IconX size={16} />
+                                    <IconX size={16}/>
                                 </ActionIcon>
                             </Group>
                         ))}
                     </Group>
                 )}
 
-                <RichTextEditor editor={editor} variant="subtle">
-                    <RichTextEditor.Toolbar sticky stickyOffset="var(--docs-header-height)">
-                        <RichTextEditor.ControlsGroup>
-                            <RichTextEditor.Bold />
-                            <RichTextEditor.Italic />
-                            <RichTextEditor.Underline />
-                            <RichTextEditor.Strikethrough />
-                            <RichTextEditor.ClearFormatting />
-                            <RichTextEditor.Highlight />
-                        </RichTextEditor.ControlsGroup>
-                    </RichTextEditor.Toolbar>
-
-                    <RichTextEditor.Content />
-                </RichTextEditor>
+                <PostTextEditor editor={editor}/>
 
                 <Group>
                     <FileButton
-                        onChange={insertMedia}
+                        onChange={addMedia}
                         accept="image/png,image/jpeg,image/gif"
                     >
                         {(props) => (
@@ -106,6 +102,8 @@ function EditPost() {
                         Create Post
                     </Button>
                 </Group>
+
+                <PostStatusPopup open={statusPopupOpen} setOpen={setStatusPopupOpen} error={postCreateError} />
             </Stack>
         </Paper>
     );
