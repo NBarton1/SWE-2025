@@ -1,6 +1,7 @@
 package com.jknv.lum.model.entity
 
 import com.jknv.lum.model.dto.CoachDTO
+import com.jknv.lum.model.type.LikeableEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType

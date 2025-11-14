@@ -40,7 +40,7 @@ class ContentService(
     internal fun getContentById(id: Long): Content =
         contentRepository.findById(id).orElseThrow { EntityNotFoundException("Content $id not found") }
 
-    internal fun uploadContent(file: MultipartFile): Content {
+    internal fun uploadContent(file: MultipartFile, post: Post? = null): Content {
         if (file.isEmpty) {
             throw IllegalArgumentException("file can not be empty")
         }
@@ -57,11 +57,13 @@ class ContentService(
             ?: throw IllegalArgumentException("Content type must be provided")
 
         // TODO validate media type being uploaded
-        val content = Content(
-            filename = originalFilename,
-            contentType = contentType,
-            fileSize = file.size,
-            post = post,
+        val content = createContent(
+            Content(
+                filename = originalFilename,
+                contentType = contentType,
+                fileSize = file.size,
+                post = post,
+            )
         )
 
         val targetPath = uploadPath.resolve(content.filename)

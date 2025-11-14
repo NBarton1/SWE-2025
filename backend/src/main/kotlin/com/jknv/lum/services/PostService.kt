@@ -1,6 +1,5 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.PostDTO
 import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.request.post.PostCreateRequest
@@ -22,7 +21,7 @@ class PostService (
         val account = accountService.getAccountById(accountId)
         val createdPost = postRepository.save(req.toEntity(account, parentPost))
 
-        req.media?.forEach { contentService.uploadForPost(it, createdPost) }
+        req.media?.forEach { contentService.uploadContent(it, createdPost) }
 
         return createdPost.toDTO()
     }
