@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for components/live_match/LiveMatchViewPage.tsx</title>
+    <title>Code coverage report for components/live_match/MatchViewPage.tsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/live_match</a> LiveMatchViewPage.tsx</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/live_match</a> MatchViewPage.tsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -125,12 +125,12 @@
 import {useEffect, useRef, useState} from "react";
 import { Client } from "@stomp/stompjs";
 import type {Match} from "../../types/match.ts";
-import LiveMatchView from "./LiveMatchView.tsx";
-import {live_match_websocket} from "./live_match.ts";
+import MatchView from "./MatchView.tsx";
+import {live_match_websocket} from "./MatchWebSocket.ts";
 import {useParams} from "react-router";
 &nbsp;
 &nbsp;
-const LiveMatchViewPage = () =&gt; {
+const MatchViewPage = () =&gt; {
     const { id } = useParams&lt;{ id: string }&gt;();
     const matchId = Number(id);
 &nbsp;
@@ -144,12 +144,12 @@ const LiveMatchViewPage = () =&gt; {
             data-testid="live-match-view-page"
             py="md"
         &gt;
-            {match &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >&lt;LiveMatchView match={match} navigable={false} /&gt;}</span>
+            {match &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >&lt;MatchView match={match} navigable={false} /&gt;}</span>
         &lt;/Container&gt;
     );
 };
 &nbsp;
-export default LiveMatchViewPage;
+export default MatchViewPage;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

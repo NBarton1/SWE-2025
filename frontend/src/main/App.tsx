@@ -5,8 +5,8 @@ import LoginPage from "./components/login/LoginPage.tsx";
 import TeamStandings from "./components/teams/TeamStandings.tsx";
 import TeamView from "./components/teams/TeamView.tsx";
 import Layout from "./components/layout/Layout.tsx";
-import LiveMatchEditPage from "./components/live_match/LiveMatchEditPage.tsx";
-import LiveMatchViewPage from "./components/live_match/LiveMatchViewPage.tsx";
+import MatchEditPage from "./components/match/MatchEditPage.tsx";
+import MatchViewPage from "./components/match/MatchViewPage.tsx";
 
 import Profile from "./components/profile/Profile.tsx";
 import {type Account, isAdmin} from "./types/accountTypes.ts";
@@ -40,8 +40,8 @@ function App() {
                     <Route path="/profile/:id" element={<Profile />} />
                     <Route path="/teams" element={(<TeamStandings />)}/>
                     <Route path="/teams/:id" element={<TeamView />} />
-                    <Route path="/live/:id" element={<LiveMatchEditPage />} />
-                    <Route path="/match/:id" element={(<LiveMatchViewPage />)}/>
+                    <Route path="/live/:id" element={<MatchEditPage />} />
+                    <Route path="/match/:id" element={(<MatchViewPage />)}/>
                     <Route path="/calendar/list" element={(<ScheduleList />)}/>
 
                     {currentAccount && isAdmin(currentAccount) && (

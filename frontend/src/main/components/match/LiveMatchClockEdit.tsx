@@ -1,12 +1,12 @@
 import {Button, Group, NumberInput, rem, Text} from "@mantine/core";
-import type {Match} from "../../types/match.ts";
+import type {MatchResponse} from "../../types/match.ts";
 import {useEffect, useState} from "react";
 import type {UpdateMatchRequest} from "../../request/matches.ts";
-import {updateLiveTime} from "./live_time.ts";
+import {updateLiveTime} from "./MatchLiveTime.ts";
 
 
 interface MatchClockProps {
-    match: Match
+    match: MatchResponse
     updateLiveMatch: (req: UpdateMatchRequest) => void
 }
 

@@ -1,7 +1,7 @@
 import {Box, Title} from "@mantine/core";
-import {type Match, MatchState} from "../../types/match.ts";
+import {Match, MatchState} from "../../types/match.ts";
 import {useEffect, useState} from "react";
-import {updateLiveTime} from "./live_time.ts";
+import {updateLiveTime} from "./MatchLiveTime.ts";
 
 
 interface LiveMatchClockViewProps {
@@ -10,12 +10,12 @@ interface LiveMatchClockViewProps {
 
 const LiveMatchClockView = ({ match }: LiveMatchClockViewProps) => {
 
-    if (match.state != MatchState.LIVE) {
+    if (match.matchRes.state != MatchState.LIVE) {
         return null;
     }
 
-    const [timeLeft, setTimeLeft] = useState(match.clockTimestamp);
-    useEffect(() => updateLiveTime(match, setTimeLeft), [match]);
+    const [timeLeft, setTimeLeft] = useState(match.matchRes.clockTimestamp);
+    useEffect(() => updateLiveTime(match.matchRes, setTimeLeft), [match]);
 
     const seconds = String(timeLeft % 60).padStart(2, "0");
 
@@ -27,7 +27,7 @@ const LiveMatchClockView = ({ match }: LiveMatchClockViewProps) => {
         >
             <Title
                 data-testid="live-match-time-remaining"
-                c={match.timeRunning ? "green" : "gray"}
+                c={match.matchRes.timeRunning ? "green" : "gray"}
             >
                 {`${Math.floor(timeLeft / 60)}:${seconds}`}
             </Title>

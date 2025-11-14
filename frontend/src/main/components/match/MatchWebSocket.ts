@@ -1,6 +1,6 @@
 import {getMatch} from "../../request/matches.ts";
 import {Client, type IMessage} from "@stomp/stompjs";
-import type {Match} from "../../types/match.ts";
+import {Match, type MatchResponse} from "../../types/match.ts";
 
 
 export function live_match_websocket(
@@ -18,10 +18,10 @@ export function live_match_websocket(
     stompClient.onConnect = (_) => {
 
         stompClient.subscribe(`/topic/match/${matchId}`, (message: IMessage) => {
-            const receivedMatch: Match = JSON.parse(message.body);
+            const receivedMatch: MatchResponse = JSON.parse(message.body);
             console.log("Match: ", receivedMatch);
 
-            setMatch(receivedMatch);
+            setMatch(new Match(receivedMatch));
         });
     };
 

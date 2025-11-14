@@ -77,7 +77,7 @@
         <line num="35" count="0" type="stmt"/>
         <line num="41" count="0" type="stmt"/>
       </file>
-      <file name="LiveMatchEditPage.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/LiveMatchEditPage.tsx">
+      <file name="MatchEditPage.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/MatchEditPage.tsx">
         <metrics statements="11" coveredstatements="8" conditionals="4" coveredconditionals="1" methods="3" coveredmethods="2"/>
         <line num="11" count="1" type="stmt"/>
         <line num="12" count="1" type="stmt"/>
@@ -91,14 +91,14 @@
         <line num="29" count="0" type="stmt"/>
         <line num="33" count="1" type="stmt"/>
       </file>
-      <file name="LiveMatchEditState.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/LiveMatchEditState.tsx">
+      <file name="MatchEditState.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/MatchEditState.tsx">
         <metrics statements="4" coveredstatements="3" conditionals="2" coveredconditionals="0" methods="2" coveredmethods="1"/>
         <line num="11" count="3" type="stmt"/>
         <line num="12" count="4" type="stmt"/>
         <line num="18" count="4" type="stmt"/>
         <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
       </file>
-      <file name="LiveMatchView.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/LiveMatchView.tsx">
+      <file name="MatchView.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/MatchView.tsx">
         <metrics statements="7" coveredstatements="5" conditionals="4" coveredconditionals="2" methods="2" coveredmethods="1"/>
         <line num="13" count="3" type="stmt"/>
         <line num="14" count="14" type="cond" truecount="2" falsecount="0"/>
@@ -108,7 +108,7 @@
         <line num="20" count="0" type="stmt"/>
         <line num="24" count="13" type="stmt"/>
       </file>
-      <file name="LiveMatchViewPage.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/LiveMatchViewPage.tsx">
+      <file name="MatchViewPage.tsx" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/MatchViewPage.tsx">
         <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="1" methods="2" coveredmethods="2"/>
         <line num="10" count="1" type="stmt"/>
         <line num="11" count="1" type="stmt"/>
@@ -137,7 +137,7 @@
         <line num="9" count="4" type="stmt"/>
         <line num="11" count="28" type="stmt"/>
       </file>
-      <file name="live_match.ts" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/live_match.ts">
+      <file name="MatchWebSocket.ts" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/MatchWebSocket.ts">
         <metrics statements="14" coveredstatements="13" conditionals="0" coveredconditionals="0" methods="7" coveredmethods="6"/>
         <line num="11" count="4" type="stmt"/>
         <line num="13" count="4" type="stmt"/>
@@ -154,7 +154,7 @@
         <line num="35" count="4" type="stmt"/>
         <line num="36" count="1" type="stmt"/>
       </file>
-      <file name="live_time.ts" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/live_time.ts">
+      <file name="MatchLiveTime.ts" path="/home/joe/IdeaProjects/SWE-2025/frontend/src/main/components/live_match/MatchLiveTime.ts">
         <metrics statements="11" coveredstatements="9" conditionals="4" coveredconditionals="3" methods="4" coveredmethods="4"/>
         <line num="4" count="8" type="stmt"/>
         <line num="5" count="18" type="stmt"/>

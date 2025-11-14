@@ -1,13 +1,13 @@
 import {expect, vi} from "vitest";
 import {mockScheduledMatch, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import {type Match} from "../../../main/types/match.ts";
+import {type MatchResponse} from "../../../main/types/match.ts";
 import type {UpdateMatchRequest} from "../../../main/request/matches.ts";
-import LiveMatchEditState from "../../../main/components/live_match/LiveMatchEditState.tsx";
+import LiveMatchEditState from "../../../main/components/match/MatchEditState.tsx";
 
 
 let mockProps: {
-    match: Match
+    match: MatchResponse
     updateLiveMatch: (req: UpdateMatchRequest) => void
 }
 

@@ -1,23 +1,23 @@
 import {Divider, Paper, Stack} from "@mantine/core";
-import {type Match} from "../../types/match.ts";
+import {Match} from "../../types/match.ts";
 import TeamScoreView from "./TeamScoreView.tsx";
 import LiveMatchClockView from "./LiveMatchClockView.tsx";
 import MatchTitle from "./MatchTitle.tsx";
 import {useNavigate} from "react-router";
 
 interface LiveMatchViewProps {
-    match: null | Match,
+    match: Match,
     navigable: boolean
 }
 
-const LiveMatchView = ({ match, navigable }: LiveMatchViewProps) => {
+const MatchView = ({ match, navigable }: LiveMatchViewProps) => {
     if (!match) return null;
 
     const navigate = useNavigate();
 
     const handleClick = () => {
         if (navigable) {
-            navigate(`/match/${match.id}`);
+            navigate(`/match/${match.matchRes.id}`);
         }
     };
 
@@ -26,7 +26,7 @@ const LiveMatchView = ({ match, navigable }: LiveMatchViewProps) => {
             shadow="md"
             p="lg"
             radius="lg" withBorder
-            data-testid={`live-match-view-${match.id}`}
+            data-testid={`live-match-view-${match.matchRes.id}`}
             onClick={handleClick}
         >
             <Stack gap="md">
@@ -35,8 +35,8 @@ const LiveMatchView = ({ match, navigable }: LiveMatchViewProps) => {
                 <Divider labelPosition="center" />
 
                 <Stack gap="xs">
-                    <TeamScoreView team={match.awayTeam} score={match.awayScore} />
-                    <TeamScoreView team={match.homeTeam} score={match.homeScore} />
+                    <TeamScoreView team={match.matchRes.awayTeam} score={match.matchRes.awayScore} />
+                    <TeamScoreView team={match.matchRes.homeTeam} score={match.matchRes.homeScore} />
                 </Stack>
 
                 <Divider />
@@ -47,4 +47,4 @@ const LiveMatchView = ({ match, navigable }: LiveMatchViewProps) => {
     );
 };
 
-export default LiveMatchView;
+export default MatchView;

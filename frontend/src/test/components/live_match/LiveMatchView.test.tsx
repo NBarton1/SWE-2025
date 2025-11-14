@@ -1,15 +1,15 @@
 import {vi} from "vitest";
 import {mockLiveTimeStoppedMatch, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import {type Match} from "../../../main/types/match.ts";
-import LiveMatchView from "../../../main/components/live_match/LiveMatchView.tsx";
+import {type MatchResponse} from "../../../main/types/match.ts";
+import MatchView from "../../../main/components/match/MatchView.tsx";
 
 
 let mockProps: {
-    match: null | Match
+    match: null | MatchResponse
 }
 
-describe("LiveMatchView", () => {
+describe("MatchView", () => {
     beforeEach(() => {
         vi.clearAllMocks();
     });
@@ -18,7 +18,7 @@ describe("LiveMatchView", () => {
         mockProps = {
             match: mockLiveTimeStoppedMatch
         }
-        renderWithWrap(<LiveMatchView {...mockProps} navigable={false} />);
+        renderWithWrap(<MatchView {...mockProps} navigable={false} />);
 
         await waitFor(() => {
             expect(screen.getByTestId(`live-match-view-${mockLiveTimeStoppedMatch.id}`)).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe("LiveMatchView", () => {
         mockProps = {
             match: null
         }
-        renderWithWrap(<LiveMatchView {...mockProps} navigable={false} />);
+        renderWithWrap(<MatchView {...mockProps} navigable={false} />);
 
         await waitFor(() => {
             expect(screen.queryByTestId(`live-match-view-${mockLiveTimeStoppedMatch.id}`)).not.toBeInTheDocument();

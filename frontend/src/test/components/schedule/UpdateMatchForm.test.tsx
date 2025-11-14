@@ -4,18 +4,18 @@ import {fireEvent, screen, waitFor} from "@testing-library/react";
 import '@testing-library/jest-dom';
 import * as matchRequest from "../../../main/request/matches.ts";
 import UpdateMatchForm from "../../../main/components/schedule/UpdateMatchForm.tsx";
-import type {Match} from "../../../main/types/match.ts";
+import type {MatchResponse} from "../../../main/types/match.ts";
 import type {Team} from "../../../main/types/team.ts";
 import React, {type Dispatch} from "react";
 
 const mockSetMatches = vi.fn();
 
 let mockProps: {
-    match: Match;
+    match: MatchResponse;
     teams: Team[];
     date: string;
-    matches: Match[];
-    setMatches: Dispatch<React.SetStateAction<Match[]>>;
+    matches: MatchResponse[];
+    setMatches: Dispatch<React.SetStateAction<MatchResponse[]>>;
 };
 
 describe("UpdateMatchForm", () => {

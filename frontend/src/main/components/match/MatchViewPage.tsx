@@ -1,13 +1,13 @@
 import {Container} from "@mantine/core";
 import {useEffect, useRef, useState} from "react";
 import { Client } from "@stomp/stompjs";
-import type {Match} from "../../types/match.ts";
-import LiveMatchView from "./LiveMatchView.tsx";
-import {live_match_websocket} from "./live_match.ts";
+import {Match} from "../../types/match.ts";
+import MatchView from "./MatchView.tsx";
+import {live_match_websocket} from "./MatchWebSocket.ts";
 import {useParams} from "react-router";
 
 
-const LiveMatchViewPage = () => {
+const MatchViewPage = () => {
     const { id } = useParams<{ id: string }>();
     const matchId = Number(id);
 
@@ -21,9 +21,9 @@ const LiveMatchViewPage = () => {
             data-testid="live-match-view-page"
             py="md"
         >
-            {match && <LiveMatchView match={match} navigable={false} />}
+            {match && <MatchView match={match} navigable={false} />}
         </Container>
     );
 };
 
-export default LiveMatchViewPage;
+export default MatchViewPage;

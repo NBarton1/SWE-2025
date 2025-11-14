@@ -3,7 +3,7 @@ import {mockDate, mockMatches, mockTeams, renderWithWrap} from "../../../../vite
 import {screen, waitFor} from "@testing-library/react";
 import DatePopup from "../../../main/components/schedule/DatePopup.tsx";
 import '@testing-library/jest-dom';
-import type {Match} from "../../../main/types/match.ts";
+import type {MatchResponse} from "../../../main/types/match.ts";
 import React, {type Dispatch} from "react";
 import type {Team} from "../../../main/types/team.ts";
 
@@ -17,8 +17,8 @@ global.ResizeObserver = vi.fn().mockImplementation(function(this: any) {
 
 let mockProps: {
     date: string | null;
-    matches: Match[];
-    setMatches: Dispatch<React.SetStateAction<Match[]>>;
+    matches: MatchResponse[];
+    setMatches: Dispatch<React.SetStateAction<MatchResponse[]>>;
     teams: Team[];
 };
 

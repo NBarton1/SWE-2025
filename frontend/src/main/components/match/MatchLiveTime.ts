@@ -1,7 +1,7 @@
-import type {Match} from "../../types/match.ts";
+import type {MatchResponse} from "../../types/match.ts";
 
 
-export const updateLiveTime = (match: Match, setTimeLeft: (value: React.SetStateAction<number>) => void) => {
+export const updateLiveTime = (match: MatchResponse, setTimeLeft: (value: React.SetStateAction<number>) => void) => {
     setTimeLeft(match.clockTimestamp);
 
     if (!match.timeRunning) {
