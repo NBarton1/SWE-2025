@@ -2,6 +2,7 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.ContentDTO
 import com.jknv.lum.model.entity.Content
+import com.jknv.lum.model.entity.Post
 import com.jknv.lum.repository.ContentRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Value
@@ -19,7 +20,7 @@ class ContentService(
     private val storagePath: String,
     private val contentRepository: ContentRepository,
 ) {
-    fun upload(file: MultipartFile): ContentDTO =
+    fun upload(file: MultipartFile, post: Post? = null): ContentDTO =
         uploadContent(file).toDTO()
 
     fun getContent(id: Long): ContentDTO =
@@ -56,12 +57,11 @@ class ContentService(
             ?: throw IllegalArgumentException("Content type must be provided")
 
         // TODO validate media type being uploaded
-        val content = createContent(
-            Content(
-                filename = originalFilename,
-                contentType = contentType,
-                fileSize = file.size
-            )
+        val content = Content(
+            filename = originalFilename,
+            contentType = contentType,
+            fileSize = file.size,
+            post = post,
         )
 
         val targetPath = uploadPath.resolve(content.filename)

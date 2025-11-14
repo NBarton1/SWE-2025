@@ -21,7 +21,9 @@ function Layout() {
                 label: "Home",
                 icon: Home,
                 items: [
-                    { label: 'Schedule', href: "/calendar" },
+                    { label: "Feed", href: "/feed" },
+                    { label: "Post", href: "/create-post" },
+                    { label: "Schedule", href: "/calendar" },
                 ]
             },
             {
@@ -36,7 +38,7 @@ function Layout() {
 
         const adminItems = [
             {
-                label: 'Admin',
+                label: "Admin",
                 icon: UserStar,
                 items: [
                     { label: "Users", href: "/users"}
@@ -44,7 +46,7 @@ function Layout() {
             }
         ]
 
-        if (currentAccount && isAdmin(currentAccount)) {
+        if (isAdmin(currentAccount)) {
             items.push(...adminItems)
         }
 
