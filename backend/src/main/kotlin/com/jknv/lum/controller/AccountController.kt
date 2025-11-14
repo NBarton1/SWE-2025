@@ -1,16 +1,13 @@
 package com.jknv.lum.controller
 
-import com.jknv.lum.LOGGER
-import com.jknv.lum.config.PreAuthorizeGuardian
+import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.AccountDTO
 import com.jknv.lum.model.dto.PlayerDTO
-import com.jknv.lum.model.dto.ContentDTO
 import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.account.AccountLoginRequest
 import com.jknv.lum.model.request.account.AccountUpdateRequest
 import com.jknv.lum.security.AccountDetails
 import com.jknv.lum.services.AccountService
-import com.jknv.lum.services.ContentService
 import com.jknv.lum.services.CookieService
 import com.jknv.lum.services.GuardianService
 import jakarta.servlet.http.HttpServletResponse
@@ -28,7 +25,6 @@ class AccountController(
     private val accountService: AccountService,
     private val cookieService: CookieService,
     private val guardianService: GuardianService,
-    private val contentService: ContentService,
 ) {
 
     @PostMapping
@@ -49,43 +45,39 @@ class AccountController(
         return ResponseEntity.ok(response)
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
+    @Require.AdminOrAccountOwner
     fun update(
         @RequestBody updateInfo: AccountUpdateRequest,
+        @PathVariable id: Long,
         @AuthenticationPrincipal details: AccountDetails,
     ): ResponseEntity<AccountDTO> {
-        val response = accountService.updateAccount(details.id, updateInfo)
+        val response = accountService.updateAccount(id, details.id, updateInfo)
         return ResponseEntity.accepted().body(response)
     }
 
     @GetMapping("/dependents")
-    @PreAuthorizeGuardian
+    @Require.Guardian
     fun getDependents(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<List<PlayerDTO>> {
         val response = guardianService.getDependentsOf(details.id)
         return ResponseEntity.ok(response)
     }
 
+    @PatchMapping("/{id}/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @Require.AdminOrAccountOwner
+    fun updatePicture(
+        @PathVariable id: Long,
+        @RequestParam("image") image: MultipartFile
+    ): ResponseEntity<AccountDTO> {
+        val response = accountService.updatePictureForAccount(id, image)
+        return ResponseEntity.ok().body(response)
+    }
+
     @DeleteMapping("/{id}")
+    @Require.AdminOrAccountOwner
     fun delete(@PathVariable id: Long): ResponseEntity<Void> {
         accountService.deleteAccount(id)
         return ResponseEntity.ok().build()
-    }
-
-    @PatchMapping("/picture", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
-    fun updatePicture(
-        @AuthenticationPrincipal details: AccountDetails,
-        @RequestParam("image") image: MultipartFile
-    ): ResponseEntity<ContentDTO> {
-        val picture = contentService.upload(image)
-        LOGGER.info("${picture.id}")
-        accountService.updatePictureForAccount(details.account, picture)
-        return ResponseEntity.ok().body(picture.toDTO())
-    }
-
-    @DeleteMapping
-    fun delete(@AuthenticationPrincipal details: AccountDetails): ResponseEntity<Void> {
-        accountService.deleteAccount(details.id)
-        return ResponseEntity.noContent().build()
     }
 
     @PostMapping("/login")

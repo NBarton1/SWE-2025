@@ -21,98 +21,150 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpStatus
-import java.security.Principal
 
 @ExtendWith(MockKExtension::class)
 class TeamControllerTest {
-    var teamService: TeamService = mockk()
-    var teamInviteService: TeamInviteService = mockk()
-    var coachService: CoachService = mockk()
-    var playerService: PlayerService = mockk()
+    val teamService: TeamService = mockk()
+    val teamInviteService: TeamInviteService = mockk()
+    val coachService: CoachService = mockk()
+    val playerService: PlayerService = mockk()
 
-    var teamController: TeamController = TeamController(teamService, teamInviteService, coachService, playerService)
+    val teamController: TeamController = TeamController(teamService, teamInviteService, coachService, playerService)
 
-    var details: AccountDetails = mockk()
+    val details: AccountDetails = mockk()
 
-    lateinit var req: TeamCreateRequest
+    lateinit var account: Account
     lateinit var team: Team
-    lateinit var teamDTO: TeamDTO
-    lateinit var coach: Coach
 
     @BeforeEach
     fun setUp() {
-        req = TeamCreateRequest(name = "team")
-        team = req.toEntity()
-        teamDTO = team.toDTO()
-        coach = Coach(account = Account(name = "Coach", username = "coach", password = "password", role = Role.COACH))
-        every { details.id } returns coach.id
+        account = Account(name = "name", username = "username", password = "password", role = Role.COACH)
+        team = Team(name = "team")
+
+        every { details.id } returns account.id
     }
 
     @Test
     fun createTeamTest() {
-        every { teamService.createTeam(req) } returns teamDTO
+        val req: TeamCreateRequest = mockk()
 
-        val result = teamController.create(req)
+        every { teamService.createTeam(req) } returns team.toDTO()
 
-        assertEquals(HttpStatus.CREATED, result.statusCode)
-        assertEquals(teamDTO, result.body)
+        val response = teamController.create(req)
+
         verify { teamService.createTeam(req) }
+
+        assertEquals(HttpStatus.CREATED, response.statusCode)
+        assertEquals(team.toDTO(), response.body)
     }
 
     @Test
     fun getAllTeamsTest() {
-        every { teamService.getTeams() } returns listOf(teamDTO)
+        every { teamService.getTeams() } returns listOf(team.toDTO())
 
-        val result = teamController.getAll()
+        val response = teamController.getAll()
 
-        assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals(listOf(teamDTO), result.body)
         verify { teamService.getTeams() }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(listOf(team.toDTO()), response.body)
+    }
+
+    @Test
+    fun getTeamTest() {
+        every { teamService.getTeam(team.id) } returns team.toDTO()
+
+        val response = teamController.getTeam(team.id)
+
+        verify { teamService.getTeam(team.id) }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(team.toDTO(), response.body)
+    }
+
+    @Test
+    fun getPlayersByTeamTest() {
+        val playerDTO: PlayerDTO = mockk()
+
+        every { teamService.getPlayersByTeam(team.id) } returns listOf(playerDTO)
+
+        val response = teamController.getPlayersByTeam(team.id)
+
+        verify { teamService.getPlayersByTeam(team.id) }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(listOf(playerDTO), response.body)
+    }
+
+    @Test
+    fun getCoachesByTeamTest() {
+        val coachDTO: CoachDTO = mockk()
+
+        every { teamService.getCoachesByTeam(team.id) } returns listOf(coachDTO)
+
+        val response = teamController.getCoachesByTeam(team.id)
+
+        verify { teamService.getCoachesByTeam(team.id) }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(listOf(coachDTO), response.body)
     }
 
     @Test
     fun addCoachTest() {
-        val coachDTO = coach.toDTO()
+        val expected = CoachDTO(
+            account = account.toDTO(),
+            team = team.toDTO()
+        )
 
-        every { coachService.setCoachingTeam(team.id, details.id) } returns coachDTO
+        every { coachService.setCoachingTeam(team.id, details.id) } returns expected
 
-        val result = teamController.addCoach(team.id, details)
+        val response = teamController.addCoach(team.id, details)
 
-        assertEquals(HttpStatus.CREATED, result.statusCode)
-        assertEquals(coachDTO, result.body)
         verify { coachService.setCoachingTeam(team.id, details.id) }
+
+        assertEquals(HttpStatus.CREATED, response.statusCode)
+        assertEquals(expected, response.body)
     }
 
     @Test
     fun invitePlayerTest() {
-        val playerSummary = AccountDTO(1, "player", "player")
-        val TeamDTO = team.toDTO()
-        val inviteDTO = TeamInviteDTO(TeamDTO, playerSummary, InviteStatus.PENDING)
+        account.role = Role.PLAYER
 
-        every { teamInviteService.invitePlayerByCoach(playerSummary.id, details.id) } returns inviteDTO
+        val expected = TeamInviteDTO(
+            team = team.toDTO(),
+            player = account.toDTO(),
+            status = InviteStatus.PENDING,
+        )
 
-        val result = teamController.invitePlayer(playerSummary.id, details)
+        every { teamInviteService.invitePlayerByCoach(account.id, details.id) } returns expected
 
-        assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals(inviteDTO, result.body)
-        verify { teamInviteService.invitePlayerByCoach(playerSummary.id, details.id) }
+        val response = teamController.invitePlayer(account.id, details)
+
+        verify { teamInviteService.invitePlayerByCoach(account.id, details.id) }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(expected, response.body)
     }
 
     @Test
     fun removePlayerTest() {
-        val expectedDTO = PlayerDTO(
-            account = AccountDTO(1, "dk", "dk"),
-            guardian = AccountDTO(1, "dk", "dk"),
+        account.role = Role.PLAYER
+
+        val expected = PlayerDTO(
+            account = account.toDTO(),
+            guardian = mockk(),
             team = null,
             hasPermission = false,
             position = null,
         )
-        
-        every { playerService.removePlayerFromTeam(1) } returns expectedDTO
 
-        val response = teamController.removePlayer(1)
+        every { playerService.removePlayerFromTeam(account.id, details.id) } returns expected
 
-        verify(exactly = 1) { playerService.removePlayerFromTeam(1) }
+        val response = teamController.removePlayer(account.id, details)
+
+        verify { playerService.removePlayerFromTeam(account.id, details.id) }
+
         assertEquals(HttpStatus.OK, response.statusCode)
     }
 }

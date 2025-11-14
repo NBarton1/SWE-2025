@@ -11,14 +11,36 @@ import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.util.*
 
 @Service
 class ContentService(
-    @param:Value($$"${lum.storage.path}")
+
+    @param:Value("\${lum.storage.path}")
     private val storagePath: String,
     private val contentRepository: ContentRepository,
 ) {
-    fun uploadForPost(file: MultipartFile, post: Post?): Content {
+    fun upload(file: MultipartFile): ContentDTO =
+        uploadContent(file).toDTO()
+
+    fun getContent(id: Long): ContentDTO =
+        getContentById(id).toDTO()
+
+    fun download(content: ContentDTO): ByteArray {
+        val downloadPath = Paths.get(storagePath).resolve(content.filename)
+        val fileBytes = Files.readAllBytes(downloadPath)
+
+        return fileBytes
+    }
+
+    internal fun createContent(content: Content): Content {
+        return contentRepository.save(content)
+    }
+
+    internal fun getContentById(id: Long): Content =
+        contentRepository.findById(id).orElseThrow { EntityNotFoundException("Content $id not found") }
+
+    internal fun uploadContent(file: MultipartFile, post: Post? = null): Content {
         if (file.isEmpty) {
             throw IllegalArgumentException("file can not be empty")
         }
@@ -28,39 +50,25 @@ class ContentService(
             Files.createDirectories(uploadPath)
         }
 
-        val originalFilename = file.originalFilename
+        val originalFilename = file.originalFilename?.takeIf { it.isNotBlank() }
             ?: throw IllegalArgumentException("Filename can not be empty")
 
+        val contentType = file.contentType?.takeIf { it.isNotBlank() }
+            ?: throw IllegalArgumentException("Content type must be provided")
+
         // TODO validate media type being uploaded
-        val content = Content(
-            filename = originalFilename,
-            contentType = file.contentType ?: throw IllegalArgumentException("contentType must be provided"),
-            fileSize = file.size,
-            post = post,
+        val content = createContent(
+            Content(
+                filename = originalFilename,
+                contentType = contentType,
+                fileSize = file.size,
+                post = post
+            )
         )
 
-        val savedContent = contentRepository.save(content)
-
-        val targetPath = uploadPath.resolve(content.id.toString())
+        val targetPath = uploadPath.resolve(content.filename)
         Files.copy(file.inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
-        return savedContent
+        return content
     }
-
-    fun upload(file: MultipartFile): Content =
-        uploadForPost(file, null)
-
-    fun getContent(id: Long): ContentDTO = getContentById(id).toDTO()
-
-    fun download(content: ContentDTO): ByteArray {
-
-        val downloadPath = Paths.get(storagePath).resolve(content.id.toString())
-
-        val fileBytes = Files.readAllBytes(downloadPath)
-
-        return fileBytes
-    }
-
-    internal fun getContentById(id: Long): Content =
-        contentRepository.findById(id).orElseThrow { EntityNotFoundException("Content $id not found") }
 }

@@ -29,8 +29,8 @@ class Player (
     var account: Account,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "guardian_id", nullable = false)
-    var guardian: Guardian,
+    @JoinColumn(name = "guardian_id", nullable = true)
+    var guardian: Guardian? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id", nullable = true)
@@ -49,7 +49,7 @@ class Player (
     fun toDTO() : PlayerDTO {
         return PlayerDTO(
             account = account.toDTO(),
-            guardian = guardian.account.toDTO(),
+            guardian = guardian?.account?.toDTO(),
             team = playingTeam?.toDTO(),
             hasPermission = hasPermission,
             position = position,

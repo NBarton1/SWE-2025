@@ -1,0 +1,149 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > GuardianService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.services</a>
+</div>
+
+<h1>Coverage Summary for Class: GuardianService (com.jknv.lum.services)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GuardianService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GuardianService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (7/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
+&nbsp;
+&nbsp;import com.jknv.lum.model.dto.GuardianDTO
+&nbsp;import com.jknv.lum.model.dto.PlayerDTO
+&nbsp;import com.jknv.lum.model.entity.Account
+&nbsp;import com.jknv.lum.model.entity.Guardian
+&nbsp;import com.jknv.lum.repository.GuardianRepository
+&nbsp;import jakarta.persistence.EntityNotFoundException
+&nbsp;import org.springframework.stereotype.Service
+&nbsp;import org.springframework.transaction.annotation.Transactional
+&nbsp;
+<b class="fc">&nbsp;@Service</b>
+&nbsp;@Transactional
+&nbsp;class GuardianService (
+<b class="fc">&nbsp;    private val guardianRepository: GuardianRepository</b>
+&nbsp;) {
+&nbsp;    fun createGuardian(account: Account): GuardianDTO =
+<b class="fc">&nbsp;        guardianRepository.save(Guardian(account = account)).toDTO()</b>
+&nbsp;
+&nbsp;    fun getGuardians(): List&lt;GuardianDTO&gt; =
+<b class="fc">&nbsp;        guardianRepository.findAll().map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    fun getDependentsOf(id: Long): List&lt;PlayerDTO&gt; =
+<b class="fc">&nbsp;        getGuardianById(id).children.map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    fun countGuardians(): Long =
+<b class="fc">&nbsp;        guardianRepository.count()</b>
+&nbsp;
+&nbsp;    internal fun getGuardianByUsername(username: String): Guardian =
+<b class="fc">&nbsp;        guardianRepository.findByAccountUsername(username).orElseThrow { EntityNotFoundException(&quot;Guardian $username not found&quot;) }</b>
+&nbsp;
+&nbsp;    internal fun getGuardianById(id: Long): Guardian =
+<b class="fc">&nbsp;        guardianRepository.findById(id).orElseThrow { EntityNotFoundException(&quot;Guardian $id not found&quot;) }</b>
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
+</div>
+</body>
+</html>

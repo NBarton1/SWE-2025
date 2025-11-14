@@ -10,6 +10,7 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
@@ -39,6 +40,10 @@ class Account(
     @Enumerated(EnumType.STRING)
     var role: Role = Role.GUARDIAN,
 
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "picture_id", nullable = true)
+    var picture: Content? = null,
+
     /* relationships */
 
     @OneToOne(mappedBy = "account", cascade = [CascadeType.ALL], orphanRemoval = true)
@@ -52,9 +57,6 @@ class Account(
 
     @OneToOne(mappedBy = "account", cascade = [CascadeType.ALL], orphanRemoval = true)
     var player: Player? = null,
-
-    @OneToOne(orphanRemoval = true)
-    var picture: Content? = null,
 ) {
     fun toDTO(): AccountDTO {
         return AccountDTO(

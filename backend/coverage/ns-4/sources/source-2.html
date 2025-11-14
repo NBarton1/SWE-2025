@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > AccountDTO</title>
+  <title>Coverage Report > ContentController</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.model.dto</a>
+    <a href="../index.html">com.jknv.lum.controller</a>
 </div>
 
-<h1>Coverage Summary for Class: AccountDTO (com.jknv.lum.model.dto)</h1>
+<h1>Coverage Summary for Class: ContentController (com.jknv.lum.controller)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -41,7 +41,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">AccountDTO</td>
+  <td class="name">ContentController</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -55,7 +55,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (1/1)
+    (3/3)
   </span>
 </td>
 <td class="coverageStat">
@@ -63,7 +63,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (4/4)
+    (10/10)
   </span>
 </td>
 </tr>
@@ -75,13 +75,39 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.dto
+<code class="sourceCode" id="sourceCode">&nbsp;    package com.jknv.lum.controller
 &nbsp;
-<b class="fc">&nbsp;data class AccountDTO (</b>
-<b class="fc">&nbsp;    var id: Long,</b>
-<b class="fc">&nbsp;    var name: String,</b>
-<b class="fc">&nbsp;    var username: String,</b>
-&nbsp;)
+&nbsp;    import com.jknv.lum.model.dto.ContentDTO
+&nbsp;    import com.jknv.lum.services.ContentService
+&nbsp;    import org.springframework.http.MediaType
+&nbsp;    import org.springframework.http.ResponseEntity
+&nbsp;    import org.springframework.web.bind.annotation.*
+&nbsp;    import org.springframework.web.multipart.MultipartFile
+&nbsp;
+<b class="fc">&nbsp;    @RestController</b>
+&nbsp;    @RequestMapping(&quot;/api/content&quot;)
+&nbsp;    class ContentController(
+<b class="fc">&nbsp;        private val contentService: ContentService,</b>
+&nbsp;    ) {
+&nbsp;
+&nbsp;        // Might need use in the future (generic file upload)
+&nbsp;        @PostMapping(&quot;/upload&quot;)
+&nbsp;        fun upload(@RequestParam(&quot;file&quot;) file: MultipartFile): ResponseEntity&lt;ContentDTO&gt; {
+<b class="fc">&nbsp;            val metadata = contentService.upload(file)</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(metadata)</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @GetMapping(&quot;/{fileId}&quot;)
+&nbsp;        fun download(@PathVariable fileId: Long): ResponseEntity&lt;ByteArray&gt; {
+<b class="fc">&nbsp;            val contentDTO = contentService.getContent(fileId)</b>
+<b class="fc">&nbsp;            val contentBytes = contentService.download(contentDTO)</b>
+<b class="fc">&nbsp;            val contentType = MediaType.parseMediaType(contentDTO.contentType)</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok()</b>
+<b class="fc">&nbsp;                .contentType(contentType)</b>
+<b class="fc">&nbsp;                .body(contentBytes)</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
 </code>
 </pre>
 </div>
@@ -105,7 +131,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-10-26 03:13</div>
+    <div style="float:right;">generated on 2025-11-10 06:01</div>
 </div>
 </body>
 </html>

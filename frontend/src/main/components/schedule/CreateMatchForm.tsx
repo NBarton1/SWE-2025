@@ -1,6 +1,6 @@
 import React, {type Dispatch} from "react";
 import { Button, Group, Stack, Paper } from "@mantine/core";
-import {type Match} from "../../types/match.ts";
+import {Match} from "../../types/match.ts";
 import type { Team } from "../../types/team.ts";
 import {useForm} from "@mantine/form";
 import MatchFormFields from "./MatchFormFields.tsx";

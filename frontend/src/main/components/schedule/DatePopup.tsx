@@ -1,7 +1,7 @@
 import React, { type Dispatch } from "react";
 import { Stack, Title, Divider, Text } from "@mantine/core";
 import UpdateMatchForm from "./UpdateMatchForm.tsx";
-import { type Match, matchDate } from "../../types/match.ts";
+import {Match} from "../../types/match.ts";
 import type { Team } from "../../types/team.ts";
 import CreateMatchForm from "./CreateMatchForm.tsx";
 
@@ -18,7 +18,7 @@ const DatePopup = ({ date, matches, setMatches, teams }: DatePopupProps) => {
         return null;
     }
 
-    const dateMatches = matches.filter(match => matchDate(match) === date);
+    const dateMatches = matches.filter(match => match.getDate() === date);
     console.log("date Matches", dateMatches)
 
     return (

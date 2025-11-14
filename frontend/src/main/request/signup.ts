@@ -1,8 +1,9 @@
 export interface SignupRequest {
     name: string,
     username: string,
+    email: string,
     password: string,
-    role?: string;
+    role: string;
 }
 
 export const signup = async (signupRequest: SignupRequest) => {
@@ -12,4 +13,3 @@ export const signup = async (signupRequest: SignupRequest) => {
         body: JSON.stringify(signupRequest),
     });
 };
-

@@ -1,11 +1,16 @@
 import type {Player} from "../types/accountTypes.ts";
-import type {SignupRequest} from "./signup.ts";
 
-export const getPlayers = async (): Promise<Player[]> => {
+export interface PlayerFilter {
+    isOrphan?: boolean;
+}
+
+export const searchPlayers = async (filter?: PlayerFilter): Promise<Player[]> => {
     try {
         const res = await fetch("http://localhost:8080/api/players", {
-            method: "GET",
-            credentials: 'include'
+            method: "POST",
+            credentials: 'include',
+            headers: {'Content-Type': 'application/json'},
+            body: filter ? JSON.stringify(filter) : null
         });
         return await res.json();
     } catch (err) {
@@ -14,11 +19,34 @@ export const getPlayers = async (): Promise<Player[]> => {
     }
 };
 
-export const createPlayer = async (signupRequest: SignupRequest) => {
-    return await fetch("http://localhost:8080/api/players", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: 'include',
-        body: JSON.stringify(signupRequest),
-    });
+export const adoptPlayer = async (playerId: number): Promise<Player | null> => {
+    try {
+        const res = await fetch(`http://localhost:8080/api/players/${playerId}/adopt`, {
+            method: "POST",
+            credentials: "include",
+        });
+
+        return await res.json();
+    } catch (err) {
+        console.error(`Failed to adopt player ${playerId}`, err);
+        return null;
+    }
 };
+
+export const setPlayerPermission = async (playerId: number, permission: boolean) => {
+    try {
+        const res = await fetch(`http://localhost:8080/api/players/${playerId}/permission`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ hasPermission: permission }),
+        });
+
+        return await res.json();
+    } catch (err) {
+        console.error(`Failed to update permission for player ${playerId}`, err);
+        return null;
+    }
+};
+
+

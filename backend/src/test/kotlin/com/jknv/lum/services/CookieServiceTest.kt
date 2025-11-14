@@ -19,7 +19,21 @@ class CookieServiceTest {
         val cookie: ResponseCookie = cookieService.giveLoginCookie(jwt)
 
         assertEquals(cookieName, cookie.name)
+        assertEquals(cookieExpiration, cookie.maxAge.seconds)
         assertEquals(jwt, cookie.value)
+        assertEquals("/", cookie.path)
+        assertEquals(SameSiteCookies.STRICT.toString(), cookie.sameSite)
+        assertTrue(cookie.isHttpOnly)
+        assertTrue(cookie.isSecure)
+    }
+
+    @Test
+    fun giveLogoutCookieTest() {
+        val cookie = cookieService.giveLogoutCookie()
+
+        assertEquals(cookieName, cookie.name)
+        assertEquals(0, cookie.maxAge.seconds)
+        assertEquals("", cookie.value)
         assertEquals("/", cookie.path)
         assertEquals(SameSiteCookies.STRICT.toString(), cookie.sameSite)
         assertTrue(cookie.isHttpOnly)

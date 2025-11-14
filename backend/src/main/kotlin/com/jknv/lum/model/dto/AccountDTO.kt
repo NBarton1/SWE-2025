@@ -5,8 +5,8 @@ import com.jknv.lum.model.type.Role
 data class AccountDTO (
     val id: Long,
     val name: String,
-    val email: String?,
+    val email: String? = null,
     val username: String,
     val role: Role,
-    val picture: ContentDTO?,
+    val picture: ContentDTO? = null,
 )

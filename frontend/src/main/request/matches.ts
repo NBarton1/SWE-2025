@@ -1,3 +1,5 @@
+import {Match, type MatchResponse} from "../types/match.ts";
+
 export interface MatchRequestFields {
     matchId: number
     type: string;
@@ -28,7 +30,9 @@ export async function createMatch(req: CreateMatchRequest) {
         body: JSON.stringify(req)
     });
 
-    return res.json();
+    const matchRes: MatchResponse = await res.json();
+
+    return new Match(matchRes);
 }
 
 export async function updateMatch(req: UpdateMatchRequest) {
@@ -44,7 +48,9 @@ export async function updateMatch(req: UpdateMatchRequest) {
         body: JSON.stringify(fields)
     });
 
-    return res.json();
+    const matchRes: MatchResponse = await res.json();
+
+    return new Match(matchRes);
 }
 
 export async function deleteMatch(matchId: number) {
@@ -62,7 +68,9 @@ export async function getMatch(matchId: number) {
         credentials: "include"
     });
 
-    return res.json();
+    const matchRes: MatchResponse = await res.json();
+
+    return new Match(matchRes);
 }
 
 export const getMatches = async () => {
@@ -72,7 +80,9 @@ export const getMatches = async () => {
             credentials: "include"
         });
 
-        return res.json();
+        const matchesResponse: MatchResponse[] = await res.json();
+
+        return matchesResponse.map(matchRes => new Match(matchRes));
     } catch (err) {
         console.error("Failed to get matches", err);
         return [];

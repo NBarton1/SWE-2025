@@ -11,7 +11,9 @@ import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
+import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.Test
@@ -26,87 +28,126 @@ class MatchServiceTest {
         teamService
     )
 
+    val req: MatchCreateRequest = mockk()
+
     lateinit var homeTeam: Team
     lateinit var awayTeam: Team
-    lateinit var req: MatchCreateRequest
+
     lateinit var match: Match
-    lateinit var matchDTO: MatchDTO
 
     @BeforeEach
     fun setup() {
-        homeTeam = Team(name = "home")
-        awayTeam = Team(name = "away")
+        homeTeam = Team(id = 0, name = "home")
+        awayTeam = Team(id = 1, name = "away")
 
-        req = MatchCreateRequest(
-            LocalDateTime.now(),
-            MatchType.STANDARD,
-            1,
-            2
-        )
-        match = req.toEntity(homeTeam, awayTeam)
-        matchDTO = match.toDTO()
+        match = Match(date = LocalDateTime.now(), type = MatchType.STANDARD, homeTeam = homeTeam, awayTeam = awayTeam)
+
+        every { req.toEntity(homeTeam, awayTeam) } returns match
+        every { req.homeTeamId } returns homeTeam.id
+        every { req.awayTeamId } returns awayTeam.id
+    }
+
+    @Test
+    fun getMatchByIdTest() {
+        every { matchRepository.findById(any()) } answers {
+            if (firstArg<Long>() == match.id)
+                Optional.of(match)
+            else Optional.empty()
+        }
+
+        val result = matchService.getMatchById(match.id)
+
+        verify { matchRepository.findById(match.id) }
+
+        assertEquals(result, match)
+        assertThrows<EntityNotFoundException> { matchService.getMatchById(match.id + 1) }
     }
 
     @Test
     fun createMatchTest() {
-        every { teamService.getTeamById(1) } returns homeTeam
-        every { teamService.getTeamById(2) } returns awayTeam
-        every { matchRepository.save(any()) } returns match
+        every { teamService.getTeamById(homeTeam.id) } returns homeTeam
+        every { teamService.getTeamById(awayTeam.id) } returns awayTeam
+        every { matchRepository.save(match) } returns match
 
-        val savedMatch = matchService.createMatch(req)
+        val result = matchService.createMatch(req)
 
-        verify(exactly = 1) { matchRepository.save(any()) }
-        assertEquals(matchDTO, savedMatch)
+        verify {
+            teamService.getTeamById(homeTeam.id)
+            teamService.getTeamById(awayTeam.id)
+            matchRepository.save(match)
+        }
+
+        assertEquals(match.toDTO(), result)
     }
 
     @Test
     fun updateMatchTest() {
         val update = MatchUpdateRequest(
-            date = LocalDateTime.now().plusDays(1),
-            type = MatchType.PLAYOFF,
-            homeTeamId = 1,
-            awayTeamId = 2
+            homeScore = match.homeScore + 7,
+            awayScore = match.awayScore + 3,
+            timeLeft = match.clockBase - 30,
+            toggleClock = true
         )
 
-        every { matchRepository.findById(1) } returns Optional.of(match)
-        every { teamService.getTeamById(1) } returns homeTeam
-        every { teamService.getTeamById(2) } returns awayTeam
-        every { matchRepository.save(any()) } returns match
+        every { matchRepository.findById(match.id) } returns Optional.of(match)
+        every { teamService.getTeamById(homeTeam.id) } returns homeTeam
+        every { teamService.getTeamById(awayTeam.id) } returns awayTeam
+        every { matchRepository.save(match) } returns match
 
-        val updatedMatch = matchService.updateMatch(1, update)
+        val expected = MatchDTO(
+            id = match.id,
+            date = update.date ?: match.date,
+            type = update.type ?: match.type,
+            state = update.state ?: match.state,
+            homeScore = update.homeScore ?: match.homeScore,
+            awayScore = update.awayScore ?: match.awayScore,
+            homeTeam = homeTeam.toDTO(),
+            awayTeam = awayTeam.toDTO(),
+            clockTimestamp = update.timeLeft ?: match.clockBase,
+            timeRunning = update.toggleClock ?: false
+        )
 
-        verify(exactly = 1) { matchRepository.save(match) }
-        assertEquals(match.toDTO(), updatedMatch)
+        val result = matchService.updateMatch(match.id, update)
+
+        verify {
+            matchRepository.findById(match.id)
+            matchRepository.save(match)
+        }
+
+        assertEquals(expected, result)
+        assertEquals(expected, match.toDTO())
     }
 
     @Test
     fun deleteMatchTest() {
-        val matchId = 1L
+        justRun { matchService.deleteMatch(match.id) }
 
-        justRun { matchService.deleteMatch(matchId) }
+        matchService.deleteMatch(match.id)
 
-        matchService.deleteMatch(matchId)
-
-        verify(exactly = 1) { matchRepository.deleteById(matchId) }
+        verify { matchRepository.deleteById(match.id) }
     }
 
     @Test
     fun getMatchesTest() {
-        every { matchRepository.findAll() } returns listOf(match);
+        every { matchRepository.findAll() } returns listOf(match)
 
         val matches = matchService.getMatches()
 
-        verify(exactly = 1) { matchRepository.findAll() }
-        assertEquals(matches, listOf(matchDTO))
+        verify { matchRepository.findAll() }
+
+        assertEquals(matches, listOf(match.toDTO()))
     }
 
     @Test
     fun getCountMatchesTest() {
-        every { matchRepository.count() } returns 1
+        val expected = 1L
+
+        every { matchRepository.count() } returns expected
 
         val count = matchService.countMatches()
 
-        verify(exactly = 1) { matchRepository.count() }
-        assertEquals(1, count)
+        verify { matchRepository.count() }
+
+        assertEquals(expected, count)
     }
 }

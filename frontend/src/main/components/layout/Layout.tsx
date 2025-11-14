@@ -1,8 +1,10 @@
 import {AppShell, Group, Text, Menu, Button, ActionIcon, useMantineColorScheme} from '@mantine/core';
-import {Home, BarChart3, Settings, ChevronDown, Sun, Moon} from 'lucide-react';
+import {Home, BarChart3, Settings, ChevronDown, Sun, Moon, UserStar} from 'lucide-react';
 import {Outlet, useNavigate} from "react-router";
 import useLogin from "../../hooks/useLogin.tsx";
 import {logout} from "../../request/auth.ts";
+import {useMemo} from "react";
+import {isAdmin} from "../../types/accountTypes.ts";
 
 function Layout() {
 
@@ -12,24 +14,44 @@ function Layout() {
 
     const { currentAccount } = useLogin()
 
-    const menuItems = [
-        {
-            label: 'Home',
-            icon: Home,
-            items: [
-                { label: 'Feed', href: '/feed' },
-                { label: 'Post', href: '/create-post' },
-                { label: 'Schedule', href: '/calendar' },
-            ]
-        },
-        {
-            label: 'Stats',
-            icon: BarChart3,
-            items: [
-                {label: 'Team Stats', href: '/teams'},
-            ]
+    const menuItems = useMemo(() => {
+
+        const items = [
+            {
+                label: "Home",
+                icon: Home,
+                items: [
+                    { label: 'Schedule', href: "/calendar" },
+                    { label: 'Feed', href: '/feed' },
+                    { label: 'Post', href: '/create-post' },
+                ]
+            },
+            {
+                label: "Stats",
+                icon: BarChart3,
+                items: [
+                    {label: "Team Stats", href: "/teams"},
+                ]
+            }
+        ]
+
+
+        const adminItems = [
+            {
+                label: 'Admin',
+                icon: UserStar,
+                items: [
+                    { label: "Users", href: "/users"}
+                ]
+            }
+        ]
+
+        if (currentAccount && isAdmin(currentAccount)) {
+            items.push(...adminItems)
         }
-    ];
+
+        return items
+    }, [currentAccount])
 
     return (
         <AppShell
