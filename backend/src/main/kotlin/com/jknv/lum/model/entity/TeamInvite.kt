@@ -46,7 +46,7 @@ class TeamInvite (
     fun toDTO(): TeamInviteDTO {
         return TeamInviteDTO(
             team = team.toDTO(),
-            player = player.account.toDTO(),
+            player = player.toDTO(),
             status = status,
         )
     }
