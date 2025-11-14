@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for components/live_match/LiveMatchEditPage.tsx</title>
+    <title>Code coverage report for components/live_match/MatchEditPage.tsx</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/live_match</a> LiveMatchEditPage.tsx</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/live_match</a> MatchEditPage.tsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -155,11 +155,11 @@ import { Client } from "@stomp/stompjs";
 import type {Match} from "../../types/match.ts";
 import LiveMatchEdit from "./LiveMatchEdit.tsx";
 import {type UpdateMatchRequest} from "../../request/matches.ts";
-import {live_match_websocket} from "./live_match.ts";
+import {live_match_websocket} from "./MatchWebSocket.ts";
 import {useParams} from "react-router";
 &nbsp;
 &nbsp;
-const LiveMatchEditPage = () =&gt; {
+const MatchEditPage = () =&gt; {
     const { id } = useParams&lt;{ id: string }&gt;();
     const matchId = Number(id);
 &nbsp;
@@ -191,7 +191,7 @@ const LiveMatchEditPage = () =&gt; {
     );
 };
 &nbsp;
-export default LiveMatchEditPage;
+export default MatchEditPage;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

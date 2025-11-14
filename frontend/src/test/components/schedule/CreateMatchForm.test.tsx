@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import CreateMatchForm from "../../../main/components/schedule/CreateMatchForm.tsx";
 import * as matchRequest from "../../../main/request/matches.ts";
 import type {Team} from "../../../main/types/team.ts";
-import type {Match} from "../../../main/types/match.ts";
+import type {MatchResponse} from "../../../main/types/match.ts";
 import React, {type Dispatch} from "react";
 
 const mockSetMatches = vi.fn();
@@ -13,8 +13,8 @@ const mockSetMatches = vi.fn();
 let mockProps: {
     teams: Team[];
     date: string;
-    matches: Match[];
-    setMatches: Dispatch<React.SetStateAction<Match[]>>;
+    matches: MatchResponse[];
+    setMatches: Dispatch<React.SetStateAction<MatchResponse[]>>;
 }
 
 describe("CreateMatchForm", () => {

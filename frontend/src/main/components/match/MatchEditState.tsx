@@ -1,14 +1,14 @@
 import {Group, rem, Select, Text} from "@mantine/core";
-import {type Match, MatchState} from "../../types/match.ts";
+import {type MatchResponse, MatchState} from "../../types/match.ts";
 import type {UpdateMatchRequest} from "../../request/matches.ts";
 
 
 interface MatchEditStateProps {
-    match: Match
-    updateLiveMatch: (req: UpdateMatchRequest) => void
+    match: MatchResponse
+    updateMatch: (req: UpdateMatchRequest) => void
 }
 
-const MatchEditState = ({ match, updateLiveMatch }: MatchEditStateProps) => {
+const MatchEditState = ({ match, updateMatch }: MatchEditStateProps) => {
     const matchStateOptions = [
         { value: MatchState.SCHEDULED, label: MatchState.SCHEDULED },
         { value: MatchState.LIVE, label: MatchState.LIVE },
@@ -35,7 +35,7 @@ const MatchEditState = ({ match, updateLiveMatch }: MatchEditStateProps) => {
                 data={matchStateOptions}
                 required
                 onChange={(state) => {
-                    if (state != null) updateLiveMatch({ state });
+                    if (state != null) updateMatch({ state });
                 }}
             />
         </Group>

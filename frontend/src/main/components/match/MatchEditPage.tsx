@@ -1,14 +1,14 @@
 import {Container} from "@mantine/core";
 import {useEffect, useRef, useState} from "react";
 import { Client } from "@stomp/stompjs";
-import type {Match} from "../../types/match.ts";
-import LiveMatchEdit from "./LiveMatchEdit.tsx";
+import {Match} from "../../types/match.ts";
+import MatchEdit from "./MatchEdit.tsx";
 import {type UpdateMatchRequest} from "../../request/matches.ts";
-import {live_match_websocket} from "./live_match.ts";
+import {live_match_websocket} from "./MatchWebSocket.ts";
 import {useParams} from "react-router";
 
 
-const LiveMatchEditPage = () => {
+const MatchEditPage = () => {
     const { id } = useParams<{ id: string }>();
     const matchId = Number(id);
 
@@ -35,9 +35,9 @@ const LiveMatchEditPage = () => {
             py="md"
             data-testid="live-match-edit-page-container"
         >
-            {match && <LiveMatchEdit match={match} updateLiveMatch={updateLiveMatch} />}
+            {match && <MatchEdit match={match} updateMatch={updateLiveMatch} />}
         </Container>
     );
 };
 
-export default LiveMatchEditPage;
+export default MatchEditPage;

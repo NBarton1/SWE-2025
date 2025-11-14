@@ -1,6 +1,6 @@
 import React, {type Dispatch} from "react";
 import { Button, Group, Stack, Paper } from "@mantine/core";
-import { type Match, matchTime } from "../../types/match.ts";
+import {Match} from "../../types/match.ts";
 import type { Team } from "../../types/team.ts";
 import {useForm} from "@mantine/form";
 import MatchFormFields from "./MatchFormFields.tsx";
@@ -21,10 +21,10 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
 
     const matchForm = useForm({
         initialValues: {
-            homeTeamId: `${match.homeTeam.id}`,
-            awayTeamId: `${match.awayTeam.id}`,
-            time: matchTime(match),
-            type: match.type
+            homeTeamId: `${match.getHomeTeamId()}`,
+            awayTeamId: `${match.getAwayTeamId()}`,
+            time: match.getTime(),
+            type: match.getType()
         },
     });
 
@@ -33,7 +33,7 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
             const { type, homeTeamId, awayTeamId, time } = matchForm.values;
 
             const req: UpdateMatchRequest = {
-                matchId: match.id,
+                matchId: match.getId(),
                 type,
                 homeTeamId,
                 awayTeamId,
@@ -42,7 +42,9 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
 
             const updatedMatch: Match = await updateMatch(req);
 
-            setMatches(matches.map(curr_match => curr_match.id === updatedMatch.id ? updatedMatch : curr_match));
+            setMatches(matches.map(curr_match => {
+                return curr_match.getId() === updatedMatch.getId() ? updatedMatch : curr_match
+            }));
         } catch (error) {
             console.log("Failed to update match", error);
         }
@@ -50,9 +52,9 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
 
     const deleteMatchCallback = async () => {
         try {
-            await deleteMatch(match.id);
+            await deleteMatch(match.getId());
 
-            setMatches([...matches.filter(curr => curr.id !== match.id)]);
+            setMatches([...matches.filter(curr => curr.getId() !== match.getId())]);
         } catch (error) {
             console.log("Failed to delete match", error);
         }
@@ -64,7 +66,7 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
     }));
 
     return (
-        <Paper shadow="sm" p="md" radius="md" withBorder data-testid={`update-match-form-${match.id}`}>
+        <Paper shadow="sm" p="md" radius="md" withBorder data-testid={`update-match-form-${match.getId()}`}>
             <form onSubmit={async (e) => {
                 e.preventDefault();
                 await updateMatchCallback();
@@ -86,7 +88,7 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
                         </Button>
 
                         <Button
-                            onClick={() => navigate(`/live/${match.id}`)}
+                            onClick={() => navigate(`/live/${match.getId()}`)}
                         >
                             Edit Live Feed
                         </Button>

@@ -5,7 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import {Container, Paper, Modal, Title, Box, Button} from "@mantine/core";
 import DatePopup from "./DatePopup.tsx";
-import { type Match, matchStr } from "../../types/match.ts";
+import {Match} from "../../types/match.ts";
 import type { Team } from "../../types/team.ts";
 import { getTeams } from "../../request/teams.ts";
 import {getMatches} from "../../request/matches.ts";
@@ -57,8 +57,8 @@ const Schedule = () => {
                         }}
                         dateClick={dateClick}
                         events={matches.map((match) => ({
-                            title: matchStr(match),
-                            start: match.date,
+                            title: match.getMatchTeams(),
+                            start: match.getDate(),
                         }))}
                         height="auto"
                         data-testid="calendar"

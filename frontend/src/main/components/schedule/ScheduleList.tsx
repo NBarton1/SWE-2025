@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import {Container, Paper, Title, Button, Stack} from "@mantine/core";
-import { type Match } from "../../types/match.ts";
+import { type MatchResponse } from "../../types/match.ts";
 import {getMatches} from "../../request/matches.ts";
-import LiveMatchView from "../live_match/LiveMatchView.tsx";
+import MatchView from "../match/MatchView.tsx";
 
 
 const ScheduleList = () => {
-    const [matches, setMatches] = useState<Match[]>([]);
+    const [matches, setMatches] = useState<MatchResponse[]>([]);
 
     useEffect(() => {
         getMatches().then(setMatches);
@@ -26,7 +26,7 @@ const ScheduleList = () => {
 
                 <Stack gap="md">
                     {matches.map((match) => (
-                        <LiveMatchView match={match} navigable={true} />
+                        <MatchView match={match} navigable={true} />
                     ))}
                 </Stack>
 

@@ -147,7 +147,7 @@
 import {Container, Paper, Title, Button, Stack} from "@mantine/core";
 import { type Match } from "../../types/match.ts";
 import {getMatches} from "../../request/matches.ts";
-import LiveMatchView from "../live_match/LiveMatchView.tsx";
+import MatchView from "../live_match/MatchView.tsx";
 &nbsp;
 &nbsp;
 const ScheduleList = () =&gt; {
@@ -171,7 +171,7 @@ const ScheduleList = () =&gt; {
 &nbsp;
                 &lt;Stack gap="md"&gt;
                     {matches.map((match) =&gt; (
-                        &lt;LiveMatchView match={match} navigable={true} /&gt;
+                        &lt;MatchView match={match} navigable={true} /&gt;
                     ))}
                 &lt;/Stack&gt;
 &nbsp;

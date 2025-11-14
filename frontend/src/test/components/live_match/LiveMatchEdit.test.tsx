@@ -1,15 +1,15 @@
 import {vi} from "vitest";
 import {mockLiveTimeStoppedMatch, mockScheduledMatch, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import {type Match} from "../../../main/types/match.ts";
+import {type MatchResponse} from "../../../main/types/match.ts";
 import type {UpdateMatchRequest} from "../../../main/request/matches.ts";
-import LiveMatchEdit from "../../../main/components/live_match/LiveMatchEdit.tsx";
+import MatchEdit from "../../../main/components/match/MatchEdit.tsx";
 
 
 const mockUpdateLiveMatch = vi.fn();
 
 let mockProps: {
-    match: Match
+    match: MatchResponse
     updateLiveMatch: (req: UpdateMatchRequest) => void
 }
 
@@ -24,7 +24,7 @@ describe("LiveMatchEdit", () => {
             updateLiveMatch: mockUpdateLiveMatch,
         };
 
-        renderWithWrap(<LiveMatchEdit {...mockProps} />);
+        renderWithWrap(<MatchEdit {...mockProps} />);
 
         await waitFor(() => {
             expect(screen.getByTestId("live-match-edit")).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe("LiveMatchEdit", () => {
             updateLiveMatch: mockUpdateLiveMatch,
         };
 
-        renderWithWrap(<LiveMatchEdit {...mockProps} />);
+        renderWithWrap(<MatchEdit {...mockProps} />);
 
         await waitFor(() => {
             expect(screen.getByTestId("live-match-edit")).toBeInTheDocument();
