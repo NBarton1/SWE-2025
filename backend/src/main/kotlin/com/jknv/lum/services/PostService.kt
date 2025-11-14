@@ -22,7 +22,7 @@ class PostService (
         val account = accountService.getAccountById(accountId)
         val createdPost = postRepository.save(req.toEntity(account, parentPost))
 
-        req.media?.forEach { contentService.uploadForPost(it, createdPost) }
+        req.media?.forEach { contentService.uploadContent(it, createdPost) }
 
         return createdPost.toDTO()
     }
