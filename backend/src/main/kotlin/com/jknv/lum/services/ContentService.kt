@@ -2,6 +2,7 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.ContentDTO
 import com.jknv.lum.model.entity.Content
+import com.jknv.lum.model.entity.Post
 import com.jknv.lum.repository.ContentRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Value
@@ -39,7 +40,7 @@ class ContentService(
     internal fun getContentById(id: Long): Content =
         contentRepository.findById(id).orElseThrow { EntityNotFoundException("Content $id not found") }
 
-    internal fun uploadContent(file: MultipartFile): Content {
+    internal fun uploadContent(file: MultipartFile, post: Post? = null): Content {
         if (file.isEmpty) {
             throw IllegalArgumentException("file can not be empty")
         }
@@ -60,7 +61,8 @@ class ContentService(
             Content(
                 filename = originalFilename,
                 contentType = contentType,
-                fileSize = file.size
+                fileSize = file.size,
+                post = post
             )
         )
 
