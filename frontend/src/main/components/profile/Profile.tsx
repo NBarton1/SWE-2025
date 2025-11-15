@@ -4,10 +4,10 @@ import '@mantine/core/styles.css';
 import {type Account, accountEquals, isPlayer} from "../../types/accountTypes.ts";
 import {useParams} from "react-router";
 import {getAccount} from "../../request/accounts.ts";
-import ProfileHeader from "./ProfileHeader.tsx";
 import TeamInvitesTable from "./TeamInvitesTable.tsx";
 import DependentsTable from "./DependentsTable.tsx";
 import {useAuth} from "../../hooks/useAuth.tsx";
+import ProfileHeader from "./ProfileHeader.tsx";
 
 const ProfilePage = () => {
     const { id } = useParams();
