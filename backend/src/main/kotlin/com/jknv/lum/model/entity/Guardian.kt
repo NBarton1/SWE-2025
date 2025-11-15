@@ -1,5 +1,3 @@
-// note: this entity is currently useless, but may have unique fields in the future
-
 package com.jknv.lum.model.entity
 
 import com.jknv.lum.model.dto.GuardianDTO
@@ -11,6 +9,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.MapsId
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
+import jakarta.persistence.PreRemove
 import jakarta.persistence.Table
 
 @Entity
@@ -34,5 +33,13 @@ class Guardian (
         return GuardianDTO(
             account = account.toDTO(),
         )
+    }
+
+    @PreRemove
+    fun preRemove() {
+        children.forEach { child ->
+            child.guardian = null
+            child.hasPermission = false
+        }
     }
 }

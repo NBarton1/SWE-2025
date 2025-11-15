@@ -11,7 +11,7 @@ import {
     Select,
     Paper
 } from '@mantine/core';
-import {isAdmin, isPlayer, isValidRoleString, Role} from '../../types/accountTypes';
+import {accountEquals, isAdmin, isPlayer, isValidRoleString, Role} from '../../types/accountTypes';
 import type {Account} from '../../types/accountTypes';
 import {useCallback, useState} from 'react';
 import {useForm, type UseFormReturnType} from '@mantine/form';
@@ -21,12 +21,11 @@ import {
     updateAccountPicture,
     type UpdateAccountRequest
 } from '../../request/accounts.ts';
-import {logout} from "../../request/auth.ts";
-import {useNavigate} from "react-router";
+import {useLogout} from "../../hooks/useLogout.tsx";
+import {useAuth} from "../../hooks/useAuth.tsx";
 
 interface ProfileHeaderProps {
     account: Account | null;
-    currentAccount: Account | null;
     setAccount: (account: Account | null) => void;
 }
 
@@ -40,11 +39,12 @@ interface ProfileUpdateForm {
     picture: File | null;
 }
 
-const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps) => {
+const ProfileHeader = ({account, setAccount}: ProfileHeaderProps) => {
     const [isEditing, setIsEditing] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-    const navigate = useNavigate();
+    const { logout } = useLogout()
+    const { currentAccount } = useAuth()
 
     const form: UseFormReturnType<ProfileUpdateForm> = useForm({
         initialValues: {
@@ -129,19 +129,25 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
     }, [form, previewUrl]);
 
     const handleDelete = useCallback(async () => {
-        if (!account) return
+        if (!account) return;
 
-        setIsEditing(false)
-        const deleted = await deleteAccount(account.id)
-        if (!deleted) return
+        setIsEditing(false);
 
-
-        if (account.id === currentAccount?.id) {
-            await logout()
-                .then(() => navigate("/login"))
+        const deleted = await deleteAccount(account.id);
+        if (!deleted) {
+            console.error("Failed to delete account");
+            return;
         }
-        setAccount(null)
-    }, [account, currentAccount?.id, navigate, setAccount])
+
+        if (accountEquals(currentAccount, account)) {
+            await logout();
+            return;
+        }
+
+        setAccount(null);
+
+    }, [account, currentAccount?.id, setAccount, logout]);
+
 
     return (
         <Paper shadow="md" radius="md" p="xl" withBorder data-testid="profile-header">
@@ -206,8 +212,9 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                                         <>
                                             <Text size="xl" fw={700} data-testid="account-name">{account.name}</Text>
                                             <Text size="sm" c="dimmed" data-testid="account-username">@{account.username}</Text>
-                                            {account.email && isPlayer(account) &&
-                                                <Text size="sm" data-testid="account-email">{account.email}</Text>}
+                                            {account.email &&
+                                                <Text size="sm" data-testid="account-email">{account.email}</Text>
+                                            }
                                         </>
                                     )}
 
