@@ -108,6 +108,9 @@ class AccountService(
     internal fun getAccountById(id: Long): Account =
         accountRepository.findById(id).orElseThrow { EntityNotFoundException("User $id not found") }
 
+    internal fun isAdmin(id: Long): Boolean =
+        adminService.isAdmin(id)
+
     private fun createAdmin(account: Account) = adminService.createAdmin(account)
     private fun createCoach(account: Account) = coachService.createCoach(account)
     private fun createGuardian(account: Account) = guardianService.createGuardian(account)

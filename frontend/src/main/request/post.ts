@@ -47,3 +47,16 @@ export const getAllPosts = async () => {
         return [];
     }
 };
+
+export const deletePost = async (id: number) => {
+    try {
+        await fetch(`http://localhost:8080/api/posts/${id}`, {
+            method: "DELETE",
+            credentials: 'include',
+        });
+        return true;
+    } catch (err) {
+        console.error("Failed to delete", err);
+    }
+    return false
+};

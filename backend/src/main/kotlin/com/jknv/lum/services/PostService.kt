@@ -31,17 +31,16 @@ class PostService (
     fun getAllPosts(): List<PostDTO> =
         postRepository.findAll().map { it.toDTO() }
 
-    fun isPostOwner(postId: Long, accountId: Long): Boolean =
-        accountId == getPostById(postId).account?.id
-
     fun deletePost(postId: Long, accountId: Long) {
-        if (!isPostOwner(postId, accountId)) {
-            throw EntityNotFoundException("Post $postId not owned by account $accountId")
-        }
+        if (! (isPostOwner(postId, accountId) || accountService.isAdmin(accountId)) )
+            throw IllegalAccessException("You do not have access to delete post $postId")
 
         postRepository.deleteById(postId)
     }
 
-    fun getPostById(id: Long): Post =
+    internal fun getPostById(id: Long): Post =
         postRepository.findById(id).orElseThrow { EntityNotFoundException("Post $id not found") }
+
+    private fun isPostOwner(postId: Long, accountId: Long): Boolean =
+        accountId == getPostById(postId).account?.id
 }
