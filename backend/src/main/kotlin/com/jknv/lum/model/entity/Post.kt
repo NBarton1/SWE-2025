@@ -2,6 +2,8 @@ package com.jknv.lum.model.entity
 
 import com.jknv.lum.model.dto.PostDTO
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
@@ -17,7 +19,8 @@ class Post (
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
-    var account: Account,
+    @OnDelete(action = OnDeleteAction.SET_NULL)
+    var account: Account? = null,
 
     @Column(nullable = false)
     var likeCount: Int = 0,
@@ -46,7 +49,7 @@ class Post (
     fun toDTO(): PostDTO {
         return PostDTO(
             id = id,
-            account = account.toDTO(),
+            account = account?.toDTO(),
             textContent = textContent,
             likeCount = likeCount,
             dislikeCount = dislikeCount,

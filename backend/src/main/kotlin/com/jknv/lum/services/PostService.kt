@@ -32,7 +32,7 @@ class PostService (
         postRepository.findAll().map { it.toDTO() }
 
     fun isPostOwner(postId: Long, accountId: Long): Boolean =
-        accountId == getPostById(postId).account.id
+        accountId == getPostById(postId).account?.id
 
     fun deletePost(postId: Long, accountId: Long) {
         if (!isPostOwner(postId, accountId)) {

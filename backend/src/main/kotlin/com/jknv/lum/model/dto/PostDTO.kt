@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 // TODO: Figure out how to return parent/children
 class PostDTO (
     val id: Long,
-    val account: AccountDTO,
+    val account: AccountDTO?,
     var media: MutableList<ContentDTO>,
     val textContent: String,
     val creationTime: LocalDateTime?,
