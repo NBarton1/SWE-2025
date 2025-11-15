@@ -77,3 +77,7 @@ const VALID_ROLES = new Set(Object.values(Role));
 export function isValidRoleString(value: string): boolean {
     return VALID_ROLES.has(value as Role);
 }
+
+export function hasEditPermission(currentAccount: Account | null, account: Account): boolean {
+    return currentAccount != null && ((account && account.id === currentAccount.id) || isAdmin(currentAccount))
+}
