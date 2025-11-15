@@ -5,10 +5,6 @@ import type {Account} from "../../types/accountTypes.ts";
 
 export abstract class ProfileStateHandler {
 
-    abstract validateName(name: string): string | null
-
-    abstract validateUsername(name: string): string | null
-
     abstract pictureUploadOption(
         form: UseFormReturnType<ProfileUpdateForm>,
         setPreviewUrl: (previewUrl: string | null) => void

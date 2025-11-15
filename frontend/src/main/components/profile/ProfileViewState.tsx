@@ -9,14 +9,6 @@ import ProfileBadge from "./ProfileBadge.tsx";
 
 export class ProfileViewState extends ProfileStateHandler {
 
-    validateName(_name: string) {
-        return null
-    }
-
-    validateUsername(_username: string): string | null {
-        return null
-    }
-
     pictureUploadOption(
         _form: UseFormReturnType<ProfileUpdateForm>,
         _setPreviewUrl: (previewUrl: string | null) => void

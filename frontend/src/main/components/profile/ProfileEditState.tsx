@@ -10,14 +10,6 @@ import ProfileBadge from "./ProfileBadge.tsx";
 
 export class ProfileEditState extends ProfileStateHandler {
 
-    validateName(name: string): string | null {
-        return name.trim().length === 0 ? "Name is required" : null
-    }
-
-    validateUsername(username: string): string | null {
-        return username.trim().length === 0 ? "Username is required" : null
-    }
-
     pictureUploadOption(form: UseFormReturnType<ProfileUpdateForm>, setPreviewUrl: (previewUrl: string | null) => void): React.ReactNode {
         return (
             <ProfilePictureChangeButton form={form} setPreviewUrl={setPreviewUrl} />
