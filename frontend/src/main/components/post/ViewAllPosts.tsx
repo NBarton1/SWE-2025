@@ -2,6 +2,7 @@ import {Container, Stack} from "@mantine/core";
 import PostView from "./PostView.tsx";
 import {useEffect, useState} from "react";
 import {getAllPosts} from "../../request/post.ts";
+import {comparePosts} from "../../types/post.ts";
 
 
 function ViewAllPosts() {
@@ -9,7 +10,10 @@ function ViewAllPosts() {
 
     useEffect(() => {
         console.log("Getting All posts");
-        getAllPosts().then(setPosts);
+        getAllPosts().then(posts => {
+            posts.sort(comparePosts);
+            setPosts(posts);
+        });
     }, []);
 
     return (

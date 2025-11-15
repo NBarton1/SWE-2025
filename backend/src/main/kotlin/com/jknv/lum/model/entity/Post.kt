@@ -2,10 +2,14 @@ package com.jknv.lum.model.entity
 
 import com.jknv.lum.model.dto.PostDTO
 import jakarta.persistence.*
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.LocalDateTime
 
 
 @Entity
 @Table(name = "Post")
+@EntityListeners(AuditingEntityListener::class)
 class Post (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +28,10 @@ class Post (
     @Column
     var textContent: String,
 
+    @CreatedDate
+    @Column(updatable = false)
+    var creationTime: LocalDateTime? = null,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = true)
     var parentPost: Post? = null,
@@ -34,14 +42,16 @@ class Post (
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     var media: MutableList<Content> = mutableListOf(),
 
-) {
+    ) {
     fun toDTO(): PostDTO {
         return PostDTO(
             id = id,
+            account = account.toDTO(),
             textContent = textContent,
             likeCount = likeCount,
             dislikeCount = dislikeCount,
             media = media.map { it.toDTO() }.toMutableList(),
+            creationTime = creationTime,
         )
     }
 }

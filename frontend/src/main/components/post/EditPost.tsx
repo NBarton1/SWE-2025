@@ -16,6 +16,11 @@ function EditPost() {
     const editor = useEditor({
         shouldRerenderOnTransaction: true,
         extensions: [StarterKit, Highlight],
+        editorProps: {
+            attributes: {
+                style: "font-size: 30px;",
+            },
+        },
     });
 
     const [previewFiles, setPreviewFiles] = useState<ContentPreview[]>([]);
