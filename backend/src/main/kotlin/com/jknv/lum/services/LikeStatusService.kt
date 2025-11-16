@@ -4,7 +4,6 @@ import com.jknv.lum.components.EntityValidatorRegistry
 import com.jknv.lum.model.dto.LikeStatusDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.LikeStatus
-import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.type.LikeType
 import com.jknv.lum.repository.AccountRepository
 import com.jknv.lum.repository.LikeRepository
@@ -67,12 +66,9 @@ class LikeStatusService(
         likeRepository.deleteById(likeId)
     }
 
-    fun getNumLikes(entityId: Long, likeType: LikeType): Long {
-        return likeRepository.countLikeStatusesByEntityIdAndLikeTypeAndLiked(entityId, likeType, true)
-    }
-
-    fun getNumDislikes(entityId: Long, likeType: LikeType): Long {
-        return likeRepository.countLikeStatusesByEntityIdAndLikeTypeAndLiked(entityId, likeType, false)
+    fun getNumLikeStatuses(entityId: Long, likeType: LikeType, liked: Boolean): Long {
+        validateEntityExists(entityId, likeType)
+        return likeRepository.countLikeStatusesByEntityIdAndLikeTypeAndLiked(entityId, likeType, liked)
     }
 
     internal fun validateEntityExists(entityId: Long, likeType: LikeType) {

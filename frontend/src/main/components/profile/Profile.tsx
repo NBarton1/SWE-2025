@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import {Container} from '@mantine/core';
 import '@mantine/core/styles.css';
-import {type Account, accountEquals, isPlayer} from "../../types/accountTypes.ts";
+import {type Account, accountEquals, isCoach, isPlayer} from "../../types/accountTypes.ts";
 import {useParams} from "react-router";
 import {getAccount} from "../../request/accounts.ts";
 import TeamInvitesTable from "./TeamInvitesTable.tsx";
 import DependentsTable from "./DependentsTable.tsx";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import ProfileHeader from "./ProfileHeader.tsx";
+import LikesBar from "../likes/LikesBar.tsx";
 
 const ProfilePage = () => {
     const { id } = useParams();
@@ -23,6 +24,7 @@ const ProfilePage = () => {
         });
     }, [id]);
 
+
     return (
         <Container
             size="md"
@@ -30,6 +32,11 @@ const ProfilePage = () => {
             data-testid="profile-page-container"
         >
             <ProfileHeader account={account} setAccount={setAccount} />
+
+            {isCoach(account) && (
+                // @ts-expect-error already null safe from isCoach
+                <LikesBar entityId={account.id} likeType="COACH"/>
+            )}
 
             {accountEquals(currentAccount, account) && (
                 isPlayer(account) ? (

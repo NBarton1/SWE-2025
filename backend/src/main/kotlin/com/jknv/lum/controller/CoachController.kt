@@ -36,4 +36,20 @@ class CoachController(
         val likeStatus = likeStatusService.getLikeStatus(details.id, id, LikeType.COACH)
         return ResponseEntity.ok(likeStatus)
     }
+
+    @GetMapping("/{id}/likes")
+    fun getLikeCount(
+        @PathVariable id: Long,
+    ): ResponseEntity<Long> {
+        val reactions = likeStatusService.getNumLikeStatuses(id, LikeType.COACH, true)
+        return ResponseEntity.ok(reactions)
+    }
+
+    @GetMapping("/{id}/dislikes")
+    fun getDislikeCount(
+        @PathVariable id: Long,
+    ): ResponseEntity<Long> {
+        val reactions = likeStatusService.getNumLikeStatuses(id, LikeType.COACH, false)
+        return ResponseEntity.ok(reactions)
+    }
 }
