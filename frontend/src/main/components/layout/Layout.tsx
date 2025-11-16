@@ -30,6 +30,7 @@ function Layout() {
                 icon: BarChart3,
                 items: [
                     {label: "Team Stats", href: "/teams"},
+                    {label: "Playoff Picture", href: "/playoff"},
                 ]
             }
         ]
