@@ -100,3 +100,17 @@ export const removePlayerFromTeam = async (playerId: number): Promise<boolean> =
         return false;
     }
 };
+
+export const getPlayoffTeams = async (): Promise<Team[]> => {
+    try {
+        const res = await fetch("http://localhost:8080/api/teams/playoff", {
+            method: "GET",
+            credentials: "include"
+        });
+
+        return await res.json();
+    } catch (err) {
+        console.error("Failed to get playoff teams", err);
+        return [];
+    }
+}

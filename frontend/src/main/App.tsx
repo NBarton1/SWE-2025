@@ -16,6 +16,7 @@ import {getAccount} from "./request/accounts.ts";
 import AdminAccountsPage from "./components/admin/AdminAccountsPage.tsx";
 import ScheduleList from "./components/schedule/ScheduleList.tsx";
 import {AuthContext} from "./hooks/useAuth.tsx";
+import PlayoffPicture from "./components/teams/PlayoffPicture.tsx";
 
 function App() {
     const [currentAccount, setCurrentAccount] = useState<Account | null>(null)
@@ -41,6 +42,7 @@ function App() {
                     <Route path="/profile/:id" element={<Profile />} />
                     <Route path="/teams" element={(<TeamStandings />)}/>
                     <Route path="/teams/:id" element={<TeamView />} />
+                    <Route path="/playoff" element={<PlayoffPicture />} />
                     <Route path="/create-post" element={(<PostEditPage />)} />
                     <Route path="/feed" element={(<FeedPage />)} />
                     <Route path="/live/:id" element={<MatchEditPage />} />
