@@ -1,7 +1,7 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, test, beforeEach, expect, vi } from "vitest";
-import ProfileHeader from "../../../main/components/profile/ProfileHeader.tsx";
+import ProfileHeader1 from "../../../main/components/profile/ProfileHeader1.tsx";
 import {
     renderWithWrap,
     mockAdminAccount,
@@ -21,14 +21,14 @@ vi.mock("../../../main/request/auth.ts", () => ({
     logout: vi.fn(),
 }));
 
-describe("ProfileHeader with testids", () => {
+describe("ProfileHeader1 with testids", () => {
     beforeEach(() => {
         vi.clearAllMocks();
     });
 
     test("renders correctly for null account", () => {
         renderWithWrap(
-            <ProfileHeader
+            <ProfileHeader1
                 account={null}
                 currentAccount={mockAdminAccount}
                 setAccount={vi.fn()}
@@ -40,7 +40,7 @@ describe("ProfileHeader with testids", () => {
 
     test("renders account information when provided", async () => {
         renderWithWrap(
-            <ProfileHeader
+            <ProfileHeader1
                 account={mockPlayerAccount}
                 currentAccount={mockPlayerAccount}
                 setAccount={vi.fn()}
@@ -56,7 +56,7 @@ describe("ProfileHeader with testids", () => {
 
     test("enters edit mode when clicking Edit Profile", async () => {
         renderWithWrap(
-            <ProfileHeader
+            <ProfileHeader1
                 account={mockPlayerAccount}
                 currentAccount={mockPlayerAccount}
                 setAccount={vi.fn()}
@@ -76,7 +76,7 @@ describe("ProfileHeader with testids", () => {
 
     test("cancel button exits edit mode", async () => {
         renderWithWrap(
-            <ProfileHeader
+            <ProfileHeader1
                 account={mockPlayerAccount}
                 currentAccount={mockPlayerAccount}
                 setAccount={vi.fn()}
@@ -103,7 +103,7 @@ describe("ProfileHeader with testids", () => {
         });
 
         renderWithWrap(
-            <ProfileHeader
+            <ProfileHeader1
                 account={mockPlayerAccount}
                 currentAccount={mockPlayerAccount}
                 setAccount={mockSetAccount}
@@ -134,7 +134,7 @@ describe("ProfileHeader with testids", () => {
         const mockSetAccount = vi.fn();
 
         renderWithWrap(
-            <ProfileHeader
+            <ProfileHeader1
                 account={mockPlayerAccount}
                 currentAccount={mockAdminAccount}
                 setAccount={mockSetAccount}
