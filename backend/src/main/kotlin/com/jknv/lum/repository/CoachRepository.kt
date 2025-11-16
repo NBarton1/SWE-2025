@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 import java.util.Optional
 
 @Repository
-interface CoachRepository : JpaRepository<Coach, Int> {
+interface CoachRepository : JpaRepository<Coach, Long> {
     fun getCoachById(accountId: Long): Optional<Coach>
     fun getCoachByAccountUsername(accountUsername: String): Optional<Coach>
 }
