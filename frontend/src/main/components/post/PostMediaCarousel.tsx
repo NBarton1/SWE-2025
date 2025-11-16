@@ -8,7 +8,7 @@ interface ViewPostsProps {
     post: Post
 }
 
-function MediaCarousel({ post }: ViewPostsProps) {
+function PostMediaCarousel({ post }: ViewPostsProps) {
 
     const media = post.media;
 
@@ -30,4 +30,4 @@ function MediaCarousel({ post }: ViewPostsProps) {
     )
 }
 
-export default MediaCarousel;
+export default PostMediaCarousel;

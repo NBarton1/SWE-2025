@@ -1,9 +1,9 @@
-import MediaCarousel from "./MediaCarousel.tsx";
+import PostMediaCarousel from "./PostMediaCarousel.tsx";
 import {formatCreationTime, type Post} from "../../types/post.ts";
 import {EditorContent, useEditor} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import '@mantine/carousel/styles.css';
-import {Avatar, Group, Paper, Title, Text} from "@mantine/core";
+import {Avatar, Group, Paper, Title, Text, Stack, Anchor} from "@mantine/core";
 
 
 interface PostViewProps {
@@ -26,20 +26,32 @@ function PostView({ post }: PostViewProps) {
 
     return (
         <Paper p="md" withBorder>
-            <Group>
-                <Avatar
-                    src={account?.picture?.downloadUrl}
-                    radius="sm"
-                    name={account.name}
-                />
+            <Anchor
+                href={`/profile/${account?.id}`}
+                c="inherit"
+                underline="never"
+            >
+                <Group>
+                    <Avatar
+                        src={account?.picture?.downloadUrl}
+                        radius="sm"
+                        name={account?.name}
+                        size="lg"
+                    />
 
-                <Title>
-                    {account.username}
-                    <Text component="span" c="dimmed"> · {formatCreationTime(post)}</Text>
-                </Title>
-            </Group>
+                    <Stack gap="xs">
+                        <Title order={3}>
+                            {account?.name}
+                        </Title>
 
-            <MediaCarousel post={post} />
+                        <Text size="sm" c="dimmed">
+                            {account ? `@${account.username}` : "Deleted User"} · {formatCreationTime(post)}
+                        </Text>
+                    </Stack>
+                </Group>
+            </Anchor>
+
+            <PostMediaCarousel post={post} />
 
             <EditorContent editor={editor} />
         </Paper>
