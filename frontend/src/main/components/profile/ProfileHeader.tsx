@@ -1,17 +1,10 @@
 import {
-    Avatar,
     Stack,
     Group,
     Text,
-    Badge,
-    Button,
-    TextInput,
-    FileButton,
-    PasswordInput,
-    Select,
     Paper
 } from '@mantine/core';
-import {isAdmin, isPlayer, isValidRoleString, Role} from '../../types/accountTypes';
+import {accountEquals, hasEditPermission, isValidRoleString} from '../../types/accountTypes';
 import type {Account} from '../../types/accountTypes';
 import {useCallback, useState} from 'react';
 import {useForm, type UseFormReturnType} from '@mantine/form';
@@ -21,12 +14,15 @@ import {
     updateAccountPicture,
     type UpdateAccountRequest
 } from '../../request/accounts.ts';
-import {logout} from "../../request/auth.ts";
-import {useNavigate} from "react-router";
+import {useLogout} from "../../hooks/useLogout.tsx";
+import {useAuth} from "../../hooks/useAuth.tsx";
+import {ProfileViewState} from "./ProfileViewState.tsx";
+import {ProfileEditState} from "./ProfileEditState.tsx";
+import ProfileAvatar from "./ProfileAvatar.tsx";
+import type {ProfileStateHandler} from "./ProfileStateHandler.tsx";
 
 interface ProfileHeaderProps {
     account: Account | null;
-    currentAccount: Account | null;
     setAccount: (account: Account | null) => void;
 }
 
@@ -40,11 +36,12 @@ interface ProfileUpdateForm {
     picture: File | null;
 }
 
-const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps) => {
-    const [isEditing, setIsEditing] = useState(false);
+const ProfileHeader = ({account, setAccount}: ProfileHeaderProps) => {
+    const [profileStateHandler, setProfileStateHandler] = useState<ProfileStateHandler>(new ProfileViewState());
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-    const navigate = useNavigate();
+    const { logout } = useLogout()
+    const { currentAccount } = useAuth()
 
     const form: UseFormReturnType<ProfileUpdateForm> = useForm({
         initialValues: {
@@ -57,8 +54,8 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
             picture: null as File | null
         },
         validate: {
-            name: (value) => (isEditing && value.trim().length === 0 ? "Name is required" : null),
-            username: (value) => (isEditing && value.trim().length === 0 ? "Username is required" : null),
+            name: (value) => (value.trim().length === 0 ? "Name is required" : null),
+            username: (value) => (value.trim().length === 0 ? "Username is required" : null),
             email: (value) => (value && value.trim().length > 0 && !/^\S+@\S+$/.test(value) ? "Invalid email" : null),
             password: (value) => {
                 if (!value) return null;
@@ -87,7 +84,7 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
             confirmPassword: "",
         });
         form.resetDirty()
-        setIsEditing(true);
+        setProfileStateHandler(new ProfileEditState());
     }, [account, form]);
 
     const handleSubmit = useCallback(async (values: typeof form.values) => {
@@ -115,7 +112,7 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
 
         if (updatedAccount === null) return
 
-        setIsEditing(false);
+        setProfileStateHandler(new ProfileViewState());
         setAccount(updatedAccount)
     }, [account, form, setAccount]);
 
@@ -125,23 +122,30 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
             URL.revokeObjectURL(previewUrl);
             setPreviewUrl(null)
         }
-        setIsEditing(false);
+
+        setProfileStateHandler(new ProfileViewState());
     }, [form, previewUrl]);
 
     const handleDelete = useCallback(async () => {
-        if (!account) return
+        if (!account) return;
 
-        setIsEditing(false)
-        const deleted = await deleteAccount(account.id)
-        if (!deleted) return
+        setProfileStateHandler(new ProfileViewState());
 
-
-        if (account.id === currentAccount?.id) {
-            await logout()
-                .then(() => navigate("/login"))
+        const deleted = await deleteAccount(account.id);
+        if (!deleted) {
+            console.error("Failed to delete account");
+            return;
         }
-        setAccount(null)
-    }, [account, currentAccount?.id, navigate, setAccount])
+
+        if (accountEquals(currentAccount, account)) {
+            await logout();
+            return;
+        }
+
+        setAccount(null);
+
+    }, [account, currentAccount?.id, setAccount, logout]);
+
 
     return (
         <Paper shadow="md" radius="md" p="xl" withBorder data-testid="profile-header">
@@ -151,139 +155,26 @@ const ProfileHeader = ({account, currentAccount, setAccount}: ProfileHeaderProps
                         <Group justify="space-between" align="flex-start">
                             <Group align="flex-start">
                                 <Stack gap="xs" align="center">
-                                    <Avatar
-                                        src={previewUrl ?? account?.picture?.downloadUrl}
-                                        size={120}
-                                        radius="md"
-                                        name={account.name}
-                                        data-testid="profile-avatar"
-                                    />
-                                    {isEditing &&
-                                        <FileButton
-                                            onChange={file => {
-                                                form.setFieldValue("picture", file);
+                                    <ProfileAvatar account={account} previewUrl={previewUrl} />
 
-                                                if (file) {
-                                                    const url = URL.createObjectURL(file);
-                                                    setPreviewUrl(url);
-                                                } else {
-                                                    setPreviewUrl(null);
-                                                }
-                                            }}
-                                            accept="image/png,image/jpeg,image/gif"
-                                            data-testid="profile-picture-button"
-                                        >
-                                            {(props) => (
-                                                <Button {...props} size="xs" variant="light" data-testid="change-picture-button">
-                                                    Change Picture
-                                                </Button>
-                                            )}
-                                        </FileButton>
-                                    }
+                                    {profileStateHandler.pictureUploadOption(form, setPreviewUrl)}
                                 </Stack>
 
                                 <Stack gap="xs" style={{flex: 1}}>
-                                    {isEditing ? (
-                                        <>
-                                            <TextInput
-                                                label="Name"
-                                                placeholder="Name"
-                                                maxLength={32}
-                                                required
-                                                {...form.getInputProps("name")}
-                                                data-testid="form-name"
-                                            />
-                                            <TextInput
-                                                label="Username"
-                                                placeholder="Username"
-                                                maxLength={32}
-                                                required
-                                                {...form.getInputProps("username")}
-                                                data-testid="form-username"
-                                            />
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Text size="xl" fw={700} data-testid="account-name">{account.name}</Text>
-                                            <Text size="sm" c="dimmed" data-testid="account-username">@{account.username}</Text>
-                                            {account.email && isPlayer(account) &&
-                                                <Text size="sm" data-testid="account-email">{account.email}</Text>}
-                                        </>
-                                    )}
+                                    {profileStateHandler.accountNamesFields(form, account)}
 
                                     <Group gap="xs" data-testid="role-section">
-                                        {!isEditing || (currentAccount && !isAdmin(currentAccount)) ?
-                                            <Badge variant="light" data-testid="account-role">
-                                                {account.role}
-                                            </Badge>
-                                            :
-                                            <Select
-                                                defaultValue={account.role}
-                                                data={Object.values(Role)}
-                                                searchable
-                                                {...form.getInputProps("role")}
-                                                data-testid="form-role-select"
-                                            />
-                                        }
+                                        {profileStateHandler.roleOptions(form, currentAccount, account)}
                                     </Group>
                                 </Stack>
                             </Group>
 
-                            {currentAccount && ((account && account.id === currentAccount.id) || isAdmin(currentAccount)) && (
-                                !isEditing ? (
-                                    <Button variant="light" size="sm" onClick={edit} data-testid="edit-profile-button">
-                                        Edit Profile
-                                    </Button>
-                                ) : (
-                                    <Group gap="xs">
-                                        <Button variant="light" color="green" size="sm" type="submit" data-testid="save-button">
-                                            Save
-                                        </Button>
-                                        <Button variant="light" color="red" size="sm" onClick={cancel} data-testid="cancel-button">
-                                            Cancel
-                                        </Button>
-                                    </Group>
-                                )
+                            {hasEditPermission(currentAccount, account) && (
+                                profileStateHandler.editOptions(edit, cancel)
                             )}
                         </Group>
 
-                        {isEditing && (
-                            <Group align="flex-start">
-                                <Stack style={{flex: 1}}>
-                                    {!isPlayer(currentAccount) &&
-                                        <TextInput
-                                            label="Email"
-                                            size="sm"
-                                            placeholder="user@example.com"
-                                            {...form.getInputProps("email")}
-                                            data-testid="form-email"
-                                        />
-                                    }
-                                    <PasswordInput
-                                        label="Password"
-                                        size="sm"
-                                        placeholder="Leave blank to keep current"
-                                        {...form.getInputProps("password")}
-                                        data-testid="form-password"
-                                    />
-                                    <PasswordInput
-                                        label="Confirm Password"
-                                        size="sm"
-                                        placeholder="Confirm new password"
-                                        {...form.getInputProps("confirmPassword")}
-                                        data-testid="form-confirm-password"
-                                    />
-                                    <Button
-                                        onClick={handleDelete}
-                                        color="red"
-                                        variant="filled"
-                                        data-testid="delete-account-button"
-                                    >
-                                        Delete Account
-                                    </Button>
-                                </Stack>
-                            </Group>
-                        )}
+                        {profileStateHandler.accountDetailsOptions(form, currentAccount, handleDelete)}
                     </Stack>
                 </form>
             ) : (

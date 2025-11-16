@@ -69,4 +69,4 @@ dist-ssr
 *.env
 *application-secret.yml
 
-/frontend/coverage1
+/coverage-ignore

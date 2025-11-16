@@ -3,6 +3,7 @@ package com.jknv.lum.model.request.post
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Post
 import org.springframework.web.multipart.MultipartFile
+import java.time.LocalDateTime
 
 class PostCreateRequest (
     var media: List<MultipartFile>?,

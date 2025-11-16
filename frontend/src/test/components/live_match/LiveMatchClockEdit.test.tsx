@@ -2,14 +2,14 @@ import { vi } from "vitest";
 import {mockLiveTimeStoppedMatch, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import '@testing-library/jest-dom';
-import type {Match} from "../../../main/types/match.ts";
+import type {MatchResponse} from "../../../main/types/match.ts";
 import type {UpdateMatchRequest} from "../../../main/request/matches.ts";
-import LiveMatchClockEdit from "../../../main/components/live_match/LiveMatchClockEdit.tsx";
+import LiveMatchClockEdit from "../../../main/components/match/LiveMatchClockEdit.tsx";
 
 const mockUpdateLiveMatch = vi.fn();
 
 let mockProps: {
-    match: Match
+    match: MatchResponse
     updateLiveMatch: (req: UpdateMatchRequest) => void
 }
 

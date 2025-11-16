@@ -1,25 +1,25 @@
 import type {JSONContent} from "@tiptap/react";
 
-export interface PostCreateRequest {
+
+export interface PostRequestFields {
     textContent: JSONContent,
     mediaFiles: File[],
-    parentId: number | null,
+    parentId: number,
 }
+
+export type PostCreateRequest = Partial<PostRequestFields>;
 
 export const createPost = async (req: PostCreateRequest) => {
     try {
         const formData = new FormData();
 
         if (req.mediaFiles && req.mediaFiles.length > 0) {
-            console.log(req.mediaFiles[0]);
             req.mediaFiles.forEach(file => formData.append("media", file));
         }
 
         formData.append("textContent", JSON.stringify(req.textContent));
 
         if (req.parentId) formData.append("parentId", req.parentId.toString());
-
-        console.log(formData);
 
         const res = await fetch("http://localhost:8080/api/posts", {
             method: "POST",

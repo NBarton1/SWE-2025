@@ -14,9 +14,9 @@ import {
 import {useNavigate} from "react-router";
 import {useCallback, useState} from "react";
 import {signup} from "../../request/signup.ts";
-import useLogin from "../../hooks/useLogin.tsx";
 import {useForm} from "@mantine/form";
 import {Role} from "../../types/accountTypes.ts";
+import {useLogin} from "../../hooks/useLogin.tsx";
 
 const SignupPage = () => {
     const theme = useMantineTheme();

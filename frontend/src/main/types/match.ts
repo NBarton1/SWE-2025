@@ -1,7 +1,12 @@
 import type {Team} from "./team.ts";
+import type {MatchStateHandler} from "../components/match/MatchStateHandler.tsx";
+import {ScheduledMatchState} from "../components/match/ScheduledMatchState.tsx";
+import {LiveMatchState} from "../components/match/LiveMatchState.tsx";
+import {FinishedMatchState} from "../components/match/FinishedMatchState.tsx";
+import type {UpdateMatchRequest} from "../request/matches.ts";
 
 
-export interface Match {
+export interface MatchResponse {
     id: number,
     type: string,
     date: string,
@@ -12,6 +17,67 @@ export interface Match {
     clockTimestamp: number,
     timeRunning: boolean,
     state: string,
+}
+
+export class Match {
+    matchRes: MatchResponse;
+    private stateHandler: MatchStateHandler;
+
+    constructor(matchRes: MatchResponse) {
+        this.matchRes = matchRes;
+
+        switch (matchRes.state) {
+            case MatchState.SCHEDULED:
+                this.stateHandler = new ScheduledMatchState(matchRes);
+                break;
+            case MatchState.LIVE:
+                this.stateHandler = new LiveMatchState(matchRes);
+                break;
+            case MatchState.FINISHED:
+                this.stateHandler = new FinishedMatchState(matchRes);
+                break;
+            default:
+                throw new Error(`Invalid match state: ${matchRes.state}`);
+        }
+    }
+
+    getId() {
+        return this.matchRes.id;
+    }
+
+    getTitleSuffix() {
+        return this.stateHandler.getTitleSuffix();
+    }
+
+    getEditControls(updateMatch: (req: UpdateMatchRequest) => void) {
+        return this.stateHandler.getEditControls(updateMatch);
+    }
+
+    getMatchTeams() {
+        return `${this.matchRes.awayTeam.name} @ ${this.matchRes.homeTeam.name}`
+    }
+
+    getDate() {
+        const date = this.matchRes.date;
+        return date.substring(0, date.indexOf("T"))
+    }
+
+    getTime() {
+        const date = this.matchRes.date;
+        return date.substring(date.indexOf("T") + 1)
+    }
+
+    getType() {
+        return this.matchRes.type;
+    }
+
+    getHomeTeamId() {
+        return this.matchRes.homeTeam.id;
+    }
+
+    getAwayTeamId() {
+        return this.matchRes.awayTeam.id;
+    }
 }
 
 
@@ -26,16 +92,4 @@ export enum MatchState {
     SCHEDULED = "SCHEDULED",
     LIVE = "LIVE",
     FINISHED = "FINISHED"
-}
-
-export function matchDate(match: Match) {
-    return match.date.substring(0, match.date.indexOf("T"))
-}
-
-export function matchTime(match: Match) {
-    return match.date.substring(match.date.indexOf("T") + 1)
-}
-
-export function matchStr(match: Match) {
-    return `${match.awayTeam.name} @ ${match.homeTeam.name}`
 }

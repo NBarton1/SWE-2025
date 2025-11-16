@@ -69,11 +69,15 @@ export function isPlayer(account: Account | null): boolean {
 }
 
 export function accountEquals(a0: Account | null, a1: Account | null): boolean {
-    return a0?.id === a1?.id;
+    return a0 != null && a1 != null && a0.id === a1.id;
 }
 
 const VALID_ROLES = new Set(Object.values(Role));
 
 export function isValidRoleString(value: string): boolean {
     return VALID_ROLES.has(value as Role);
+}
+
+export function hasEditPermission(currentAccount: Account | null, account: Account): boolean {
+    return currentAccount != null && ((account && account.id === currentAccount.id) || isAdmin(currentAccount))
 }

@@ -1,6 +1,6 @@
 import {vi} from "vitest";
 import {mockLiveTimeRunningMatch} from "../../../../vitest.setup.tsx";
-import {updateLiveTime} from "../../../main/components/live_match/live_time.ts";
+import {updateLiveTime} from "../../../main/components/match/MatchLiveTime.ts";
 
 
 describe("live_time", () => {

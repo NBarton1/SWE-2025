@@ -1,18 +1,17 @@
 import {AppShell, Group, Text, Menu, Button, ActionIcon, useMantineColorScheme} from '@mantine/core';
 import {Home, BarChart3, Settings, ChevronDown, Sun, Moon, UserStar} from 'lucide-react';
-import {Outlet, useNavigate} from "react-router";
-import useLogin from "../../hooks/useLogin.tsx";
-import {logout} from "../../request/auth.ts";
+import {Outlet} from "react-router";
+import {useAuth} from "../../hooks/useAuth.tsx";
 import {useMemo} from "react";
 import {isAdmin} from "../../types/accountTypes.ts";
+import {useLogout} from "../../hooks/useLogout.tsx";
 
 function Layout() {
 
-    const navigate = useNavigate()
-
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-    const { currentAccount } = useLogin()
+    const { currentAccount } = useAuth()
+    const { logout } = useLogout()
 
     const menuItems = useMemo(() => {
 
@@ -21,9 +20,9 @@ function Layout() {
                 label: "Home",
                 icon: Home,
                 items: [
-                    { label: "Feed", href: "/feed" },
-                    { label: "Post", href: "/create-post" },
-                    { label: "Schedule", href: "/calendar" },
+                    { label: 'Schedule', href: "/calendar" },
+                    { label: 'Feed', href: '/feed' },
+                    { label: 'Post', href: '/create-post' },
                 ]
             },
             {
@@ -135,19 +134,11 @@ function Layout() {
                                     </>
                                 }
                                 {currentAccount ?
-                                    <Menu.Item
-                                        onClick={async () => {
-                                            await logout();
-                                            navigate("/login")
-                                        }}
-                                    >
+                                    <Menu.Item onClick={async () => await logout()}>
                                         Logout
                                     </Menu.Item>
                                     :
-                                    <Menu.Item
-                                        component="a"
-                                        href="/login"
-                                    >
+                                    <Menu.Item component="a" href="/login">
                                         Login
                                     </Menu.Item>
                                 }

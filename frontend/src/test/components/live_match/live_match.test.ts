@@ -1,11 +1,11 @@
 import {expect, vi} from "vitest";
 import {mockLiveTimeRunningMatch, mockScheduledMatch} from "../../../../vitest.setup.tsx";
-import {live_match_websocket} from "../../../main/components/live_match/live_match.ts";
-import type {Match} from "../../../main/types/match.ts";
+import {live_match_websocket} from "../../../main/components/match/MatchWebSocket.ts";
+import type {MatchResponse} from "../../../main/types/match.ts";
 import {Client, type Frame, type IFrame} from "@stomp/stompjs";
 
 interface MockMatchUseState {
-    match: null | Match
+    match: null | MatchResponse
 }
 
 interface MockClientUseRef {
@@ -13,12 +13,12 @@ interface MockClientUseRef {
 }
 
 interface MockWebsocketPayload {
-    body: Match
+    body: MatchResponse
 }
 
 let mockMatchUseState: MockMatchUseState;
 
-const setMatchMock = vi.fn().mockImplementation((match: Match) => {
+const setMatchMock = vi.fn().mockImplementation((match: MatchResponse) => {
     mockMatchUseState.match = match;
 });
 

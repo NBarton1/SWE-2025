@@ -10,13 +10,11 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {useNavigate} from "react-router";
-import useLogin from "../../hooks/useLogin.tsx";
+import { useLogin } from "../../hooks/useLogin.tsx";
 
 
 const LoginPage = () => {
-
     const navigate = useNavigate();
-
     const { tryLogin } = useLogin()
 
     const theme = useMantineTheme(); // access Mantine theme

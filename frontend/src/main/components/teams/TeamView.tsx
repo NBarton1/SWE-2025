@@ -5,8 +5,8 @@ import {type Team} from "../../types/team";
 import {type Player, type Coach, isCoach} from "../../types/accountTypes";
 import { useParams } from "react-router-dom";
 import {formatLikePCT, getLikePCT} from "../../types/util.ts";
-import useLogin from "../../hooks/useLogin.tsx";
 import InvitePlayerModal from "./TeamInviteModal.tsx";
+import {useAuth} from "../../hooks/useAuth.tsx";
 
 const TeamView = () => {
     const { id } = useParams<{ id: string }>();
@@ -31,7 +31,7 @@ const TeamView = () => {
         });
     }, [id]);
 
-    const {currentAccount} = useLogin();
+    const {currentAccount} = useAuth();
 
     useEffect(() => {
         if (!currentAccount || !isCoach(currentAccount)) {
