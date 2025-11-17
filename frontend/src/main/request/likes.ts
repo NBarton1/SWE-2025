@@ -10,7 +10,7 @@ export const likeCoach = async (coachId: number, liked: boolean) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify(liked),
+            body: String(liked),
         });
         return await res.json();
     } catch (err) {
@@ -25,7 +25,7 @@ export const likePost = async (postId: number, liked: boolean) => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify(liked),
+            body: String(liked),
         });
         return await res.json();
     } catch (err) {

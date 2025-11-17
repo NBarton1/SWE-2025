@@ -73,7 +73,7 @@ class PostController(
     fun getLikeCount(
         @PathVariable id: Long,
     ): ResponseEntity<Long> {
-        val reactions = likeStatusService.getNumLikeStatuses(id, LikeType.COACH, true)
+        val reactions = likeStatusService.getNumLikeStatuses(id, LikeType.POST, true)
         return ResponseEntity.ok(reactions)
     }
 
@@ -81,7 +81,7 @@ class PostController(
     fun getDislikeCount(
         @PathVariable id: Long,
     ): ResponseEntity<Long> {
-        val reactions = likeStatusService.getNumLikeStatuses(id, LikeType.COACH, false)
+        val reactions = likeStatusService.getNumLikeStatuses(id, LikeType.POST, false)
         return ResponseEntity.ok(reactions)
     }
 }
