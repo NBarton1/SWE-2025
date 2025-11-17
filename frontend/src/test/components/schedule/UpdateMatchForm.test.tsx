@@ -3,7 +3,7 @@ import {mockDate, mockMatches, mockTeams, renderWithWrap} from "../../../../vite
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import '@testing-library/jest-dom';
 import * as matchRequest from "../../../main/request/matches.ts";
-import UpdateMatchForm from "../../../main/components/schedule/UpdateMatchForm.tsx";
+import MatchDetailsForm from "../../../main/components/schedule/MatchDetailsForm.tsx";
 import type {MatchResponse} from "../../../main/types/match.ts";
 import type {Team} from "../../../main/types/team.ts";
 import React, {type Dispatch} from "react";
@@ -18,7 +18,7 @@ let mockProps: {
     setMatches: Dispatch<React.SetStateAction<MatchResponse[]>>;
 };
 
-describe("UpdateMatchForm", () => {
+describe("MatchDetailsForm", () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
@@ -32,7 +32,7 @@ describe("UpdateMatchForm", () => {
     });
 
     test("update match form rendered", async () => {
-        renderWithWrap(<UpdateMatchForm {...mockProps} />);
+        renderWithWrap(<MatchDetailsForm {...mockProps} />);
 
         await waitFor(() => {
             expect(screen.getByTestId("update-match-form-1")).toBeInTheDocument();
@@ -42,7 +42,7 @@ describe("UpdateMatchForm", () => {
     test("updating match test", async () => {
         vi.spyOn(matchRequest, "updateMatch").mockResolvedValue(mockMatches[0]);
 
-        const { container } = renderWithWrap(<UpdateMatchForm {...mockProps} />);
+        const { container } = renderWithWrap(<MatchDetailsForm {...mockProps} />);
 
         const form = container.querySelector('form');
 
@@ -56,7 +56,7 @@ describe("UpdateMatchForm", () => {
     test("deleting match test", async () => {
         vi.spyOn(matchRequest, "deleteMatch").mockResolvedValue(Response.json({}));
 
-        renderWithWrap(<UpdateMatchForm {...mockProps} />);
+        renderWithWrap(<MatchDetailsForm {...mockProps} />);
 
         const deleteButton = screen.getByTestId("match-delete-button")
 

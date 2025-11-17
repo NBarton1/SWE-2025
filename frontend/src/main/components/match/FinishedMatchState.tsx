@@ -7,6 +7,14 @@ import {MatchStateHandler} from "./MatchStateHandler.tsx";
 
 export class FinishedMatchState extends MatchStateHandler {
     getTitleSuffix(): ReactNode {
+        const date = new Date(this.match.date);
+        const dateStr = date.toLocaleString(undefined, {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+        });
+
         return (
             <Text
                 span
@@ -14,7 +22,7 @@ export class FinishedMatchState extends MatchStateHandler {
                 inherit
                 data-testid="match-title-finished"
             >
-                ● Final
+                ● Final - {dateStr}
             </Text>
         );
     }
