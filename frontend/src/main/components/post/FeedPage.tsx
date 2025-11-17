@@ -2,11 +2,11 @@ import {Container, Stack} from "@mantine/core";
 import PostView from "./PostView.tsx";
 import {useEffect, useState} from "react";
 import {getAllPosts} from "../../request/post.ts";
-import {comparePosts} from "../../types/post.ts";
+import {comparePosts, type Post} from "../../types/post.ts";
 
 
-function ViewAllPosts() {
-    const [posts, setPosts] = useState([]);
+function FeedPage() {
+    const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
         console.log("Getting All posts");
@@ -19,10 +19,15 @@ function ViewAllPosts() {
     return (
         <Container size="md">
             <Stack gap="md">
-                {posts.map((post) => <PostView post={post}/>)}
+                {posts.map((post) =>
+                    <PostView
+                        post={post}
+                        onDelete={(id: number) => setPosts(prev => prev.filter(p => p.id !== id))}
+                    />
+                )}
             </Stack>
         </Container>
     );
 }
 
-export default ViewAllPosts;
+export default FeedPage;

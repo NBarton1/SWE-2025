@@ -19,8 +19,13 @@ class ContentService(
     private val storagePath: String,
     private val contentRepository: ContentRepository,
 ) {
-    fun upload(file: MultipartFile, post: Post? = null): ContentDTO =
+    fun upload(file: MultipartFile): ContentDTO =
         uploadContent(file).toDTO()
+
+    fun getUnapprovedContent(): List<ContentDTO> =
+        contentRepository.findAll()
+            .filter { !it.isApproved }
+            .map { it.toDTO() }
 
     fun getContent(id: Long): ContentDTO =
         getContentById(id).toDTO()
@@ -32,9 +37,21 @@ class ContentService(
         return fileBytes
     }
 
-    internal fun createContent(content: Content): Content {
-        return contentRepository.save(content)
+    fun approveContent(id: Long): ContentDTO {
+        val content = getContentById(id)
+        content.isApproved = true
+
+        return updateContent(content)
     }
+
+    fun deleteContentById(id: Long) =
+        contentRepository.deleteById(id)
+
+    internal fun createContent(content: Content): Content =
+        contentRepository.save(content)
+
+    internal fun updateContent(content: Content): ContentDTO =
+        contentRepository.save(content).toDTO()
 
     internal fun getContentById(id: Long): Content =
         contentRepository.findById(id).orElseThrow { EntityNotFoundException("Content $id not found") }
@@ -62,6 +79,7 @@ class ContentService(
                 contentType = contentType,
                 fileSize = file.size,
                 post = post,
+                isApproved = post != null
             )
         )
 

@@ -2,6 +2,7 @@ package com.jknv.lum.config.seed
 
 import com.jknv.lum.LOGGER
 import com.jknv.lum.model.entity.Match
+import com.jknv.lum.model.type.MatchState
 import com.jknv.lum.model.type.MatchType
 import com.jknv.lum.repository.MatchRepository
 import com.jknv.lum.repository.TeamRepository
@@ -24,8 +25,12 @@ class MatchSeeder (
             val teams = teamRepository.findAll()
 
             val matches = listOf(
-                Match(homeTeam = teams[0], awayTeam = teams[1], date = LocalDateTime.now(), type = MatchType.PLAYOFF, homeScore = 1000),
-                Match(homeTeam = teams[1], awayTeam = teams[2], date = LocalDateTime.now(), type = MatchType.STANDARD),
+                Match(homeTeam = teams[1], awayTeam = teams[2], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 100, state = MatchState.FINISHED),
+                Match(homeTeam = teams[0], awayTeam = teams[1], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 1000, state = MatchState.FINISHED),
+                Match(homeTeam = teams[0], awayTeam = teams[1], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 1000, state = MatchState.FINISHED),
+                Match(homeTeam = teams[0], awayTeam = teams[2], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 1000, state = MatchState.FINISHED),
+                Match(homeTeam = teams[0], awayTeam = teams[2], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 1000, state = MatchState.FINISHED),
+                Match(homeTeam = teams[1], awayTeam = teams[2], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 100, state = MatchState.FINISHED),
             )
 
             matches.forEach { matchRepository.save(it) }

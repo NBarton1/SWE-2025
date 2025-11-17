@@ -5,12 +5,12 @@ import LiveMatchClockView from "./LiveMatchClockView.tsx";
 import MatchTitle from "./MatchTitle.tsx";
 import {useNavigate} from "react-router";
 
-interface LiveMatchViewProps {
+interface MatchViewProps {
     match: Match,
     navigable: boolean
 }
 
-const MatchView = ({ match, navigable }: LiveMatchViewProps) => {
+const MatchView = ({ match, navigable }: MatchViewProps) => {
     if (!match) return null;
 
     const navigate = useNavigate();

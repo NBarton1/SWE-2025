@@ -1,7 +1,7 @@
-import { Divider, Paper, Stack } from "@mantine/core";
+import { Paper, Stack } from "@mantine/core";
 import {Match} from "../../types/match.ts";
 import { type UpdateMatchRequest } from "../../request/matches.ts";
-import MatchTitle from "./MatchTitle.tsx";
+
 
 interface MatchEditProps {
     match: Match;
@@ -19,10 +19,6 @@ const MatchEdit = ({ match, updateMatch }: MatchEditProps) => {
             withBorder
         >
             <Stack gap="md">
-                <MatchTitle match={match} />
-
-                <Divider labelPosition="center" />
-
                 {match.getEditControls(updateMatch)}
             </Stack>
         </Paper>

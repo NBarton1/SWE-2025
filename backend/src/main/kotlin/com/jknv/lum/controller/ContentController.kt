@@ -1,5 +1,6 @@
 package com.jknv.lum.controller
 
+import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.ContentDTO
 import com.jknv.lum.services.ContentService
 import org.springframework.http.MediaType
@@ -30,4 +31,28 @@ class ContentController(
             .body(contentBytes)
     }
 
+    @GetMapping("/unapproved")
+    @Require.Admin
+    fun getUnapprovedContent(): ResponseEntity<List<ContentDTO>> {
+        val response = contentService.getUnapprovedContent()
+        return ResponseEntity.ok(response)
+    }
+
+    @PatchMapping("/{fileId}")
+    @Require.Admin
+    fun approveContent(
+        @PathVariable fileId: Long,
+    ): ResponseEntity<ContentDTO> {
+        val response = contentService.approveContent(fileId)
+        return ResponseEntity.ok(response)
+    }
+
+    @DeleteMapping("/{fileId}")
+    @Require.Admin
+    fun deleteContent(
+        @PathVariable fileId: Long,
+    ): ResponseEntity<Void> {
+        contentService.deleteContentById(fileId)
+        return ResponseEntity.ok().build()
+    }
 }

@@ -30,6 +30,7 @@ function Layout() {
                 icon: BarChart3,
                 items: [
                     {label: "Team Stats", href: "/teams"},
+                    {label: "Playoff Picture", href: "/playoff"},
                 ]
             }
         ]
@@ -40,7 +41,8 @@ function Layout() {
                 label: "Admin",
                 icon: UserStar,
                 items: [
-                    { label: "Users", href: "/users"}
+                    { label: "Users", href: "/users"},
+                    { label: "Approve Content", href: "/content-approval"}
                 ]
             }
         ]

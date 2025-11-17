@@ -13,6 +13,8 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
 @Entity
 @Table(name = "Account")
@@ -42,6 +44,7 @@ class Account(
 
     @OneToOne(orphanRemoval = true)
     @JoinColumn(name = "picture_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     var picture: Content? = null,
 
     /* relationships */
@@ -65,7 +68,7 @@ class Account(
             email = email,
             username = username,
             role = role,
-            picture = picture?.toDTO()
+            picture = picture?.takeIf { it.isApproved }?.toDTO()
         )
     }
 }

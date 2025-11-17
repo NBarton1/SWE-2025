@@ -17,6 +17,9 @@ class AdminService (
     fun createAdmin(account: Account): AdminDTO =
         adminRepository.save(Admin(account = account)).toDTO()
 
+    internal fun isAdmin(id: Long): Boolean =
+        adminRepository.existsById(id)
+
     fun countAdmins(): Long =
         adminRepository.count()
 }

@@ -5,17 +5,18 @@ import LoginPage from "./components/login/LoginPage.tsx";
 import TeamStandings from "./components/teams/TeamStandings.tsx";
 import TeamView from "./components/teams/TeamView.tsx";
 import Layout from "./components/layout/Layout.tsx";
-import MatchEditPage from "./components/match/MatchEditPage.tsx";
-import MatchViewPage from "./components/match/MatchViewPage.tsx";
 import Profile from "./components/profile/Profile.tsx";
-import EditPostPage from "./components/post/EditPostPage.tsx";
-import ViewAllPosts from "./components/post/ViewAllPosts.tsx";
+import PostEditPage from "./components/post/PostEditPage.tsx";
+import FeedPage from "./components/post/FeedPage.tsx";
 import {type Account, isAdmin} from "./types/accountTypes.ts";
 import {useEffect, useState} from "react";
 import {getAccount} from "./request/accounts.ts";
 import AdminAccountsPage from "./components/admin/AdminAccountsPage.tsx";
 import ScheduleList from "./components/schedule/ScheduleList.tsx";
 import {AuthContext} from "./hooks/useAuth.tsx";
+import PlayoffPicture from "./components/teams/PlayoffPicture.tsx";
+import MatchPage from "./components/match/MatchPage.tsx";
+import AdminContentApprovalPage from "./components/admin/AdminContentApprovalPage.tsx";
 
 function App() {
     const [currentAccount, setCurrentAccount] = useState<Account | null>(null)
@@ -36,20 +37,21 @@ function App() {
                     <Route path="/login" element={(<LoginPage/>)}/>
                     <Route path="/signup" element={(<SignupPage/>)}/>
 
-                <Route element={<Layout />}>
-                    <Route path="/calendar" element={(<Schedule />)}/>
-                    <Route path="/profile/:id" element={<Profile />} />
-                    <Route path="/teams" element={(<TeamStandings />)}/>
-                    <Route path="/teams/:id" element={<TeamView />} />
-                    <Route path="/create-post" element={(<EditPostPage />)} />
-                    <Route path="/feed" element={(<ViewAllPosts />)} />
-                    <Route path="/live/:id" element={<MatchEditPage />} />
-                    <Route path="/match/:id" element={(<MatchViewPage />)}/>
-                    <Route path="/calendar/list" element={(<ScheduleList />)}/>
+                    <Route element={<Layout/>}>
+                        <Route path="/calendar" element={(<Schedule/>)}/>
+                        <Route path="/profile/:id" element={<Profile/>}/>
+                        <Route path="/teams" element={(<TeamStandings/>)}/>
+                        <Route path="/teams/:id" element={<TeamView/>}/>
+                        <Route path="/playoff" element={<PlayoffPicture/>}/>
+                        <Route path="/create-post" element={(<PostEditPage/>)}/>
+                        <Route path="/feed" element={(<FeedPage/>)}/>
+                        <Route path="/match/:id" element={(<MatchPage/>)}/>
+                        <Route path="/calendar/list" element={(<ScheduleList/>)}/>
 
-                        {isAdmin(currentAccount) && (
+                        {isAdmin(currentAccount) && (<>
                             <Route path="/users" element={(<AdminAccountsPage/>)}/>
-                        )}
+                            <Route path="/content-approval" element={(<AdminContentApprovalPage/>)}/>
+                        </>)}
                     </Route>
                 </Routes>
             </BrowserRouter>

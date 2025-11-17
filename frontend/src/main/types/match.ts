@@ -53,8 +53,12 @@ export class Match {
         return this.stateHandler.getEditControls(updateMatch);
     }
 
-    getMatchTeams() {
+    getTeams() {
         return `${this.matchRes.awayTeam.name} @ ${this.matchRes.homeTeam.name}`
+    }
+
+    getDateTime() {
+        return this.matchRes.date;
     }
 
     getDate() {
@@ -77,6 +81,15 @@ export class Match {
 
     getAwayTeamId() {
         return this.matchRes.awayTeam.id;
+    }
+
+    cmp(other: Match) {
+        const timeDiff = this.startTime() - other.startTime();
+        return timeDiff ? timeDiff : this.getTeams().localeCompare(other.getTeams());
+    }
+
+    private startTime() {
+        return new Date(this.matchRes.date).getTime();
     }
 }
 

@@ -4,7 +4,7 @@ import {Match} from "../../types/match.ts";
 import type { Team } from "../../types/team.ts";
 import {useForm} from "@mantine/form";
 import MatchFormFields from "./MatchFormFields.tsx";
-import {createMatch, type UpdateMatchRequest} from "../../request/matches.ts";
+import {createMatch, type CreateMatchRequest} from "../../request/matches.ts";
 
 interface CreateMatchFormProps {
     teams: Team[];
@@ -20,6 +20,7 @@ const CreateMatchForm = ({ teams, date, matches, setMatches }: CreateMatchFormPr
             homeTeamId: "",
             awayTeamId: "",
             time: "",
+            date: date,
             type: ""
         },
     });
@@ -28,7 +29,7 @@ const CreateMatchForm = ({ teams, date, matches, setMatches }: CreateMatchFormPr
         try {
             const { type, homeTeamId, awayTeamId, time } = matchForm.values;
 
-            const req: UpdateMatchRequest = {
+            const req: CreateMatchRequest = {
                 type,
                 homeTeamId,
                 awayTeamId,
@@ -58,10 +59,17 @@ const CreateMatchForm = ({ teams, date, matches, setMatches }: CreateMatchFormPr
                 await createMatchCallback();
             }}>
                 <Stack gap="md">
-                    <MatchFormFields teams={teamSelection} matchFormFields={matchForm} />
+                    <MatchFormFields
+                        teams={teamSelection}
+                        matchFormFields={matchForm}
+                        readOnly={false}
+                    />
 
                     <Group justify="flex-end" mt="md">
-                        <Button type="submit" data-testid={`create-match-form-submit`}>
+                        <Button
+                            type="submit"
+                            data-testid={`create-match-form-submit`}
+                        >
                             Create Match
                         </Button>
                     </Group>
