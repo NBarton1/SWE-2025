@@ -19,7 +19,12 @@ function FeedPage() {
     return (
         <Container size="md">
             <Stack gap="md">
-                {posts.map((post) => <PostView post={post}/>)}
+                {posts.map((post) =>
+                    <PostView
+                        post={post}
+                        onDelete={(id: number) => setPosts(prev => prev.filter(p => p.id !== id))}
+                    />
+                )}
             </Stack>
         </Container>
     );
