@@ -41,7 +41,8 @@ function Layout() {
                 label: 'Admin',
                 icon: UserStar,
                 items: [
-                    { label: "Users", href: "/users"}
+                    { label: "Users", href: "/users"},
+                    { label: "Approve Content", href: "/content-approval"}
                 ]
             }
         ]
