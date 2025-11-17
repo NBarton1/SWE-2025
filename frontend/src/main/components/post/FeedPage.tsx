@@ -5,7 +5,7 @@ import {getAllPosts} from "../../request/post.ts";
 import {comparePosts, type Post} from "../../types/post.ts";
 
 
-function ViewAllPosts() {
+function FeedPage() {
     const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
@@ -30,4 +30,4 @@ function ViewAllPosts() {
     );
 }
 
-export default ViewAllPosts;
+export default FeedPage;

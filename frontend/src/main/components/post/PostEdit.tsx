@@ -12,7 +12,7 @@ import PostStatusPopup from "./PostStatusPopup.tsx";
 import PostTextEditor from "./PostTextEditor.tsx";
 
 
-function EditPost() {
+function PostEdit() {
     const editor = useEditor({
         shouldRerenderOnTransaction: true,
         extensions: [StarterKit, Highlight],
@@ -114,4 +114,4 @@ function EditPost() {
     );
 }
 
-export default EditPost;
+export default PostEdit;

@@ -1,4 +1,4 @@
-import MediaCarousel from "./MediaCarousel.tsx";
+import PostMediaCarousel from "./PostMediaCarousel.tsx";
 import {formatCreationTime, type Post} from "../../types/post.ts";
 import {EditorContent, useEditor} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -8,6 +8,7 @@ import {IconTrash} from "@tabler/icons-react";
 import {accountEquals, isAdmin} from "../../types/accountTypes.ts";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import {deletePost} from "../../request/post.ts";
+import {Avatar, Group, Paper, Title, Text, Stack, Anchor} from "@mantine/core";
 
 
 interface PostViewProps {
@@ -40,26 +41,38 @@ function PostView({post, onDelete}: PostViewProps) {
 
     return (
         <Paper p="md" withBorder>
-            <Group>
-                <Avatar
-                    src={account?.picture?.downloadUrl}
-                    radius="sm"
-                    name={account.name}
-                />
+            <Anchor
+                href={`/profile/${account?.id}`}
+                c="inherit"
+                underline="never"
+            >
+                <Group>
+                    <Avatar
+                        src={account?.picture?.downloadUrl}
+                        radius="sm"
+                        name={account?.name}
+                        size="lg"
+                    />
 
-                <Title>
-                    {account.username}
-                    <Text component="span" c="dimmed"> · {formatCreationTime(post)}</Text>
-                </Title>
+                    <Stack gap="xs">
+                        <Title order={3}>
+                            {account?.name}
+                        </Title>
 
-                {(accountEquals(account, currentAccount) || isAdmin(currentAccount)) && (
-                    <ActionIcon variant="subtle" color="red" ml="auto" onClick={handleDelete}>
-                        <IconTrash />
-                    </ActionIcon>
-                )}
-            </Group>
+                        <Text size="sm" c="dimmed">
+                            {account ? `@${account.username}` : "Deleted User"} · {formatCreationTime(post)}
+                        </Text>
+                    </Stack>
 
-            <MediaCarousel post={post}/>
+                    {(accountEquals(account, currentAccount) || isAdmin(currentAccount)) && (
+                        <ActionIcon variant="subtle" color="red" ml="auto" onClick={handleDelete}>
+                            <IconTrash />
+                        </ActionIcon>
+                    )}
+                </Group>
+            </Anchor>
+
+            <PostMediaCarousel post={post} />
 
             <EditorContent editor={editor}/>
         </Paper>

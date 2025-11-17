@@ -3,7 +3,7 @@ import type {Account} from "./accountTypes.ts";
 
 export interface Post {
     id: number,
-    account: Account,
+    account: Account | null,
     textContent: string,
     likeCount: number,
     dislikeCount: number,

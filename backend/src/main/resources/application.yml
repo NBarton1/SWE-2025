@@ -36,4 +36,8 @@ lum:
     name: authToken
     expires-in: 3600
 
+  playoff:
+    teams: 8
+    min-matches: 2
+
   storage.path: "content-storage"

@@ -6,15 +6,11 @@ export interface Team {
     win: number
     draw: number
     loss: number
-}
-
-
-export function getTeamPCT(team: Team): number {
-    return (team.win + team.draw / 2) / (team.win + team.loss + team.draw);
+    pct: number
 }
 
 export function formatTeamPCT(team: Team) {
-    const pct = getTeamPCT(team);
+    const pct = team.pct;
 
     return isNaN(pct) ? "-" : pct.toFixed(3).replace(/^0/, "");
 }
