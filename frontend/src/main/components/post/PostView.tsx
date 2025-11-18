@@ -76,7 +76,7 @@ function PostView({post, onDelete}: PostViewProps) {
             <PostMediaCarousel post={post}/>
 
             <EditorContent editor={editor}/>
-            <Likes entityId={post.id} likeType="POST"/>
+            <Likes entityId={post.id} likeType="POST" compact/>
         </Paper>
     );
 }

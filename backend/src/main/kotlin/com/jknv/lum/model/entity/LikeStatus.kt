@@ -7,12 +7,12 @@ import jakarta.persistence.*
 @Entity
 @Table(
     name = "LikeStatus",
-    uniqueConstraints = [
-        UniqueConstraint(columnNames = ["account_id", "entity_id", "like_type"])
-    ],
-    indexes = [
-        Index(name = "idx_entity_like_liked", columnList = "entity_id, like_type, liked")
-    ],
+//    uniqueConstraints = [
+//        UniqueConstraint(columnNames = ["account_id", "entity_id", "like_type"])
+//    ],
+//    indexes = [
+//        Index(name = "idx_entity_like_liked", columnList = "entity_id, like_type, liked")
+//    ],
 )
 class LikeStatus(
     @Id
