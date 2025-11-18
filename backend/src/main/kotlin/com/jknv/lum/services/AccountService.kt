@@ -68,8 +68,6 @@ class AccountService(
         val account = getAccountById(id)
         account.picture = picture
 
-        LOGGER.info("Account $id added picture ${picture.toDTO()}")
-
         return updateAccount(account)
     }
 

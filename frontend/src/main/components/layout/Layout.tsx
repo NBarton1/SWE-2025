@@ -38,7 +38,7 @@ function Layout() {
 
         const adminItems = [
             {
-                label: 'Admin',
+                label: "Admin",
                 icon: UserStar,
                 items: [
                     { label: "Users", href: "/users"},

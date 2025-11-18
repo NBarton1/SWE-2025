@@ -8,7 +8,7 @@ import {accountEquals, isAdmin} from "../../types/accountTypes.ts";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import {deletePost} from "../../request/post.ts";
 import {Avatar, Group, Paper, Title, Text, Stack, Anchor, ActionIcon} from "@mantine/core";
-
+import Likes from "../likes/Likes.tsx";
 
 interface PostViewProps {
     post: Post;
@@ -76,6 +76,7 @@ function PostView({post, onDelete}: PostViewProps) {
             <PostMediaCarousel post={post}/>
 
             <EditorContent editor={editor}/>
+            <Likes entityId={post.id} likeType="POST" compact/>
         </Paper>
     );
 }

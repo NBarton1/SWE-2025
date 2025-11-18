@@ -1,6 +1,5 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.PostDTO
 import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.request.post.PostCreateRequest
