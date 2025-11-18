@@ -52,7 +52,13 @@ const DatePopup = ({ date, matches, teams, setMatches, setSelectedMatch }: DateP
 
             {dateMatches.length > 0 && (
                 <>
-                    <Text size="sm" fw={500} c="dimmed">Scheduled Matches</Text>
+                    <Text
+                        size="sm"
+                        fw={500}
+                        c="dimmed"
+                    >
+                        Scheduled Matches
+                    </Text>
 
                     <Stack gap="md">
                         {dateMatches.sort((m0, m1) => m0.cmp(m1)).map(match => (

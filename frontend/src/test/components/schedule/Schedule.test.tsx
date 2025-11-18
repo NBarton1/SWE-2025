@@ -1,7 +1,7 @@
 import { vi } from "vitest";
 import {mockDate, mockMatches, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import Schedule from "../../../main/components/schedule/Schedule.tsx";
+import Calendar from "../../../main/components/schedule/Calendar.tsx";
 import * as matchRequest from "../../../main/request/matches.ts";
 import * as teamRequest from "../../../main/request/teams.ts";
 import type {DateClickArg} from "@fullcalendar/interaction";
@@ -17,7 +17,7 @@ vi.mock("@fullcalendar/react", () => ({
     },
 }));
 
-describe("Schedule", () => {
+describe("Calendar", () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
@@ -26,7 +26,7 @@ describe("Schedule", () => {
     });
 
     test("renders components", async () => {
-        renderWithWrap(<Schedule />);
+        renderWithWrap(<Calendar />);
 
         await waitFor(() => {
             expect(screen.getByTestId("calendar")).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe("Schedule", () => {
     test("fetches matches and teams", async () => {
 
 
-        renderWithWrap(<Schedule />);
+        renderWithWrap(<Calendar />);
 
         await waitFor(() => {
             expect(matchRequest.getMatches).toHaveBeenCalled();
@@ -47,7 +47,7 @@ describe("Schedule", () => {
     });
 
     test("popup opened when date clicked", async () => {
-        renderWithWrap(<Schedule />);
+        renderWithWrap(<Calendar />);
 
         mockDateClick?.({ dateStr: mockDate } as DateClickArg);
 
@@ -60,7 +60,7 @@ describe("Schedule", () => {
 
         vi.spyOn(matchRequest, "getMatches").mockResolvedValue(mockMatches);
 
-        renderWithWrap(<Schedule />);
+        renderWithWrap(<Calendar />);
 
         await waitFor(() => {
             expect(mockEvents.length).toBe(mockMatches.length);

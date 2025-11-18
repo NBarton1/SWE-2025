@@ -17,7 +17,7 @@ describe("ScheduleList", () => {
 
         await waitFor(() => {
             expect(screen.getByTestId("schedule-paper")).toBeInTheDocument();
-            expect(screen.getByTestId("schedule-title")).toHaveTextContent("Schedule");
+            expect(screen.getByTestId("schedule-title")).toHaveTextContent("Calendar");
         });
     });
 

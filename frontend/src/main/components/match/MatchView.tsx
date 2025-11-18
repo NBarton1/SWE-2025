@@ -1,12 +1,13 @@
-import {Divider, Paper, Stack} from "@mantine/core";
+import {Divider, Group, Paper, Stack} from "@mantine/core";
 import {Match} from "../../types/match.ts";
 import TeamScoreView from "./TeamScoreView.tsx";
 import LiveMatchClockView from "./LiveMatchClockView.tsx";
 import MatchTitle from "./MatchTitle.tsx";
 import {useNavigate} from "react-router";
 
+
 interface MatchViewProps {
-    match: Match,
+    match: Match
     navigable: boolean
 }
 
@@ -17,33 +18,37 @@ const MatchView = ({ match, navigable }: MatchViewProps) => {
 
     const handleClick = () => {
         if (navigable) {
-            navigate(`/match/${match.matchRes.id}`);
+            navigate(`/match/${match.getId()}`);
         }
     };
 
     return (
-        <Paper
-            shadow="md"
-            p="lg"
-            radius="lg" withBorder
-            data-testid={`live-match-view-${match.matchRes.id}`}
-            onClick={handleClick}
-        >
-            <Stack gap="md">
-                <MatchTitle match={match} />
+        <Group gap="xs" wrap="nowrap" align="flex-start">
+            <Paper
+                shadow="md"
+                p="lg"
+                radius="lg"
+                withBorder
+                style={{ flex: 1 }}
+                data-testid={`live-match-view-${match.getId()}`}
+                onClick={handleClick}
+            >
+                <Stack gap="md">
+                    <MatchTitle match={match} />
 
-                <Divider labelPosition="center" />
+                    <Divider labelPosition="center" />
 
-                <Stack gap="xs">
-                    <TeamScoreView team={match.matchRes.awayTeam} score={match.matchRes.awayScore} />
-                    <TeamScoreView team={match.matchRes.homeTeam} score={match.matchRes.homeScore} />
+                    <Stack gap="xs">
+                        <TeamScoreView team={match.getAwayTeam()} score={match.getAwayScore()} />
+                        <TeamScoreView team={match.getHomeTeam()} score={match.getHomeScore()} />
+                    </Stack>
+
+                    <Divider labelPosition="center" />
+
+                    <LiveMatchClockView match={match} />
                 </Stack>
-
-                <Divider />
-
-                <LiveMatchClockView match={match} />
-            </Stack>
-        </Paper>
+            </Paper>
+        </Group>
     );
 };
 

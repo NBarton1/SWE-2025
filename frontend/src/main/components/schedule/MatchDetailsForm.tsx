@@ -10,6 +10,14 @@ import {useAuth} from "../../hooks/useAuth.tsx";
 import {isAdmin} from "../../types/accountTypes.ts";
 
 
+// interface MatchFormFields1 {
+//     homeTeamId: number
+//     awayTeamId: number
+//     time: string
+//     date: string
+//     type: string
+// }
+
 interface UpdateMatchFormProps {
     match: Match
     teams: Team[]
@@ -19,7 +27,7 @@ interface UpdateMatchFormProps {
 }
 
 const MatchDetailsForm = ({ match, teams, matches, setMatches, setSelectedMatch }: UpdateMatchFormProps) => {
-    console.log(match);
+    console.log("date", match.getDate());
 
     const navigate = useNavigate();
 
@@ -113,7 +121,6 @@ const MatchDetailsForm = ({ match, teams, matches, setMatches, setSelectedMatch 
                             </Button>
                         </Group>
                     }
-
                 </Stack>
             </form>
         </Paper>

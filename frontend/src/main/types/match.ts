@@ -53,8 +53,35 @@ export class Match {
         return this.stateHandler.getEditControls(updateMatch);
     }
 
+    getTitle() {
+        const matchRes = this.matchRes;
+
+        if (matchRes.state == MatchState.SCHEDULED) {
+            return this.getTeams();
+        }
+
+        return `${matchRes.awayTeam.name} ${matchRes.awayScore} - ${matchRes.homeScore} ${matchRes.homeTeam.name}`
+    }
+
     getTeams() {
-        return `${this.matchRes.awayTeam.name} @ ${this.matchRes.homeTeam.name}`
+        const matchRes = this.matchRes;
+        return `${matchRes.awayTeam.name} @ ${matchRes.homeTeam.name}`
+    }
+
+    getHomeTeam() {
+        return this.matchRes.homeTeam;
+    }
+
+    getAwayTeam() {
+        return this.matchRes.awayTeam;
+    }
+
+    getHomeScore() {
+        return this.matchRes.homeScore;
+    }
+
+    getAwayScore() {
+        return this.matchRes.awayScore;
     }
 
     getDateTime() {
@@ -85,7 +112,7 @@ export class Match {
 
     cmp(other: Match) {
         const timeDiff = this.startTime() - other.startTime();
-        return timeDiff ? timeDiff : this.getTeams().localeCompare(other.getTeams());
+        return timeDiff ? timeDiff : this.getTitle().localeCompare(other.getTitle());
     }
 
     private startTime() {
