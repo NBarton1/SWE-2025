@@ -51,7 +51,7 @@ class LikeStatusSeeder(
             likeRepository.saveAll(postLikeStatuses)
             likeRepository.saveAll(accountLikeStatuses)
 
-            LOGGER.info("Guardians seeded")
+            LOGGER.info("Like statuses seeded")
         }
     }
 
