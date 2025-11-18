@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "Post")
 @EntityListeners(AuditingEntityListener::class)
-class Post (
+class Post(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
@@ -42,10 +42,10 @@ class Post (
     @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY)
     var children: MutableList<Post> = mutableListOf(),
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var media: MutableList<Content> = mutableListOf(),
 
-    ) {
+) {
     fun toDTO(): PostDTO {
         return PostDTO(
             id = id,

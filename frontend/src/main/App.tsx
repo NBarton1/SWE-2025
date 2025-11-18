@@ -14,6 +14,7 @@ import AdminAccountsPage from "./components/admin/AdminAccountsPage.tsx";
 import {AuthContext} from "./hooks/useAuth.tsx";
 import PlayoffPicture from "./components/teams/PlayoffPicture.tsx";
 import MatchPage from "./components/match/MatchPage.tsx";
+import AdminContentApprovalPage from "./components/admin/AdminContentApprovalPage.tsx";
 import Schedule from "./components/schedule/Schedule.tsx";
 
 function App() {
@@ -45,9 +46,10 @@ function App() {
                     <Route path="/feed" element={(<FeedPage />)} />
                     <Route path="/match/:id" element={(<MatchPage />)}/>
 
-                        {isAdmin(currentAccount) && (
+                        {isAdmin(currentAccount) && (<>
                             <Route path="/users" element={(<AdminAccountsPage/>)}/>
-                        )}
+                            <Route path="/content-approval" element={(<AdminContentApprovalPage/>)}/>
+                        </>)}
                     </Route>
                 </Routes>
             </BrowserRouter>

@@ -23,13 +23,13 @@ import java.time.Duration
 
 @Entity
 @Table(name = "Match")
-class Match (
+class Match(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
 
     @Column(nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @param:JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     var date: LocalDateTime,
 
     @Column(nullable = false)

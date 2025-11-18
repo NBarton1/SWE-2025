@@ -27,6 +27,9 @@ class Content (
     @Column(nullable = false)
     val contentType: String,
 
+    @Column(nullable = false)
+    var isApproved: Boolean = false,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = true)
     var post: Post? = null,

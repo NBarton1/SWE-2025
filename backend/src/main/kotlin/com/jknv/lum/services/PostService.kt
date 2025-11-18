@@ -1,9 +1,9 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.PostDTO
 import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.request.post.PostCreateRequest
+import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.PostRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
@@ -32,7 +32,8 @@ class PostService (
         postRepository.findAll().map { it.toDTO() }
 
     fun deletePost(postId: Long, accountId: Long) {
-        if (! (isPostOwner(postId, accountId) || accountService.isAdmin(accountId)) )
+        val requester = accountService.getAccountById(accountId)
+        if (! (isPostOwner(postId, accountId) || requester.role == Role.ADMIN) )
             throw IllegalAccessException("You do not have access to delete post $postId")
 
         postRepository.deleteById(postId)
