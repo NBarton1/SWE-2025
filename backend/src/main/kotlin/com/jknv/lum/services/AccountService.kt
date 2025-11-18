@@ -24,17 +24,12 @@ class AccountService(
     private val authenticationManager: AuthenticationManager,
     private val bCryptPasswordEncoder: BCryptPasswordEncoder,
     private val jwtService: JwtService,
-    private val coachService: CoachService,
-    private val guardianService: GuardianService,
-    private val adminService: AdminService,
-    private val playerService: PlayerService,
     private val contentService: ContentService,
+    private val accountRoleService: AccountRoleService,
 ) {
     fun createAccountWithRoles(req: AccountCreateRequest): AccountDTO {
         val account = createAccount(req)
-
-        val roles = roleHierarchy(req.role)
-        createAccountsForRoles(account, roles)
+        accountRoleService.createAccount(account)
 
         return account.toDTO()
     }
@@ -63,7 +58,7 @@ class AccountService(
         req.name?.let { account.name = it }
         req.username?.let { account.username = it }
         req.password?.let { account.password = bCryptPasswordEncoder.encode(it) }
-        req.role?.let { updateRole(account, it) }
+        req.role?.let { accountRoleService.updateRole(account, it) }
 
         return updateAccount(account)
     }
@@ -107,60 +102,4 @@ class AccountService(
 
     internal fun getAccountById(id: Long): Account =
         accountRepository.findById(id).orElseThrow { EntityNotFoundException("User $id not found") }
-
-    internal fun isAdmin(id: Long): Boolean =
-        adminService.isAdmin(id)
-
-    private fun createAdmin(account: Account) = adminService.createAdmin(account)
-    private fun createCoach(account: Account) = coachService.createCoach(account)
-    private fun createGuardian(account: Account) = guardianService.createGuardian(account)
-    private fun createPlayer(account: Account) = playerService.createPlayer(account)
-
-    private fun deleteAdmin(account: Account) { account.admin = null }
-    private fun deleteCoach(account: Account) { account.coach = null }
-    private fun deleteGuardian(account: Account) { account.guardian = null }
-    private fun deletePlayer(account: Account) { account.player = null }
-
-    private fun roleHierarchy(role: Role): Set<Role> =
-        when (role) {
-            Role.ADMIN -> setOf(Role.ADMIN, Role.COACH, Role.GUARDIAN)
-            Role.COACH -> setOf(Role.COACH, Role.GUARDIAN)
-            Role.GUARDIAN -> setOf(Role.GUARDIAN)
-            Role.PLAYER -> setOf(Role.PLAYER)
-        }
-
-    private fun createAccountsForRoles(account: Account, roles: Set<Role>) =
-        roles.forEach { role ->
-            when (role) {
-                Role.ADMIN -> { createAdmin(account) }
-                Role.COACH -> { createCoach(account) }
-                Role.GUARDIAN -> { createGuardian(account) }
-                Role.PLAYER -> { createPlayer(account) }
-            }
-        }
-
-    private fun deleteAccountsForRoles(account: Account, roles: Set<Role>) =
-        roles.forEach { role ->
-            when (role) {
-                Role.ADMIN -> { deleteAdmin(account) }
-                Role.COACH -> { deleteCoach(account) }
-                Role.GUARDIAN -> { deleteGuardian(account) }
-                Role.PLAYER -> { deletePlayer(account) }
-            }
-        }
-
-    private fun updateRole(account: Account, newRole: Role) {
-        if (account.role == newRole) return
-
-        val oldRoles = roleHierarchy(account.role)
-        val newRoles = roleHierarchy(newRole)
-
-        val addRoles = newRoles - oldRoles
-        val removeRoles = oldRoles - newRoles
-
-        deleteAccountsForRoles(account, removeRoles)
-        createAccountsForRoles(account, addRoles)
-
-        account.role = newRole
-    }
 }
