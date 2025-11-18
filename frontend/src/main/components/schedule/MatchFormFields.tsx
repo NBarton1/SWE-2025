@@ -4,34 +4,36 @@ import type {UseFormReturnType} from "@mantine/form";
 import MatchTeamSelect from "./MatchTeamSelect.tsx";
 import MatchDateSelect from "./MatchDateSelect.tsx";
 
-interface MatchFormFields {
+interface MatchFormValues {
     homeTeamId: string
     awayTeamId: string
     time: string
-    date: string
+    date: string | null
     type: string
 }
 
 interface MatchFormFieldsProps {
     teams: { value: string, label: string }[]
-    matchFormFields: UseFormReturnType<MatchFormFields>
+    matchFormFields: UseFormReturnType<MatchFormValues>
     readOnly: boolean
 }
 
 const MatchFormFields = ({ teams, matchFormFields, readOnly } : MatchFormFieldsProps) => {
+    console.log("Date", matchFormFields.getInputProps("date"))
+
     return (
         <>
-            <MatchTeamSelect
-                label="Home Team"
-                teams={teams}
-                props={matchFormFields.getInputProps("homeTeamId")}
-                readOnly={readOnly}
-            />
-
             <MatchTeamSelect
                 label="Away Team"
                 teams={teams}
                 props={matchFormFields.getInputProps("awayTeamId")}
+                readOnly={readOnly}
+            />
+
+            <MatchTeamSelect
+                label="Home Team"
+                teams={teams}
+                props={matchFormFields.getInputProps("homeTeamId")}
                 readOnly={readOnly}
             />
 

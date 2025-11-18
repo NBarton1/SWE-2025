@@ -1,4 +1,4 @@
-import {Container, Stack} from "@mantine/core";
+import {Container, Group, Stack} from "@mantine/core";
 import {useEffect, useRef, useState} from "react";
 import { Client } from "@stomp/stompjs";
 import {Match} from "../../types/match.ts";
@@ -8,14 +8,14 @@ import {useParams} from "react-router";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import {isAdmin} from "../../types/accountTypes.ts";
 import MatchEdit from "./MatchEdit.tsx";
-import type {UpdateMatchRequest} from "../../request/matches.ts";
+import {type UpdateMatchRequest} from "../../request/matches.ts";
 
 
 const MatchPage = () => {
     const { id } = useParams<{ id: string }>();
     const matchId = Number(id);
 
-    const {currentAccount} = useAuth()
+    const {currentAccount} = useAuth();
 
     const [match, setMatch] = useState<Match | null>(null);
     const clientRef = useRef<Client | null>(null);
@@ -42,21 +42,25 @@ const MatchPage = () => {
     return match && (
         <Container
             data-testid="match-view-page"
-            py="md"
         >
-            <Stack gap="md">
-                <MatchView
-                    match={match}
-                    navigable={false}
-                />
-
-                {isAdmin(currentAccount) &&
-                    <MatchEdit
+            <Group
+                gap="xs"
+                wrap="nowrap"
+                align="flex-start"
+            >
+                <Stack style={{ flex: 1 }} gap="md">
+                    <MatchView
                         match={match}
-                        updateMatch={updateMatch}
+                        navigable={false}
                     />
-                }
-            </Stack>
+                    {isAdmin(currentAccount) &&
+                        <MatchEdit
+                            match={match}
+                            updateMatch={updateMatch}
+                        />
+                    }
+                </Stack>
+            </Group>
         </Container>
     );
 };

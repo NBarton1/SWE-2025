@@ -8,7 +8,7 @@ import {createMatch, type CreateMatchRequest} from "../../request/matches.ts";
 
 interface CreateMatchFormProps {
     teams: Team[];
-    date: string;
+    date: string | null ;
     matches: Match[];
     setMatches: Dispatch<React.SetStateAction<Match[]>>;
 }
@@ -27,7 +27,7 @@ const CreateMatchForm = ({ teams, date, matches, setMatches }: CreateMatchFormPr
 
     const createMatchCallback = async () => {
         try {
-            const { type, homeTeamId, awayTeamId, time } = matchForm.values;
+            const { type, homeTeamId, awayTeamId, time, date } = matchForm.values;
 
             const req: CreateMatchRequest = {
                 type,

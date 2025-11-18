@@ -25,12 +25,12 @@ class MatchSeeder (
             val teams = teamRepository.findAll()
 
             val matches = listOf(
-                Match(homeTeam = teams[1], awayTeam = teams[2], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 100, state = MatchState.FINISHED),
                 Match(homeTeam = teams[0], awayTeam = teams[1], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 1000, state = MatchState.FINISHED),
-                Match(homeTeam = teams[0], awayTeam = teams[1], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 1000, state = MatchState.FINISHED),
+                Match(homeTeam = teams[1], awayTeam = teams[0], date = LocalDateTime.now(), type = MatchType.STANDARD, awayScore = 1000, state = MatchState.FINISHED),
                 Match(homeTeam = teams[0], awayTeam = teams[2], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 1000, state = MatchState.FINISHED),
-                Match(homeTeam = teams[0], awayTeam = teams[2], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 1000, state = MatchState.FINISHED),
+                Match(homeTeam = teams[2], awayTeam = teams[0], date = LocalDateTime.now(), type = MatchType.STANDARD, awayScore = 1000, state = MatchState.FINISHED),
                 Match(homeTeam = teams[1], awayTeam = teams[2], date = LocalDateTime.now(), type = MatchType.STANDARD, homeScore = 100, state = MatchState.FINISHED),
+                Match(homeTeam = teams[2], awayTeam = teams[1], date = LocalDateTime.now(), type = MatchType.STANDARD, awayScore = 100, state = MatchState.FINISHED),
             )
 
             matches.forEach { matchRepository.save(it) }

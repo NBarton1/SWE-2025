@@ -20,9 +20,9 @@ function Layout() {
                 label: "Home",
                 icon: Home,
                 items: [
-                    { label: 'Schedule', href: "/calendar" },
-                    { label: 'Feed', href: '/feed' },
-                    { label: 'Post', href: '/create-post' },
+                    { label: "Schedule", href: "/schedule" },
+                    { label: "Feed", href: "/feed" },
+                    { label: "Post", href: "/create-post" },
                 ]
             },
             {

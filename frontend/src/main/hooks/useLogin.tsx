@@ -29,7 +29,7 @@ export const useLogin = () => {
         const account = await getAccount(accountId);
         setCurrentAccount(account);
 
-        navigate("/teams");
+        navigate("/feed");
 
         return true;
     }, [navigate, setCurrentAccount]);
