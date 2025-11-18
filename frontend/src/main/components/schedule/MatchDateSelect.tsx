@@ -4,11 +4,21 @@ import '@mantine/dates/styles.css';
 
 const MatchDateSelect = (props: DatePickerInputProps) => {
     return (
-        <DatePickerInput
-            label="Date"
-            placeholder="Select date"
-            {...props}
-        />
+        <>
+            <style>{`
+                .mantine-DatePickerInput-day[data-weekend] {
+                    color: inherit !important;
+                }
+            `}
+            </style>
+
+            <DatePickerInput
+                label="Date"
+                placeholder="Select date"
+                {...props}
+            />
+        </>
+
     );
 };
 

@@ -8,7 +8,7 @@ interface MatchFormValues {
     homeTeamId: string
     awayTeamId: string
     time: string
-    date: string
+    date: string | null
     type: string
 }
 

@@ -6,7 +6,9 @@ import {getMatches} from "../../request/matches.ts";
 import {getTeams} from "../../request/teams.ts";
 import ScheduleList from "./ScheduleList.tsx";
 import Calendar from "./Calendar.tsx";
-import {Button, Group, Paper} from "@mantine/core";
+import {Button, Group, Modal, Paper, Title} from "@mantine/core";
+import CreateMatchForm from "./CreateMatchForm.tsx";
+import { useSearchParams } from 'react-router-dom';
 
 
 const Schedule = () => {
@@ -14,9 +16,17 @@ const Schedule = () => {
     const [matches, setMatches] = useState<Match[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
 
-    const [onListView, toggleView] = useToggle(false);
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    // const [newMatchModalOpened, setNewMatchModalOpened] = useState(false);
+    const [onListView, setOnListView] = useToggle(searchParams.get('view') === "list");
+
+    useEffect(() => {
+        const view = searchParams.get("view");
+        if (view === "calendar") setOnListView(false);
+        else if (view === "list") setOnListView(true);
+    }, [searchParams]);
+
+    const [newMatchModalOpened, setNewMatchModalOpened] = useState(false);
 
     useEffect(() => {
         getMatches().then(setMatches);
@@ -32,22 +42,26 @@ const Schedule = () => {
         >
             <Group>
                 <Button
-                    onClick={toggleView}
+                    onClick={() => setNewMatchModalOpened(true)}
+                >
+                    New Match
+                </Button>
+
+                <Button
+                    onClick={() => {
+                        setSearchParams({ view: onListView ? "calendar" : "list" });
+                        setOnListView(!onListView);
+                    }}
                 >
                     {onListView ? "Calendar View" : "List View"}
                 </Button>
-
-                {/*<Button*/}
-                {/*    onClick={() => setNewMatchModalOpened(true)}*/}
-                {/*>*/}
-                {/*    New Match*/}
-                {/*</Button>*/}
             </Group>
 
             {onListView ? (
                 <ScheduleList
                     matches={matches}
                     setMatches={setMatches}
+                    teams={teams}
                 />
             ) : (
                 <Calendar
@@ -57,27 +71,27 @@ const Schedule = () => {
                 />
             )}
 
-            {/*<Modal*/}
-            {/*    opened={newMatchModalOpened}*/}
-            {/*    onClose={() => setNewMatchModalOpened(false)}*/}
-            {/*    size="lg"*/}
-            {/*    data-testid="event-popup"*/}
-            {/*>*/}
-            {/*    <Title*/}
-            {/*        order={2}*/}
-            {/*        mb="md"*/}
-            {/*        ta="center"*/}
-            {/*    >*/}
-            {/*        New Match*/}
-            {/*    </Title>*/}
+            <Modal
+                opened={newMatchModalOpened}
+                onClose={() => setNewMatchModalOpened(false)}
+                size="lg"
+                data-testid="event-popup"
+            >
+                <Title
+                    order={2}
+                    mb="md"
+                    ta="center"
+                >
+                    New Match
+                </Title>
 
-            {/*    <CreateMatchForm*/}
-            {/*        teams={teams}*/}
-            {/*        matches={matches}*/}
-            {/*        setMatches={setMatches}*/}
-            {/*        date={null}*/}
-            {/*    />*/}
-            {/*</Modal>*/}
+                <CreateMatchForm
+                    teams={teams}
+                    matches={matches}
+                    setMatches={setMatches}
+                    date={null}
+                />
+            </Modal>
         </Paper>
     );
 };

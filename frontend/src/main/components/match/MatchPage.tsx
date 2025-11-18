@@ -8,8 +8,7 @@ import {useParams} from "react-router";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import {isAdmin} from "../../types/accountTypes.ts";
 import MatchEdit from "./MatchEdit.tsx";
-import {getMatches, type UpdateMatchRequest} from "../../request/matches.ts";
-import MatchDelete from "./MatchDelete.tsx";
+import {type UpdateMatchRequest} from "../../request/matches.ts";
 
 
 const MatchPage = () => {
@@ -17,12 +16,6 @@ const MatchPage = () => {
     const matchId = Number(id);
 
     const {currentAccount} = useAuth();
-
-    const [matches, setMatches] = useState<Match[]>([]);
-
-    useEffect(() => {
-        getMatches().then(setMatches);
-    }, []);
 
     const [match, setMatch] = useState<Match | null>(null);
     const clientRef = useRef<Client | null>(null);
@@ -67,9 +60,6 @@ const MatchPage = () => {
                         />
                     }
                 </Stack>
-                {isAdmin(currentAccount) &&
-                    <MatchDelete match={match} matches={matches} setMatches={setMatches} />
-                }
             </Group>
         </Container>
     );

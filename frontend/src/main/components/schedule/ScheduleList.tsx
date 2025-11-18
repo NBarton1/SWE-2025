@@ -1,18 +1,23 @@
-import {Title, Stack, Group, Box, Container} from "@mantine/core";
+import {Title, Stack, Group, Box, Container, Modal} from "@mantine/core";
 import MatchView from "../match/MatchView.tsx";
-import MatchDelete from "../match/MatchDelete.tsx";
+import MatchUpdateIcons from "./MatchUpdateIcons.tsx";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import {isAdmin} from "../../types/accountTypes.ts";
 import {Match} from "../../types/match.ts";
-import React, {type Dispatch} from "react";
+import React, {type Dispatch, useState} from "react";
+import MatchDetailsModalFields from "./MatchDetailsModalFields.tsx";
+import type {Team} from "../../types/team.ts";
 
 
 interface ScheduleListProps {
     matches: Match[];
     setMatches: Dispatch<React.SetStateAction<Match[]>>;
+    teams: Team[]
 }
 
-const ScheduleList = ({ matches, setMatches }: ScheduleListProps) => {
+const ScheduleList = ({ matches, setMatches, teams }: ScheduleListProps) => {
+
+    const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
 
     const {currentAccount} = useAuth();
 
@@ -42,11 +47,25 @@ const ScheduleList = ({ matches, setMatches }: ScheduleListProps) => {
                         </Box>
 
                         {isAdmin(currentAccount) &&
-                            <MatchDelete match={match} matches={matches} setMatches={setMatches} />
+                            <MatchUpdateIcons match={match} setMatch={setSelectedMatch} matches={matches} setMatches={setMatches} />
                         }
                     </Group>
                 ))}
             </Stack>
+
+            <Modal
+                opened={selectedMatch != null}
+                onClose={() => setSelectedMatch(null)}
+                size="lg"
+                data-testid="event-popup"
+            >
+                <MatchDetailsModalFields
+                    match={selectedMatch}
+                    matches={matches}
+                    setMatches={setMatches}
+                    teams={teams}
+                />
+            </Modal>
         </Container>
     );
 };

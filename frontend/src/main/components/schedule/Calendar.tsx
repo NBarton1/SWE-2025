@@ -6,8 +6,8 @@ import interactionPlugin from "@fullcalendar/interaction";
 import {Modal, Title, Box} from "@mantine/core";
 import DatePopup from "./DatePopup.tsx";
 import {Match} from "../../types/match.ts";
-import MatchDetailsForm from "./MatchDetailsForm.tsx";
 import type {Team} from "../../types/team.ts";
+import MatchDetailsModalFields from "./MatchDetailsModalFields.tsx";
 
 
 interface CalendarProps {
@@ -99,26 +99,12 @@ const Calendar = ({ teams, matches, setMatches }: CalendarProps) => {
                 size="lg"
                 data-testid="event-popup"
             >
-                {selectedMatch && (
-                    <>
-                        <Title
-                            order={2}
-                            mb="md"
-                            ta="center"
-                        >
-                            Match Details
-                        </Title>
-
-                        <MatchDetailsForm
-                            match={selectedMatch}
-                            teams={teams}
-                            matches={matches}
-                            setMatches={setMatches}
-                            setSelectedMatch={setSelectedMatch}
-                        />
-                    </>
-
-                )}
+                <MatchDetailsModalFields
+                    match={selectedMatch}
+                    matches={matches}
+                    setMatches={setMatches}
+                    teams={teams}
+                />
             </Modal>
         </>
     );
