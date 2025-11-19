@@ -14,6 +14,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.MapsId
+import jakarta.persistence.OneToOne
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
 import jakarta.persistence.Table
@@ -58,7 +60,12 @@ class Match (
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "away_team_id", nullable = false)
-    var awayTeam: Team
+    var awayTeam: Team,
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    @JoinColumn(name = "id")
+    var post: Post? = null
 
 ) {
     fun toDTO(): MatchDTO {
@@ -83,9 +90,22 @@ class Match (
         )
     }
 
-    @PrePersist
-    @PreUpdate
-    fun truncateToMinutes() {
+    private fun truncateToMinutes() {
         date = date.truncatedTo(ChronoUnit.MINUTES)
+    }
+
+    private fun createPost() {
+        post = Post(account = null)
+    }
+
+    @PrePersist
+    fun perPersist() {
+        createPost()
+        truncateToMinutes()
+    }
+
+    @PreUpdate
+    fun preUpdate() {
+        truncateToMinutes()
     }
 }

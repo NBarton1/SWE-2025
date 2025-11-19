@@ -12,4 +12,5 @@ class PostDTO (
     val creationTime: LocalDateTime?,
     val likeCount: Int,
     val dislikeCount: Int,
+    val match: MatchDTO?,
 )

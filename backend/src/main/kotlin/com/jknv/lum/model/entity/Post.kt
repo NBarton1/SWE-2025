@@ -29,7 +29,7 @@ class Post (
     var dislikeCount: Int = 0,
 
     @Column
-    var textContent: String,
+    var textContent: String = "",
 
     @CreatedDate
     @Column(updatable = false)
@@ -45,7 +45,10 @@ class Post (
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     var media: MutableList<Content> = mutableListOf(),
 
-    ) {
+    @OneToOne(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
+    var match: Match? = null
+
+) {
     fun toDTO(): PostDTO {
         return PostDTO(
             id = id,
@@ -55,6 +58,7 @@ class Post (
             dislikeCount = dislikeCount,
             media = media.map { it.toDTO() }.toMutableList(),
             creationTime = creationTime,
+            match = match?.toDTO(),
         )
     }
 }
