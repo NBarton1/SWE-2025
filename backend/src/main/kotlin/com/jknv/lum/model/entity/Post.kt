@@ -42,11 +42,11 @@ class Post (
     @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY)
     var children: MutableList<Post> = mutableListOf(),
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var media: MutableList<Content> = mutableListOf(),
 
-    @OneToOne(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var match: Match? = null
+    @OneToOne(mappedBy = "post")
+    var match: Match? = null,
 
 ) {
     fun toDTO(): PostDTO {

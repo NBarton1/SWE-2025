@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.util.*
 
 @Service
 class ContentService(
@@ -23,6 +22,11 @@ class ContentService(
     fun upload(file: MultipartFile): ContentDTO =
         uploadContent(file).toDTO()
 
+    fun getUnapprovedContent(): List<ContentDTO> =
+        contentRepository.findAll()
+            .filter { !it.isApproved }
+            .map { it.toDTO() }
+
     fun getContent(id: Long): ContentDTO =
         getContentById(id).toDTO()
 
@@ -33,9 +37,21 @@ class ContentService(
         return fileBytes
     }
 
-    internal fun createContent(content: Content): Content {
-        return contentRepository.save(content)
+    fun approveContent(id: Long): ContentDTO {
+        val content = getContentById(id)
+        content.isApproved = true
+
+        return updateContent(content)
     }
+
+    fun deleteContentById(id: Long) =
+        contentRepository.deleteById(id)
+
+    internal fun createContent(content: Content): Content =
+        contentRepository.save(content)
+
+    internal fun updateContent(content: Content): ContentDTO =
+        contentRepository.save(content).toDTO()
 
     internal fun getContentById(id: Long): Content =
         contentRepository.findById(id).orElseThrow { EntityNotFoundException("Content $id not found") }
@@ -62,7 +78,8 @@ class ContentService(
                 filename = originalFilename,
                 contentType = contentType,
                 fileSize = file.size,
-                post = post
+                post = post,
+                isApproved = post != null
             )
         )
 

@@ -16,7 +16,6 @@ import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
-import jakarta.mail.Multipart
 import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -223,7 +222,7 @@ class AccountServiceTest {
             contentType = "png"
         )
 
-        every { contentService.uploadContent(image) } returns picture
+        every { contentService.upload(image) } returns picture
         every { accountRepository.findById(account.id) } returns Optional.of(account)
         every { accountRepository.save(account) } returns account
 

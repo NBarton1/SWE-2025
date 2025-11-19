@@ -6,31 +6,39 @@ import {useForm} from "@mantine/form";
 import MatchFormFields from "./MatchFormFields.tsx";
 import { updateMatch, deleteMatch, type UpdateMatchRequest } from "../../request/matches.ts";
 import {useNavigate} from "react-router";
+import {useAuth} from "../../hooks/useAuth.tsx";
+import {isAdmin} from "../../types/accountTypes.ts";
 
 
 interface UpdateMatchFormProps {
-    match: Match;
-    teams: Team[];
-    date: string;
-    matches: Match[];
-    setMatches: Dispatch<React.SetStateAction<Match[]>>;
+    match: Match
+    teams: Team[]
+    matches: Match[]
+    setMatches: Dispatch<React.SetStateAction<Match[]>>
 }
 
-const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatchFormProps) => {
+const MatchDetailsForm = ({ match, teams, matches, setMatches }: UpdateMatchFormProps) => {
+    console.log("date", match.getDate());
+
     const navigate = useNavigate();
+
+    const {currentAccount} = useAuth();
+
+    const adminPrivilege = isAdmin(currentAccount);
 
     const matchForm = useForm({
         initialValues: {
-            homeTeamId: `${match.getHomeTeamId()}`,
-            awayTeamId: `${match.getAwayTeamId()}`,
+            homeTeamId: match.getHomeTeamId().toString(),
+            awayTeamId: match.getAwayTeamId().toString(),
             time: match.getTime(),
+            date: match.getDate() as string | null,
             type: match.getType()
         },
     });
 
     const updateMatchCallback = async () => {
         try {
-            const { type, homeTeamId, awayTeamId, time } = matchForm.values;
+            const { type, homeTeamId, awayTeamId, time, date } = matchForm.values;
 
             const req: UpdateMatchRequest = {
                 matchId: match.getId(),
@@ -72,35 +80,41 @@ const UpdateMatchForm = ({ match, teams, date, matches, setMatches }: UpdateMatc
                 await updateMatchCallback();
             }}>
                 <Stack gap="md">
-                    <MatchFormFields teams={teamSelection} matchFormFields={matchForm} />
+                    <MatchFormFields
+                        teams={teamSelection}
+                        matchFormFields={matchForm}
+                        readOnly={!adminPrivilege}
+                    />
 
-                    <Group justify="right" mt="md">
-                        <Button
-                            color="red"
-                            variant="outline"
-                            onClick={async (e) => {
-                                e.preventDefault();
-                                await deleteMatchCallback();
-                            }}
-                            data-testid="match-delete-button"
-                        >
-                            Delete
-                        </Button>
+                    {adminPrivilege &&
+                        <Group justify="right" mt="md">
+                            <Button
+                                color="red"
+                                variant="outline"
+                                onClick={async (e) => {
+                                    e.preventDefault();
+                                    await deleteMatchCallback();
+                                }}
+                                data-testid="match-delete-button"
+                            >
+                                Delete
+                            </Button>
 
-                        <Button
-                            onClick={() => navigate(`/live/${match.getId()}`)}
-                        >
-                            Edit Live Feed
-                        </Button>
+                            <Button
+                                onClick={() => navigate(`/match/${match.getId()}`)}
+                            >
+                                Edit Live Feed
+                            </Button>
 
-                        <Button type="submit">
-                            Save Changes
-                        </Button>
-                    </Group>
+                            <Button type="submit">
+                                Save Changes
+                            </Button>
+                        </Group>
+                    }
                 </Stack>
             </form>
         </Paper>
     );
 };
 
-export default UpdateMatchForm;
+export default MatchDetailsForm;

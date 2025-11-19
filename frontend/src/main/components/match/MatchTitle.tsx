@@ -12,7 +12,7 @@ const MatchTitle = ({ match }: MatchTitleProps) => {
             ta="center"
             data-testid="match-title"
         >
-            {match.getMatchTeams()}
+            {match.getTeams()}
             {match.getTitleSuffix()}
         </Title>
     );

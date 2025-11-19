@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.jknv.lum.model.dto.MatchDTO
 import com.jknv.lum.model.type.MatchState
 import com.jknv.lum.model.type.MatchType
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -25,13 +26,13 @@ import java.time.Duration
 
 @Entity
 @Table(name = "Match")
-class Match (
+class Match(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
 
     @Column(nullable = false)
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @param:JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     var date: LocalDateTime,
 
     @Column(nullable = false)
@@ -62,9 +63,8 @@ class Match (
     @JoinColumn(name = "away_team_id", nullable = false)
     var awayTeam: Team,
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    @JoinColumn(name = "id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinColumn(name = "post_id")
     var post: Post? = null
 
 ) {
@@ -90,22 +90,9 @@ class Match (
         )
     }
 
-    private fun truncateToMinutes() {
-        date = date.truncatedTo(ChronoUnit.MINUTES)
-    }
-
-    private fun createPost() {
-        post = Post(account = null)
-    }
-
     @PrePersist
-    fun perPersist() {
-        createPost()
-        truncateToMinutes()
-    }
-
     @PreUpdate
-    fun preUpdate() {
-        truncateToMinutes()
+    fun truncateToMinutes() {
+        date = date.truncatedTo(ChronoUnit.MINUTES)
     }
 }

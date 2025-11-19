@@ -34,7 +34,7 @@ const DependentsTable = ({account}: DependentsTableProps) => {
     };
 
     return (
-        <Paper shadow="sm" radius="md" p="xl" mt="md" withBorder>
+        <Paper shadow="sm" radius="md" p="xl" withBorder>
             <Stack>
                 <Group align="center" justify="space-between">
                     <Title

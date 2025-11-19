@@ -1,9 +1,9 @@
 package com.jknv.lum.services
 
-import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.PostDTO
 import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.request.post.PostCreateRequest
+import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.PostRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
@@ -31,17 +31,17 @@ class PostService (
     fun getAllPosts(): List<PostDTO> =
         postRepository.findAll().map { it.toDTO() }
 
-    fun isPostOwner(postId: Long, accountId: Long): Boolean =
-        accountId == getPostById(postId).account?.id
-
     fun deletePost(postId: Long, accountId: Long) {
-        if (!isPostOwner(postId, accountId)) {
-            throw EntityNotFoundException("Post $postId not owned by account $accountId")
-        }
+        val requester = accountService.getAccountById(accountId)
+        if (! (isPostOwner(postId, accountId) || requester.role == Role.ADMIN) )
+            throw IllegalAccessException("You do not have access to delete post $postId")
 
         postRepository.deleteById(postId)
     }
 
-    fun getPostById(id: Long): Post =
+    internal fun getPostById(id: Long): Post =
         postRepository.findById(id).orElseThrow { EntityNotFoundException("Post $id not found") }
+
+    private fun isPostOwner(postId: Long, accountId: Long): Boolean =
+        accountId == getPostById(postId).account?.id
 }

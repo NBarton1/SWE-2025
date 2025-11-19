@@ -20,9 +20,9 @@ function Layout() {
                 label: "Home",
                 icon: Home,
                 items: [
-                    { label: 'Schedule', href: "/calendar" },
-                    { label: 'Feed', href: '/feed' },
-                    { label: 'Post', href: '/create-post' },
+                    { label: "Schedule", href: "/schedule" },
+                    { label: "Feed", href: "/feed" },
+                    { label: "Post", href: "/create-post" },
                 ]
             },
             {
@@ -30,6 +30,7 @@ function Layout() {
                 icon: BarChart3,
                 items: [
                     {label: "Team Stats", href: "/teams"},
+                    {label: "Playoff Picture", href: "/playoff"},
                 ]
             }
         ]
@@ -37,10 +38,11 @@ function Layout() {
 
         const adminItems = [
             {
-                label: 'Admin',
+                label: "Admin",
                 icon: UserStar,
                 items: [
-                    { label: "Users", href: "/users"}
+                    { label: "Users", href: "/users"},
+                    { label: "Approve Content", href: "/content-approval"}
                 ]
             }
         ]

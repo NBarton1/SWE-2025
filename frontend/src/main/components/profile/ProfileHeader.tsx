@@ -144,7 +144,7 @@ const ProfileHeader = ({account, setAccount}: ProfileHeaderProps) => {
 
         setAccount(null);
 
-    }, [account, currentAccount?.id, setAccount, logout]);
+    }, [account, currentAccount, setAccount, logout]);
 
 
     return (

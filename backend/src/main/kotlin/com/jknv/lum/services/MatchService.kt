@@ -17,6 +17,10 @@ class MatchService (
 ) {
 
     fun createMatch(req: MatchCreateRequest): MatchDTO {
+        if (req.homeTeamId == req.awayTeamId) {
+            throw IllegalArgumentException("Match must have different teams")
+        }
+
         val homeTeam = teamService.getTeamById(req.homeTeamId)
         val awayTeam = teamService.getTeamById(req.awayTeamId)
 
