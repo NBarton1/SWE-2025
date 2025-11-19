@@ -15,20 +15,10 @@ interface MatchPostUpdateIconsProps {
 const MatchPostUpdateIcons = ({ match, setPosts, setSelectedMatch }: MatchPostUpdateIconsProps) => {
 
     const handleDelete = async() => {
-        console.log("DK just won again")
-
         try {
             await deleteMatch(match.getId());
 
-            setPosts(prev => prev.filter(curr => {
-                if (curr.match?.id !== match.getId()) {
-                    console.log("DK won")
-                    return true;
-                } else {
-                    console.log("DK just won")
-                    return false;
-                }
-            }));
+            setPosts(prev => prev.filter(curr => curr.match?.id !== match.getId()));
         } catch (error) {
             console.log("Failed to delete match", error);
         }
