@@ -96,19 +96,4 @@ class Match(
     fun truncateToMinutes() {
         date = date.truncatedTo(ChronoUnit.MINUTES)
     }
-
-//    private fun createPost() {
-//        post = Post(account = null)
-//    }
-//
-//    @PrePersist
-//    fun perPersist() {
-//        createPost()
-//        truncateToMinutes()
-//    }
-//
-//    @PreUpdate
-//    fun preUpdate() {
-//        truncateToMinutes()
-//    }
 }
