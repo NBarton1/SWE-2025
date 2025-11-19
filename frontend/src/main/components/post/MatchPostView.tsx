@@ -2,18 +2,23 @@ import { type Post } from "../../types/post.ts";
 import '@mantine/carousel/styles.css';
 import React, {type Dispatch} from "react";
 import MatchView from "../match/MatchView.tsx";
-import {Match} from "../../types/match.ts";
+import {Match, type MatchResponse} from "../../types/match.ts";
 import MatchPostUpdateIcons from "./MatchPostUpdateIcons.tsx";
 import {Box, Group} from "@mantine/core";
+import {hasEditPermission} from "../../types/accountTypes.ts";
+import {useAuth} from "../../hooks/useAuth.tsx";
 
 
 interface MatchPostViewProps {
-    match: Match
+    post: Post
     setPosts: Dispatch<React.SetStateAction<Post[]>>
     setSelectedMatch: Dispatch<React.SetStateAction<Match | null>>
 }
 
-function MatchPostView({ match, setPosts, setSelectedMatch }: MatchPostViewProps) {
+function MatchPostView({ post, setPosts, setSelectedMatch }: MatchPostViewProps) {
+
+    const match = new Match(post.match as MatchResponse);
+    const {currentAccount} = useAuth();
 
     return (
         <Group
@@ -30,11 +35,13 @@ function MatchPostView({ match, setPosts, setSelectedMatch }: MatchPostViewProps
                 />
             </Box>
 
-            <MatchPostUpdateIcons
-                match={match}
-                setPosts={setPosts}
-                setSelectedMatch={setSelectedMatch}
-            />
+            {hasEditPermission(currentAccount, post.account) &&
+                <MatchPostUpdateIcons
+                    match={match}
+                    setPosts={setPosts}
+                    setSelectedMatch={setSelectedMatch}
+                />
+            }
         </Group>
     )
 }

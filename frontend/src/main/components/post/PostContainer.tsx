@@ -30,7 +30,7 @@ function PostContainer({ post, setPosts, setSelectedMatch }: PostContainerProps)
         <>
             {post.match ? (
                 <MatchPostView
-                    match={new Match(post.match)}
+                    post={post}
                     setPosts={setPosts}
                     setSelectedMatch={setSelectedMatch}
                 />
