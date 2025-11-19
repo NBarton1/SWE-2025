@@ -1,4 +1,5 @@
 import type {JSONContent} from "@tiptap/react";
+import type {Post} from "../types/post.ts";
 
 
 export interface PostRequestFields {
@@ -59,4 +60,18 @@ export const deletePost = async (id: number) => {
         console.error("Failed to delete", err);
     }
     return false
+};
+
+export const getChildren = async (post: Post) => {
+    try {
+        const res = await fetch(`http://localhost:8080/api/posts/${post.id}/children`, {
+            method: "GET",
+            credentials: 'include',
+        });
+
+        return await res.json();
+    } catch (err) {
+        console.error("Failed to get children", err);
+    }
+    return [];
 };

@@ -15,4 +15,5 @@ data class MatchDTO (
     val awayTeam: TeamDTO,
     val clockTimestamp: Int = 0,
     val timeRunning: Boolean = false,
+    val postId: Long?,
 )

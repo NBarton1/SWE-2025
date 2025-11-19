@@ -20,9 +20,9 @@ function Layout() {
                 label: "Home",
                 icon: Home,
                 items: [
-                    { label: 'Schedule', href: "/calendar" },
-                    { label: 'Feed', href: '/feed' },
-                    { label: 'Post', href: '/create-post' },
+                    { label: "Schedule", href: "/schedule" },
+                    { label: "Feed", href: "/feed" },
+                    { label: "Post", href: "/create-post" },
                 ]
             },
             {
@@ -41,8 +41,9 @@ function Layout() {
                 label: "Admin",
                 icon: UserStar,
                 items: [
-                    { label: "Users", href: "/users"},
-                    { label: "Approve Content", href: "/content-approval"}
+                    { label: "Accounts", href: "/accounts"},
+                    { label: "Approve Content", href: "/content-approval"},
+                    { label: "Flagged Posts", href: "/flagged-posts"}
                 ]
             }
         ]

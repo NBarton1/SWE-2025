@@ -10,6 +10,6 @@ class PostDTO (
     var media: MutableList<ContentDTO>,
     val textContent: String,
     val creationTime: LocalDateTime?,
-    val likeCount: Int,
-    val dislikeCount: Int,
+    val flagCount: Int,
+    val match: MatchDTO?,
 )

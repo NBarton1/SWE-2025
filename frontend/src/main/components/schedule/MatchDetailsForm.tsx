@@ -12,14 +12,13 @@ import {isAdmin} from "../../types/accountTypes.ts";
 
 interface UpdateMatchFormProps {
     match: Match
-    teams: Team[]
-    matches: Match[]
-    setMatches: Dispatch<React.SetStateAction<Match[]>>
     setSelectedMatch: Dispatch<React.SetStateAction<Match | null>>
+    teams: Team[]
+    setMatches: Dispatch<React.SetStateAction<Match[]>>
 }
 
-const MatchDetailsForm = ({ match, teams, matches, setMatches, setSelectedMatch }: UpdateMatchFormProps) => {
-    console.log(match);
+const MatchDetailsForm = ({ match, setSelectedMatch, teams, setMatches }: UpdateMatchFormProps) => {
+    console.log("date", match.getDate());
 
     const navigate = useNavigate();
 
@@ -29,10 +28,10 @@ const MatchDetailsForm = ({ match, teams, matches, setMatches, setSelectedMatch 
 
     const matchForm = useForm({
         initialValues: {
-            homeTeamId: `${match.getHomeTeamId()}`,
-            awayTeamId: `${match.getAwayTeamId()}`,
+            homeTeamId: match.getHomeTeamId().toString(),
+            awayTeamId: match.getAwayTeamId().toString(),
             time: match.getTime(),
-            date: match.getDate(),
+            date: match.getDate() as string | null,
             type: match.getType()
         },
     });
@@ -51,7 +50,7 @@ const MatchDetailsForm = ({ match, teams, matches, setMatches, setSelectedMatch 
 
             const updatedMatch: Match = await updateMatch(req);
 
-            setMatches(matches.map(curr_match => {
+            setMatches(prev => prev.map(curr_match => {
                 return curr_match.getId() === updatedMatch.getId() ? updatedMatch : curr_match
             }));
         } catch (error) {
@@ -64,7 +63,8 @@ const MatchDetailsForm = ({ match, teams, matches, setMatches, setSelectedMatch 
             await deleteMatch(match.getId());
 
             setSelectedMatch(null);
-            setMatches([...matches.filter(curr => curr.getId() !== match.getId())]);
+
+            setMatches(prev => prev.filter(curr => curr.getId() !== match.getId()));
         } catch (error) {
             console.log("Failed to delete match", error);
         }
@@ -113,7 +113,6 @@ const MatchDetailsForm = ({ match, teams, matches, setMatches, setSelectedMatch 
                             </Button>
                         </Group>
                     }
-
                 </Stack>
             </form>
         </Paper>

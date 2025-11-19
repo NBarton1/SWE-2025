@@ -21,6 +21,7 @@ class FlagService(
         val post = postService.getPostById(postId)
         val account = accountService.getAccountById(accountId)
 
+        post.flagCount++
         return createFlag(post, account)
     }
 
@@ -28,8 +29,11 @@ class FlagService(
         return flagRepository.countFlagsByPostId(postId)
     }
 
-    fun deleteFlag(postId: Long, accountId: Long) =
+    fun deleteFlag(postId: Long, accountId: Long) {
+        val post = postService.getPostById(postId)
+        post.flagCount--
         flagRepository.deleteById(Flag.PK(postId, accountId))
+    }
 
     internal fun createFlag(post: Post, account: Account): FlagDTO =
         flagRepository.save(Flag(post = post, account = account)).toDTO()

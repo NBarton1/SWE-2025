@@ -1,14 +1,15 @@
 import type {Content} from "./content.ts";
 import type {Account} from "./accountTypes.ts";
+import type {MatchResponse} from "./match.ts";
 
 export interface Post {
     id: number,
     account: Account | null,
     textContent: string,
-    likeCount: number,
-    dislikeCount: number,
+    flagCount: number
     media: Content[],
     creationTime: string,
+    match: MatchResponse | null,
 }
 
 export function formatCreationTime(post: Post): string {
@@ -32,4 +33,7 @@ export function formatCreationTime(post: Post): string {
 
 export function comparePosts(post0: Post, post1: Post) {
     return new Date(post1.creationTime).getTime() - new Date(post0.creationTime).getTime();
+}
+
+export class comparePostFlagCount {
 }

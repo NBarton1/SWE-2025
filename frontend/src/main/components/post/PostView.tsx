@@ -7,20 +7,20 @@ import {IconTrash} from "@tabler/icons-react";
 import {accountEquals, isAdmin} from "../../types/accountTypes.ts";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import {deletePost} from "../../request/post.ts";
-import {Avatar, Group, Paper, Title, Text, Stack, Anchor, ActionIcon} from "@mantine/core";
-import Likes from "../likes/Likes.tsx";
-import PostFlagButton from "./PostFlagButton.tsx";
+import {Avatar, Group, Title, Text, Stack, Anchor, ActionIcon} from "@mantine/core";
+import React, {type Dispatch} from "react";
+
 
 interface PostViewProps {
     post: Post;
-    onDelete: (id: number) => void;
+    setPosts: Dispatch<React.SetStateAction<Post[]>>;
 }
 
-function PostView({post, onDelete}: PostViewProps) {
+function PostView({post, setPosts}: PostViewProps) {
 
     const editor = useEditor({
         editable: false,
-        content: JSON.parse(post.textContent),
+        content: post.textContent == "" ? "" : JSON.parse(post.textContent),
         extensions: [StarterKit],
         editorProps: {
             attributes: {
@@ -33,15 +33,14 @@ function PostView({post, onDelete}: PostViewProps) {
 
     const account = post.account;
 
-    const handleDelete = () => {
-        const deleted = deletePost(post.id);
-        if (!deleted) return
+    const handleDelete = async () => {
+        const deleted = await deletePost(post.id);
 
-        onDelete(post.id)
+        if (deleted) setPosts(prev => prev.filter(p => p.id !== post.id))
     };
 
     return (
-        <Paper p="md" withBorder>
+        <>
             <Group>
                 <Anchor
                     href={`/profile/${account?.id}`}
@@ -69,7 +68,7 @@ function PostView({post, onDelete}: PostViewProps) {
                 </Anchor>
 
                 {(accountEquals(account, currentAccount) || isAdmin(currentAccount)) && (
-                    <ActionIcon variant="subtle" color="red" ml="auto" onClick={handleDelete}>
+                    <ActionIcon variant="subtle" color="red" ml="auto" mb="auto" onClick={handleDelete}>
                         <IconTrash/>
                     </ActionIcon>
                 )}
@@ -78,11 +77,7 @@ function PostView({post, onDelete}: PostViewProps) {
             <PostMediaCarousel post={post}/>
 
             <EditorContent editor={editor}/>
-            <Group>
-                <Likes entityId={post.id} likeType="POST" compact/>
-                <PostFlagButton postId={post.id}/>
-            </Group>
-        </Paper>
+        </>
     );
 }
 
