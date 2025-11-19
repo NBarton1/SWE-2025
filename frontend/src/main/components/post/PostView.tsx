@@ -4,10 +4,10 @@ import {EditorContent, useEditor} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import '@mantine/carousel/styles.css';
 import {IconTrash} from "@tabler/icons-react";
-import {accountEquals, isAdmin} from "../../types/accountTypes.ts";
+import {accountEquals, hasEditPermission, isAdmin} from "../../types/accountTypes.ts";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import {deletePost} from "../../request/post.ts";
-import {Avatar, Group, Title, Text, Stack, Anchor, ActionIcon} from "@mantine/core";
+import {Avatar, Group, Title, Text, Stack, Anchor, ActionIcon, Paper} from "@mantine/core";
 import React, {type Dispatch} from "react";
 
 
@@ -55,10 +55,10 @@ function PostView({post, setPosts}: PostViewProps) {
                             size="lg"
                         />
 
-                        <Stack gap="xs">
-                            <Title order={3}>
-                                {account?.name}
-                            </Title>
+                                <Stack gap="xs">
+                                    <Title order={3}>
+                                        {account?.name}
+                                    </Title>
 
                             <Text size="sm" c="dimmed">
                                 {account ? `@${account.username}` : "Deleted User"} · {formatCreationTime(post)}

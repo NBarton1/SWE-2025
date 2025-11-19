@@ -15,7 +15,7 @@ interface MatchPostViewProps {
     setSelectedMatch: Dispatch<React.SetStateAction<Match | null>>
 }
 
-function MatchPostView({ post, setPosts, setSelectedMatch}: MatchPostViewProps) {
+function MatchPostView({ post, setPosts, setSelectedMatch }: MatchPostViewProps) {
 
     const match = new Match(post.match as MatchResponse);
     const {currentAccount} = useAuth();
