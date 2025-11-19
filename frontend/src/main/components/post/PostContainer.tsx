@@ -56,8 +56,7 @@ function PostContainer({ post, setPosts, setSelectedMatch }: PostContainerProps)
                             <PostContainer
                                 post={child}
                                 setPosts={setPosts}
-                                setSelectedMatch={setSelectedMatch}
-                            />
+                                setSelectedMatch={setSelectedMatch} />
                         ))}
                     </Stack>
                 </Collapse>
