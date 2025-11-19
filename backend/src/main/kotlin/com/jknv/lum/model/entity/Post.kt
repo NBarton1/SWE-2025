@@ -22,12 +22,6 @@ class Post (
     @OnDelete(action = OnDeleteAction.SET_NULL)
     var account: Account? = null,
 
-    @Column(nullable = false)
-    var likeCount: Int = 0,
-
-    @Column(nullable = false)
-    var dislikeCount: Int = 0,
-
     @Column
     var textContent: String = "",
 
@@ -46,17 +40,18 @@ class Post (
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var media: MutableList<Content> = mutableListOf(),
 
-    @OneToOne(mappedBy = "post")
-    var match: Match? = null,
+    @Column(nullable = false)
+    var flagCount: Int = 0,
 
+    @OneToOne(mappedBy = "post")
+    var match: Match? = null
 ) {
     fun toDTO(): PostDTO {
         return PostDTO(
             id = id,
             account = account?.toDTO(),
             textContent = textContent,
-            likeCount = likeCount,
-            dislikeCount = dislikeCount,
+            flagCount = flagCount,
             media = media.map { it.toDTO() }.toMutableList(),
             creationTime = creationTime,
             match = match?.toDTO(),

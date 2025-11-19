@@ -4,11 +4,10 @@ import {EditorContent, useEditor} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import '@mantine/carousel/styles.css';
 import {IconTrash} from "@tabler/icons-react";
-import {hasEditPermission} from "../../types/accountTypes.ts";
+import {accountEquals, isAdmin} from "../../types/accountTypes.ts";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import {deletePost} from "../../request/post.ts";
-import {Avatar, Group, Title, Text, Stack, Anchor, ActionIcon, Paper, Box} from "@mantine/core";
-import Likes from "../likes/Likes.tsx";
+import {Avatar, Group, Title, Text, Stack, Anchor, ActionIcon} from "@mantine/core";
 import React, {type Dispatch} from "react";
 
 
@@ -18,7 +17,6 @@ interface PostViewProps {
 }
 
 function PostView({post, setPosts}: PostViewProps) {
-
 
     const editor = useEditor({
         editable: false,
@@ -42,56 +40,44 @@ function PostView({post, setPosts}: PostViewProps) {
     };
 
     return (
-        <Group
-            justify="space-between"
-            align="flex-start"
-            wrap="nowrap"
-        >
-            <Box
-                style={{ flex: 1 }}
-            >
-                <Paper p="md" withBorder>
+        <>
+            <Group>
+                <Anchor
+                    href={`/profile/${account?.id}`}
+                    c="inherit"
+                    underline="never"
+                >
                     <Group>
-                        <Anchor
-                            href={`/profile/${account?.id}`}
-                            c="inherit"
-                            underline="never"
-                        >
-                            <Group>
-                                <Avatar
-                                    src={account?.picture?.downloadUrl}
-                                    radius="sm"
-                                    name={account?.name}
-                                    size="lg"
-                                />
+                        <Avatar
+                            src={account?.picture?.downloadUrl}
+                            radius="sm"
+                            name={account?.name}
+                            size="lg"
+                        />
 
                                 <Stack gap="xs">
                                     <Title order={3}>
                                         {account?.name}
                                     </Title>
 
-                                    <Text size="sm" c="dimmed">
-                                        {account ? `@${account.username}` : "Deleted User"} · {formatCreationTime(post)}
-                                    </Text>
-                                </Stack>
-                            </Group>
-                        </Anchor>
+                            <Text size="sm" c="dimmed">
+                                {account ? `@${account.username}` : "Deleted User"} · {formatCreationTime(post)}
+                            </Text>
+                        </Stack>
                     </Group>
+                </Anchor>
 
-                    <PostMediaCarousel post={post}/>
+                {(accountEquals(account, currentAccount) || isAdmin(currentAccount)) && (
+                    <ActionIcon variant="subtle" color="red" ml="auto" mb="auto" onClick={handleDelete}>
+                        <IconTrash/>
+                    </ActionIcon>
+                )}
+            </Group>
 
-                    <EditorContent editor={editor}/>
-                    <Likes entityId={post.id} likeType="POST" compact/>
-                </Paper>
-            </Box>
+            <PostMediaCarousel post={post}/>
 
-            {hasEditPermission(currentAccount, account) && (
-                <ActionIcon variant="subtle" color="red" ml="auto" onClick={handleDelete}>
-                    <IconTrash/>
-                </ActionIcon>
-            )}
-
-        </Group>
+            <EditorContent editor={editor}/>
+        </>
     );
 }
 

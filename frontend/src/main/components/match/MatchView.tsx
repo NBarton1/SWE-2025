@@ -9,9 +9,10 @@ import {useNavigate} from "react-router";
 interface MatchViewProps {
     match: Match
     navigable: boolean
+    borderless?: boolean
 }
 
-const MatchView = ({ match, navigable }: MatchViewProps) => {
+const MatchView = ({ match, navigable, borderless}: MatchViewProps) => {
     if (!match) return null;
 
     const navigate = useNavigate();
@@ -25,10 +26,9 @@ const MatchView = ({ match, navigable }: MatchViewProps) => {
     return (
         <Group gap="xs" wrap="nowrap" align="flex-start">
             <Paper
-                shadow="md"
                 p="lg"
                 radius="lg"
-                withBorder
+                withBorder={borderless === undefined || !borderless}
                 style={{ flex: 1 }}
                 data-testid={`live-match-view-${match.getId()}`}
                 onClick={handleClick}

@@ -25,6 +25,8 @@ class PostSeeder (
             val posts = listOf(
                 postOf(accounts[0], "DK won"),
                 postOf(accounts[1], "DK won again"),
+                postOf(accounts[5], "DK sucks!!!"),
+                postOf(accounts[5], "DK team players are losers"),
                 postOf(accounts[2], "DK won yet again"),
                 postOf(accounts[2], "DK is awesome"),
                 postOf(accounts[2], "DK is the winner"),

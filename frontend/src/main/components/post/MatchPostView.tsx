@@ -30,6 +30,7 @@ function MatchPostView({ post, setPosts, setSelectedMatch }: MatchPostViewProps)
                 style={{ flex: 1 }}
             >
                 <MatchView
+                    borderless
                     match={match}
                     navigable={true}
                 />

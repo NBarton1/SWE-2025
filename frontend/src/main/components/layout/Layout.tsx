@@ -41,8 +41,9 @@ function Layout() {
                 label: "Admin",
                 icon: UserStar,
                 items: [
-                    { label: "Users", href: "/users"},
-                    { label: "Approve Content", href: "/content-approval"}
+                    { label: "Accounts", href: "/accounts"},
+                    { label: "Approve Content", href: "/content-approval"},
+                    { label: "Flagged Posts", href: "/flagged-posts"}
                 ]
             }
         ]

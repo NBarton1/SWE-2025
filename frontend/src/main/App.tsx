@@ -46,10 +46,12 @@ function App() {
                     <Route path="/feed" element={(<FeedPage />)} />
                     <Route path="/match/:id" element={(<MatchPage />)}/>
 
-                        {isAdmin(currentAccount) && (<>
-                            <Route path="/users" element={(<AdminAccountsPage/>)}/>
-                            <Route path="/content-approval" element={(<AdminContentApprovalPage/>)}/>
-                        </>)}
+                        {isAdmin(currentAccount) && (
+                            <>
+                                <Route path="/accounts" element={(<AdminAccountsPage/>)}/>
+                                <Route path="/content-approval" element={(<AdminContentApprovalPage/>)}/>
+                            </>
+                        )}
                     </Route>
                 </Routes>
             </BrowserRouter>

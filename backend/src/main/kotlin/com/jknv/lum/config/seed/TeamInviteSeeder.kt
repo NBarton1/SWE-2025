@@ -33,7 +33,7 @@ class TeamInviteSeeder (
                 inviteOf(teams[2], players[1], InviteStatus.DECLINED)
             )
 
-            invites.forEach { teamInviteRepository.save(it) }
+            teamInviteRepository.saveAll(invites)
             LOGGER.info("Invites seeded")
         }
     }
