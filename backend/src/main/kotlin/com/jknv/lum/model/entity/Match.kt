@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.jknv.lum.model.dto.MatchDTO
 import com.jknv.lum.model.type.MatchState
 import com.jknv.lum.model.type.MatchType
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -14,6 +15,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.MapsId
+import jakarta.persistence.OneToOne
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
 import jakarta.persistence.Table
@@ -58,7 +61,11 @@ class Match(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "away_team_id", nullable = false)
-    var awayTeam: Team
+    var awayTeam: Team,
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinColumn(name = "post_id")
+    var post: Post? = null,
 
 ) {
     fun toDTO(): MatchDTO {
@@ -80,6 +87,7 @@ class Match(
             awayTeam = awayTeam.toDTO(),
             clockTimestamp = timeRemaining,
             timeRunning = timeRemaining > 0 && running,
+            postId = post?.id
         )
     }
 

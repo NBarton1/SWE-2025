@@ -1,5 +1,6 @@
 import type {Content} from "./content.ts";
 import type {Account} from "./accountTypes.ts";
+import type {MatchResponse} from "./match.ts";
 
 export interface Post {
     id: number,
@@ -9,6 +10,7 @@ export interface Post {
     dislikeCount: number,
     media: Content[],
     creationTime: string,
+    match: MatchResponse | null,
 }
 
 export function formatCreationTime(post: Post): string {

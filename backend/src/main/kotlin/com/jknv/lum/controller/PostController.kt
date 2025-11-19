@@ -35,8 +35,8 @@ class PostController(
     }
 
     @GetMapping
-    fun getAllPosts(): ResponseEntity<List<PostDTO>> {
-        val response = postService.getAllPosts()
+    fun getAllRootPosts(): ResponseEntity<List<PostDTO>> {
+        val response = postService.getAllRootPosts()
         return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 
@@ -83,5 +83,13 @@ class PostController(
     ): ResponseEntity<Long> {
         val reactions = likeStatusService.getNumLikeStatuses(id, LikeType.POST, false)
         return ResponseEntity.ok(reactions)
+    }
+
+    @GetMapping("/{id}/children")
+    fun getChildren(
+        @PathVariable id: Long,
+    ): ResponseEntity<List<PostDTO>> {
+        val children = postService.getChildren(id)
+        return ResponseEntity.ok(children)
     }
 }

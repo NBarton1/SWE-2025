@@ -61,7 +61,7 @@ const ScheduleList = ({ matches, setMatches, teams }: ScheduleListProps) => {
             >
                 <MatchDetailsModalFields
                     match={selectedMatch}
-                    matches={matches}
+                    setSelectedMatch={setSelectedMatch}
                     setMatches={setMatches}
                     teams={teams}
                 />

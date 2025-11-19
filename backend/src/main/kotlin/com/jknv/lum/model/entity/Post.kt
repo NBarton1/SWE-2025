@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "Post")
 @EntityListeners(AuditingEntityListener::class)
-class Post(
+class Post (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0,
@@ -29,7 +29,7 @@ class Post(
     var dislikeCount: Int = 0,
 
     @Column
-    var textContent: String,
+    var textContent: String = "",
 
     @CreatedDate
     @Column(updatable = false)
@@ -37,6 +37,7 @@ class Post(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var parentPost: Post? = null,
 
     @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY)
@@ -44,6 +45,9 @@ class Post(
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var media: MutableList<Content> = mutableListOf(),
+
+    @OneToOne(mappedBy = "post")
+    var match: Match? = null,
 
 ) {
     fun toDTO(): PostDTO {
@@ -55,6 +59,7 @@ class Post(
             dislikeCount = dislikeCount,
             media = media.map { it.toDTO() }.toMutableList(),
             creationTime = creationTime,
+            match = match?.toDTO(),
         )
     }
 }

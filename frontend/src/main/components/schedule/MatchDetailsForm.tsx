@@ -12,12 +12,12 @@ import {isAdmin} from "../../types/accountTypes.ts";
 
 interface UpdateMatchFormProps {
     match: Match
+    setSelectedMatch: Dispatch<React.SetStateAction<Match | null>>
     teams: Team[]
-    matches: Match[]
     setMatches: Dispatch<React.SetStateAction<Match[]>>
 }
 
-const MatchDetailsForm = ({ match, teams, matches, setMatches }: UpdateMatchFormProps) => {
+const MatchDetailsForm = ({ match, setSelectedMatch, teams, setMatches }: UpdateMatchFormProps) => {
     console.log("date", match.getDate());
 
     const navigate = useNavigate();
@@ -50,7 +50,7 @@ const MatchDetailsForm = ({ match, teams, matches, setMatches }: UpdateMatchForm
 
             const updatedMatch: Match = await updateMatch(req);
 
-            setMatches(matches.map(curr_match => {
+            setMatches(prev => prev.map(curr_match => {
                 return curr_match.getId() === updatedMatch.getId() ? updatedMatch : curr_match
             }));
         } catch (error) {
@@ -62,7 +62,9 @@ const MatchDetailsForm = ({ match, teams, matches, setMatches }: UpdateMatchForm
         try {
             await deleteMatch(match.getId());
 
-            setMatches([...matches.filter(curr => curr.getId() !== match.getId())]);
+            setSelectedMatch(null);
+
+            setMatches(prev => prev.filter(curr => curr.getId() !== match.getId()));
         } catch (error) {
             console.log("Failed to delete match", error);
         }

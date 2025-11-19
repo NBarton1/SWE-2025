@@ -14,6 +14,7 @@ import java.time.LocalDateTime
 class MatchService (
     val matchRepository: MatchRepository,
     val teamService: TeamService,
+    val postService: PostService,
 ) {
 
     fun createMatch(req: MatchCreateRequest): MatchDTO {
@@ -25,6 +26,8 @@ class MatchService (
         val awayTeam = teamService.getTeamById(req.awayTeamId)
 
         val match = req.toEntity(homeTeam, awayTeam)
+        match.post = postService.createPostForMatch()
+
         return matchRepository.save(match).toDTO()
     }
 
