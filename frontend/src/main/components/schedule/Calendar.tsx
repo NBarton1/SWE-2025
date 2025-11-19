@@ -101,7 +101,7 @@ const Calendar = ({ teams, matches, setMatches }: CalendarProps) => {
             >
                 <MatchDetailsModalFields
                     match={selectedMatch}
-                    matches={matches}
+                    setSelectedMatch={setSelectedMatch}
                     setMatches={setMatches}
                     teams={teams}
                 />

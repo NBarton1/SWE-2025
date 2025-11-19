@@ -6,12 +6,12 @@ import type {Team} from "../../types/team.ts";
 
 interface MatchDeleteProps {
     match: Match | null,
-    matches: Match[]
+    setSelectedMatch: Dispatch<React.SetStateAction<Match | null>>
     setMatches: Dispatch<React.SetStateAction<Match[]>>
     teams: Team[]
 }
 
-const MatchDetailsModalFields = ({ match, matches, setMatches, teams }: MatchDeleteProps) => {
+const MatchDetailsModalFields = ({ match, setSelectedMatch, setMatches, teams }: MatchDeleteProps) => {
 
     return match && (
         <>
@@ -25,8 +25,8 @@ const MatchDetailsModalFields = ({ match, matches, setMatches, teams }: MatchDel
 
             <MatchDetailsForm
                 match={match}
+                setSelectedMatch={setSelectedMatch}
                 teams={teams}
-                matches={matches}
                 setMatches={setMatches}
             />
         </>

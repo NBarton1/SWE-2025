@@ -65,7 +65,7 @@ class Match(
 
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "post_id")
-    var post: Post? = null
+    var post: Post? = null,
 
 ) {
     fun toDTO(): MatchDTO {
@@ -87,6 +87,7 @@ class Match(
             awayTeam = awayTeam.toDTO(),
             clockTimestamp = timeRemaining,
             timeRunning = timeRemaining > 0 && running,
+            postId = post?.id
         )
     }
 
@@ -95,4 +96,19 @@ class Match(
     fun truncateToMinutes() {
         date = date.truncatedTo(ChronoUnit.MINUTES)
     }
+
+//    private fun createPost() {
+//        post = Post(account = null)
+//    }
+//
+//    @PrePersist
+//    fun perPersist() {
+//        createPost()
+//        truncateToMinutes()
+//    }
+//
+//    @PreUpdate
+//    fun preUpdate() {
+//        truncateToMinutes()
+//    }
 }
