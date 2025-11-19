@@ -37,6 +37,7 @@ class Post (
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var parentPost: Post? = null,
 
     @OneToMany(mappedBy = "parentPost", fetch = FetchType.LAZY)

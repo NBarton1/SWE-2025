@@ -53,7 +53,11 @@ function PostContainer({ post, setPosts, setSelectedMatch }: PostContainerProps)
                 <Collapse in={commentsOpen}>
                     <Stack mt="md" p="md">
                         {children.map(child => (
-                            <PostContainer post={child} setPosts={setPosts} setSelectedMatch={setSelectedMatch} />
+                            <PostContainer
+                                post={child}
+                                setPosts={setPosts}
+                                setSelectedMatch={setSelectedMatch}
+                            />
                         ))}
                     </Stack>
                 </Collapse>
