@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PostRepository : JpaRepository<Post, Long> {
-    fun findAllByParentPostId(parentId: Long): List<Post>
     fun findByParentPostIsNull(): List<Post>
 }

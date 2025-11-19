@@ -34,8 +34,8 @@ class PostService (
     fun getAllRootPosts(): List<PostDTO> =
         postRepository.findByParentPostIsNull().map { it.toDTO() }
 
-    fun getChildren(parentId: Long): List<PostDTO> =
-        postRepository.findAllByParentPostId(parentId).map { it.toDTO() }
+    fun getChildren(id: Long): List<PostDTO> =
+        getPostById(id).children.map { it.toDTO() }
 
     fun deletePost(postId: Long, accountId: Long) {
         val requester = accountService.getAccountById(accountId)
