@@ -9,6 +9,7 @@ import {useAuth} from "../../hooks/useAuth.tsx";
 import {deletePost} from "../../request/post.ts";
 import {Avatar, Group, Paper, Title, Text, Stack, Anchor, ActionIcon} from "@mantine/core";
 import Likes from "../likes/Likes.tsx";
+import PostFlagButton from "./PostFlagButton.tsx";
 
 interface PostViewProps {
     post: Post;
@@ -16,6 +17,7 @@ interface PostViewProps {
 }
 
 function PostView({post, onDelete}: PostViewProps) {
+
     const editor = useEditor({
         editable: false,
         content: JSON.parse(post.textContent),
@@ -76,7 +78,10 @@ function PostView({post, onDelete}: PostViewProps) {
             <PostMediaCarousel post={post}/>
 
             <EditorContent editor={editor}/>
-            <Likes entityId={post.id} likeType="POST" compact/>
+            <Group>
+                <Likes entityId={post.id} likeType="POST" compact/>
+                <PostFlagButton postId={post.id}/>
+            </Group>
         </Paper>
     );
 }

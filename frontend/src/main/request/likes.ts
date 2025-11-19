@@ -55,7 +55,7 @@ export const getCoachLikeStatusCount: CountLikeStatusFunction = async (coachId: 
             headers: { "Content-Type": "application/json" },
             credentials: "include",
         });
-        return await res.json();
+        return Number(await res.text());
     } catch (err) {
         console.error(`Failed to get like count`, err);
         return null;
@@ -69,7 +69,7 @@ export const getPostLikeStatusCount: CountLikeStatusFunction = async (postId: nu
             headers: { "Content-Type": "application/json" },
             credentials: "include",
         });
-        return await res.json();
+        return Number(await res.text());
     } catch (err) {
         console.error(`Failed to get like count`, err);
         return null;

@@ -1,10 +1,12 @@
 package com.jknv.lum.controller
 
+import com.jknv.lum.model.dto.FlagDTO
 import com.jknv.lum.model.dto.LikeStatusDTO
 import com.jknv.lum.model.dto.PostDTO
 import com.jknv.lum.model.request.post.PostCreateRequest
 import com.jknv.lum.model.type.LikeType
 import com.jknv.lum.security.AccountDetails
+import com.jknv.lum.services.FlagService
 import com.jknv.lum.services.LikeStatusService
 import com.jknv.lum.services.PostService
 import org.springframework.http.HttpStatus
@@ -18,7 +20,8 @@ import org.springframework.web.multipart.MultipartFile
 @RequestMapping("/api/posts")
 class PostController(
     private val postService: PostService,
-    private val likeStatusService: LikeStatusService
+    private val likeStatusService: LikeStatusService,
+    private val flagService: FlagService
 ) {
 
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
@@ -83,5 +86,31 @@ class PostController(
     ): ResponseEntity<Long> {
         val reactions = likeStatusService.getNumLikeStatuses(id, LikeType.POST, false)
         return ResponseEntity.ok(reactions)
+    }
+
+    @PostMapping("/{id}/flags")
+    fun flagPost(
+        @PathVariable id: Long,
+        @AuthenticationPrincipal details: AccountDetails,
+    ): ResponseEntity<FlagDTO> {
+        val flag = flagService.createFlagByIds(id, details.id)
+        return ResponseEntity.ok(flag)
+    }
+
+    @GetMapping("/{id}/flags")
+    fun getFlagCountForPost(
+        @PathVariable id: Long,
+    ): ResponseEntity<Long> {
+        val count = flagService.getNumFlags(id)
+        return ResponseEntity.ok(count)
+    }
+
+    @GetMapping("/{id}/flag")
+    fun getFlagForPost(
+        @PathVariable id: Long,
+        @AuthenticationPrincipal details: AccountDetails,
+    ): ResponseEntity<FlagDTO> {
+        val flag = flagService.getFlagById(details.id, id)
+        return ResponseEntity.ok(flag)
     }
 }
