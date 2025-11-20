@@ -10,7 +10,7 @@ export interface PostRequestFields {
 
 export type PostCreateRequest = Partial<PostRequestFields>;
 
-export const createPost = async (req: PostCreateRequest) => {
+export const createPost = async (req: PostCreateRequest): Promise<Post | null> => {
     try {
         const formData = new FormData();
 

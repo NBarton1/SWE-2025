@@ -3,16 +3,24 @@ import {useEditor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import '@mantine/tiptap/styles.css';
 import {Button, FileButton, Paper, Stack, Group, ActionIcon, Title} from "@mantine/core";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {IconX} from '@tabler/icons-react';
-import {createPost, type PostCreateRequest} from "../../request/post.ts";
+import {createPost, type PostCreateRequest} from "../../request/posts.ts";
 import PostMediaPreview from "./PostMediaPreview.tsx";
 import type {ContentPreview} from "../../types/content.ts";
 import PostStatusPopup from "./PostStatusPopup.tsx";
 import PostTextEditor from "./PostTextEditor.tsx";
+import {comparePosts, type Post} from "../../types/post.ts";
 
 
-function PostEdit() {
+interface PostEditProps {
+    setPosts:  React.Dispatch<React.SetStateAction<Post[]>>;
+    parent?: Post;
+    popup?: boolean;
+    clearFormOnSubmit?: boolean;
+}
+
+function PostCreate({ setPosts, parent, popup, clearFormOnSubmit }: PostEditProps) {
     const editor = useEditor({
         shouldRerenderOnTransaction: true,
         extensions: [StarterKit, Highlight],
@@ -27,7 +35,7 @@ function PostEdit() {
     const [statusPopupOpen, setStatusPopupOpen] = useState<boolean>(false);
     const [postCreateError, setPostCreateError] = useState<boolean>(false);
 
-    const addMedia = (file: File | null) => {
+    const addMedia = useCallback((file: File | null) => {
         if (file) {
             const url = URL.createObjectURL(file);
 
@@ -38,36 +46,48 @@ function PostEdit() {
 
             setPreviewFiles([...previewFiles, contentPreview])
         }
-    };
+    }, [previewFiles]);
 
-    const removeMedia = (index: number) => {
+    const removeMedia = useCallback((index: number) => {
         URL.revokeObjectURL(previewFiles[index].previewUrl);
 
         setPreviewFiles(previewFiles.filter((_, i) => i !== index));
-    };
+    }, [previewFiles]);
 
-    const handleCreatePost = async () => {
+    const clearForm = useCallback(() => {
+        editor?.commands.clearContent();
+        previewFiles.forEach(p => URL.revokeObjectURL(p.previewUrl));
+        setPreviewFiles([]);
+    }, [editor?.commands, previewFiles]);
+
+    const handleCreatePost = useCallback(async () => {
         if (!editor) return;
 
         const jsonContent = editor.getJSON();
         const createPostReq: PostCreateRequest = {
+            parentId: parent?.id,
             mediaFiles: previewFiles.map(preview => preview.file),
             textContent: jsonContent,
         };
 
-        if (await createPost(createPostReq)) {
+        const post = await createPost(createPostReq)
+        if (post) {
+            console.log(post)
             setPostCreateError(false);
+            setPosts(prev => [...prev, post].sort(comparePosts));
         } else {
             setPostCreateError(true);
         }
 
-        setStatusPopupOpen(true);
-    };
+        if (popup) setStatusPopupOpen(true);
+        if (clearFormOnSubmit) clearForm();
+    }, [editor, parent, previewFiles, popup, clearFormOnSubmit, clearForm, setPosts]);
+
 
     return (
         <Paper shadow="sm" p="md" radius="md" withBorder>
             <Stack gap="md">
-                <Title order={3} ta="center">New Post</Title>
+                <Title order={3} ta="center">New {parent ? "Reply" : "Post"}</Title>
 
                 {previewFiles.length > 0 && (
                     <Group gap="xs" align="flex-start">
@@ -104,7 +124,7 @@ function PostEdit() {
                     <Button
                         onClick={handleCreatePost}
                     >
-                        Create Post
+                        Create {parent ? "Reply" : "Post"}
                     </Button>
                 </Group>
 
@@ -114,4 +134,4 @@ function PostEdit() {
     );
 }
 
-export default PostEdit;
+export default PostCreate;

@@ -4,11 +4,13 @@ import React, {type Dispatch, useEffect, useState} from "react";
 import PostView from "./PostView.tsx";
 import {Match} from "../../types/match.ts";
 import MatchPostView from "./MatchPostView.tsx";
-import {getChildren} from "../../request/post.ts";
+import {getChildren} from "../../request/posts.ts";
 import {Box, Button, Collapse, Group, Paper, Stack} from "@mantine/core";
 import {IconChevronDown, IconChevronUp} from "@tabler/icons-react";
 import Likes from "../likes/Likes.tsx";
 import PostFlagButton from "./PostFlagButton.tsx";
+import PostCreate from "./PostCreate.tsx";
+import {MessageCircle} from "lucide-react";
 
 
 interface PostContainerProps {
@@ -20,11 +22,11 @@ interface PostContainerProps {
 function PostContainer({ post, setPosts, setSelectedMatch }: PostContainerProps) {
     const [children, setChildren] = useState<Post[]>([]);
     const [commentsOpen, setCommentsOpen] = useState(false);
+    // const [replyCreatorOpen, setReplyCreatorOpen] = useState(false);
 
 
     useEffect(() => {
         getChildren(post).then((children) => {
-            console.log(children)
             setChildren(children)
         });
     }, [post])
@@ -53,22 +55,35 @@ function PostContainer({ post, setPosts, setSelectedMatch }: PostContainerProps)
                         <Group>
                             <Likes entityId={post.id} likeType="POST" compact/>
                             <PostFlagButton postId={post.id}/>
-                            <Box>
-                                <Button
-                                    onClick={() => setCommentsOpen(!commentsOpen)}
-                                    rightSection={commentsOpen ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-                                    variant="light"
-                                >
-                                    {commentsOpen ? "Hide Replies" : "Show Replies"}
-                                </Button>
-                            </Box>
+                            <Button
+                                onClick={() => setCommentsOpen(!commentsOpen)}
+                                rightSection={commentsOpen ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+                                variant="light"
+                            >
+                                <MessageCircle/>
+                            </Button>
+                            {/*<Box>*/}
+                            {/*    <Button*/}
+                            {/*        onClick={() => setCommentsOpen(!commentsOpen)}*/}
+                            {/*        rightSection={commentsOpen ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}*/}
+                            {/*        variant="light"*/}
+                            {/*    >*/}
+                            {/*        {commentsOpen ? "Hide Replies" : "Show Replies"}*/}
+                            {/*    </Button>*/}
+                            {/*</Box>*/}
                         </Group>
+
+                        {/*<Collapse in={replyCreatorOpen}>*/}
+                        {/*</Collapse>*/}
+
                         <Collapse in={commentsOpen}>
                             <Stack mt="md" p="md">
+                                <PostCreate setPosts={setChildren} parent={post} clearFormOnSubmit/>
                                 {children.map(child => (
                                     <PostContainer
+                                        key={child.id}
                                         post={child}
-                                        setPosts={setPosts}
+                                        setPosts={setChildren}
                                         setSelectedMatch={setSelectedMatch} />
                                 ))}
                             </Stack>

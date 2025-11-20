@@ -10,6 +10,7 @@ export interface Post {
     media: Content[],
     creationTime: string,
     match: MatchResponse | null,
+    parentId: number | null
 }
 
 export function formatCreationTime(post: Post): string {
@@ -32,7 +33,7 @@ export function formatCreationTime(post: Post): string {
 }
 
 export function comparePosts(post0: Post, post1: Post) {
-    return new Date(post1.creationTime).getTime() - new Date(post0.creationTime).getTime();
+    return post1.id - post0.id
 }
 
 export class comparePostFlagCount {

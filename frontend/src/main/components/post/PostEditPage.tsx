@@ -1,12 +1,12 @@
 import {Container} from "@mantine/core";
-import PostEdit from "./PostEdit.tsx";
+import PostCreate from "./PostCreate.tsx";
 
 
 function PostEditPage() {
 
     return (
         <Container size="md">
-            <PostEdit />
+            <PostCreate />
         </Container>
     );
 }

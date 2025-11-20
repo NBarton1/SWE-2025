@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
 @Component
-@Order(6)
+@Order(7)
 class FlagSeeder(
     private val flagRepository: FlagRepository,
     private val accountRepository: AccountRepository,

@@ -6,7 +6,7 @@ import '@mantine/carousel/styles.css';
 import {IconTrash} from "@tabler/icons-react";
 import {accountEquals, isAdmin} from "../../types/accountTypes.ts";
 import {useAuth} from "../../hooks/useAuth.tsx";
-import {deletePost} from "../../request/post.ts";
+import {deletePost} from "../../request/posts.ts";
 import {Avatar, Group, Title, Text, Stack, Anchor, ActionIcon} from "@mantine/core";
 import React, {type Dispatch} from "react";
 
