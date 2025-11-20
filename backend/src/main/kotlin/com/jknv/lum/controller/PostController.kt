@@ -31,7 +31,7 @@ class PostController(
         val req = PostCreateRequest(media, textContent, parentId)
 
         val response = postService.createPost(req, details.id)
-        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping

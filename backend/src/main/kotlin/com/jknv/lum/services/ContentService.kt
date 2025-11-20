@@ -83,6 +83,8 @@ class ContentService(
             )
         )
 
+        post?.media?.add(content)
+
         val targetPath = uploadPath.resolve(content.filename)
         Files.copy(file.inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING)
 
