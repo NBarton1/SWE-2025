@@ -5,7 +5,6 @@ import TeamStandings from "./components/teams/TeamStandings.tsx";
 import TeamView from "./components/teams/TeamView.tsx";
 import Layout from "./components/layout/Layout.tsx";
 import Profile from "./components/profile/Profile.tsx";
-import PostEditPage from "./components/post/PostEditPage.tsx";
 import FeedPage from "./components/post/FeedPage.tsx";
 import {type Account, isAdmin} from "./types/accountTypes.ts";
 import {useEffect, useState} from "react";
@@ -42,7 +41,6 @@ function App() {
                     <Route path="/teams" element={(<TeamStandings />)}/>
                     <Route path="/teams/:id" element={<TeamView />} />
                     <Route path="/playoff" element={<PlayoffPicture />} />
-                    <Route path="/create-post" element={(<PostEditPage />)} />
                     <Route path="/feed" element={(<FeedPage />)} />
                     <Route path="/match/:id" element={(<MatchPage />)}/>
 

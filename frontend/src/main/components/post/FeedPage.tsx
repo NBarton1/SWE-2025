@@ -1,12 +1,13 @@
 import {Container, Modal, Stack} from "@mantine/core";
 import {useEffect, useState} from "react";
-import {getAllPosts} from "../../request/post.ts";
+import {getAllPosts} from "../../request/posts.ts";
 import {comparePosts, type Post} from "../../types/post.ts";
 import PostContainer from "./PostContainer.tsx";
 import MatchDetailsModalFields from "../schedule/MatchDetailsModalFields.tsx";
 import type {Match} from "../../types/match.ts";
 import {getTeams} from "../../request/teams.ts";
 import type {Team} from "../../types/team.ts";
+import PostCreate from "./PostCreate.tsx";
 
 
 function FeedPage() {
@@ -16,7 +17,6 @@ function FeedPage() {
     const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
 
     useEffect(() => {
-        console.log("Getting All posts");
         getAllPosts().then(posts => {
             posts.sort(comparePosts);
             setPosts(posts);
@@ -25,11 +25,15 @@ function FeedPage() {
         getTeams().then(setTeams);
     }, []);
 
+    console.log("POST:", posts);
+
     return (
         <Container size="md">
             <Stack gap="md">
+                <PostCreate setPosts={setPosts} clearFormOnSubmit/>
                 {posts.map((post) =>
                     <PostContainer
+                        key={post.id}
                         post={post}
                         setPosts={setPosts}
                         setSelectedMatch={setSelectedMatch}

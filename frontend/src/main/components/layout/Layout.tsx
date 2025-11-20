@@ -22,7 +22,6 @@ function Layout() {
                 items: [
                     { label: "Schedule", href: "/schedule" },
                     { label: "Feed", href: "/feed" },
-                    { label: "Post", href: "/create-post" },
                 ]
             },
             {

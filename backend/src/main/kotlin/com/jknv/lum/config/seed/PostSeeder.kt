@@ -32,11 +32,12 @@ class PostSeeder (
                 postOf(accounts[2], "DK is the winner"),
             )
 
+            posts.forEach { postRepository.save(it) }
+
             posts[2].parentPost = posts[1]
             posts[3].parentPost = posts[2]
             posts[4].parentPost = posts[2]
 
-            posts.forEach { postRepository.save(it) }
             LOGGER.info("Posts seeded")
         }
     }
