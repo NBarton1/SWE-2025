@@ -5,6 +5,7 @@ import {useAuth} from "../../hooks/useAuth.tsx";
 import {useMemo} from "react";
 import {isAdmin} from "../../types/accountTypes.ts";
 import {useLogout} from "../../hooks/useLogout.tsx";
+import ProfileAvatar from "../profile/ProfileAvatar.tsx";
 
 function Layout() {
 
@@ -106,6 +107,11 @@ function Layout() {
                     </Group>
 
                     <Group gap="xs">
+
+                        {currentAccount &&
+                            <ProfileAvatar  account={currentAccount}/>
+                        }
+
                         <ActionIcon
                             variant="default"
                             size="lg"

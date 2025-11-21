@@ -35,6 +35,10 @@ class Guardian (
         )
     }
 
+    fun isGuardianOf(childAccountId: Long?): Boolean {
+        return children.any { it.account.id == childAccountId }
+    }
+
     @PreRemove
     fun preRemove() {
         children.forEach { child ->

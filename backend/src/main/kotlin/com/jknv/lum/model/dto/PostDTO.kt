@@ -12,4 +12,5 @@ class PostDTO (
     val creationTime: LocalDateTime?,
     val flagCount: Int,
     val match: MatchDTO?,
+    val isApproved: Boolean,
 )

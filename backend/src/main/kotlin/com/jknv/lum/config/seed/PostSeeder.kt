@@ -23,13 +23,13 @@ class PostSeeder (
             val accounts = accountRepository.findAll()
 
             val posts = listOf(
-                postOf(accounts[0], "DK won"),
-                postOf(accounts[1], "DK won again"),
-                postOf(accounts[5], "DK sucks!!!"),
-                postOf(accounts[5], "DK team players are losers"),
-                postOf(accounts[2], "DK won yet again"),
-                postOf(accounts[2], "DK is awesome"),
-                postOf(accounts[2], "DK is the winner"),
+                postOf(accounts[0], "DK won", true),
+                postOf(accounts[1], "DK won again", true),
+                postOf(accounts[5], "DK sucks!!!", true),
+                postOf(accounts[5], "DK team players are losers", true),
+                postOf(accounts[2], "DK won yet again", true),
+                postOf(accounts[2], "DK is awesome", true),
+                postOf(accounts[2], "DK is the winner", true),
             )
 
             posts.forEach { postRepository.save(it) }
@@ -42,9 +42,10 @@ class PostSeeder (
         }
     }
 
-    fun postOf(account: Account, textContent: String) : Post =
+    fun postOf(account: Account, textContent: String, isApproved: Boolean) : Post =
         Post(
             account = account,
             textContent = "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"$textContent\"}]}]}",
+            isApproved = isApproved
         )
 }
