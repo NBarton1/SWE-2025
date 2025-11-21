@@ -12,10 +12,9 @@ import {useAuth} from "../../hooks/useAuth.tsx";
 interface MatchPostViewProps {
     post: Post
     setPosts: Dispatch<React.SetStateAction<Post[]>>
-    setSelectedMatch: Dispatch<React.SetStateAction<Match | null>>
 }
 
-function MatchPostView({ post, setPosts, setSelectedMatch }: MatchPostViewProps) {
+function MatchPostView({ post, setPosts }: MatchPostViewProps) {
 
     const match = new Match(post.match as MatchResponse);
     const {currentAccount} = useAuth();
@@ -40,7 +39,6 @@ function MatchPostView({ post, setPosts, setSelectedMatch }: MatchPostViewProps)
                 <MatchPostUpdateIcons
                     match={match}
                     setPosts={setPosts}
-                    setSelectedMatch={setSelectedMatch}
                 />
             }
         </Group>
