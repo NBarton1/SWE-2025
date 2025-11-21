@@ -1,5 +1,6 @@
 package com.jknv.lum.controller
 
+import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.FlagDTO
 import com.jknv.lum.model.dto.LikeStatusDTO
 import com.jknv.lum.model.dto.PostDTO
@@ -112,6 +113,13 @@ class PostController(
     ): ResponseEntity<FlagDTO> {
         val flag = flagService.getFlagById(details.id, id)
         return ResponseEntity.ok(flag)
+    }
+
+    @GetMapping("/flags")
+    @Require.Admin
+    fun getFlaggedPosts(): ResponseEntity<List<PostDTO>> {
+        val response = postService.getFlaggedPosts()
+        return ResponseEntity.ok(response)
     }
 
     @GetMapping("/{id}/children")

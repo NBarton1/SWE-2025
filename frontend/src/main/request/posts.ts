@@ -75,3 +75,17 @@ export const getChildren = async (post: Post) => {
     }
     return [];
 };
+
+export const getFlaggedPosts = async (): Promise<Post[]> => {
+    try {
+        const res = await fetch("http://localhost:8080/api/posts/flags", {
+            method: "GET",
+            credentials: 'include',
+        });
+
+        return await res.json()
+    } catch (err) {
+        console.error("Failed to get flagged posts", err)
+    }
+    return [];
+}

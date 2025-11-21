@@ -45,6 +45,12 @@ class PostService (
         postRepository.deleteById(postId)
     }
 
+    fun getFlaggedPosts(): List<PostDTO> =
+        postRepository.findAll()
+            .filter { it.flagCount > 0 }
+            .sortedByDescending { it.flagCount }
+            .map { it.toDTO() }
+
     internal fun getPostById(id: Long): Post =
         postRepository.findById(id).orElseThrow { EntityNotFoundException("Post $id not found") }
 

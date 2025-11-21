@@ -15,6 +15,7 @@ import PlayoffPicture from "./components/teams/PlayoffPicture.tsx";
 import MatchPage from "./components/match/MatchPage.tsx";
 import AdminContentApprovalPage from "./components/admin/AdminContentApprovalPage.tsx";
 import Schedule from "./components/schedule/Schedule.tsx";
+import AdminFlaggedPosts from "./components/admin/AdminFlaggedPosts.tsx";
 
 function App() {
     const [currentAccount, setCurrentAccount] = useState<Account | null>(null)
@@ -48,6 +49,7 @@ function App() {
                             <>
                                 <Route path="/accounts" element={(<AdminAccountsPage/>)}/>
                                 <Route path="/content-approval" element={(<AdminContentApprovalPage/>)}/>
+                                <Route path="/flagged-posts" element={(<AdminFlaggedPosts/>)}/>
                             </>
                         )}
                     </Route>

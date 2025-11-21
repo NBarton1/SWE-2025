@@ -1,0 +1,35 @@
+import {useEffect, useState} from "react";
+import type {Post} from "../../types/post.ts";
+import {getFlaggedPosts} from "../../request/posts.ts";
+import {Paper, Stack, Text, Title} from "@mantine/core";
+import PostContainer from "../post/PostContainer.tsx";
+
+const AdminFlaggedPosts = () => {
+    const [posts, setPosts] = useState<Post[]>([])
+
+    useEffect(() => {
+        getFlaggedPosts().then(setPosts)
+    })
+
+    return (
+        <Stack>
+            <Title size="xl" fw={700}>Flagged Posts</Title>
+
+            {posts.length == 0 && (
+                <Text c="dimmed">There are no flagged posts</Text>
+            )}
+
+            {posts.map(post => (
+                <Paper p="md" withBorder>
+                    <PostContainer
+                        post={post}
+                        setPosts={setPosts}
+                        setSelectedMatch={() => {}}
+                    />
+                </Paper>
+            ))}
+        </Stack>
+    )
+}
+
+export default AdminFlaggedPosts
