@@ -19,7 +19,7 @@ import kotlin.test.assertEquals
 
 class TeamServiceTest {
     val teamRepository: TeamRepository = mockk()
-    val teamService = TeamService(teamRepository)
+    val teamService = TeamService(8, 2, teamRepository)
 
     val req: TeamCreateRequest = mockk()
 

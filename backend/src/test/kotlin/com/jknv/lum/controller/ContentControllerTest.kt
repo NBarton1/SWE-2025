@@ -3,6 +3,7 @@ package com.jknv.lum.controller
 import com.jknv.lum.model.entity.Content
 import com.jknv.lum.services.ContentService
 import io.mockk.every
+import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -22,7 +23,7 @@ class ContentControllerTest {
 
     @BeforeEach
     fun setUp() {
-        content = Content(filename = "file", fileSize = 0xff, contentType = "text/plain")
+        content = Content(filename = "file", fileSize = 0xff, contentType = "text/plain", isApproved = false)
     }
 
     @Test
@@ -55,5 +56,40 @@ class ContentControllerTest {
 
         assertEquals(response.statusCode, HttpStatus.OK)
         assertEquals(response.body, bytes)
+    }
+
+    @Test
+    fun getUnapprovedContentTest() {
+        every { contentService.getUnapprovedContent() } returns listOf(content.toDTO())
+
+        val response = contentController.getUnapprovedContent()
+
+        verify { contentService.getUnapprovedContent() }
+
+        assertEquals(response.statusCode, HttpStatus.OK)
+        assertEquals(response.body, listOf(content.toDTO()))
+    }
+
+    @Test
+    fun approveContentTest() {
+        every { contentService.approveContent(content.id) } returns content.toDTO()
+
+        val response = contentController.approveContent(content.id)
+
+        verify { contentService.approveContent(content.id) }
+
+        assertEquals(response.statusCode, HttpStatus.OK)
+        assertEquals(response.body, content.toDTO())
+    }
+
+    @Test
+    fun deleteContentTest() {
+        justRun { contentService.deleteContentById(content.id) }
+
+        val response = contentController.deleteContent(content.id)
+
+        verify { contentService.deleteContentById(content.id) }
+
+        assertEquals(response.statusCode, HttpStatus.OK)
     }
 }

@@ -232,7 +232,7 @@ class AccountServiceTest {
             username = account.username,
             email = account.email,
             role = account.role,
-            picture = picture.toDTO()
+            picture = picture.takeIf { it.isApproved }?.toDTO()
         )
 
         val result = accountService.updatePictureForAccount(account.id, image)

@@ -144,9 +144,14 @@ class AccountControllerTest {
 
     @Test
     fun deleteAccountTest() {
+        val details: AccountDetails = mockk()
+        val res: HttpServletResponse = mockk()
+
+        every { details.id } returns account.id + 1
+
         justRun { accountService.deleteAccount(account.id) }
 
-        val response: ResponseEntity<Void> = accountController.delete(account.id)
+        val response: ResponseEntity<Void> = accountController.delete(account.id, details, res)
 
         verify(exactly = 1) { accountService.deleteAccount(account.id) }
         assertEquals(HttpStatus.OK, response.statusCode)
