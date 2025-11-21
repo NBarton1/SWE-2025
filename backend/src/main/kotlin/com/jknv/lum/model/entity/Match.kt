@@ -20,6 +20,8 @@ import jakarta.persistence.OneToOne
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
 import jakarta.persistence.Table
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.time.Duration
@@ -63,8 +65,7 @@ class Match(
     @JoinColumn(name = "away_team_id", nullable = false)
     var awayTeam: Team,
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "post_id")
+    @OneToOne(mappedBy = "match", fetch = FetchType.LAZY)
     var post: Post? = null,
 
 ) {

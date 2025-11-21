@@ -87,7 +87,7 @@ class MatchSeeder (
             )
 
             matches.forEach {
-                it.post = postRepository.save(Post())
+                it.post = postRepository.save(Post(match = it))
                 matchRepository.save(it) 
             }
             

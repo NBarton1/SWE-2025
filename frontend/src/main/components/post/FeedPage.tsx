@@ -14,10 +14,10 @@ function FeedPage() {
         getAllPosts().then(posts => {
             posts.sort(comparePosts);
             setPosts(posts);
+
+            console.log("posts", posts);
         });
     }, []);
-
-    console.log("POST:", posts);
 
     return (
         <Container size="md">
