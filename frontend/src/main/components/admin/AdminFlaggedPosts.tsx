@@ -9,7 +9,7 @@ const AdminFlaggedPosts = () => {
 
     useEffect(() => {
         getFlaggedPosts().then(setPosts)
-    })
+    }, [])
 
     return (
         <Stack>
@@ -24,7 +24,6 @@ const AdminFlaggedPosts = () => {
                     <PostContainer
                         post={post}
                         setPosts={setPosts}
-                        setSelectedMatch={() => {}}
                     />
                 </Paper>
             ))}
