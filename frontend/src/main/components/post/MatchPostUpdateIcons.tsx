@@ -1,4 +1,4 @@
-import {IconEdit, IconTrash} from "@tabler/icons-react";
+import {IconTrash} from "@tabler/icons-react";
 import {ActionIcon, Stack} from "@mantine/core";
 import {Match} from "../../types/match.ts";
 import {deleteMatch} from "../../request/matches.ts";
@@ -9,10 +9,9 @@ import type {Post} from "../../types/post.ts";
 interface MatchPostUpdateIconsProps {
     match: Match,
     setPosts: Dispatch<React.SetStateAction<Post[]>>
-    setSelectedMatch: Dispatch<React.SetStateAction<Match | null>>
 }
 
-const MatchPostUpdateIcons = ({ match, setPosts, setSelectedMatch }: MatchPostUpdateIconsProps) => {
+const MatchPostUpdateIcons = ({ match, setPosts }: MatchPostUpdateIconsProps) => {
 
     const handleDelete = async() => {
         try {
@@ -24,16 +23,8 @@ const MatchPostUpdateIcons = ({ match, setPosts, setSelectedMatch }: MatchPostUp
         }
     }
 
-    const handleUpdate = () => {
-        setSelectedMatch(match);
-    }
-
     return (
         <Stack>
-            <ActionIcon variant="subtle" color="red" onClick={handleUpdate}>
-                <IconEdit />
-            </ActionIcon>
-
             <ActionIcon variant="subtle" color="red" onClick={handleDelete}>
                 <IconTrash />
             </ActionIcon>

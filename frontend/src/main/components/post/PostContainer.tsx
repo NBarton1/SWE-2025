@@ -2,7 +2,6 @@ import { type Post } from "../../types/post.ts";
 import '@mantine/carousel/styles.css';
 import React, {type Dispatch, useEffect, useState} from "react";
 import PostView from "./PostView.tsx";
-import {Match} from "../../types/match.ts";
 import MatchPostView from "./MatchPostView.tsx";
 import {getChildren} from "../../request/posts.ts";
 import {Box, Button, Collapse, Group, Paper, Stack} from "@mantine/core";
@@ -16,13 +15,11 @@ import {MessageCircle} from "lucide-react";
 interface PostContainerProps {
     post: Post
     setPosts: Dispatch<React.SetStateAction<Post[]>>
-    setSelectedMatch: Dispatch<React.SetStateAction<Match | null>>
 }
 
-function PostContainer({ post, setPosts, setSelectedMatch }: PostContainerProps) {
+function PostContainer({ post, setPosts }: PostContainerProps) {
     const [children, setChildren] = useState<Post[]>([]);
     const [commentsOpen, setCommentsOpen] = useState(false);
-    // const [replyCreatorOpen, setReplyCreatorOpen] = useState(false);
 
 
     useEffect(() => {
@@ -41,7 +38,6 @@ function PostContainer({ post, setPosts, setSelectedMatch }: PostContainerProps)
                         <MatchPostView
                             post={post}
                             setPosts={setPosts}
-                            setSelectedMatch={setSelectedMatch}
                         />
                     ) : (
                         <PostView
@@ -62,19 +58,7 @@ function PostContainer({ post, setPosts, setSelectedMatch }: PostContainerProps)
                             >
                                 <MessageCircle/>
                             </Button>
-                            {/*<Box>*/}
-                            {/*    <Button*/}
-                            {/*        onClick={() => setCommentsOpen(!commentsOpen)}*/}
-                            {/*        rightSection={commentsOpen ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}*/}
-                            {/*        variant="light"*/}
-                            {/*    >*/}
-                            {/*        {commentsOpen ? "Hide Replies" : "Show Replies"}*/}
-                            {/*    </Button>*/}
-                            {/*</Box>*/}
                         </Group>
-
-                        {/*<Collapse in={replyCreatorOpen}>*/}
-                        {/*</Collapse>*/}
 
                         <Collapse in={commentsOpen}>
                             <Stack mt="md" p="md">
@@ -84,7 +68,7 @@ function PostContainer({ post, setPosts, setSelectedMatch }: PostContainerProps)
                                         key={child.id}
                                         post={child}
                                         setPosts={setChildren}
-                                        setSelectedMatch={setSelectedMatch} />
+                                    />
                                 ))}
                             </Stack>
                         </Collapse>
