@@ -43,7 +43,8 @@ class Post (
     @Column(nullable = false)
     var flagCount: Int = 0,
 
-    @OneToOne(mappedBy = "post")
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @JoinColumn(name = "match_id")
     var match: Match? = null
 ) {
     fun toDTO(): PostDTO {

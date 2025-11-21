@@ -3,20 +3,14 @@ import {formatCreationTime, type Post} from "../../types/post.ts";
 import {EditorContent, useEditor} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import '@mantine/carousel/styles.css';
-import {IconTrash} from "@tabler/icons-react";
-import {accountEquals, isAdmin} from "../../types/accountTypes.ts";
-import {useAuth} from "../../hooks/useAuth.tsx";
-import {deletePost} from "../../request/posts.ts";
-import {Avatar, Group, Title, Text, Stack, Anchor, ActionIcon} from "@mantine/core";
-import React, {type Dispatch} from "react";
+import {Avatar, Group, Title, Text, Stack, Anchor} from "@mantine/core";
 
 
 interface PostViewProps {
     post: Post;
-    setPosts: Dispatch<React.SetStateAction<Post[]>>;
 }
 
-function PostView({post, setPosts}: PostViewProps) {
+function PostView({post}: PostViewProps) {
 
     const editor = useEditor({
         editable: false,
@@ -29,15 +23,7 @@ function PostView({post, setPosts}: PostViewProps) {
         },
     });
 
-    const {currentAccount} = useAuth()
-
     const account = post.account;
-
-    const handleDelete = async () => {
-        const deleted = await deletePost(post.id);
-
-        if (deleted) setPosts(prev => prev.filter(p => p.id !== post.id))
-    };
 
     return (
         <>
@@ -66,12 +52,6 @@ function PostView({post, setPosts}: PostViewProps) {
                         </Stack>
                     </Group>
                 </Anchor>
-
-                {(accountEquals(account, currentAccount) || isAdmin(currentAccount)) && (
-                    <ActionIcon variant="subtle" color="red" ml="auto" mb="auto" onClick={handleDelete}>
-                        <IconTrash/>
-                    </ActionIcon>
-                )}
             </Group>
 
             <PostMediaCarousel post={post}/>

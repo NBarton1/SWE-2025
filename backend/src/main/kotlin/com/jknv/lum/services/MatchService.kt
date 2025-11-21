@@ -26,7 +26,7 @@ class MatchService (
         val awayTeam = teamService.getTeamById(req.awayTeamId)
 
         val match = req.toEntity(homeTeam, awayTeam)
-        match.post = postService.createPostForMatch()
+        postService.createPostForMatch(match)
 
         return matchRepository.save(match).toDTO()
     }

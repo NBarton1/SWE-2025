@@ -1,6 +1,8 @@
 package com.jknv.lum.services
 
+import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.PostDTO
+import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.request.post.PostCreateRequest
 import com.jknv.lum.model.type.Role
@@ -28,8 +30,8 @@ class PostService (
         return createdPost.toDTO()
     }
 
-    fun createPostForMatch(): Post =
-        postRepository.save(Post())
+    fun createPostForMatch(match: Match): Post =
+        postRepository.save(Post(match = match))
 
     fun getAllRootPosts(): List<PostDTO> =
         postRepository.findByParentPostIsNull().map { it.toDTO() }
@@ -43,6 +45,7 @@ class PostService (
             throw IllegalAccessException("You do not have access to delete post $postId")
 
         postRepository.deleteById(postId)
+        LOGGER.info("Post Delected $postId")
     }
 
     fun getFlaggedPosts(): List<PostDTO> =
