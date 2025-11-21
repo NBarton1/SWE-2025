@@ -155,7 +155,7 @@ const ProfileHeader = ({account, setAccount}: ProfileHeaderProps) => {
                         <Group justify="space-between" align="flex-start">
                             <Group align="flex-start">
                                 <Stack gap="xs" align="center">
-                                    <ProfileAvatar account={account} previewUrl={previewUrl} />
+                                    <ProfileAvatar account={account} previewUrl={previewUrl} size={120} />
 
                                     {profileStateHandler.pictureUploadOption(form, setPreviewUrl)}
                                 </Stack>

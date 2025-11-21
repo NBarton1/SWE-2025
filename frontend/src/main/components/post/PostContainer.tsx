@@ -1,6 +1,6 @@
 import { type Post } from "../../types/post.ts";
 import '@mantine/carousel/styles.css';
-import React, {type Dispatch, useEffect, useState} from "react";
+import React, {type Dispatch, useCallback, useEffect, useState} from "react";
 import PostView from "./PostView.tsx";
 import MatchPostView from "./MatchPostView.tsx";
 import {deletePost, getChildren} from "../../request/posts.ts";
@@ -10,8 +10,9 @@ import Likes from "../likes/Likes.tsx";
 import PostFlagButton from "./PostFlagButton.tsx";
 import PostCreate from "./PostCreate.tsx";
 import {MessageCircle} from "lucide-react";
-import {hasEditPermission} from "../../types/accountTypes.ts";
 import {useAuth} from "../../hooks/useAuth.tsx";
+import {hasEditPermission} from "../../types/accountTypes.ts";
+import PostApprovalContainer from "./PostApprovalContainer.tsx";
 
 
 interface PostContainerProps {
@@ -30,6 +31,20 @@ function PostContainer({ post, setPosts }: PostContainerProps) {
             setChildren(children)
         });
     }, [post])
+
+    const setApprovedPost = useCallback((post: Post) => {
+        setChildren(prev => prev.map((p) => {
+            if (p.id === post.id) {
+                p.isApproved = true;
+            }
+            return p;
+        }));
+    }, []);
+
+    const deleteDisapprovedPost = useCallback((post: Post) => {
+        setChildren(prev => prev.filter((p) => p.id !== post.id));
+    }, []);
+
 
     const handleDelete = async () => {
         const deleted = await deletePost(post.id);
@@ -73,11 +88,20 @@ function PostContainer({ post, setPosts }: PostContainerProps) {
                                 <Stack mt="md" p="md">
                                     <PostCreate setPosts={setChildren} parent={post} clearFormOnSubmit/>
                                     {children.map(child => (
-                                        <PostContainer
-                                            key={child.id}
-                                            post={child}
-                                            setPosts={setChildren}
-                                        />
+                                        child.isApproved ?
+                                            <PostContainer
+                                                key={child.id}
+                                                post={child}
+                                                setPosts={setChildren}
+                                            />
+                                            :
+                                            <PostApprovalContainer
+                                                key={child.id}
+                                                post={child}
+                                                onApprove={setApprovedPost}
+                                                onDisapprove={deleteDisapprovedPost}
+                                                hasApprovalText
+                                            />
                                     ))}
                                 </Stack>
                             </Collapse>

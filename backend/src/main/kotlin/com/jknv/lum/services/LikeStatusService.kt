@@ -18,7 +18,7 @@ class LikeStatusService(
 ) {
 
     fun createLikeStatus(accountId: Long, entityId: Long, likeType: LikeType, liked: Boolean): LikeStatusDTO {
-        validateEntityExists(entityId, likeType)
+        validateEntityExists(entityId, likeType) // TODO change this to just have functions in dedicated services checking if exists
         return createLikeStatusEntity(accountId, entityId, likeType, liked).toDTO()
     }
 

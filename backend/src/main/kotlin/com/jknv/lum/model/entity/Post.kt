@@ -45,7 +45,10 @@ class Post (
 
     @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "match_id")
-    var match: Match? = null
+    var match: Match? = null,
+
+    @Column(nullable = false)
+    var isApproved: Boolean = false,
 ) {
     fun toDTO(): PostDTO {
         return PostDTO(
@@ -56,6 +59,7 @@ class Post (
             media = media.map { it.toDTO() }.toMutableList(),
             creationTime = creationTime,
             match = match?.toDTO(),
+            isApproved = isApproved,
         )
     }
 }

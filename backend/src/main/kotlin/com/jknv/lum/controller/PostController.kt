@@ -1,5 +1,6 @@
 package com.jknv.lum.controller
 
+import com.jknv.lum.LOGGER
 import com.jknv.lum.config.Require
 import com.jknv.lum.model.dto.FlagDTO
 import com.jknv.lum.model.dto.LikeStatusDTO
@@ -39,8 +40,10 @@ class PostController(
     }
 
     @GetMapping
-    fun getAllRootPosts(): ResponseEntity<List<PostDTO>> {
-        val response = postService.getAllRootPosts()
+    fun getAllRootPosts(
+        @AuthenticationPrincipal details: AccountDetails,
+    ): ResponseEntity<List<PostDTO>> {
+        val response = postService.getAllVisibleRootPosts(details.id)
         return ResponseEntity.status(HttpStatus.OK).body(response)
     }
 
@@ -60,7 +63,7 @@ class PostController(
         @AuthenticationPrincipal details: AccountDetails,
         @RequestBody liked: Boolean
     ): ResponseEntity<LikeStatusDTO> {
-        val likeStatus = likeStatusService.createLikeStatus(details.id, id, LikeType.POST, liked)
+        val likeStatus = postService.likePost(id, details.id, liked)
         return ResponseEntity.ok(likeStatus)
     }
 
@@ -125,8 +128,39 @@ class PostController(
     @GetMapping("/{id}/children")
     fun getChildren(
         @PathVariable id: Long,
+        @AuthenticationPrincipal details: AccountDetails,
     ): ResponseEntity<List<PostDTO>> {
-        val children = postService.getChildren(id)
+        val children = postService.getVisibleChildren(id, details.id)
         return ResponseEntity.ok(children)
     }
+
+    @Require.Guardian
+    @GetMapping("/unapproved")
+    fun getUnapproved(
+        @AuthenticationPrincipal details: AccountDetails,
+    ): ResponseEntity<HashMap<Long, List<PostDTO>>> {
+        val unapprovedPosts = postService.getUnapprovedPostsForGuardiansChildren(details.id)
+        return ResponseEntity.ok(unapprovedPosts)
+    }
+
+    @Require.GuardianOrAdmin
+    @PatchMapping("/{id}/approve")
+    fun approvePost(
+        @PathVariable id: Long,
+        @AuthenticationPrincipal details: AccountDetails,
+    ): ResponseEntity<PostDTO> {
+        val approved = postService.approveChildPost(details.id, id)
+        return ResponseEntity.ok(approved)
+    }
+
+    @Require.GuardianOrAdmin
+    @DeleteMapping("/{id}/disapprove")
+    fun disapprovePost(
+        @PathVariable id: Long,
+        @AuthenticationPrincipal details: AccountDetails,
+    ): ResponseEntity<Void> {
+        postService.disapproveChildPost(details.id, id)
+        return ResponseEntity.ok().build()
+    }
+
 }
