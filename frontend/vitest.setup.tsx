@@ -9,7 +9,6 @@ import {type Account, type Coach, type Player, Role} from "./src/main/types/acco
 import type {Content} from "./src/main/types/content.ts";
 import {InviteStatus, type TeamInvite} from "./src/main/types/invite.ts";
 import type {Post} from "./src/main/types/post.ts";
-import type {LikeStatus, LikeType} from "./src/main/types/like.ts";
 import type {UseLikesReturn} from "./src/main/hooks/useLikes.tsx";
 
 expect.extend(matchers)
