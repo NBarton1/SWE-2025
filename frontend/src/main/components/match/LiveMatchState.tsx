@@ -28,7 +28,7 @@ export class LiveMatchState extends MatchStateHandler {
         return (
             <>
                 <MatchEditState
-                    match={this.match}
+                    match={this.matchResponse}
                     updateMatch={updateMatch}
                 />
 
@@ -38,19 +38,19 @@ export class LiveMatchState extends MatchStateHandler {
                 >
 
                     <TeamScoreEdit
-                        team={this.match.awayTeam}
-                        score={this.match.awayScore}
+                        team={this.matchResponse.awayTeam}
+                        score={this.matchResponse.awayScore}
                         updateScore={(awayScore) => updateMatch({ awayScore })}
                     />
 
                     <TeamScoreEdit
-                        team={this.match.homeTeam}
-                        score={this.match.homeScore}
+                        team={this.matchResponse.homeTeam}
+                        score={this.matchResponse.homeScore}
                         updateScore={(homeScore) => updateMatch({ homeScore })}
                     />
 
                     <LiveMatchClockEdit
-                        match={this.match}
+                        match={this.matchResponse}
                         updateLiveMatch={updateMatch}
                     />
 

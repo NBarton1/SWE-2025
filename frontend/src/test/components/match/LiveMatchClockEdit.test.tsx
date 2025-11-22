@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import {mockLiveTimeStoppedMatch, renderWithWrap} from "../../../../vitest.setup.tsx";
+import {mockLiveTimeStoppedMatchResponse, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import '@testing-library/jest-dom';
 import type {MatchResponse} from "../../../main/types/match.ts";
@@ -18,7 +18,7 @@ describe("LiveMatchClockEdit", () => {
         vi.clearAllMocks();
 
         mockProps = {
-            match: mockLiveTimeStoppedMatch,
+            match: mockLiveTimeStoppedMatchResponse,
             updateLiveMatch: mockUpdateLiveMatch,
         };
     });

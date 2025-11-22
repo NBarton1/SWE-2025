@@ -3,12 +3,11 @@ import {useEffect, useRef, useState} from "react";
 import { Client } from "@stomp/stompjs";
 import {Match} from "../../types/match.ts";
 import MatchView from "./MatchView.tsx";
-import {live_match_websocket} from "./MatchWebSocket.ts";
+import {createMatchWebsocket, updateMatchCallback} from "./MatchWebSocket.ts";
 import {useParams} from "react-router";
 import {useAuth} from "../../hooks/useAuth.tsx";
 import {isAdmin} from "../../types/accountTypes.ts";
 import MatchEdit from "./MatchEdit.tsx";
-import {type UpdateMatchRequest} from "../../request/matches.ts";
 
 
 const MatchPage = () => {
@@ -20,24 +19,9 @@ const MatchPage = () => {
     const [match, setMatch] = useState<Match | null>(null);
     const clientRef = useRef<Client | null>(null);
 
-    useEffect(() => live_match_websocket(matchId, setMatch, clientRef), []);
+    useEffect(() => createMatchWebsocket(matchId, setMatch, clientRef), []);
 
-    const updateMatch = (
-        req: UpdateMatchRequest
-    ) => {
-
-        const client = clientRef.current;
-
-        if (client?.connected) {
-
-            client.publish({
-                destination: `/app/match/live-update/${matchId}`,
-                body: JSON.stringify(req),
-            });
-        } else {
-            console.error("Not Connected");
-        }
-    };
+    const updateMatch = updateMatchCallback(matchId, clientRef);
 
     return match && (
         <Container

@@ -7,11 +7,11 @@ import {
 } from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
 import MatchTitle from "../../../main/components/match/MatchTitle.tsx";
-import type {MatchResponse} from "../../../main/types/match.ts";
+import type {Match} from "../../../main/types/match.ts";
 
 
 let mockProps: {
-    match: MatchResponse
+    match: Match
 }
 
 
