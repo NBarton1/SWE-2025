@@ -25,6 +25,7 @@ const PlayoffPicture = () => {
                 display: "flex",
                 justifyContent: "center",
             }}
+            data-testid="playoff-picture"
         >
             <Paper
                 radius="md"
@@ -41,7 +42,13 @@ const PlayoffPicture = () => {
                     (playoffTeams.length ? (
                         <TeamStandingsTable teams={playoffTeams} />
                     ) : (
-                        <Stack align="center" justify="center" py="xl" gap="md">
+                        <Stack
+                            align="center"
+                            justify="center"
+                            py="xl"
+                            gap="md"
+                            data-testid="not-enough-matches-played-indicator"
+                        >
                             <Trophy size="5%" color="var(--mantine-color-dimmed)" />
                             <Text size="xl" fw={500} c="dimmed" ta="center">
                                 Playoff Picture appears when all teams have
