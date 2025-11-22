@@ -21,10 +21,10 @@ export function MatchExcelImporter() {
 
             // 4. Map rows → CreateMatchRequest objects
             const requests = rows.map((row: any) => ({
-                matchId: row.matchId ?? undefined,
+                matchId: undefined,
                 type: row.type ?? undefined,
-                homeTeamId: row.homeTeamId ?? undefined,
-                awayTeamId: row.awayTeamId ?? undefined,
+                homeTeamId: undefined,
+                awayTeamId: undefined,
                 date: row.date ? new Date(row.date).toISOString() : undefined,
                 homeScore: row.homeScore ?? undefined,
                 awayScore: row.awayScore ?? undefined,
