@@ -117,11 +117,11 @@ export const mockLiveTimeStoppedMatch = new Match(mockLiveTimeStoppedMatchRespon
 export const mockFinishedMatch = new Match(mockFinishedMatchResponse);
 
 
-export const mockMatches: MatchResponse[] = [
-    mockScheduledMatchResponse,
-    mockLiveTimeRunningMatchResponse,
-    mockLiveTimeStoppedMatchResponse,
-    mockFinishedMatchResponse
+export const mockMatches: Match[] = [
+    mockScheduledMatch,
+    mockLiveTimeRunningMatch,
+    mockLiveTimeStoppedMatch,
+    mockFinishedMatch
 ];
 
 export const mockContent: Content = {
