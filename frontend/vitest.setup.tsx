@@ -9,6 +9,8 @@ import {type Account, type Coach, type Player, Role} from "./src/main/types/acco
 import type {Content} from "./src/main/types/content.ts";
 import {InviteStatus, type TeamInvite} from "./src/main/types/invite.ts";
 import type {Post} from "./src/main/types/post.ts";
+import type {LikeStatus, LikeType} from "./src/main/types/like.ts";
+import type {UseLikesReturn} from "./src/main/hooks/useLikes.tsx";
 
 expect.extend(matchers)
 
@@ -220,12 +222,14 @@ export const mockContentImage: Content = {
     downloadUrl: "http://localhost:8080/api/content/1",
 }
 
+// @ts-ignore
 export const mockPost: Post = {
     id: 1,
     account: mockAdminAccount,
     textContent: "DK won",
 }
 
+// @ts-ignore
 export const mockFlaggedPost: Post = {
     id: 2,
     account: mockPlayerAccount,
@@ -234,6 +238,23 @@ export const mockFlaggedPost: Post = {
 }
 
 export const mockFlaggedPosts = [mockFlaggedPost]
+
+// export const mockLikeStatus: LikeStatus = {
+//     id: 1,
+//     account: mockAdminAccount,
+//     likeType: "POST",
+//     entityId: 1,
+//     liked: true
+// }
+
+export const mockUseLikesReturn: UseLikesReturn = {
+    numLikes: 1,
+    numDislikes: 1,
+    percentLikes: 50,
+    percentDislikes: 50,
+    reaction: null,
+    handleReact: vi.fn()
+}
 
 afterEach(() => {
     cleanup()
