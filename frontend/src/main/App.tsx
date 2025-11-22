@@ -16,6 +16,7 @@ import MatchPage from "./components/match/MatchPage.tsx";
 import AdminContentApprovalPage from "./components/admin/AdminContentApprovalPage.tsx";
 import Schedule from "./components/schedule/Schedule.tsx";
 import AdminFlaggedPosts from "./components/admin/AdminFlaggedPosts.tsx";
+import ScheduleImport from "./components/schedule/ScheduleImport.tsx";
 
 function App() {
     const [currentAccount, setCurrentAccount] = useState<Account | null>(null)
@@ -44,6 +45,7 @@ function App() {
                     <Route path="/playoff" element={<PlayoffPicture />} />
                     <Route path="/feed" element={(<FeedPage />)} />
                     <Route path="/match/:id" element={(<MatchPage />)}/>
+                    <Route path="/schedule/import" element={(<ScheduleImport />)}/>
 
                         {isAdmin(currentAccount) && (
                             <>
