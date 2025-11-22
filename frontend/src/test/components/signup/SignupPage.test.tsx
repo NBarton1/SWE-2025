@@ -1,21 +1,22 @@
 import SignupPage from "../../../main/components/signup/SignupPage.tsx";
-import {expect, vi} from "vitest";
-import {MOCK_OK, MOCK_UNAUTHORIZED, mockNavigate, renderWithWrap} from "../../../../vitest.setup.tsx";
-import {screen, waitFor} from "@testing-library/react";
+import { expect, vi, describe, test, beforeEach } from "vitest";
+import { MOCK_OK, MOCK_UNAUTHORIZED, mockNavigate, renderWithWrap } from "../../../../vitest.setup.tsx";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as signupRequest from "../../../main/request/signup.ts";
-import {Role} from "../../../main/types/accountTypes.ts";
-import {login} from "../../../main/request/auth.ts";
+import { Role } from "../../../main/types/accountTypes.ts";
 
+const mockTryLogin = vi.fn();
 
-vi.mock("../../../main/request/auth.ts", () => {
-    return {
-        login: vi.fn().mockResolvedValue({
-            ok: true,
-            text: async () => "dkwon",
-        }),
-    };
-})
+vi.mock("../../../main/hooks/useLogin.tsx", () => ({
+    useLogin: () => ({
+        tryLogin: mockTryLogin
+    })
+}));
+
+vi.mock("react-router", () => ({
+    useNavigate: () => mockNavigate
+}));
 
 describe("SignupPage", () => {
     beforeEach(() => {
@@ -58,7 +59,8 @@ describe("SignupPage", () => {
         await user.click(submitButton);
     });
 
-    test("signup and login function success login", async () => {
+    test("signup and login function success", async () => {
+
         const user = userEvent.setup();
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_OK);
 
@@ -83,16 +85,12 @@ describe("SignupPage", () => {
         });
 
         await waitFor(() => {
-            expect(login).toHaveBeenCalledWith({
-                username: "user",
-                password: "password",
-            });
+            expect(mockTryLogin).toHaveBeenCalledWith("user", "password");
         });
-
     });
 
-
     test("signup and login function fail login", async () => {
+
         const user = userEvent.setup();
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_UNAUTHORIZED);
 
@@ -117,20 +115,23 @@ describe("SignupPage", () => {
         });
 
         await waitFor(() => {
-            expect(login).not.toHaveBeenCalled();
+            expect(mockTryLogin).not.toHaveBeenCalled();
         });
     });
 
     test("signup as guardian", async () => {
+
         const user = userEvent.setup();
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_OK);
+
         const nameInput = screen.getByTestId("signup-name") as HTMLInputElement;
         const usernameInput = screen.getByTestId("signup-username") as HTMLInputElement;
         const passwordInput = screen.getByTestId("signup-password") as HTMLInputElement;
         const signupSubmit = screen.getByTestId("signup-submit") as HTMLButtonElement;
         const signupRadio = screen.getByTestId("signup-radio-guardian") as HTMLButtonElement;
 
-        signupRadio.click()
+        await user.click(signupRadio);
+
         const emailInput = screen.getByTestId("signup-email") as HTMLInputElement;
 
         await user.type(nameInput, "name");
@@ -149,20 +150,22 @@ describe("SignupPage", () => {
                 username: "user",
             });
         });
-    })
-
+    });
 
     test("press login to navigate to login page", async () => {
+
         const user = userEvent.setup();
         const signupLoginButton = screen.getByTestId("signup-login") as HTMLButtonElement;
 
-        await user.click(signupLoginButton)
+        await user.click(signupLoginButton);
+
         await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith("/login")
-        })
-    })
+            expect(mockNavigate).toHaveBeenCalledWith("/login");
+        });
+    });
 
     test("fail form validation name too short", async () => {
+
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_OK);
 
         const user = userEvent.setup();
@@ -176,14 +179,15 @@ describe("SignupPage", () => {
         await user.type(usernameInput, "user");
         await user.type(passwordInput, "password");
 
-        await user.click(signupSubmit)
-        await waitFor(() => {
-            expect(mockSignup).not.toHaveBeenCalled()
-        })
-    })
+        await user.click(signupSubmit);
 
+        await waitFor(() => {
+            expect(mockSignup).not.toHaveBeenCalled();
+        });
+    });
 
     test("fail form validation user too short", async () => {
+
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_OK);
 
         const user = userEvent.setup();
@@ -197,13 +201,15 @@ describe("SignupPage", () => {
         await user.type(usernameInput, "u");
         await user.type(passwordInput, "password");
 
-        await user.click(signupSubmit)
+        await user.click(signupSubmit);
+
         await waitFor(() => {
-            expect(mockSignup).not.toHaveBeenCalled()
-        })
-    })
+            expect(mockSignup).not.toHaveBeenCalled();
+        });
+    });
 
     test("fail form validation password too short", async () => {
+
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_OK);
 
         const user = userEvent.setup();
@@ -217,13 +223,15 @@ describe("SignupPage", () => {
         await user.type(usernameInput, "user");
         await user.type(passwordInput, "g");
 
-        await user.click(signupSubmit)
+        await user.click(signupSubmit);
+
         await waitFor(() => {
-            expect(mockSignup).not.toHaveBeenCalled()
-        })
-    })
+            expect(mockSignup).not.toHaveBeenCalled();
+        });
+    });
 
     test("fail form validation email invalid", async () => {
+
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_OK);
 
         const user = userEvent.setup();
@@ -234,7 +242,8 @@ describe("SignupPage", () => {
         const signupSubmit = screen.getByTestId("signup-submit") as HTMLButtonElement;
         const signupRadio = screen.getByTestId("signup-radio-guardian") as HTMLButtonElement;
 
-        signupRadio.click()
+        await user.click(signupRadio);
+
         const emailInput = screen.getByTestId("signup-email") as HTMLInputElement;
 
         await user.type(nameInput, "name");
@@ -242,13 +251,15 @@ describe("SignupPage", () => {
         await user.type(passwordInput, "password");
         await user.type(emailInput, "e");
 
-        await user.click(signupSubmit)
+        await user.click(signupSubmit);
+
         await waitFor(() => {
-            expect(mockSignup).not.toHaveBeenCalled()
-        })
-    })
+            expect(mockSignup).not.toHaveBeenCalled();
+        });
+    });
 
     test("click guardian button and player button", async () => {
+
         const mockSignup = vi.spyOn(signupRequest, "signup").mockResolvedValue(MOCK_OK);
         const user = userEvent.setup();
 
@@ -261,14 +272,15 @@ describe("SignupPage", () => {
 
         const signupSubmit = screen.getByTestId("signup-submit") as HTMLButtonElement;
 
-        await user.click(signupRadioGuardian)
+        await user.click(signupRadioGuardian);
+
         const emailInput = screen.getByTestId("signup-email") as HTMLInputElement;
 
         await user.type(nameInput, "name");
         await user.type(usernameInput, "user");
         await user.type(passwordInput, "password");
         await user.type(emailInput, "example@test.com");
-        await user.click(signupSubmit)
+        await user.click(signupSubmit);
 
         await waitFor(() => {
             expect(mockSignup).toHaveBeenCalledWith({
@@ -277,16 +289,16 @@ describe("SignupPage", () => {
                 password: "password",
                 role: Role.GUARDIAN,
                 username: "user",
-            })
-        })
+            });
+        });
 
-        await user.click(signupRadioPlayer)
+        await user.click(signupRadioPlayer);
 
         await waitFor(() => {
-            expect(mockSignup).toHaveBeenCalled()
-        })
+            expect(screen.queryByTestId("signup-email")).not.toBeInTheDocument();
+        });
 
-        await user.click(signupSubmit)
+        await user.click(signupSubmit);
 
         await waitFor(() => {
             expect(mockSignup).toHaveBeenCalledWith({
@@ -295,7 +307,7 @@ describe("SignupPage", () => {
                 password: "password",
                 role: Role.PLAYER,
                 username: "user",
-            })
-        })
-    })
+            });
+        });
+    });
 });
