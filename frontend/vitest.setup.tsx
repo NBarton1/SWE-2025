@@ -8,6 +8,7 @@ import {Match, type MatchResponse, MatchState, MatchType} from "./src/main/types
 import {type Account, type Coach, type Player, Role} from "./src/main/types/accountTypes.ts";
 import type {Content} from "./src/main/types/content.ts";
 import {InviteStatus, type TeamInvite} from "./src/main/types/invite.ts";
+import type {Post} from "./src/main/types/post.ts";
 
 expect.extend(matchers)
 
@@ -117,11 +118,11 @@ export const mockLiveTimeStoppedMatch = new Match(mockLiveTimeStoppedMatchRespon
 export const mockFinishedMatch = new Match(mockFinishedMatchResponse);
 
 
-export const mockMatches: MatchResponse[] = [
-    mockScheduledMatchResponse,
-    mockLiveTimeRunningMatchResponse,
-    mockLiveTimeStoppedMatchResponse,
-    mockFinishedMatchResponse
+export const mockMatches: Match[] = [
+    mockScheduledMatch,
+    mockLiveTimeRunningMatch,
+    mockLiveTimeStoppedMatch,
+    mockFinishedMatch
 ];
 
 export const mockContent: Content = {
@@ -131,6 +132,8 @@ export const mockContent: Content = {
     contentType: "",
     downloadUrl: "",
 }
+
+export const mockUnapprovedContent: Content[] = [mockContent];
 
 export const mockPlayerAccount: Account = {
     id: 2,
@@ -217,6 +220,20 @@ export const mockContentImage: Content = {
     downloadUrl: "http://localhost:8080/api/content/1",
 }
 
+export const mockPost: Post = {
+    id: 1,
+    account: mockAdminAccount,
+    textContent: "DK won",
+}
+
+export const mockFlaggedPost: Post = {
+    id: 2,
+    account: mockPlayerAccount,
+    textContent: "DK lost",
+    flagCount: 1000,
+}
+
+export const mockFlaggedPosts = [mockFlaggedPost]
 
 afterEach(() => {
     cleanup()

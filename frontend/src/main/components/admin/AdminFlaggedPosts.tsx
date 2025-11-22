@@ -12,11 +12,18 @@ const AdminFlaggedPosts = () => {
     }, [])
 
     return (
-        <Stack>
+        <Stack
+            data-testid="flagged-posts"
+        >
             <Title size="xl" fw={700}>Flagged Posts</Title>
 
             {posts.length == 0 && (
-                <Text c="dimmed">There are no flagged posts</Text>
+                <Text
+                    c="dimmed"
+                    data-testid="no-flagged-posts-indicator"
+                >
+                    There are no flagged posts
+                </Text>
             )}
 
             {posts.map(post => (
