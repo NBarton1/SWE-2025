@@ -1,20 +1,17 @@
 import {vi} from "vitest";
 import {
-    mockLiveTimeRunningMatch,
-    mockLiveTimeStoppedMatch,
-    mockScheduledMatch,
+    mockLiveTimeRunningMatchResponse,
+    mockLiveTimeStoppedMatchResponse,
+    mockScheduledMatchResponse,
     renderWithWrap
 } from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import type {MatchResponse} from "../../../main/types/match.ts";
-import type {UpdateMatchRequest} from "../../../main/request/matches.ts";
+import {Match} from "../../../main/types/match.ts";
 import LiveMatchClockView from "../../../main/components/match/LiveMatchClockView.tsx";
 
-const mockUpdateLiveMatch = vi.fn();
 
 let mockProps: {
-    match: MatchResponse
-    updateLiveMatch: (req: UpdateMatchRequest) => void
+    match: Match
 }
 
 describe("LiveMatchClockView", () => {
@@ -24,8 +21,7 @@ describe("LiveMatchClockView", () => {
 
     test("live match clock view renders", async () => {
         mockProps = {
-            match: mockLiveTimeStoppedMatch,
-            updateLiveMatch: mockUpdateLiveMatch,
+            match: new Match(mockLiveTimeStoppedMatchResponse),
         };
 
         renderWithWrap(<LiveMatchClockView {...mockProps} />);
@@ -37,8 +33,7 @@ describe("LiveMatchClockView", () => {
 
     test("clock not rendered if match not live", async () => {
         mockProps = {
-            match: mockScheduledMatch,
-            updateLiveMatch: mockUpdateLiveMatch,
+            match: new Match(mockScheduledMatchResponse),
         };
 
         renderWithWrap(<LiveMatchClockView {...mockProps} />);
@@ -50,8 +45,7 @@ describe("LiveMatchClockView", () => {
 
     test("live match clock stopped", async () => {
         mockProps = {
-            match: mockLiveTimeStoppedMatch,
-            updateLiveMatch: mockUpdateLiveMatch,
+            match: new Match(mockLiveTimeStoppedMatchResponse),
         };
 
         renderWithWrap(<LiveMatchClockView {...mockProps} />);
@@ -63,8 +57,7 @@ describe("LiveMatchClockView", () => {
 
     test("live match clock running", async () => {
         mockProps = {
-            match: mockLiveTimeRunningMatch,
-            updateLiveMatch: mockUpdateLiveMatch,
+            match: new Match(mockLiveTimeRunningMatchResponse),
         };
 
         renderWithWrap(<LiveMatchClockView {...mockProps} />);

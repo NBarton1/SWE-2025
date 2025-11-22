@@ -4,7 +4,7 @@ import * as matchers from '@testing-library/jest-dom/matchers'
 import {createTheme, MantineProvider} from "@mantine/core";
 import {BrowserRouter} from "react-router";
 import type {Team} from "./src/main/types/team.ts";
-import {type MatchResponse, MatchState, MatchType} from "./src/main/types/match.ts";
+import {Match, type MatchResponse, MatchState, MatchType} from "./src/main/types/match.ts";
 import {type Account, type Coach, type Player, Role} from "./src/main/types/accountTypes.ts";
 import type {Content} from "./src/main/types/content.ts";
 import {InviteStatus, type TeamInvite} from "./src/main/types/invite.ts";
@@ -30,6 +30,7 @@ export const mockTeamDK: Team = {
     draw: 0,
     pointsFor: 999,
     pointsAllowed: 0,
+    pct: 1
 };
 
 export const mockTeams: Team[] = [
@@ -42,6 +43,7 @@ export const mockTeams: Team[] = [
         draw: 0,
         pointsFor: 0,
         pointsAllowed: 1499,
+        pct: 0
     },
     {
         id: 3,
@@ -51,12 +53,13 @@ export const mockTeams: Team[] = [
         draw: 0,
         pointsFor: 500,
         pointsAllowed: 500,
+        pct: 0.5
     },
 ];
 
 export const mockDate = "2026-03-14";
 
-export const mockScheduledMatch: MatchResponse = {
+export const mockScheduledMatchResponse: MatchResponse = {
     id: 1,
     type: MatchType.STANDARD,
     date: `${mockDate}T03:00`,
@@ -69,7 +72,7 @@ export const mockScheduledMatch: MatchResponse = {
     state: MatchState.SCHEDULED,
 }
 
-export const mockLiveTimeStoppedMatch: MatchResponse = {
+export const mockLiveTimeStoppedMatchResponse: MatchResponse = {
     id: 2,
     type: MatchType.STANDARD,
     date: `${mockDate}T03:00`,
@@ -82,7 +85,7 @@ export const mockLiveTimeStoppedMatch: MatchResponse = {
     state: MatchState.LIVE,
 }
 
-export const mockLiveTimeRunningMatch: MatchResponse = {
+export const mockLiveTimeRunningMatchResponse: MatchResponse = {
     id: 3,
     type: MatchType.STANDARD,
     date: `${mockDate}T03:00`,
@@ -95,7 +98,7 @@ export const mockLiveTimeRunningMatch: MatchResponse = {
     state: MatchState.LIVE,
 }
 
-export const mockFinishedMatch: MatchResponse = {
+export const mockFinishedMatchResponse: MatchResponse = {
     id: 4,
     type: MatchType.STANDARD,
     date: `${mockDate}T03:00`,
@@ -108,11 +111,17 @@ export const mockFinishedMatch: MatchResponse = {
     state: MatchState.FINISHED,
 }
 
+export const mockScheduledMatch = new Match(mockScheduledMatchResponse);
+export const mockLiveTimeRunningMatch = new Match(mockLiveTimeRunningMatchResponse);
+export const mockLiveTimeStoppedMatch = new Match(mockLiveTimeStoppedMatchResponse);
+export const mockFinishedMatch = new Match(mockFinishedMatchResponse);
+
+
 export const mockMatches: MatchResponse[] = [
-    mockScheduledMatch,
-    mockLiveTimeRunningMatch,
-    mockLiveTimeStoppedMatch,
-    mockFinishedMatch
+    mockScheduledMatchResponse,
+    mockLiveTimeRunningMatchResponse,
+    mockLiveTimeStoppedMatchResponse,
+    mockFinishedMatchResponse
 ];
 
 export const mockContent: Content = {

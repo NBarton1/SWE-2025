@@ -3,10 +3,10 @@ import {type MatchResponse} from "../../types/match.ts";
 import { type UpdateMatchRequest } from "../../request/matches.ts";
 
 export abstract class MatchStateHandler {
-    protected match: MatchResponse;
+    protected matchResponse: MatchResponse;
 
     constructor(match: MatchResponse) {
-        this.match = match;
+        this.matchResponse = match;
     }
 
     abstract getTitleSuffix(): ReactNode;
