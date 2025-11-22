@@ -4,7 +4,9 @@ import { Group, Text } from "@mantine/core";
 import { IconUpload, IconX, IconPhoto } from "@tabler/icons-react";
 import * as XLSX from "xlsx";
 import { useState } from "react";
-import {createMatch} from "../../request/matches.ts";
+import {createMatch, type CreateMatchRequest} from "../../request/matches.ts";
+import {getTeams} from "../../request/teams.ts";
+import {Match} from "../../types/match.ts";
 
 export function MatchExcelImporter() {
     const [loading, setLoading] = useState(false);
@@ -19,24 +21,25 @@ export function MatchExcelImporter() {
             const sheet = workbook.Sheets[workbook.SheetNames[0]];
             const rows = XLSX.utils.sheet_to_json(sheet);
 
-            // 4. Map rows → CreateMatchRequest objects
-            const requests = rows.map((row: any) => ({
-                matchId: undefined,
-                type: row.type ?? undefined,
-                homeTeamId: undefined,
-                awayTeamId: undefined,
-                date: row.date ? new Date(row.date).toISOString() : undefined,
-                homeScore: row.homeScore ?? undefined,
-                awayScore: row.awayScore ?? undefined,
-                timeLeft: row.timeLeft ?? undefined,
-                toggleClock: row.toggleClock ?? undefined,
-                state: row.state ?? undefined,
-            }));
+            const teams = getTeams();
 
-            for (const req of requests) {
-                await createMatch(req);
-            }
+            const createMatchFromRow = async ( type, homeTeamId, awayTeamId, date, time) => {
+                try {
+                    console.log(type, homeTeamId, awayTeamId, date, time);
+                    const req: CreateMatchRequest = {
+                        type,
+                        homeTeamId,
+                        awayTeamId,
+                        date: `${date}T${time}`,
+                    };
 
+                    let createdMatch: Match = await createMatch(req);
+
+                    console.log(createdMatch);
+                } catch (error) {
+                    console.log("Failed to create match", error);
+                }
+            };
         } catch (err) {
             console.error("Import failed:", err);
         }
