@@ -52,7 +52,6 @@ const Dependent = ({
                         data-testid={`expand-button-${dependent.account.id}`}
                     >
                         <ChevronDown
-                            data-testid="chevron"
                             size={20}
                             style={{
                                 transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
