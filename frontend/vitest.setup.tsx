@@ -9,8 +9,9 @@ import {type Account, type Coach, type Player, Role} from "./src/main/types/acco
 import type {Content} from "./src/main/types/content.ts";
 import {InviteStatus, type TeamInvite} from "./src/main/types/invite.ts";
 import type {Post} from "./src/main/types/post.ts";
-import type {LikeStatus, LikeType} from "./src/main/types/like.ts";
 import type {UseLikesReturn} from "./src/main/hooks/useLikes.tsx";
+import type {Flag} from "./src/main/types/flag.ts";
+import type {LikeStatus} from "./src/main/types/like.ts";
 
 expect.extend(matchers)
 
@@ -237,15 +238,20 @@ export const mockFlaggedPost: Post = {
     flagCount: 1000,
 }
 
+
+export const mockFlag: Flag = {
+    post: mockFlaggedPost
+}
+
 export const mockFlaggedPosts = [mockFlaggedPost]
 
-// export const mockLikeStatus: LikeStatus = {
-//     id: 1,
-//     account: mockAdminAccount,
-//     likeType: "POST",
-//     entityId: 1,
-//     liked: true
-// }
+export const mockLikeStatus: LikeStatus = {
+    id: 1,
+    account: mockAdminAccount,
+    likeType: "POST",
+    entityId: 1,
+    liked: true
+}
 
 export const mockUseLikesReturn: UseLikesReturn = {
     numLikes: 1,

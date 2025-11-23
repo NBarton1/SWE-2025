@@ -1,9 +1,16 @@
-import {describe, expect} from "vitest";
-import {renderWithWrap} from "../../../../vitest.setup.tsx";
+import {describe, expect, vi} from "vitest";
+import {mockPlayerAccount, renderWithWrap} from "../../../../vitest.setup.tsx";
 import Layout from "../../../main/components/layout/Layout.tsx";
 import {screen} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+
+vi.mock("../../../main/hooks/useAuth.tsx", () => ({
+    useAuth: vi.fn().mockReturnValue({
+        currentAccount: mockPlayerAccount,
+        setCurrentAccount: vi.fn()
+    })
+}));
 
 describe("Layout", () => {
 

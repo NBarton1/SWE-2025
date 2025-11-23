@@ -1,6 +1,12 @@
 import {screen, waitFor} from "@testing-library/react";
 import {beforeEach, expect, vi} from "vitest";
-import {coachDK, mockAdminAccount, mockPlayer, mockTeamDK, renderWithWrap} from "../../../../vitest.setup.tsx";
+import {
+    coachDK,
+    mockAdminAccount,
+    mockPlayer,
+    mockTeamDK,
+    renderWithWrap
+} from "../../../../vitest.setup.tsx";
 import TeamView from "../../../main/components/teams/TeamView.tsx";
 import userEvent from "@testing-library/user-event";
 import * as teamsRequest from "../../../main/request/teams.ts";
@@ -28,7 +34,14 @@ vi.mock("../../../main/request/teams.ts", () => ({
     removePlayerFromTeam: vi.fn().mockResolvedValue(true),
 }));
 
-describe("TeamsPage", () => {
+vi.mock("../../../main/hooks/useAuth.tsx", () => ({
+    useAuth: vi.fn().mockReturnValue({
+        currentAccount: mockAdminAccount,
+        setCurrentAccount: vi.fn()
+    })
+}));
+
+describe("TeamView", () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
