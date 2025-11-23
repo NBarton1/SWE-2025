@@ -42,16 +42,16 @@ export const getFlag = async (postId: number): Promise<Flag | null> => {
     }
 };
 
-export const deleteFlag = async (id: number): Promise<void> => {
+export const deleteFlag = async (id: number): Promise<boolean> => {
     try {
         await fetch(`http://localhost:8080/api/flags/${id}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
         });
-        return;
+        return true;
     } catch (err) {
         console.error("Failed to delete flag for post ", err);
-        return;
+        return false;
     }
 };
