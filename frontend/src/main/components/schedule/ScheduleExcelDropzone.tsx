@@ -14,7 +14,7 @@ const excelDateToJSDate = (excelNum: number)=> {
 }
 
 const normalizeRow = (raw: any) => {
-    // Excel date → JS date parts
+
     const d = excelDateToJSDate(raw.date);
     const t = excelDateToJSDate(raw.time);
 
@@ -26,9 +26,9 @@ const normalizeRow = (raw: any) => {
     const min = String(t.M).padStart(2, "0");
 
     return {
-        type: raw.type,
-        homeTeam: raw.homeTeam,
-        awayTeam: raw.awayTeam,
+        type: String(raw.type).toUpperCase().trim(),            // make type case insensitive
+        homeTeam: String(raw.homeTeam),
+        awayTeam: String(raw.awayTeam),
         date: `${yyyy}-${mm}-${dd}`,
         time: `${hh}:${min}`,
     };
@@ -116,14 +116,14 @@ export function MatchExcelImporter() {
         setLoading(true);
 
         try {
-            const rows = await excelToJSON(file); // await here
+            const rows = await excelToJSON(file);
 
-            if (!rows || !Array.isArray(rows)) {
+            if (!rows) {
                 console.error("Excel file returned no rows.");
                 return;
             }
 
-            await createMatchesFromRows(rows); // await here too
+            await createMatchesFromRows(rows);
         } finally {
             setLoading(false);
         }
