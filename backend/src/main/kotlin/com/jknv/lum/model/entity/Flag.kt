@@ -28,6 +28,7 @@ class Flag (
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("accountId")
     @JoinColumn(name = "account_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     var account: Account,
 
     ) {
