@@ -43,7 +43,7 @@ class Post (
     @Column(nullable = false)
     var flagCount: Int = 0,
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     @JoinColumn(name = "match_id")
     var match: Match? = null,
 
