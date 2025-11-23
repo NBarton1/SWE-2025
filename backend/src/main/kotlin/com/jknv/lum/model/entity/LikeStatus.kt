@@ -3,6 +3,8 @@ package com.jknv.lum.model.entity
 import com.jknv.lum.model.dto.LikeStatusDTO
 import com.jknv.lum.model.type.LikeType
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 
 @Entity
 @Table(
@@ -20,6 +22,7 @@ class LikeStatus(
     val id: Long = 0,
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     val account: Account,
 
     @Column(nullable = false)
