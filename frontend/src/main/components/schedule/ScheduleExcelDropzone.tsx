@@ -9,17 +9,48 @@ import {getTeams} from "../../request/teams.ts";
 import {Match} from "../../types/match.ts";
 
 
-const excelToJSON =  async (file: File) => {
+const excelDateToJSDate = (excelNum: number)=> {
+    return XLSX.SSF.parse_date_code(excelNum);
+}
+
+const normalizeRow = (raw: any) => {
+    // Excel date → JS date parts
+    const d = excelDateToJSDate(raw.date);
+    const t = excelDateToJSDate(raw.time);
+
+    const yyyy = d.y;
+    const mm = String(d.m).padStart(2, "0");
+    const dd = String(d.d).padStart(2, "0");
+
+    const hh = String(t.H).padStart(2, "0");
+    const min = String(t.M).padStart(2, "0");
+
+    return {
+        type: raw.type,
+        homeTeam: raw.homeTeam,
+        awayTeam: raw.awayTeam,
+        date: `${yyyy}-${mm}-${dd}`,
+        time: `${hh}:${min}`,
+    };
+}
+
+
+const excelToJSON = async (file: File): Promise<any[]> => {
     try {
         const buffer = await file.arrayBuffer();
         const workbook = XLSX.read(buffer);
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet);
-        return rows;
+        const rowsRaw: any[] = XLSX.utils.sheet_to_json(sheet);
+
+        const normalizedRows = rowsRaw.map(normalizeRow);
+
+        return normalizedRows;
     } catch (err) {
         console.error("Import failed:", err);
+        return [];
     }
-}
+};
+
 
 const getTeamDictionary = async () => {
     const teams = await getTeams();
@@ -37,38 +68,29 @@ const createMatchesFromRows = async (rows: any) => {
     const teamDictionary = await getTeamDictionary();
 
     for (const row of rows) {
+
         const homeId = teamDictionary[row.homeTeam];
         const awayId = teamDictionary[row.awayTeam];
 
         if (!homeId || !awayId) {
             console.log(`Team not found in dictionary for row:`, row);
-            continue;
+        }
+        else {
+            await createMatchFromRow(
+                row.type,
+                homeId,
+                awayId,
+                row.date,
+                row.time
+            );
         }
 
-        await createMatchFromRow(
-            row.type,
-            homeId,
-            awayId,
-            row.date,
-            row.time
-        );
+        console.log("Mapped home:", homeId, "away:", awayId);
+
     }
 };
 
-    /*
-const parseRow = async(rows: any[], dictTeams: any) => {
-
-    //not necessary to check because backend won't create matches with invalid teams?
-
-    if row.homeTeam in dictTeams.keys and row.awayTeam in dictTeams.keys
-            createMatchFromRow()
-    else
-        do nothing
-     */
-}
-
 const createMatchFromRow = async ( type: string, homeTeamId: string, awayTeamId: string, date:string, time:string) => {
-
     try{
         const req: CreateMatchRequest = {
             type,
@@ -77,7 +99,7 @@ const createMatchFromRow = async ( type: string, homeTeamId: string, awayTeamId:
             date: `${date}T${time}`,
         };
 
-        let createdMatch: Match = await createMatch(req);
+        const createdMatch: Match = await createMatch(req);
         console.log(createdMatch);
     }
 
@@ -90,13 +112,22 @@ const createMatchFromRow = async ( type: string, homeTeamId: string, awayTeamId:
 export function MatchExcelImporter() {
     const [loading, setLoading] = useState(false);
 
-    setLoading(true);
-    setLoading(false);
-
     const handleExcel = async (file: File) => {
-        const rows = excelToJSON(file);
-        createMatchesFromRows(rows);
-    }
+        setLoading(true);
+
+        try {
+            const rows = await excelToJSON(file); // await here
+
+            if (!rows || !Array.isArray(rows)) {
+                console.error("Excel file returned no rows.");
+                return;
+            }
+
+            await createMatchesFromRows(rows); // await here too
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <Dropzone
