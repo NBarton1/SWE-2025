@@ -27,7 +27,9 @@ function PostView({post}: PostViewProps) {
 
     return (
         <>
-            <Group>
+            <Group
+                data-testid="post-view"
+            >
                 <Anchor
                     href={`/profile/${account?.id}`}
                     c="inherit"
@@ -46,7 +48,11 @@ function PostView({post}: PostViewProps) {
                                         {account?.name}
                                     </Title>
 
-                            <Text size="sm" c="dimmed">
+                            <Text
+                                size="sm"
+                                c="dimmed"
+                                data-testid="post-author"
+                            >
                                 {account ? `@${account.username}` : "Deleted User"} · {formatCreationTime(post)}
                             </Text>
                         </Stack>

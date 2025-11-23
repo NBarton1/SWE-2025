@@ -6,7 +6,7 @@ import {BrowserRouter} from "react-router";
 import type {Team} from "./src/main/types/team.ts";
 import {Match, type MatchResponse, MatchState, MatchType} from "./src/main/types/match.ts";
 import {type Account, type Coach, type Player, Role} from "./src/main/types/accountTypes.ts";
-import type {Content} from "./src/main/types/content.ts";
+import type {Content, ContentPreview} from "./src/main/types/content.ts";
 import {InviteStatus, type TeamInvite} from "./src/main/types/invite.ts";
 import type {Post} from "./src/main/types/post.ts";
 import type {UseLikesReturn} from "./src/main/hooks/useLikes.tsx";
@@ -136,6 +136,24 @@ export const mockContent: Content = {
     downloadUrl: "",
 }
 
+export const mockContentPreview: ContentPreview = {
+    file: { type: "image/png" } as File,
+    previewUrl: "",
+}
+
+export const mockVideoContentPreview: ContentPreview = {
+    file: { type: "video/mp4" } as File,
+    previewUrl: "video/",
+}
+
+export const mockVideoContent: Content = {
+    id: 1,
+    filename: "",
+    fileSize: 0,
+    contentType: "video/",
+    downloadUrl: "",
+}
+
 export const mockUnapprovedContent: Content[] = [mockContent];
 
 export const mockPlayerAccount: Account = {
@@ -227,8 +245,27 @@ export const mockContentImage: Content = {
 export const mockPost: Post = {
     id: 1,
     account: mockAdminAccount,
-    textContent: "DK won",
+    textContent: "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"DK won\"}]}]}",
+    isApproved: true,
+    media: []
 }
+
+// @ts-ignore
+export const mockPostDeletedAccount: Post = {
+    id: 1,
+    textContent: "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"DK won\"}]}]}",
+    isApproved: true,
+    media: []
+}
+
+// @ts-ignore
+export const mockUnapprovedPost: Post = {
+    id: 2,
+    account: mockPlayerAccount,
+    textContent: "",
+    isApproved: false
+}
+
 
 // @ts-ignore
 export const mockFlaggedPost: Post = {
@@ -238,7 +275,7 @@ export const mockFlaggedPost: Post = {
     flagCount: 1000,
 }
 
-
+// @ts-ignore
 export const mockFlag: Flag = {
     post: mockFlaggedPost
 }
@@ -261,6 +298,14 @@ export const mockUseLikesReturn: UseLikesReturn = {
     reaction: null,
     handleReact: vi.fn()
 }
+// @ts-ignore
+export const mockMatchPost: Post = {
+    id: 3,
+    match: mockScheduledMatchResponse,
+}
+
+export const mockPosts = [mockPost, mockUnapprovedPost];
+export const mockPostsWithMatch = [mockPost, mockMatchPost];
 
 afterEach(() => {
     cleanup()
