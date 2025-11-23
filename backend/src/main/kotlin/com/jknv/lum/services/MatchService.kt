@@ -7,10 +7,12 @@ import com.jknv.lum.model.request.match.MatchUpdateRequest
 import com.jknv.lum.repository.MatchRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 import java.time.LocalDateTime
 
 @Service
+@Transactional
 class MatchService (
     val matchRepository: MatchRepository,
     val teamService: TeamService,

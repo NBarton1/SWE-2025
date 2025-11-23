@@ -15,12 +15,17 @@ interface PostFooterProps {
 const PostFooter = ({ post, commentsOpen, setCommentsOpen }: PostFooterProps) => {
 
     return (
-        <Group>
+        <Group
+            data-testid="post-footer"
+        >
             <Likes entityId={post.id} likeType="POST" compact/>
             <PostFlagButton postId={post.id}/>
             <Button
                 onClick={() => setCommentsOpen(!commentsOpen)}
-                rightSection={commentsOpen ? <IconChevronUp size={16}/> : <IconChevronDown size={16}/>}
+                rightSection={commentsOpen ?
+                    <IconChevronUp data-testid="comments-open-indicator" size={16}/>
+                    :
+                    <IconChevronDown data-testid="comments-collapsed-indicator" size={16}/>}
                 variant="light"
             >
                 <MessageCircle/>

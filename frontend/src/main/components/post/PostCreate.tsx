@@ -13,14 +13,14 @@ import PostTextEditor from "./PostTextEditor.tsx";
 import {comparePosts, type Post} from "../../types/post.ts";
 
 
-interface PostEditProps {
+interface PostCreateProps {
     setPosts:  React.Dispatch<React.SetStateAction<Post[]>>;
     parent?: Post;
     popup?: boolean;
     clearFormOnSubmit?: boolean;
 }
 
-function PostCreate({ setPosts, parent, popup, clearFormOnSubmit }: PostEditProps) {
+function PostCreate({ setPosts, parent, popup, clearFormOnSubmit }: PostCreateProps) {
     const editor = useEditor({
         shouldRerenderOnTransaction: true,
         extensions: [StarterKit, Highlight],
@@ -85,7 +85,13 @@ function PostCreate({ setPosts, parent, popup, clearFormOnSubmit }: PostEditProp
 
 
     return (
-        <Paper shadow="sm" p="md" radius="md" withBorder>
+        <Paper
+            shadow="sm"
+            p="md"
+            radius="md"
+            data-testid="post-create"
+            withBorder
+        >
             <Stack gap="md">
                 <Title order={3} ta="center">New {parent ? "Reply" : "Post"}</Title>
 
@@ -113,6 +119,7 @@ function PostCreate({ setPosts, parent, popup, clearFormOnSubmit }: PostEditProp
                     <FileButton
                         onChange={addMedia}
                         accept="image/png,image/jpeg,image/gif"
+                        data-testid="upload-media-button"
                     >
                         {(props) => (
                             <Button {...props}>
@@ -123,6 +130,7 @@ function PostCreate({ setPosts, parent, popup, clearFormOnSubmit }: PostEditProp
 
                     <Button
                         onClick={handleCreatePost}
+                        data-testid="create-post-button"
                     >
                         Create {parent ? "Reply" : "Post"}
                     </Button>

@@ -1,23 +1,21 @@
-import { vi } from "vitest";
-import {mockDate, mockMatches, renderWithWrap} from "../../../../vitest.setup.tsx";
-import {screen, waitFor} from "@testing-library/react";
-import Calendar from "../../../main/components/schedule/Calendar.tsx";
+import { vi, describe, test, beforeEach, expect } from "vitest";
+import {renderWithWrap} from "../../../../vitest.setup.tsx";
+import { screen, waitFor } from "@testing-library/react";
 import * as matchRequest from "../../../main/request/matches.ts";
 import * as teamRequest from "../../../main/request/teams.ts";
-import type {DateClickArg} from "@fullcalendar/interaction";
+import Schedule from "../../../main/components/schedule/Schedule.tsx";
+import { MemoryRouter } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
 
-let mockDateClick: ((arg: DateClickArg) => void) | undefined;
-let mockEvents: any[];
-
-vi.mock("@fullcalendar/react", () => ({
-    default: (props: any) => {
-        mockDateClick = props.dateClick;
-        mockEvents = props.events || [];
-        return (<div data-testid="calendar">Mocked Calendar</div>);
-    },
+vi.mock("../../../main/components/schedule/Calendar.tsx", () => ({
+    default: () => <div data-testid="calendar"/>
 }));
 
-describe("Calendar", () => {
+vi.mock("../../../main/components/schedule/ScheduleList.tsx", () => ({
+    default: () => <div data-testid="schedule-list"/>
+}));
+
+describe("Schedule", () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
@@ -25,45 +23,140 @@ describe("Calendar", () => {
         vi.spyOn(teamRequest, "getTeams").mockResolvedValue([]);
     });
 
-    test("renders components", async () => {
-        renderWithWrap(<Calendar />);
+    test("renders schedule paper", async () => {
+        renderWithWrap(
+            <MemoryRouter>
+                <Schedule />
+            </MemoryRouter>
+        );
 
         await waitFor(() => {
-            expect(screen.getByTestId("calendar")).toBeInTheDocument();
-            expect(screen.getByTestId("schedule-title")).toBeInTheDocument();
             expect(screen.getByTestId("schedule-paper")).toBeInTheDocument();
         });
     });
 
-    test("fetches matches and teams", async () => {
-
-
-        renderWithWrap(<Calendar />);
+    test("fetches matches and teams on mount", async () => {
+        renderWithWrap(
+            <MemoryRouter>
+                <Schedule />
+            </MemoryRouter>
+        );
 
         await waitFor(() => {
-            expect(matchRequest.getMatches).toHaveBeenCalled();
-            expect(teamRequest.getTeams).toHaveBeenCalled();
+            expect(matchRequest.getMatches).toHaveBeenCalledTimes(1);
+            expect(teamRequest.getTeams).toHaveBeenCalledTimes(1);
         });
     });
 
-    test("popup opened when date clicked", async () => {
-        renderWithWrap(<Calendar />);
-
-        mockDateClick?.({ dateStr: mockDate } as DateClickArg);
+    test("renders new match button", async () => {
+        renderWithWrap(
+            <MemoryRouter>
+                <Schedule />
+            </MemoryRouter>
+        );
 
         await waitFor(() => {
-            expect(screen.getByTestId("date-popup")).toBeInTheDocument();
+            expect(screen.getByTestId("new-match-button")).toBeInTheDocument();
         });
-    })
+    });
 
-    test("matches populate on calendar", async () => {
+    test("opens new match modal when button clicked", async () => {
+        const user = userEvent.setup();
 
-        vi.spyOn(matchRequest, "getMatches").mockResolvedValue(mockMatches);
+        renderWithWrap(
+            <MemoryRouter>
+                <Schedule />
+            </MemoryRouter>
+        );
 
-        renderWithWrap(<Calendar />);
+        const newMatchButton = screen.getByTestId("new-match-button");
+        await user.click(newMatchButton);
 
         await waitFor(() => {
-            expect(mockEvents.length).toBe(mockMatches.length);
+            expect(screen.getByTestId("event-popup")).toBeInTheDocument();
+        });
+    });
+
+    test("defaults to calendar view", async () => {
+        renderWithWrap(
+            <MemoryRouter>
+                <Schedule />
+            </MemoryRouter>
+        );
+
+        await waitFor(() => {
+            expect(screen.getByTestId("calendar")).toBeInTheDocument();
+            expect(screen.queryByTestId("schedule-list")).not.toBeInTheDocument();
+        });
+    });
+
+    test("renders list view when view=list in search params", async () => {
+        renderWithWrap(
+            <MemoryRouter initialEntries={["/?view=list"]}>
+                <Schedule />
+            </MemoryRouter>
+        );
+
+        await waitFor(() => {
+            expect(screen.getByTestId("schedule-list")).toBeInTheDocument();
+            expect(screen.queryByTestId("calendar")).not.toBeInTheDocument();
+        });
+    });
+
+    test("renders calendar view when view=calendar in search params", async () => {
+        renderWithWrap(
+            <MemoryRouter initialEntries={["/?view=calendar"]}>
+                <Schedule />
+            </MemoryRouter>
+        );
+
+        await waitFor(() => {
+            expect(screen.getByTestId("calendar")).toBeInTheDocument();
+            expect(screen.queryByTestId("schedule-list")).not.toBeInTheDocument();
+        });
+    });
+
+    test("toggles from calendar to list view", async () => {
+        const user = userEvent.setup();
+
+        renderWithWrap(
+            <MemoryRouter>
+                <Schedule />
+            </MemoryRouter>
+        );
+
+        await waitFor(() => {
+            expect(screen.getByTestId("calendar")).toBeInTheDocument();
+        });
+
+        const toggleButton = screen.getByTestId("view-toggle-button");
+        await user.click(toggleButton);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId("calendar")).not.toBeInTheDocument();
+            expect(screen.getByTestId("schedule-list")).toBeInTheDocument();
+        });
+    });
+
+    test("toggles from list to calendar view", async () => {
+        const user = userEvent.setup();
+
+        renderWithWrap(
+            <MemoryRouter initialEntries={["/?view=list"]}>
+                <Schedule />
+            </MemoryRouter>
+        );
+
+        await waitFor(() => {
+            expect(screen.getByTestId("schedule-list")).toBeInTheDocument();
+        });
+
+        const toggleButton = screen.getByTestId("view-toggle-button");
+        await user.click(toggleButton);
+
+        await waitFor(() => {
+            expect(screen.getByTestId("calendar")).toBeInTheDocument();
+            expect(screen.queryByTestId("schedule-list")).not.toBeInTheDocument();
         });
     });
 });

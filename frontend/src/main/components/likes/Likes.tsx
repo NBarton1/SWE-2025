@@ -18,7 +18,13 @@ const Likes = ({ entityId, likeType, compact}: LikesProps) => {
 
     return (
         (compact ? buttons : (
-            <Paper shadow="sm" radius="md" p="xl" withBorder>
+            <Paper
+                shadow="sm"
+                radius="md"
+                p="xl"
+                withBorder
+                data-testid="likes-view"
+            >
                 <Stack gap="md">
 
                     {buttons}

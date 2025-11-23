@@ -30,7 +30,10 @@ const AdminContentApprovalPage = () => {
 
 
     return (
-        <Stack p="md">
+        <Stack
+            p="md"
+            data-testid="admin-content-approval-page"
+        >
             <Title size="xl" fw={700}>Content Pending Approval</Title>
 
             {content.length === 0 && (
@@ -59,6 +62,7 @@ const AdminContentApprovalPage = () => {
                                 <Button
                                     color="green"
                                     onClick={() => approveItem(item.id)}
+                                    data-testid="approve-content-button"
                                 >
                                     Approve
                                 </Button>
@@ -67,6 +71,7 @@ const AdminContentApprovalPage = () => {
                                     color="red"
                                     variant="outline"
                                     onClick={() => disapproveItem(item.id)}
+                                    data-testid="disapprove-content-button"
                                 >
                                     Delete
                                 </Button>

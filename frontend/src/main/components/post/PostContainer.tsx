@@ -55,7 +55,11 @@ function PostContainer({ post, setPosts }: PostContainerProps) {
     }
 
     return (
-        <Paper p="md" withBorder>
+        <Paper
+            p="md"
+            withBorder
+            data-testid="post-container"
+        >
             <Group>
                 <Box
                     style={{ flex: 1 }}
@@ -69,7 +73,6 @@ function PostContainer({ post, setPosts }: PostContainerProps) {
                                 post={post}
                             />
                         )}
-
 
                         <Stack gap="sm">
                             <Group>
@@ -115,6 +118,7 @@ function PostContainer({ post, setPosts }: PostContainerProps) {
                         ml="auto"
                         mb="auto"
                         onClick={handleDelete}
+                        data-testid="post-delete-icon"
                     >
                         <IconTrash/>
                     </ActionIcon>

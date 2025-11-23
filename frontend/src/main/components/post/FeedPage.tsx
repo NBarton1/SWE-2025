@@ -34,7 +34,10 @@ function FeedPage() {
     }, []);
 
     return (
-        <Container size="md">
+        <Container
+            size="md"
+            data-testid="feed-page"
+        >
             <Stack gap="md">
                 <PostCreate setPosts={setPosts} clearFormOnSubmit/>
                 {posts.map((post) =>

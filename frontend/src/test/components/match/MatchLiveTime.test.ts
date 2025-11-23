@@ -1,5 +1,5 @@
 import {vi} from "vitest";
-import {mockLiveTimeRunningMatch} from "../../../../vitest.setup.tsx";
+import {mockLiveTimeRunningMatchResponse} from "../../../../vitest.setup.tsx";
 import {updateLiveTime} from "../../../main/components/match/MatchLiveTime.ts";
 
 
@@ -11,7 +11,7 @@ describe("live_time", () => {
 
     test("match time counts downwards", () => {
 
-        let initial_time = mockLiveTimeRunningMatch.clockTimestamp
+        let initial_time = mockLiveTimeRunningMatchResponse.clockTimestamp
         let currentTime = initial_time;
 
         const setTimeLeft = vi.fn((updater) => {
@@ -22,7 +22,7 @@ describe("live_time", () => {
             }
         });
 
-        updateLiveTime(mockLiveTimeRunningMatch, setTimeLeft);
+        updateLiveTime(mockLiveTimeRunningMatchResponse, setTimeLeft);
 
         expect(setTimeLeft).toHaveBeenCalledWith(currentTime);
         expect(currentTime).toBe(initial_time);

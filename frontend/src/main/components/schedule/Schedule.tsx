@@ -47,6 +47,7 @@ const Schedule = () => {
             <Group>
                 <Button
                     onClick={() => setNewMatchModalOpened(true)}
+                    data-testid="new-match-button"
                 >
                     New Match
                 </Button>
@@ -56,6 +57,7 @@ const Schedule = () => {
                         setSearchParams({ view: onListView ? "calendar" : "list" });
                         setOnListView(!onListView);
                     }}
+                    data-testid="view-toggle-button"
                 >
                     {onListView ? "Calendar View" : "List View"}
                 </Button>

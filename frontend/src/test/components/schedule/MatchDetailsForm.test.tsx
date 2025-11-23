@@ -1,22 +1,38 @@
 import { vi } from "vitest";
-import {mockDate, mockMatches, mockTeams, renderWithWrap} from "../../../../vitest.setup.tsx";
+import {
+    mockAdminAccount,
+    mockDate,
+    mockMatches,
+    mockPlayerAccount,
+    mockTeams,
+    renderWithWrap
+} from "../../../../vitest.setup.tsx";
 import {fireEvent, screen, waitFor} from "@testing-library/react";
 import '@testing-library/jest-dom';
 import * as matchRequest from "../../../main/request/matches.ts";
 import MatchDetailsForm from "../../../main/components/schedule/MatchDetailsForm.tsx";
-import type {MatchResponse} from "../../../main/types/match.ts";
+import {Match} from "../../../main/types/match.ts";
 import type {Team} from "../../../main/types/team.ts";
 import React, {type Dispatch} from "react";
+import * as useAuth from "../../../main/hooks/useAuth.tsx";
 
 const mockSetMatches = vi.fn();
 
 let mockProps: {
-    match: MatchResponse;
+    match: Match;
     teams: Team[];
     date: string;
-    matches: MatchResponse[];
-    setMatches: Dispatch<React.SetStateAction<MatchResponse[]>>;
+    setMatches: Dispatch<React.SetStateAction<Match[]>>;
+    setSelectedMatch: Dispatch<React.SetStateAction<Match | null>>
 };
+
+
+vi.mock("../../../main/hooks/useAuth.tsx", () => ({
+    useAuth: vi.fn().mockReturnValue({
+        currentAccount: mockPlayerAccount,
+        setCurrentAccount: vi.fn()
+    })
+}));
 
 describe("MatchDetailsForm", () => {
     beforeEach(() => {
@@ -25,9 +41,9 @@ describe("MatchDetailsForm", () => {
         mockProps = {
             date: mockDate,
             match: mockMatches[0],
-            matches: mockMatches,
             setMatches: mockSetMatches,
             teams: mockTeams,
+            setSelectedMatch: vi.fn(),
         };
     });
 
@@ -53,7 +69,20 @@ describe("MatchDetailsForm", () => {
         });
     });
 
-    test("deleting match test", async () => {
+    test("deleting match with non admin should not be allowed", async () => {
+        vi.spyOn(matchRequest, "deleteMatch").mockResolvedValue(Response.json({}));
+
+        renderWithWrap(<MatchDetailsForm {...mockProps} />);
+
+        await waitFor(() => {
+            expect(screen.queryByTestId("match-delete-button")).not.toBeInTheDocument();
+        });
+    });
+
+
+    test("deleting match with admin should be allowed", async () => {
+        vi.spyOn(useAuth, "useAuth").mockReturnValue({ currentAccount: mockAdminAccount });
+
         vi.spyOn(matchRequest, "deleteMatch").mockResolvedValue(Response.json({}));
 
         renderWithWrap(<MatchDetailsForm {...mockProps} />);
@@ -63,7 +92,7 @@ describe("MatchDetailsForm", () => {
         fireEvent.click(deleteButton!);
 
         await waitFor(() => {
-            expect(matchRequest.deleteMatch).toHaveBeenCalledWith(mockMatches[0].id);
+            expect(matchRequest.deleteMatch).toHaveBeenCalledWith(mockMatches[0].getId());
         });
     });
 });

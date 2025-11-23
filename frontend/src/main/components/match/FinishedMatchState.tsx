@@ -7,7 +7,7 @@ import {MatchStateHandler} from "./MatchStateHandler.tsx";
 
 export class FinishedMatchState extends MatchStateHandler {
     getTitleSuffix(): ReactNode {
-        const date = new Date(this.match.date);
+        const date = new Date(this.matchResponse.date);
         const dateStr = date.toLocaleString(undefined, {
             weekday: 'short',
             year: 'numeric',
@@ -32,7 +32,7 @@ export class FinishedMatchState extends MatchStateHandler {
     ): ReactNode {
         return (
             <MatchEditState
-                match={this.match}
+                match={this.matchResponse}
                 updateMatch={updateMatch}
             />
         );

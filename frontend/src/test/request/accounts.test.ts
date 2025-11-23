@@ -168,6 +168,6 @@ describe("accounts", () => {
 
         const res = await deleteAccount(1);
 
-        expect(res).toBeNull();
+        expect(res).toBe(false);
     })
 });

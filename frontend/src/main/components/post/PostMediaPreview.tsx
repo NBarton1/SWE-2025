@@ -11,6 +11,7 @@ function PostMediaPreview({ contentPreview }: EditPostMediaProps) {
 
     return isVideo ? (
         <video
+            data-testid="post-media-preview-video"
             controls
             style={{
                 objectFit: "contain",
@@ -23,6 +24,7 @@ function PostMediaPreview({ contentPreview }: EditPostMediaProps) {
         </video>
     ) : (
         <Image
+            data-testid="post-media-preview-image"
             src={contentPreview.previewUrl}
             radius="md"
             fit="contain"
