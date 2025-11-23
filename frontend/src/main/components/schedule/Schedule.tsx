@@ -9,6 +9,7 @@ import Calendar from "./Calendar.tsx";
 import {Button, Group, Modal, Paper, Stack, Title} from "@mantine/core";
 import CreateMatchForm from "./CreateMatchForm.tsx";
 import { useSearchParams } from 'react-router-dom';
+import schedule from "./Schedule.tsx";
 import ScheduleExcelImporter from "./ScheduleExcelDropzone.tsx";
 
 
@@ -28,6 +29,8 @@ const Schedule = () => {
     }, [searchParams]);
 
     const [newMatchModalOpened, setNewMatchModalOpened] = useState(false);
+
+    const [scheduleImportModalOpened, setScheduleImportModalOpened] = useState(false);
 
     useEffect(() => {
         getMatches().then(setMatches);
@@ -56,6 +59,13 @@ const Schedule = () => {
                 >
                     {onListView ? "Calendar View" : "List View"}
                 </Button>
+
+                <Button
+                    onClick={() => setScheduleImportModalOpened(true)}
+                >
+                    Import Schedule from Excel
+                </Button>
+
             </Group>
 
             {onListView ? (
@@ -86,10 +96,6 @@ const Schedule = () => {
                     New Match
                 </Title>
 
-                <Stack
-                    gap="md"
-                >
-
                     <CreateMatchForm
                         teams={teams}
                         matches={matches}
@@ -97,9 +103,23 @@ const Schedule = () => {
                         date={null}
                     />
 
-                    <ScheduleExcelImporter></ScheduleExcelImporter>
+            </Modal>
 
-                </Stack>
+            <Modal
+                opened={scheduleImportModalOpened}
+                onClose={() => setScheduleImportModalOpened(false)}
+                size="lg"
+                data-testid="schedule-import-popup"
+            >
+                <Title
+                    order={2}
+                    mb="md"
+                    ta="center"
+                >
+                    Import Schedule from Excel
+                </Title>
+
+                <ScheduleExcelImporter></ScheduleExcelImporter>
 
             </Modal>
         </Paper>
