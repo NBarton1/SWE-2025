@@ -11,9 +11,13 @@ import CreateMatchForm from "./CreateMatchForm.tsx";
 import { useSearchParams } from 'react-router-dom';
 import schedule from "./Schedule.tsx";
 import ScheduleExcelImporter from "./ScheduleExcelDropzone.tsx";
+import {isAdmin} from "../../types/accountTypes.ts";
+import {useAuth} from "../../hooks/useAuth.tsx";
 
 
 const Schedule = () => {
+
+    const { currentAccount } = useAuth();
 
     const [matches, setMatches] = useState<Match[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
@@ -62,11 +66,12 @@ const Schedule = () => {
                     {onListView ? "Calendar View" : "List View"}
                 </Button>
 
-                <Button
+                {isAdmin(currentAccount) && <Button
                     onClick={() => setScheduleImportModalOpened(true)}
                 >
                     Import Schedule from Excel
                 </Button>
+                }
 
             </Group>
 
