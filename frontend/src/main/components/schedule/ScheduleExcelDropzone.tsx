@@ -1,6 +1,6 @@
 import { Dropzone } from "@mantine/dropzone";
 import { MIME_TYPES } from "@mantine/dropzone";
-import {Group, Paper, Stack, Text, Title} from "@mantine/core";
+import {Group, Paper, Stack, Text} from "@mantine/core";
 import { IconUpload, IconX, IconPhoto } from "@tabler/icons-react";
 import * as XLSX from "xlsx";
 import { useState } from "react";
