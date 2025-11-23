@@ -22,6 +22,9 @@ function PostApprovalContainer({ post, onApprove, onDisapprove, hasApprovalText 
 
         if (approved) {
             const approvedPost = await approve(post.id)
+
+            console.log("Appproved", approvedPost)
+
             if (approvedPost && onApprove) {
                 onApprove(approvedPost);
             }
@@ -35,7 +38,11 @@ function PostApprovalContainer({ post, onApprove, onDisapprove, hasApprovalText 
     }, [onApprove, onDisapprove, post]);
 
     return (
-        <Paper p="md" withBorder>
+        <Paper
+            p="md"
+            withBorder
+            data-testid="post-approval-container"
+        >
             <Stack>
                 <Group>
                     <Box
@@ -60,7 +67,7 @@ function PostApprovalContainer({ post, onApprove, onDisapprove, hasApprovalText 
                 { !isPlayer(currentAccount) &&
                     <Group>
                         <Button
-                            data-testid="accept-button"
+                            data-testid="approve-button"
                             size="xs"
                             color="green"
                             onClick={() => handleApproval(true)}
@@ -68,6 +75,7 @@ function PostApprovalContainer({ post, onApprove, onDisapprove, hasApprovalText 
                             Approve
                         </Button>
                         <Button
+                            data-testid="disapprove-button"
                             size="xs"
                             color="red"
                             onClick={() => handleApproval(false)}
