@@ -6,9 +6,10 @@ import {getMatches} from "../../request/matches.ts";
 import {getTeams} from "../../request/teams.ts";
 import ScheduleList from "./ScheduleList.tsx";
 import Calendar from "./Calendar.tsx";
-import {Button, Group, Modal, Paper, Title} from "@mantine/core";
+import {Button, Group, Modal, Paper, Stack, Title} from "@mantine/core";
 import CreateMatchForm from "./CreateMatchForm.tsx";
 import { useSearchParams } from 'react-router-dom';
+import ScheduleExcelImporter from "./ScheduleExcelDropzone.tsx";
 
 
 const Schedule = () => {
@@ -85,12 +86,21 @@ const Schedule = () => {
                     New Match
                 </Title>
 
-                <CreateMatchForm
-                    teams={teams}
-                    matches={matches}
-                    setMatches={setMatches}
-                    date={null}
-                />
+                <Stack
+                    gap="md"
+                >
+
+                    <CreateMatchForm
+                        teams={teams}
+                        matches={matches}
+                        setMatches={setMatches}
+                        date={null}
+                    />
+
+                    <ScheduleExcelImporter></ScheduleExcelImporter>
+
+                </Stack>
+
             </Modal>
         </Paper>
     );

@@ -1,6 +1,6 @@
 import { Dropzone } from "@mantine/dropzone";
 import { MIME_TYPES } from "@mantine/dropzone";
-import { Group, Text } from "@mantine/core";
+import {Group, Paper, Text, Title} from "@mantine/core";
 import { IconUpload, IconX, IconPhoto } from "@tabler/icons-react";
 import * as XLSX from "xlsx";
 import { useState } from "react";
@@ -109,7 +109,7 @@ const createMatchFromRow = async ( type: string, homeTeamId: string, awayTeamId:
 };
 
 
-export function MatchExcelImporter() {
+export function ScheduleExcelImporter() {
     const [loading, setLoading] = useState(false);
 
     const handleExcel = async (file: File) => {
@@ -130,35 +130,43 @@ export function MatchExcelImporter() {
     };
 
     return (
-        <Dropzone
-            onDrop={(files) => handleExcel(files[0])}
-            onReject={(files) => console.log('rejected files', files)}
-            maxSize={5 * 1024 ** 2}
-            accept={[MIME_TYPES.xlsx]}
-            disabled={loading}
-        >
-            <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
-                <Dropzone.Accept>
-                    <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
-                </Dropzone.Accept>
+        <Paper shadow="sm" p="md" radius="md" withBorder data-testid="create-match-form">
 
-                <Dropzone.Reject>
-                    <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
-                </Dropzone.Reject>
 
-                <Dropzone.Idle>
-                    <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
-                </Dropzone.Idle>
 
-                <div>
-                    <Text size="xl" inline>
-                        Drag your file here or click to select file
-                    </Text>
-                    <Text size="sm" c="dimmed" inline mt={7}>
-                        File must be an .xlsx file and under 5mb
-                    </Text>
-                </div>
-            </Group>
-        </Dropzone>
+            <Dropzone
+                onDrop={(files) => handleExcel(files[0])}
+                onReject={(files) => console.log('rejected files', files)}
+                maxSize={5 * 1024 ** 2}
+                accept={[MIME_TYPES.xlsx]}
+                disabled={loading}
+            >
+                <Group justify="center" gap="xl" mih={220} style={{ pointerEvents: 'none' }}>
+                    <Dropzone.Accept>
+                        <IconUpload size={52} color="var(--mantine-color-blue-6)" stroke={1.5} />
+                    </Dropzone.Accept>
+
+                    <Dropzone.Reject>
+                        <IconX size={52} color="var(--mantine-color-red-6)" stroke={1.5} />
+                    </Dropzone.Reject>
+
+                    <Dropzone.Idle>
+                        <IconPhoto size={52} color="var(--mantine-color-dimmed)" stroke={1.5} />
+                    </Dropzone.Idle>
+
+                    <div>
+                        <Text size="xl" inline>
+                            Drag your file here or click to select file
+                        </Text>
+                        <Text size="sm" c="dimmed" inline mt={7}>
+                            File must be an .xlsx file and under 5mb
+                        </Text>
+                    </div>
+                </Group>
+            </Dropzone>
+        </Paper>
+
     );
 }
+
+export default ScheduleExcelImporter;
