@@ -3,7 +3,7 @@ import { MIME_TYPES } from "@mantine/dropzone";
 import {Group, Paper, Stack, Text} from "@mantine/core";
 import { IconUpload, IconX, IconPhoto } from "@tabler/icons-react";
 import * as XLSX from "xlsx";
-import { useState } from "react";
+import {type Dispatch, type SetStateAction, useState} from "react";
 import {createMatch, type CreateMatchRequest} from "../../request/matches.ts";
 import {getTeams} from "../../request/teams.ts";
 import {Match} from "../../types/match.ts";
@@ -65,7 +65,10 @@ const getTeamDictionary = async () => {
     return dictionary;
 };
 
-const createMatchesFromRows = async (rows: any) => {
+const createMatchesFromRows = async (
+    rows: any,
+    setMatches: Dispatch<SetStateAction<Match[]>>
+) => {
     const teamDictionary = await getTeamDictionary();
     let allRowsSuccesful: boolean = true;
 
@@ -84,7 +87,8 @@ const createMatchesFromRows = async (rows: any) => {
                 homeId,
                 awayId,
                 row.date,
-                row.time
+                row.time,
+                setMatches,
             );
         }
 
@@ -94,7 +98,14 @@ const createMatchesFromRows = async (rows: any) => {
     return allRowsSuccesful;
 };
 
-const createMatchFromRow = async ( type: string, homeTeamId: string, awayTeamId: string, date:string, time:string) => {
+const createMatchFromRow = async (
+    type: string,
+    homeTeamId: string,
+    awayTeamId: string,
+    date:string,
+    time:string,
+    setMatches: Dispatch<SetStateAction<Match[]>>
+) => {
     try{
         const req: CreateMatchRequest = {
             type,
@@ -105,6 +116,8 @@ const createMatchFromRow = async ( type: string, homeTeamId: string, awayTeamId:
 
         const createdMatch: Match = await createMatch(req);
         console.log(createdMatch);
+
+        setMatches(prev => [...prev, createdMatch]);
     }
 
     catch (error) {
@@ -112,13 +125,19 @@ const createMatchFromRow = async ( type: string, homeTeamId: string, awayTeamId:
     }
 };
 
+interface ScheduleExcelImporterProps {
+    setMatches: Dispatch<SetStateAction<Match[]>>
+}
 
-export function ScheduleExcelImporter() {
+export function ScheduleExcelImporter({ setMatches }: ScheduleExcelImporterProps) {
     const [loading, setLoading] = useState(false);
     const [showNotification, setShowNotification] = useState(false);
 
 
-    const handleExcel = async (file: File) => {
+    const handleExcel = async (
+        file: File,
+        setMatches: Dispatch<SetStateAction<Match[]>>
+    ) => {
         setLoading(true);
 
         try {
@@ -129,7 +148,7 @@ export function ScheduleExcelImporter() {
                 return;
             }
 
-            const allRowsSuccesful: boolean = await createMatchesFromRows(rows);
+            const allRowsSuccesful: boolean = await createMatchesFromRows(rows, setMatches);
             if (allRowsSuccesful) setShowNotification(true);
 
         } finally {
@@ -142,7 +161,7 @@ export function ScheduleExcelImporter() {
             <Paper shadow="sm" p="md" radius="md" withBorder data-testid="create-match-form">
 
                 <Dropzone
-                    onDrop={(files) => handleExcel(files[0])}
+                    onDrop={(files) => handleExcel(files[0], setMatches)}
                     onReject={(files) => console.log('rejected files', files)}
                     maxSize={5 * 1024 ** 2}
                     accept={[MIME_TYPES.xlsx]}

@@ -125,7 +125,9 @@ const Schedule = () => {
                     Import Schedule from Excel
                 </Title>
 
-                <ScheduleExcelImporter></ScheduleExcelImporter>
+                <ScheduleExcelImporter
+                    setMatches={setMatches}
+                />
 
             </Modal>
         </Paper>
