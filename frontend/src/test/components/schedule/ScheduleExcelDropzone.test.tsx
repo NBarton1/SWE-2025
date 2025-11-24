@@ -22,8 +22,10 @@ vi.mock("xlsx", () => ({
 
 // Mock Mantine Dropzone components
 vi.mock("@mantine/dropzone", () => {
+    // @ts-ignore
     const React = require('react');
 
+    // @ts-ignore
     const DropzoneComponent = React.forwardRef(({ children, onDrop, onReject, disabled, ...props }: any, ref: any) => (
         <div
             ref={ref}

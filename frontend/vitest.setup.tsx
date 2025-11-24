@@ -13,6 +13,8 @@ import type {UseLikesReturn} from "./src/main/hooks/useLikes.tsx";
 import type {Flag} from "./src/main/types/flag.ts";
 import type {LikeStatus} from "./src/main/types/like.ts";
 
+global.fetch = vi.fn()
+
 expect.extend(matchers)
 
 export const testTheme = createTheme({

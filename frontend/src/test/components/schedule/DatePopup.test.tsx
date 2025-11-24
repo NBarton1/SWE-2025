@@ -62,8 +62,6 @@ describe("DatePopup", () => {
     test("update match form displayed", async () => {
         renderWithWrap(<DatePopup {...mockProps} />);
 
-        screen.debug(undefined, Infinity);
-
         await waitFor(() => {
             for (let i = 1; i <= mockMatches.length; i++) {
                 expect(screen.getByTestId(`update-match-form-${i}`)).toBeInTheDocument();
