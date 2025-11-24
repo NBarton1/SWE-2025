@@ -1,7 +1,6 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.MatchDTO
-import com.jknv.lum.model.dto.PostDTO
 import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.entity.Team
@@ -77,7 +76,7 @@ class MatchServiceTest {
         every { teamService.getTeamById(homeTeam.id) } returns homeTeam
         every { teamService.getTeamById(awayTeam.id) } returns awayTeam
         every { matchRepository.save(match) } returns match
-        every { postService.createPostForMatch() } returns post
+        every { postService.createPostForMatch(match) } returns post
 
         val result = matchService.createMatch(req)
 
@@ -85,7 +84,7 @@ class MatchServiceTest {
             teamService.getTeamById(homeTeam.id)
             teamService.getTeamById(awayTeam.id)
             matchRepository.save(match)
-            postService.createPostForMatch()
+            postService.createPostForMatch(match)
         }
 
         assertEquals(match.toDTO(), result)
@@ -136,6 +135,17 @@ class MatchServiceTest {
         matchService.deleteMatch(match.id)
 
         verify { matchRepository.deleteById(match.id) }
+    }
+
+    @Test
+    fun getMatchTest() {
+        every { matchRepository.findById(match.id) } returns Optional.of(match)
+
+        val result = matchService.getMatch(match.id)
+
+        verify { matchRepository.findById(match.id) }
+
+        assertEquals(result, match.toDTO())
     }
 
     @Test

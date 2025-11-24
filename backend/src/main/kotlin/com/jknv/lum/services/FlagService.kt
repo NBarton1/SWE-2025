@@ -43,7 +43,7 @@ class FlagService(
 
     fun getFlagById(postId: Long, accountId: Long): FlagDTO {
         return flagRepository
-            .getFlagById(Flag.PK(accountId, postId))
+            .getFlagById(Flag.PK(postId, accountId))
             .orElseThrow()
             .toDTO()
     }

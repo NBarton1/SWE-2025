@@ -109,7 +109,7 @@ class PostController(
         @PathVariable id: Long,
         @AuthenticationPrincipal details: AccountDetails,
     ): ResponseEntity<FlagDTO> {
-        val flag = flagService.getFlagById(details.id, id)
+        val flag = flagService.getFlagById(id, details.id)
         return ResponseEntity.ok(flag)
     }
 

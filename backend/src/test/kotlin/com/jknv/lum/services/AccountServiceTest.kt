@@ -1,9 +1,6 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.AccountDTO
-import com.jknv.lum.model.dto.AdminDTO
-import com.jknv.lum.model.dto.CoachDTO
-import com.jknv.lum.model.dto.GuardianDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Content
 import com.jknv.lum.model.request.account.AccountCreateRequest
@@ -101,26 +98,22 @@ class AccountServiceTest {
         assertThrows<EntityNotFoundException> { accountService.getAccountById(account.id + 1) }
     }
 
-    /*@Test
+    @Test
     fun createAccountWithRolesTest() {
         every { req.role } returns Role.ADMIN
 
         every { accountRepository.save(account) } returns account
-        every { adminService.createAdmin(account) } returns AdminDTO(account.toDTO())
-        every { coachService.createCoach(account) } returns CoachDTO(account.toDTO())
-        every { guardianService.createGuardian(account) } returns GuardianDTO(account.toDTO())
+        justRun { accountRoleService.createAccount(account) }
 
         val result = accountService.createAccountWithRoles(req)
 
         verify {
             accountRepository.save(account)
-            adminService.createAdmin(account)
-            coachService.createCoach(account)
-            guardianService.createGuardian(account)
+            accountRoleService.createAccount(account)
         }
 
         assertEquals(account.toDTO(), result)
-    }*/
+    }
 
     @Test
     fun getAccountTest() {

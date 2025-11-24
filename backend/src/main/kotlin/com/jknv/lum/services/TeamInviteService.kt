@@ -49,8 +49,6 @@ class TeamInviteService (
             invite.status = InviteStatus.DECLINED
         }
 
-        teamInviteRepository.delete(invite)
-
         return updateInvite(invite)
     }
 
