@@ -1,0 +1,237 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AccountService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.services</a>
+</div>
+
+<h1>Coverage Summary for Class: AccountService (com.jknv.lum.services)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AccountService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.3%
+  </span>
+  <span class="absValue">
+    (19/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.1%
+  </span>
+  <span class="absValue">
+    (41/45)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AccountService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63.3%
+  </span>
+  <span class="absValue">
+    (19/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.1%
+  </span>
+  <span class="absValue">
+    (41/45)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
+&nbsp;
+&nbsp;import com.jknv.lum.LOGGER
+&nbsp;import com.jknv.lum.model.dto.AccountDTO
+&nbsp;import com.jknv.lum.model.entity.Account
+&nbsp;import com.jknv.lum.model.request.account.AccountCreateRequest
+&nbsp;import com.jknv.lum.model.type.Role
+&nbsp;import com.jknv.lum.model.request.account.AccountUpdateRequest
+&nbsp;import com.jknv.lum.repository.AccountRepository
+&nbsp;import com.jknv.lum.model.request.account.AccountLoginRequest
+&nbsp;import com.jknv.lum.security.AccountDetails
+&nbsp;import jakarta.persistence.EntityNotFoundException
+&nbsp;import jakarta.transaction.Transactional
+&nbsp;import org.springframework.security.authentication.AuthenticationManager
+&nbsp;import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+&nbsp;import org.springframework.stereotype.Service
+&nbsp;import org.springframework.web.multipart.MultipartFile
+&nbsp;
+<b class="fc">&nbsp;@Service</b>
+&nbsp;@Transactional
+&nbsp;class AccountService(
+<b class="fc">&nbsp;    private val accountRepository: AccountRepository,</b>
+<b class="fc">&nbsp;    private val authenticationManager: AuthenticationManager,</b>
+<b class="fc">&nbsp;    private val bCryptPasswordEncoder: BCryptPasswordEncoder,</b>
+<b class="fc">&nbsp;    private val jwtService: JwtService,</b>
+<b class="fc">&nbsp;    private val contentService: ContentService,</b>
+<b class="fc">&nbsp;    private val accountRoleService: AccountRoleService,</b>
+&nbsp;) {
+&nbsp;    fun createAccountWithRoles(req: AccountCreateRequest): AccountDTO {
+<b class="fc">&nbsp;        val account = createAccount(req)</b>
+<b class="fc">&nbsp;        accountRoleService.createAccount(account)</b>
+&nbsp;
+<b class="fc">&nbsp;        return account.toDTO()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun getAccount(id: Long): AccountDTO =
+<b class="fc">&nbsp;        getAccountById(id).toDTO()</b>
+&nbsp;
+&nbsp;    fun getAccounts(): List&lt;AccountDTO&gt; =
+<b class="fc">&nbsp;        accountRepository.findAll().map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    fun updateAccount(id: Long, requesterId: Long, req: AccountUpdateRequest): AccountDTO {
+<b class="fc">&nbsp;        val account = getAccountById(id)</b>
+<b class="fc">&nbsp;        val requester =</b>
+<b class="pc">&nbsp;            if (id == requesterId)</b>
+<b class="fc">&nbsp;                account</b>
+<b class="nc">&nbsp;            else getAccountById(requesterId)</b>
+&nbsp;
+<b class="pc">&nbsp;        if (id != requester.id &amp;&amp; requester.role != Role.ADMIN)</b>
+<b class="nc">&nbsp;            throw IllegalAccessException(&quot;You cannot update account $id&quot;)</b>
+&nbsp;
+<b class="pc">&nbsp;        if (req.role != null &amp;&amp; requester.role != Role.ADMIN)</b>
+<b class="nc">&nbsp;            throw IllegalAccessException(&quot;You cannot update the role of $id&quot;)</b>
+&nbsp;
+<b class="pc">&nbsp;        if (account.role != Role.PLAYER)</b>
+<b class="pc">&nbsp;            req.email?.let { account.email = it }</b>
+<b class="fc">&nbsp;        req.name?.let { account.name = it }</b>
+<b class="fc">&nbsp;        req.username?.let { account.username = it }</b>
+<b class="fc">&nbsp;        req.password?.let { account.password = bCryptPasswordEncoder.encode(it) }</b>
+<b class="fc">&nbsp;        req.role?.let { accountRoleService.updateRole(account, it) }</b>
+&nbsp;
+<b class="fc">&nbsp;        return updateAccount(account)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun updatePictureForAccount(id: Long, image: MultipartFile): AccountDTO {
+<b class="fc">&nbsp;        val picture = contentService.uploadContent(image)</b>
+<b class="fc">&nbsp;        val account = getAccountById(id)</b>
+<b class="fc">&nbsp;        account.picture = picture</b>
+&nbsp;
+<b class="fc">&nbsp;        return updateAccount(account)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun deleteAccount(id: Long) =
+<b class="fc">&nbsp;        accountRepository.deleteById(id)</b>
+&nbsp;
+&nbsp;    fun verifyLogin(loginRequest: AccountLoginRequest): String? {
+<b class="fc">&nbsp;        val authentication = authenticationManager.authenticate(</b>
+<b class="fc">&nbsp;            UsernamePasswordAuthenticationToken(</b>
+<b class="fc">&nbsp;                loginRequest.username,</b>
+<b class="fc">&nbsp;                loginRequest.password</b>
+&nbsp;            )
+&nbsp;        )
+&nbsp;
+<b class="pc">&nbsp;        if (!authentication.isAuthenticated)</b>
+<b class="nc">&nbsp;            return null</b>
+&nbsp;
+<b class="pc">&nbsp;        val userId = (authentication.principal as? AccountDetails)?.account?.id ?: return null</b>
+<b class="fc">&nbsp;        return jwtService.giveToken(userId)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    internal fun updateAccount(account: Account): AccountDTO =
+<b class="fc">&nbsp;        accountRepository.save(account).toDTO()</b>
+&nbsp;
+&nbsp;    internal fun createAccount(req: AccountCreateRequest): Account =
+<b class="fc">&nbsp;        accountRepository.save(req.toEntity())</b>
+&nbsp;
+&nbsp;    internal fun getAccountByUsername(username: String): Account =
+<b class="fc">&nbsp;        accountRepository.findByUsername(username).orElseThrow { EntityNotFoundException(&quot;User $username not found&quot;) }</b>
+&nbsp;
+&nbsp;    internal fun getAccountById(id: Long): Account =
+<b class="fc">&nbsp;        accountRepository.findById(id).orElseThrow { EntityNotFoundException(&quot;User $id not found&quot;) }</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,161 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LikeStatus</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.model.entity</a>
+</div>
+
+<h1>Coverage Summary for Class: LikeStatus (com.jknv.lum.model.entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LikeStatus</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">LikeStatus$HibernateInstantiator</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.entity
+&nbsp;
+&nbsp;import com.jknv.lum.model.dto.LikeStatusDTO
+&nbsp;import com.jknv.lum.model.type.LikeType
+&nbsp;import jakarta.persistence.*
+&nbsp;import org.hibernate.annotations.OnDelete
+&nbsp;import org.hibernate.annotations.OnDeleteAction
+&nbsp;
+<b class="fc">&nbsp;@Entity</b>
+&nbsp;@Table(
+&nbsp;    name = &quot;LikeStatus&quot;,
+&nbsp;//    uniqueConstraints = [
+&nbsp;//        UniqueConstraint(columnNames = [&quot;account_id&quot;, &quot;entity_id&quot;, &quot;like_type&quot;])
+&nbsp;//    ],
+&nbsp;//    indexes = [
+&nbsp;//        Index(name = &quot;idx_entity_like_liked&quot;, columnList = &quot;entity_id, like_type, liked&quot;)
+&nbsp;//    ],
+&nbsp;)
+&nbsp;class LikeStatus(
+<b class="fc">&nbsp;    @Id</b>
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+<b class="fc">&nbsp;    val id: Long = 0,</b>
+&nbsp;
+<b class="fc">&nbsp;    @ManyToOne(fetch = FetchType.LAZY)</b>
+&nbsp;    @OnDelete(action = OnDeleteAction.CASCADE)
+<b class="fc">&nbsp;    val account: Account,</b>
+&nbsp;
+<b class="fc">&nbsp;    @Column(nullable = false)</b>
+<b class="fc">&nbsp;    val entityId: Long,</b>
+&nbsp;
+<b class="fc">&nbsp;    @Column(nullable = false)</b>
+&nbsp;    @Enumerated(EnumType.STRING)
+<b class="fc">&nbsp;    val likeType: LikeType,</b>
+&nbsp;
+<b class="fc">&nbsp;    @Column(nullable = false)</b>
+<b class="fc">&nbsp;    var liked: Boolean</b>
+&nbsp;) {
+&nbsp;    fun toDTO(): LikeStatusDTO {
+<b class="fc">&nbsp;        return LikeStatusDTO(</b>
+<b class="fc">&nbsp;            id = id,</b>
+<b class="fc">&nbsp;            account = account.toDTO(),</b>
+<b class="fc">&nbsp;            entityId = entityId,</b>
+<b class="fc">&nbsp;            likeType = likeType,</b>
+<b class="fc">&nbsp;            liked = liked</b>
+&nbsp;        )
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
+</div>
+</body>
+</html>

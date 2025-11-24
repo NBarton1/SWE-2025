@@ -1,0 +1,100 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PostRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: PostRepository (com.jknv.lum.repository)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">PostRepository$Subclass23</td>
+  </tr>
+  <tr>
+    <td class="name">PostRepository$Subclass23$auxiliary$5XnZNNsk</td>
+  </tr>
+  <tr>
+    <td class="name">PostRepository$Subclass23$auxiliary$jR8sLyne</td>
+  </tr>
+  <tr>
+    <td class="name">PostRepository$Subclass23$auxiliary$kSkaNNzN</td>
+  </tr>
+  <tr>
+    <td class="name">PostRepository$Subclass23$auxiliary$QNxB5JEu</td>
+  </tr>
+  <tr>
+    <td class="name">PostRepository$Subclass23$auxiliary$s2Ow85Hf</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.repository
+&nbsp;
+&nbsp;import com.jknv.lum.model.entity.Account
+&nbsp;import com.jknv.lum.model.entity.Post
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository
+&nbsp;import org.springframework.data.jpa.repository.Query
+&nbsp;import org.springframework.data.repository.query.Param
+&nbsp;import org.springframework.stereotype.Repository
+&nbsp;
+&nbsp;@Repository
+&nbsp;interface PostRepository : JpaRepository&lt;Post, Long&gt; {
+&nbsp;    fun findByParentPostIsNull(): List&lt;Post&gt;
+&nbsp;    fun findByIsApprovedIsFalseAndAccountId(accountId: Long): MutableList&lt;Post&gt;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PostSeeder</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.config.seed</a>
+</div>
+
+<h1>Coverage Summary for Class: PostSeeder (com.jknv.lum.config.seed)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PostSeeder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PostSeeder$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (22/22)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.config.seed
+&nbsp;
+&nbsp;import com.jknv.lum.LOGGER
+&nbsp;import com.jknv.lum.model.entity.Account
+&nbsp;import com.jknv.lum.model.entity.Post
+&nbsp;import com.jknv.lum.repository.AccountRepository
+&nbsp;import com.jknv.lum.repository.PostRepository
+&nbsp;import org.springframework.boot.CommandLineRunner
+&nbsp;import org.springframework.core.annotation.Order
+&nbsp;import org.springframework.stereotype.Component
+&nbsp;import org.springframework.transaction.annotation.Transactional
+&nbsp;
+<b class="fc">&nbsp;@Component</b>
+&nbsp;@Order(6)
+&nbsp;class PostSeeder (
+<b class="fc">&nbsp;    private val postRepository: PostRepository,</b>
+<b class="fc">&nbsp;    private val accountRepository: AccountRepository,</b>
+&nbsp;) : CommandLineRunner {
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    override fun run(vararg args: String?) {
+<b class="pc">&nbsp;        if (postRepository.count() == 0L) {</b>
+<b class="fc">&nbsp;            val accounts = accountRepository.findAll()</b>
+&nbsp;
+<b class="fc">&nbsp;            val posts = listOf(</b>
+<b class="fc">&nbsp;                postOf(accounts[0], &quot;DK won&quot;, true),</b>
+<b class="fc">&nbsp;                postOf(accounts[1], &quot;DK won again&quot;, true),</b>
+<b class="fc">&nbsp;                postOf(accounts[5], &quot;DK sucks!!!&quot;, true),</b>
+<b class="fc">&nbsp;                postOf(accounts[5], &quot;DK team players are losers&quot;, true),</b>
+<b class="fc">&nbsp;                postOf(accounts[2], &quot;DK won yet again&quot;, true),</b>
+<b class="fc">&nbsp;                postOf(accounts[2], &quot;DK is awesome&quot;, true),</b>
+<b class="fc">&nbsp;                postOf(accounts[2], &quot;DK is the winner&quot;, true),</b>
+&nbsp;            )
+&nbsp;
+<b class="fc">&nbsp;            posts.forEach { postRepository.save(it) }</b>
+&nbsp;
+<b class="fc">&nbsp;            posts[2].parentPost = posts[1]</b>
+<b class="fc">&nbsp;            posts[3].parentPost = posts[2]</b>
+<b class="fc">&nbsp;            posts[4].parentPost = posts[2]</b>
+&nbsp;
+<b class="fc">&nbsp;            LOGGER.info(&quot;Posts seeded&quot;)</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    fun postOf(account: Account, textContent: String, isApproved: Boolean) : Post =
+<b class="fc">&nbsp;        Post(</b>
+<b class="fc">&nbsp;            account = account,</b>
+<b class="fc">&nbsp;            textContent = &quot;{\&quot;type\&quot;:\&quot;doc\&quot;,\&quot;content\&quot;:[{\&quot;type\&quot;:\&quot;paragraph\&quot;,\&quot;content\&quot;:[{\&quot;type\&quot;:\&quot;text\&quot;,\&quot;text\&quot;:\&quot;$textContent\&quot;}]}]}&quot;,</b>
+<b class="fc">&nbsp;            isApproved = isApproved</b>
+&nbsp;        )
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,199 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > LikeStatusSeeder</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.config.seed</a>
+</div>
+
+<h1>Coverage Summary for Class: LikeStatusSeeder (com.jknv.lum.config.seed)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">LikeStatusSeeder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (32/32)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">LikeStatusSeeder$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (32/32)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.config.seed
+&nbsp;
+&nbsp;import com.jknv.lum.LOGGER
+&nbsp;import com.jknv.lum.model.entity.Account
+&nbsp;import com.jknv.lum.model.entity.LikeStatus
+&nbsp;import com.jknv.lum.model.type.LikeType
+&nbsp;import com.jknv.lum.repository.AccountRepository
+&nbsp;import com.jknv.lum.repository.LikeRepository
+&nbsp;import org.springframework.boot.CommandLineRunner
+&nbsp;import org.springframework.core.annotation.Order
+&nbsp;import org.springframework.stereotype.Component
+&nbsp;import org.springframework.transaction.annotation.Transactional
+&nbsp;
+<b class="fc">&nbsp;@Component</b>
+&nbsp;@Order(4)
+&nbsp;class LikeStatusSeeder(
+<b class="fc">&nbsp;    private val likeRepository: LikeRepository,</b>
+<b class="fc">&nbsp;    private val accountRepository: AccountRepository</b>
+&nbsp;) : CommandLineRunner {
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    override fun run(vararg args: String?) {
+<b class="pc">&nbsp;        if (likeRepository.count() == 0L) {</b>
+<b class="fc">&nbsp;            val accounts = accountRepository.findAll()</b>
+&nbsp;
+&nbsp;            // DK should have all likes
+<b class="fc">&nbsp;            accounts.forEach { account -&gt;</b>
+<b class="fc">&nbsp;                val likeStatus = likeStatusOf(account, 3, LikeType.COACH, true)</b>
+<b class="fc">&nbsp;                likeRepository.save(likeStatus)</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;
+<b class="fc">&nbsp;            val postLikeStatuses = listOf(</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[2], 1, LikeType.POST, true),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[2], 2, LikeType.POST, true),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[1], 1, LikeType.POST, true),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[0], 2, LikeType.POST, false),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[0], 1, LikeType.POST, false),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[3], 2, LikeType.POST, false),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[3], 2, LikeType.POST, false),</b>
+&nbsp;            )
+&nbsp;
+<b class="fc">&nbsp;            val accountLikeStatuses = listOf(</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[0], 2, LikeType.COACH, true),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[0], 4, LikeType.COACH, true),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[1], 2, LikeType.COACH, false),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[4], 2, LikeType.COACH, false),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[4], 5, LikeType.COACH, false),</b>
+<b class="fc">&nbsp;                likeStatusOf(accounts[1], 4, LikeType.COACH, true),</b>
+&nbsp;            )
+&nbsp;
+<b class="fc">&nbsp;            likeRepository.saveAll(postLikeStatuses)</b>
+<b class="fc">&nbsp;            likeRepository.saveAll(accountLikeStatuses)</b>
+&nbsp;
+<b class="fc">&nbsp;            LOGGER.info(&quot;Like statuses seeded&quot;)</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    fun likeStatusOf(account: Account, entityId: Long, likeType: LikeType, liked: Boolean) : LikeStatus =
+<b class="fc">&nbsp;        LikeStatus(</b>
+<b class="fc">&nbsp;            account = account,</b>
+<b class="fc">&nbsp;            entityId = entityId,</b>
+<b class="fc">&nbsp;            likeType = likeType,</b>
+<b class="fc">&nbsp;            liked = liked</b>
+&nbsp;        )
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
+</div>
+</body>
+</html>
