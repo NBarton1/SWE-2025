@@ -3,6 +3,8 @@ package com.jknv.lum.controller
 import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.request.post.PostCreateRequest
 import com.jknv.lum.security.AccountDetails
+import com.jknv.lum.services.FlagService
+import com.jknv.lum.services.LikeStatusService
 import com.jknv.lum.services.PostService
 import io.mockk.every
 import io.mockk.justRun
@@ -16,8 +18,10 @@ import org.springframework.http.ResponseEntity
 
 class PostControllerTest {
     val postService: PostService = mockk()
+    val likeStatusService: LikeStatusService = mockk()
+    val flagService: FlagService = mockk()
 
-    val postController = PostController(postService)
+    val postController = PostController(postService, likeStatusService, flagService)
 
     val details: AccountDetails = mockk()
 
@@ -42,17 +46,17 @@ class PostControllerTest {
 
         verify { postService.createPost(req, mockId) }
 
-        assertEquals(response.statusCode, HttpStatus.CREATED)
+        assertEquals(response.statusCode, HttpStatus.OK)
         assertEquals(response.body, post.toDTO())
     }
 
     @Test
     fun getAllPostsTest() {
-        every { postService.getAllPosts() } returns listOf(post.toDTO())
+        every { postService.getAllRootPosts() } returns listOf(post.toDTO())
 
-        val response = postController.getAllPosts()
+        val response = postController.getAllRootPosts()
 
-        verify { postService.getAllPosts() }
+        verify { postService.getAllRootPosts() }
 
         assertEquals(response.statusCode, HttpStatus.OK)
         assertEquals(response.body, listOf(post.toDTO()))
