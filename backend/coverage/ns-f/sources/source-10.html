@@ -1,0 +1,210 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TeamService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.services</a>
+</div>
+
+<h1>Coverage Summary for Class: TeamService (com.jknv.lum.services)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TeamService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (12/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95.7%
+  </span>
+  <span class="absValue">
+    (22/23)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">TeamService$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">TeamService$getPlayoffTeams$$inlined$sortedByDescending$1</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (12/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95.7%
+  </span>
+  <span class="absValue">
+    (22/23)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
+&nbsp;
+&nbsp;import com.jknv.lum.LOGGER
+&nbsp;import com.jknv.lum.model.dto.CoachDTO
+&nbsp;import com.jknv.lum.model.dto.PlayerDTO
+&nbsp;import com.jknv.lum.model.dto.TeamDTO
+&nbsp;import com.jknv.lum.model.entity.Team
+&nbsp;import com.jknv.lum.model.request.team.TeamCreateRequest
+&nbsp;import com.jknv.lum.model.type.MatchState
+&nbsp;import com.jknv.lum.repository.TeamRepository
+&nbsp;import jakarta.persistence.EntityNotFoundException
+&nbsp;import jakarta.transaction.Transactional
+&nbsp;import org.springframework.beans.factory.annotation.Value
+&nbsp;import org.springframework.stereotype.Service
+&nbsp;import kotlin.collections.mutableMapOf
+&nbsp;
+<b class="fc">&nbsp;@Service</b>
+&nbsp;@Transactional
+&nbsp;class TeamService (
+<b class="fc">&nbsp;    @param:Value($$&quot;${lum.playoff.teams}&quot;)</b>
+&nbsp;    private val playoffTeams: Int,
+&nbsp;
+<b class="fc">&nbsp;    @param:Value($$&quot;${lum.playoff.min-matches}&quot;)</b>
+&nbsp;    private val minMatchesForBracket: Int,
+&nbsp;
+<b class="fc">&nbsp;    private val teamRepository: TeamRepository,</b>
+&nbsp;) {
+&nbsp;    fun createTeam(req: TeamCreateRequest): TeamDTO =
+<b class="fc">&nbsp;        teamRepository.save(req.toEntity()).toDTO()</b>
+&nbsp;
+&nbsp;    fun getTeams(): List&lt;TeamDTO&gt; =
+<b class="fc">&nbsp;        teamRepository.findAll().map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    fun getTeam(id: Long): TeamDTO =
+<b class="fc">&nbsp;        getTeamById(id).toDTO()</b>
+&nbsp;
+&nbsp;    fun getPlayersByTeam(id: Long): List&lt;PlayerDTO&gt; =
+<b class="fc">&nbsp;        getTeamById(id).players.map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    fun getCoachesByTeam(id: Long): List&lt;CoachDTO&gt; =
+<b class="fc">&nbsp;        getTeamById(id).coaches.map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    fun countTeams(): Long =
+<b class="fc">&nbsp;        teamRepository.count()</b>
+&nbsp;
+&nbsp;    fun getPlayoffTeams(): List&lt;TeamDTO&gt; {
+<b class="fc">&nbsp;        val teams = teamRepository.findAll()</b>
+<b class="fc">&nbsp;        val teamsCount = teams.size</b>
+&nbsp;
+<b class="fc">&nbsp;        for (team in teams) {</b>
+<b class="fc">&nbsp;            val matchCounts = mutableMapOf&lt;Long, Int&gt;()</b>
+&nbsp;
+<b class="pc">&nbsp;            for (match in (team.homeMatches + team.awayMatches).filter { it.state == MatchState.FINISHED }) {</b>
+<b class="fc">&nbsp;                val opponentId = if (match.homeTeam == team) {</b>
+<b class="fc">&nbsp;                    match.awayTeam.id</b>
+&nbsp;                } else {
+<b class="fc">&nbsp;                    match.homeTeam.id</b>
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                matchCounts.compute(opponentId) { _, count -&gt; (count ?: 0) + 1 }</b>
+&nbsp;            }
+&nbsp;
+<b class="pc">&nbsp;            if (matchCounts.size != teamsCount - 1 || matchCounts.values.any { it &lt; minMatchesForBracket }) {</b>
+<b class="nc">&nbsp;                return listOf()</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return teams.sortedByDescending { it.pct }.take(playoffTeams).map { it.toDTO() }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    internal fun getTeamById(id: Long): Team =
+<b class="fc">&nbsp;        teamRepository.findById(id).orElseThrow { EntityNotFoundException(&quot;Team $id not found&quot;) }</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
+</div>
+</body>
+</html>

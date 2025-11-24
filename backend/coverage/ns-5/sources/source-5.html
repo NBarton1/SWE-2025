@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > GuardianDTO</title>
+  <title>Coverage Report > LikeStatusController</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.model.dto</a>
+    <a href="../index.html">com.jknv.lum.controller</a>
 </div>
 
-<h1>Coverage Summary for Class: GuardianDTO (com.jknv.lum.model.dto)</h1>
+<h1>Coverage Summary for Class: LikeStatusController (com.jknv.lum.controller)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -41,15 +41,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">GuardianDTO</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (1/1)
-  </span>
-</td>
+  <td class="name">LikeStatusController</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -66,6 +58,14 @@ Current scope:     <a href="../../index.html">all classes</a>
     (2/2)
   </span>
 </td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
 </tr>
 
 </table>
@@ -75,11 +75,32 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.dto
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.controller
 &nbsp;
-<b class="fc">&nbsp;data class GuardianDTO (</b>
-<b class="fc">&nbsp;    var account: AccountDTO,</b>
-&nbsp;)
+&nbsp;import com.jknv.lum.security.AccountDetails
+&nbsp;import com.jknv.lum.services.LikeStatusService
+&nbsp;import org.springframework.http.ResponseEntity
+&nbsp;import org.springframework.security.core.annotation.AuthenticationPrincipal
+&nbsp;import org.springframework.stereotype.Controller
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping
+&nbsp;import org.springframework.web.bind.annotation.PathVariable
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping
+&nbsp;
+<b class="fc">&nbsp;@Controller</b>
+&nbsp;@RequestMapping(&quot;/api/likes&quot;)
+&nbsp;class LikeStatusController(
+<b class="fc">&nbsp;    private val likeStatusService: LikeStatusService</b>
+&nbsp;) {
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    fun deleteLikeStatus(
+&nbsp;        @PathVariable id: Long,
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;    ): ResponseEntity&lt;Void&gt; {
+<b class="fc">&nbsp;        likeStatusService.deleteLikeStatus(details.id, id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok().build()</b>
+&nbsp;    }
+&nbsp;}
 </code>
 </pre>
 </div>
@@ -103,7 +124,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-10 06:01</div>
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
 </div>
 </body>
 </html>

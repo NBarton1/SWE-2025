@@ -1,9 +1,16 @@
 import {screen, waitFor} from "@testing-library/react";
 import {beforeEach, vi} from "vitest";
-import {mockTeams, renderWithWrap} from "../../../../vitest.setup.tsx";
-import TeamsPage from "../../../main/components/teams/TeamStandings.tsx";
+import {mockPlayerAccount, mockTeams, renderWithWrap} from "../../../../vitest.setup.tsx";
+import TeamsStandings from "../../../main/components/teams/TeamStandings.tsx";
 import * as teamsRequest from "../../../main/request/teams.ts";
 
+
+vi.mock("../../../main/hooks/useAuth.tsx", () => ({
+    useAuth: vi.fn().mockReturnValue({
+        currentAccount: mockPlayerAccount,
+        setCurrentAccount: vi.fn()
+    })
+}));
 
 describe("TeamsPage", () => {
 
@@ -11,11 +18,9 @@ describe("TeamsPage", () => {
         vi.clearAllMocks()
     })
 
-
-
     test("renders", () => {
 
-        renderWithWrap(<TeamsPage/>)
+        renderWithWrap(<TeamsStandings/>)
         expect(screen.getByTestId("teams-title")).toBeInTheDocument();
         expect(screen.getByTestId("teams-table")).toBeInTheDocument();
     });
@@ -25,7 +30,7 @@ describe("TeamsPage", () => {
 
         const mockGetTeams = vi.spyOn(teamsRequest, "getTeams").mockResolvedValue(mockTeams);
 
-        renderWithWrap(<TeamsPage/>)
+        renderWithWrap(<TeamsStandings/>)
 
         await waitFor(() => {
             expect(mockGetTeams).toHaveBeenCalled();

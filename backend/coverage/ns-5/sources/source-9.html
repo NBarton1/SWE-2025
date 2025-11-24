@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > TeamInviteDTO</title>
+  <title>Coverage Report > PostController</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,18 +19,15 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.model.dto</a>
+    <a href="../index.html">com.jknv.lum.controller</a>
 </div>
 
-<h1>Coverage Summary for Class: TeamInviteDTO (com.jknv.lum.model.dto)</h1>
+<h1>Coverage Summary for Class: PostController (com.jknv.lum.controller)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
-<th class="coverageStat 
-">
-  Class, %
-</th>
 <th class="coverageStat 
 ">
   Method, %
@@ -41,13 +38,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">TeamInviteDTO</td>
+  <td class="name">PostController</td>
 <td class="coverageStat">
   <span class="percent">
     100%
   </span>
   <span class="absValue">
-    (1/1)
+    (16/16)
   </span>
 </td>
 <td class="coverageStat">
@@ -55,19 +52,32 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (1/1)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (4/4)
+    (34/34)
   </span>
 </td>
 </tr>
-
+  <tr>
+    <td class="name">PostController$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (16/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (34/34)
+  </span>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -75,15 +85,167 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.dto
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.controller
 &nbsp;
-&nbsp;import com.jknv.lum.model.type.InviteStatus
+&nbsp;import com.jknv.lum.LOGGER
+&nbsp;import com.jknv.lum.config.Require
+&nbsp;import com.jknv.lum.model.dto.FlagDTO
+&nbsp;import com.jknv.lum.model.dto.LikeStatusDTO
+&nbsp;import com.jknv.lum.model.dto.PostDTO
+&nbsp;import com.jknv.lum.model.request.post.PostCreateRequest
+&nbsp;import com.jknv.lum.model.type.LikeType
+&nbsp;import com.jknv.lum.security.AccountDetails
+&nbsp;import com.jknv.lum.services.FlagService
+&nbsp;import com.jknv.lum.services.LikeStatusService
+&nbsp;import com.jknv.lum.services.PostService
+&nbsp;import org.springframework.http.HttpStatus
+&nbsp;import org.springframework.http.MediaType
+&nbsp;import org.springframework.http.ResponseEntity
+&nbsp;import org.springframework.security.core.annotation.AuthenticationPrincipal
+&nbsp;import org.springframework.web.bind.annotation.*
 &nbsp;
-<b class="fc">&nbsp;data class TeamInviteDTO (</b>
-<b class="fc">&nbsp;    var team: TeamDTO,</b>
-<b class="fc">&nbsp;    var player: AccountDTO,</b>
-<b class="fc">&nbsp;    var status: InviteStatus,</b>
-&nbsp;)
+<b class="fc">&nbsp;@RestController</b>
+&nbsp;@RequestMapping(&quot;/api/posts&quot;)
+&nbsp;class PostController(
+<b class="fc">&nbsp;    private val postService: PostService,</b>
+<b class="fc">&nbsp;    private val likeStatusService: LikeStatusService,</b>
+<b class="fc">&nbsp;    private val flagService: FlagService</b>
+&nbsp;) {
+&nbsp;
+&nbsp;    @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+&nbsp;    fun createPost(
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;        @ModelAttribute req: PostCreateRequest
+&nbsp;    ): ResponseEntity&lt;PostDTO&gt; {
+<b class="fc">&nbsp;        val response = postService.createPost(req, details.id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping
+&nbsp;    fun getAllRootPosts(
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;    ): ResponseEntity&lt;List&lt;PostDTO&gt;&gt; {
+<b class="fc">&nbsp;        val response = postService.getAllVisibleRootPosts(details.id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    fun delete(
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;        @PathVariable id: Long,
+&nbsp;    ): ResponseEntity&lt;Void&gt; {
+<b class="fc">&nbsp;        postService.deletePost(id, details.id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok().build()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/{id}/like&quot;)
+&nbsp;    fun setLikeStatus(
+&nbsp;        @PathVariable id: Long,
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;        @RequestBody liked: Boolean
+&nbsp;    ): ResponseEntity&lt;LikeStatusDTO&gt; {
+<b class="fc">&nbsp;        val likeStatus = postService.likePost(id, details.id, liked)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(likeStatus)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}/like&quot;)
+&nbsp;    fun getLikeStatus(
+&nbsp;        @PathVariable id: Long,
+&nbsp;        @AuthenticationPrincipal details: AccountDetails
+&nbsp;    ): ResponseEntity&lt;LikeStatusDTO&gt; {
+<b class="fc">&nbsp;        val likeStatus = likeStatusService.getLikeStatus(details.id, id, LikeType.POST)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(likeStatus)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}/likes&quot;)
+&nbsp;    fun getLikeCount(
+&nbsp;        @PathVariable id: Long,
+&nbsp;    ): ResponseEntity&lt;Long&gt; {
+<b class="fc">&nbsp;        val reactions = likeStatusService.getNumLikeStatuses(id, LikeType.POST, true)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(reactions)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}/dislikes&quot;)
+&nbsp;    fun getDislikeCount(
+&nbsp;        @PathVariable id: Long,
+&nbsp;    ): ResponseEntity&lt;Long&gt; {
+<b class="fc">&nbsp;        val reactions = likeStatusService.getNumLikeStatuses(id, LikeType.POST, false)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(reactions)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(&quot;/{id}/flags&quot;)
+&nbsp;    fun flagPost(
+&nbsp;        @PathVariable id: Long,
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;    ): ResponseEntity&lt;FlagDTO&gt; {
+<b class="fc">&nbsp;        val flag = flagService.createFlagByIds(id, details.id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(flag)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}/flags&quot;)
+&nbsp;    fun getFlagCountForPost(
+&nbsp;        @PathVariable id: Long,
+&nbsp;    ): ResponseEntity&lt;Long&gt; {
+<b class="fc">&nbsp;        val count = flagService.getNumFlags(id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(count)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}/flag&quot;)
+&nbsp;    fun getFlagForPost(
+&nbsp;        @PathVariable id: Long,
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;    ): ResponseEntity&lt;FlagDTO&gt; {
+<b class="fc">&nbsp;        val flag = flagService.getFlagById(id, details.id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(flag)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/flags&quot;)
+&nbsp;    @Require.Admin
+&nbsp;    fun getFlaggedPosts(): ResponseEntity&lt;List&lt;PostDTO&gt;&gt; {
+<b class="fc">&nbsp;        val response = postService.getFlaggedPosts()</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}/children&quot;)
+&nbsp;    fun getChildren(
+&nbsp;        @PathVariable id: Long,
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;    ): ResponseEntity&lt;List&lt;PostDTO&gt;&gt; {
+<b class="fc">&nbsp;        val children = postService.getVisibleChildren(id, details.id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(children)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Require.Guardian
+&nbsp;    @GetMapping(&quot;/unapproved&quot;)
+&nbsp;    fun getUnapproved(
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;    ): ResponseEntity&lt;HashMap&lt;Long, List&lt;PostDTO&gt;&gt;&gt; {
+<b class="fc">&nbsp;        val unapprovedPosts = postService.getUnapprovedPostsForGuardiansChildren(details.id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(unapprovedPosts)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Require.GuardianOrAdmin
+&nbsp;    @PatchMapping(&quot;/{id}/approve&quot;)
+&nbsp;    fun approvePost(
+&nbsp;        @PathVariable id: Long,
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;    ): ResponseEntity&lt;PostDTO&gt; {
+<b class="fc">&nbsp;        val approved = postService.approveChildPost(details.id, id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(approved)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Require.GuardianOrAdmin
+&nbsp;    @DeleteMapping(&quot;/{id}/disapprove&quot;)
+&nbsp;    fun disapprovePost(
+&nbsp;        @PathVariable id: Long,
+&nbsp;        @AuthenticationPrincipal details: AccountDetails,
+&nbsp;    ): ResponseEntity&lt;Void&gt; {
+<b class="fc">&nbsp;        postService.disapproveChildPost(details.id, id)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok().build()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
 </code>
 </pre>
 </div>
@@ -107,7 +269,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-10 06:01</div>
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
 </div>
 </body>
 </html>

@@ -3,9 +3,12 @@ package com.jknv.lum.model.entity
 import com.jknv.lum.model.dto.ContentDTO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
 @Entity
@@ -24,7 +27,14 @@ class Content (
     @Column(nullable = false)
     val contentType: String,
 
-    ) {
+    @Column(nullable = false)
+    var isApproved: Boolean = false,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = true)
+    var post: Post? = null,
+
+) {
     fun toDTO(): ContentDTO {
         return ContentDTO (
             id = id,

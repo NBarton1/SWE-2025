@@ -1,18 +1,18 @@
 import {AppShell, Group, Text, Menu, Button, ActionIcon, useMantineColorScheme} from '@mantine/core';
 import {Home, BarChart3, Settings, ChevronDown, Sun, Moon, UserStar} from 'lucide-react';
-import {Outlet, useNavigate} from "react-router";
-import useLogin from "../../hooks/useLogin.tsx";
-import {logout} from "../../request/auth.ts";
+import {Outlet} from "react-router";
+import {useAuth} from "../../hooks/useAuth.tsx";
 import {useMemo} from "react";
 import {isAdmin} from "../../types/accountTypes.ts";
+import {useLogout} from "../../hooks/useLogout.tsx";
+import ProfileAvatar from "../profile/ProfileAvatar.tsx";
 
 function Layout() {
 
-    const navigate = useNavigate()
-
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
-    const { currentAccount } = useLogin()
+    const { currentAccount } = useAuth()
+    const { logout } = useLogout()
 
     const menuItems = useMemo(() => {
 
@@ -21,7 +21,8 @@ function Layout() {
                 label: "Home",
                 icon: Home,
                 items: [
-                    { label: 'Schedule', href: "/calendar" },
+                    { label: "Schedule", href: "/schedule" },
+                    { label: "Feed", href: "/feed" },
                 ]
             },
             {
@@ -29,6 +30,7 @@ function Layout() {
                 icon: BarChart3,
                 items: [
                     {label: "Team Stats", href: "/teams"},
+                    {label: "Playoff Picture", href: "/playoff"},
                 ]
             }
         ]
@@ -36,15 +38,17 @@ function Layout() {
 
         const adminItems = [
             {
-                label: 'Admin',
+                label: "Admin",
                 icon: UserStar,
                 items: [
-                    { label: "Users", href: "/users"}
+                    { label: "Accounts", href: "/accounts"},
+                    { label: "Approve Content", href: "/content-approval"},
+                    { label: "Flagged Posts", href: "/flagged-posts"}
                 ]
             }
         ]
 
-        if (currentAccount && isAdmin(currentAccount)) {
+        if (isAdmin(currentAccount)) {
             items.push(...adminItems)
         }
 
@@ -103,6 +107,11 @@ function Layout() {
                     </Group>
 
                     <Group gap="xs">
+
+                        {currentAccount &&
+                            <ProfileAvatar  account={currentAccount}/>
+                        }
+
                         <ActionIcon
                             variant="default"
                             size="lg"
@@ -133,19 +142,11 @@ function Layout() {
                                     </>
                                 }
                                 {currentAccount ?
-                                    <Menu.Item
-                                        onClick={async () => {
-                                            await logout();
-                                            navigate("/login")
-                                        }}
-                                    >
+                                    <Menu.Item onClick={async () => await logout()}>
                                         Logout
                                     </Menu.Item>
                                     :
-                                    <Menu.Item
-                                        component="a"
-                                        href="/login"
-                                    >
+                                    <Menu.Item component="a" href="/login">
                                         Login
                                     </Menu.Item>
                                 }

@@ -2,6 +2,7 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.MatchDTO
 import com.jknv.lum.model.entity.Match
+import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.entity.Team
 import com.jknv.lum.model.request.match.MatchCreateRequest
 import com.jknv.lum.model.request.match.MatchUpdateRequest
@@ -22,10 +23,12 @@ import kotlin.test.assertEquals
 class MatchServiceTest {
     val matchRepository: MatchRepository = mockk()
     val teamService: TeamService = mockk()
+    val postService: PostService = mockk()
 
     val matchService = MatchService(
         matchRepository,
-        teamService
+        teamService,
+        postService,
     )
 
     val req: MatchCreateRequest = mockk()
@@ -34,6 +37,8 @@ class MatchServiceTest {
     lateinit var awayTeam: Team
 
     lateinit var match: Match
+
+    val mockId: Long = 1L
 
     @BeforeEach
     fun setup() {
@@ -65,9 +70,13 @@ class MatchServiceTest {
 
     @Test
     fun createMatchTest() {
+        val post: Post = mockk()
+        every { post.id } returns mockId
+
         every { teamService.getTeamById(homeTeam.id) } returns homeTeam
         every { teamService.getTeamById(awayTeam.id) } returns awayTeam
         every { matchRepository.save(match) } returns match
+        every { postService.createPostForMatch(match) } returns post
 
         val result = matchService.createMatch(req)
 
@@ -75,6 +84,7 @@ class MatchServiceTest {
             teamService.getTeamById(homeTeam.id)
             teamService.getTeamById(awayTeam.id)
             matchRepository.save(match)
+            postService.createPostForMatch(match)
         }
 
         assertEquals(match.toDTO(), result)
@@ -125,6 +135,17 @@ class MatchServiceTest {
         matchService.deleteMatch(match.id)
 
         verify { matchRepository.deleteById(match.id) }
+    }
+
+    @Test
+    fun getMatchTest() {
+        every { matchRepository.findById(match.id) } returns Optional.of(match)
+
+        val result = matchService.getMatch(match.id)
+
+        verify { matchRepository.findById(match.id) }
+
+        assertEquals(result, match.toDTO())
     }
 
     @Test

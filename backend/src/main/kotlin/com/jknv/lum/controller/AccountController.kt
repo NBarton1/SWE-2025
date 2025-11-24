@@ -75,8 +75,15 @@ class AccountController(
 
     @DeleteMapping("/{id}")
     @Require.AdminOrAccountOwner
-    fun delete(@PathVariable id: Long): ResponseEntity<Void> {
+    fun delete(
+        @PathVariable id: Long,
+        @AuthenticationPrincipal details: AccountDetails,
+        response: HttpServletResponse
+    ): ResponseEntity<Void> {
         accountService.deleteAccount(id)
+        if (details.id == id)
+            logout(response)
+
         return ResponseEntity.ok().build()
     }
 

@@ -1,87 +1,136 @@
-import { useCallback, useEffect, useState } from "react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import {Container, Paper, Modal, Title, Box, Button} from "@mantine/core";
-import DatePopup from "./DatePopup.tsx";
-import { type Match, matchStr } from "../../types/match.ts";
-import type { Team } from "../../types/team.ts";
-import { getTeams } from "../../request/teams.ts";
+import { useEffect, useState } from "react";
+import {Match} from "../../types/match.ts";
+import type {Team} from "../../types/team.ts";
+import {useToggle} from "react-use";
 import {getMatches} from "../../request/matches.ts";
+import {getTeams} from "../../request/teams.ts";
+import ScheduleList from "./ScheduleList.tsx";
+import Calendar from "./Calendar.tsx";
+import {Button, Group, Modal, Paper, Title} from "@mantine/core";
+import CreateMatchForm from "./CreateMatchForm.tsx";
+import { useSearchParams } from 'react-router-dom';
+import ScheduleExcelImporter from "./ScheduleExcelDropzone.tsx";
+import {isAdmin} from "../../types/accountTypes.ts";
+import {useAuth} from "../../hooks/useAuth.tsx";
 
 
 const Schedule = () => {
+
+    const { currentAccount } = useAuth();
+
     const [matches, setMatches] = useState<Match[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
-    const [selectedDate, setSelectedDate] = useState<string | null>(null);
-    const [opened, setOpened] = useState(false);
 
-    const dateClick = useCallback((info: { dateStr: string }) => {
-        setSelectedDate(info.dateStr);
-        setOpened(true);
-    }, []);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const [onListView, setOnListView] = useToggle(searchParams.get('view') === "list");
+
+    useEffect(() => {
+        const view = searchParams.get("view");
+        if (view === "calendar") setOnListView(false);
+        else if (view === "list") setOnListView(true);
+    }, [searchParams]);
+
+    const [newMatchModalOpened, setNewMatchModalOpened] = useState(false);
+
+    const [scheduleImportModalOpened, setScheduleImportModalOpened] = useState(false);
 
     useEffect(() => {
         getMatches().then(setMatches);
         getTeams().then(setTeams);
     }, []);
 
-    return (
-        <Container py="md">
-            <Paper shadow="md" p="md" radius="md" data-testid="schedule-paper">
-
-                <Button component="a" href="/calendar/list">
-                    List View
+    return matches && (
+        <Paper
+            shadow="md"
+            p="md"
+            radius="md"
+            data-testid="schedule-paper"
+        >
+            <Group>
+                <Button
+                    onClick={() => setNewMatchModalOpened(true)}
+                    data-testid="new-match-button"
+                >
+                    New Match
                 </Button>
 
-                <Title order={2} mb="md" ta="center" data-testid="schedule-title">
-                    Schedule
-                </Title>
+                <Button
+                    onClick={() => {
+                        setSearchParams({ view: onListView ? "calendar" : "list" });
+                        setOnListView(!onListView);
+                    }}
+                    data-testid="view-toggle-button"
+                >
+                    {onListView ? "Calendar View" : "List View"}
+                </Button>
 
-                <Box>
-                    <style>
-                        {`
-                            .fc .fc-col-header-cell-cushion {
-                                color: black !important;
-                            }
-                        `}
-                    </style>
-                    <FullCalendar
-                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                        initialView="dayGridMonth"
-                        headerToolbar={{
-                            left: "prev,next today",
-                            center: "title",
-                            right: "dayGridMonth,timeGridWeek,timeGridDay",
-                        }}
-                        dateClick={dateClick}
-                        events={matches.map((match) => ({
-                            title: matchStr(match),
-                            start: match.date,
-                        }))}
-                        height="auto"
-                        data-testid="calendar"
-                    />
-                </Box>
-            </Paper>
+                {isAdmin(currentAccount) && <Button
+                    onClick={() => setScheduleImportModalOpened(true)}
+                >
+                    Import Schedule from Excel
+                </Button>
+                }
+
+            </Group>
+
+            {onListView ? (
+                <ScheduleList
+                    matches={matches}
+                    setMatches={setMatches}
+                    teams={teams}
+                />
+            ) : (
+                <Calendar
+                    teams={teams}
+                    matches={matches}
+                    setMatches={setMatches}
+                />
+            )}
 
             <Modal
-                opened={opened}
-                onClose={() => setOpened(false)}
+                opened={newMatchModalOpened}
+                onClose={() => setNewMatchModalOpened(false)}
                 size="lg"
-                data-testid="date-popup"
+                data-testid="event-popup"
             >
-                {selectedDate && (
-                    <DatePopup
-                        date={selectedDate}
+                <Title
+                    order={2}
+                    mb="md"
+                    ta="center"
+                >
+                    New Match
+                </Title>
+
+                    <CreateMatchForm
+                        teams={teams}
                         matches={matches}
                         setMatches={setMatches}
-                        teams={teams}
+                        date={null}
                     />
-                )}
+
             </Modal>
-        </Container>
+
+            <Modal
+                opened={scheduleImportModalOpened}
+                onClose={() => setScheduleImportModalOpened(false)}
+                size="lg"
+                data-testid="schedule-import-popup"
+            >
+                <Title
+                    order={2}
+                    mb="md"
+                    ta="center"
+                >
+                    Import Schedule from Excel
+                </Title>
+
+                <ScheduleExcelImporter
+                    setMatches={setMatches}
+                />
+
+            </Modal>
+        </Paper>
     );
 };
 

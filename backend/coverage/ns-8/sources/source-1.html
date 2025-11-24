@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > MatchCreateRequest</title>
+  <title>Coverage Report > AccountCreateRequest</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.model.request.match</a>
+    <a href="../index.html">com.jknv.lum.model.request.account</a>
 </div>
 
-<h1>Coverage Summary for Class: MatchCreateRequest (com.jknv.lum.model.request.match)</h1>
+<h1>Coverage Summary for Class: AccountCreateRequest (com.jknv.lum.model.request.account)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -41,7 +41,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">MatchCreateRequest</td>
+  <td class="name">AccountCreateRequest</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -63,7 +63,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (16/16)
+    (11/11)
   </span>
 </td>
 </tr>
@@ -75,33 +75,26 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.request.match
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.request.account
 &nbsp;
-&nbsp;import com.jknv.lum.model.entity.Match
-&nbsp;import com.jknv.lum.model.entity.Team
-&nbsp;import com.jknv.lum.model.type.MatchState
-&nbsp;import com.jknv.lum.model.type.MatchType
-&nbsp;import java.time.LocalDateTime
+&nbsp;import com.jknv.lum.model.entity.Account
+&nbsp;import com.jknv.lum.model.type.Role
+&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 &nbsp;
-&nbsp;class MatchCreateRequest (
-<b class="fc">&nbsp;    val date: LocalDateTime,</b>
-<b class="fc">&nbsp;    val type: MatchType,</b>
-<b class="fc">&nbsp;    val homeTeamId: Long,</b>
-<b class="fc">&nbsp;    val awayTeamId: Long,</b>
-<b class="fc">&nbsp;    val timeLeft: Int = 0,</b>
-<b class="fc">&nbsp;    val homeScore: Int = 0,</b>
-<b class="fc">&nbsp;    val awayScore: Int = 0,</b>
+&nbsp;data class AccountCreateRequest (
+<b class="fc">&nbsp;    val name: String,</b>
+<b class="fc">&nbsp;    val username: String,</b>
+<b class="fc">&nbsp;    val email: String? = null,</b>
+<b class="fc">&nbsp;    val password: String,</b>
+<b class="fc">&nbsp;    val role: Role,</b>
 &nbsp;) {
-&nbsp;    fun toEntity(homeTeam: Team, awayTeam: Team): Match {
-<b class="fc">&nbsp;        return Match(</b>
-<b class="fc">&nbsp;            date = date,</b>
-<b class="fc">&nbsp;            type = type,</b>
-<b class="fc">&nbsp;            state = MatchState.SCHEDULED,</b>
-<b class="fc">&nbsp;            homeTeam = homeTeam,</b>
-<b class="fc">&nbsp;            awayTeam = awayTeam,</b>
-<b class="fc">&nbsp;            homeScore = homeScore,</b>
-<b class="fc">&nbsp;            awayScore = awayScore,</b>
-<b class="fc">&nbsp;            clockTimestamp = null,</b>
+&nbsp;    fun toEntity(): Account {
+<b class="fc">&nbsp;        return Account(</b>
+<b class="fc">&nbsp;            name = name,</b>
+<b class="fc">&nbsp;            username = username,</b>
+<b class="fc">&nbsp;            email = email,</b>
+<b class="fc">&nbsp;            password = BCryptPasswordEncoder().encode(password),</b>
+<b class="fc">&nbsp;            role = role,</b>
 &nbsp;        )
 &nbsp;    }
 &nbsp;}
@@ -128,7 +121,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-10 06:01</div>
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
 </div>
 </body>
 </html>

@@ -1,0 +1,278 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PostService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.services</a>
+</div>
+
+<h1>Coverage Summary for Class: PostService (com.jknv.lum.services)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PostService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (16/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40.7%
+  </span>
+  <span class="absValue">
+    (22/54)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.5%
+  </span>
+  <span class="absValue">
+    (54/59)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PostService$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">PostService$getFlaggedPosts$$inlined$sortedByDescending$1</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (16/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40.7%
+  </span>
+  <span class="absValue">
+    (22/54)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    91.5%
+  </span>
+  <span class="absValue">
+    (54/59)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
+&nbsp;
+&nbsp;import com.jknv.lum.LOGGER
+&nbsp;import com.jknv.lum.model.dto.LikeStatusDTO
+&nbsp;import com.jknv.lum.model.dto.PostDTO
+&nbsp;import com.jknv.lum.model.entity.Match
+&nbsp;import com.jknv.lum.model.entity.Post
+&nbsp;import com.jknv.lum.model.request.post.PostCreateRequest
+&nbsp;import com.jknv.lum.model.type.LikeType
+&nbsp;import com.jknv.lum.model.type.Role
+&nbsp;import com.jknv.lum.repository.PostRepository
+&nbsp;import jakarta.persistence.EntityNotFoundException
+&nbsp;import org.springframework.stereotype.Service
+&nbsp;import org.springframework.transaction.annotation.Transactional
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;@Service</b>
+&nbsp;@Transactional
+&nbsp;class PostService (
+<b class="fc">&nbsp;    private val postRepository: PostRepository,</b>
+<b class="fc">&nbsp;    private val accountService: AccountService,</b>
+<b class="fc">&nbsp;    private val contentService: ContentService,</b>
+<b class="fc">&nbsp;    private val likeStatusService: LikeStatusService,</b>
+&nbsp;) {
+&nbsp;    fun createPost(req: PostCreateRequest, accountId: Long): PostDTO {
+<b class="pc">&nbsp;        val parentPost: Post? = req.parentId?.let { id -&gt; getPostById(id) }</b>
+<b class="fc">&nbsp;        val account = accountService.getAccountById(accountId)</b>
+&nbsp;
+<b class="fc">&nbsp;        val post = req.toEntity(account, parentPost)</b>
+&nbsp;
+<b class="pc">&nbsp;        if (parentPost?.isApproved == false) throw IllegalAccessException(&quot;Cannot reply to unapproved post&quot;)</b>
+&nbsp;
+<b class="pc">&nbsp;        post.isApproved = account.role != Role.PLAYER</b>
+&nbsp;
+<b class="fc">&nbsp;        val createdPost = postRepository.save(post)</b>
+&nbsp;
+<b class="pc">&nbsp;        req.media?.forEach { contentService.uploadContent(it, createdPost) }</b>
+&nbsp;
+<b class="fc">&nbsp;        return createdPost.toDTO()</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun createPostForMatch(match: Match): Post =
+<b class="fc">&nbsp;        postRepository.save(Post(match = match, isApproved = true))</b>
+&nbsp;
+&nbsp;    fun getAllVisibleRootPosts(accountId: Long): List&lt;PostDTO&gt; =
+<b class="fc">&nbsp;        postRepository.findByParentPostIsNull()</b>
+<b class="fc">&nbsp;            .filter { isPostVisibleToAccount(it, accountId) }</b>
+<b class="fc">&nbsp;            .map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    internal fun getAllUnapprovedPostsFor(accountId: Long): List&lt;PostDTO&gt; =
+<b class="fc">&nbsp;        postRepository.findByIsApprovedIsFalseAndAccountId(accountId).map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    fun getVisibleChildren(id: Long, accountId: Long): List&lt;PostDTO&gt; =
+<b class="fc">&nbsp;        getPostById(id).children.filter { isPostVisibleToAccount(it, accountId) }.map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    fun deletePost(postId: Long, accountId: Long) {
+<b class="fc">&nbsp;        val requester = accountService.getAccountById(accountId)</b>
+<b class="pc">&nbsp;        if (! (isPostOwner(postId, accountId) || requester.role == Role.ADMIN) )</b>
+<b class="nc">&nbsp;            throw IllegalAccessException(&quot;You do not have access to delete post $postId&quot;)</b>
+&nbsp;
+<b class="fc">&nbsp;        postRepository.deleteById(postId)</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;Post Delected $postId&quot;)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun getFlaggedPosts(): List&lt;PostDTO&gt; =
+<b class="fc">&nbsp;        postRepository.findAll()</b>
+<b class="fc">&nbsp;            .filter { it.flagCount &gt; 0 }</b>
+<b class="fc">&nbsp;            .sortedByDescending { it.flagCount }</b>
+<b class="fc">&nbsp;            .map { it.toDTO() }</b>
+&nbsp;
+&nbsp;    fun likePost(postId: Long, accountId: Long, liked: Boolean): LikeStatusDTO {
+&nbsp;
+<b class="fc">&nbsp;        val post = getPostById(postId)</b>
+<b class="pc">&nbsp;        if (!post.isApproved) throw IllegalAccessException(&quot;Cannot like unapproved post $post&quot;)</b>
+&nbsp;
+<b class="fc">&nbsp;        return likeStatusService.createLikeStatus(accountId, postId, LikeType.POST, liked)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    internal fun getPostById(id: Long): Post =
+<b class="fc">&nbsp;        postRepository.findById(id).orElseThrow { EntityNotFoundException(&quot;Post $id not found&quot;) }</b>
+&nbsp;
+&nbsp;    internal fun isPostOwner(postId: Long, accountId: Long): Boolean =
+<b class="pc">&nbsp;        accountId == getPostById(postId).account?.id</b>
+&nbsp;
+&nbsp;
+&nbsp;    internal fun isPostVisibleToAccount(post: Post, accountId: Long): Boolean {
+&nbsp;
+<b class="fc">&nbsp;        val account = accountService.getAccountById(accountId)</b>
+&nbsp;
+<b class="pc">&nbsp;        val posterId = post.account?.id</b>
+&nbsp;
+<b class="pc">&nbsp;        return post.isApproved ||</b>
+<b class="nc">&nbsp;                isPostOwner(post.id, accountId) ||</b>
+<b class="nc">&nbsp;                account.role == Role.ADMIN ||</b>
+<b class="pc">&nbsp;                account.guardian?.isGuardianOf(posterId) ?: false</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun getUnapprovedPostsForGuardiansChildren(guardianId: Long): HashMap&lt;Long, List&lt;PostDTO&gt;&gt; {
+<b class="fc">&nbsp;        val guardian = accountService.getAccountById(guardianId).guardian</b>
+&nbsp;
+<b class="fc">&nbsp;        val childrenPostMap = HashMap&lt;Long, List&lt;PostDTO&gt;&gt;()</b>
+&nbsp;
+<b class="pc">&nbsp;        guardian?.children?.forEach { child -&gt;</b>
+<b class="fc">&nbsp;            childrenPostMap[child.id] = getAllUnapprovedPostsFor(child.id)</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        return childrenPostMap</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    fun approveChildPost(guardianId: Long, postId: Long): PostDTO {
+<b class="fc">&nbsp;        val account = accountService.getAccountById(guardianId)</b>
+&nbsp;
+<b class="fc">&nbsp;        val post = getPostById(postId)</b>
+&nbsp;
+<b class="pc">&nbsp;        val isGuardianForChild = account.guardian?.isGuardianOf(post.account?.id) ?: false</b>
+<b class="pc">&nbsp;        if (isGuardianForChild || account.role == Role.ADMIN) {</b>
+<b class="fc">&nbsp;            post.isApproved = true</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw IllegalAccessException(&quot;Unable to approve post $postId&quot;)</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return updatePost(post)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun disapproveChildPost(guardianId: Long, postId: Long) {
+<b class="fc">&nbsp;        val account = accountService.getAccountById(guardianId)</b>
+&nbsp;
+<b class="fc">&nbsp;        val post = getPostById(postId)</b>
+&nbsp;
+<b class="pc">&nbsp;        val isGuardianForChild = account.guardian?.isGuardianOf(post.account?.id) ?: false</b>
+<b class="pc">&nbsp;        if (isGuardianForChild || account.role == Role.ADMIN) {</b>
+<b class="fc">&nbsp;            postRepository.delete(post)</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw IllegalAccessException(&quot;Unable to disapprove post $postId&quot;)</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    internal fun updatePost(post: Post) =
+<b class="fc">&nbsp;        postRepository.save(post).toDTO()</b>
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
+</div>
+</body>
+</html>

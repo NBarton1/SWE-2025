@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/15</span>
+                <span class='fraction'>12/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">60% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>6/10</span>
+                <span class='fraction'>8/10</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/15</span>
+                <span class='fraction'>12/14</span>
             </div>
         
             
@@ -227,7 +227,10 @@
 <a name='L162'></a><a href='#L162'>162</a>
 <a name='L163'></a><a href='#L163'>163</a>
 <a name='L164'></a><a href='#L164'>164</a>
-<a name='L165'></a><a href='#L165'>165</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L165'></a><a href='#L165'>165</a>
+<a name='L166'></a><a href='#L166'>166</a>
+<a name='L167'></a><a href='#L167'>167</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -240,7 +243,6 @@
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
@@ -263,7 +265,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -316,7 +322,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -365,11 +374,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -393,19 +397,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {AppShell, Group, Text, Menu, Button, ActionIcon, useMantineColorScheme} from '@mantine/core';
 import {Home, BarChart3, Settings, ChevronDown, Sun, Moon, UserStar} from 'lucide-react';
-import {Outlet, useNavigate} from "react-router";
-import useLogin from "../../hooks/useLogin.tsx";
-import {logout} from "../../request/auth.ts";
+import {Outlet} from "react-router";
+import {useAuth} from "../../hooks/useAuth.tsx";
 import {useMemo} from "react";
 import {isAdmin} from "../../types/accountTypes.ts";
+import {useLogout} from "../../hooks/useLogout.tsx";
+import ProfileAvatar from "../profile/ProfileAvatar.tsx";
 &nbsp;
 function Layout() {
 &nbsp;
-    const navigate = useNavigate()
-&nbsp;
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 &nbsp;
-    const { currentAccount } = useLogin()
+    const { currentAccount } = useAuth()
+    const { logout } = useLogout()
 &nbsp;
     const menuItems = useMemo(() =&gt; {
 &nbsp;
@@ -414,7 +418,8 @@ function Layout() {
                 label: "Home",
                 icon: Home,
                 items: [
-                    { label: 'Schedule', href: "/calendar" },
+                    { label: "Schedule", href: "/schedule" },
+                    { label: "Feed", href: "/feed" },
                 ]
             },
             {
@@ -422,6 +427,7 @@ function Layout() {
                 icon: BarChart3,
                 items: [
                     {label: "Team Stats", href: "/teams"},
+                    {label: "Playoff Picture", href: "/playoff"},
                 ]
             }
         ]
@@ -429,15 +435,17 @@ function Layout() {
 &nbsp;
         const adminItems = [
             {
-                label: 'Admin',
+                label: "Admin",
                 icon: UserStar,
                 items: [
-                    { label: "Users", href: "/users"}
+                    { label: "Accounts", href: "/accounts"},
+                    { label: "Approve Content", href: "/content-approval"},
+                    { label: "Flagged Posts", href: "/flagged-posts"}
                 ]
             }
         ]
 &nbsp;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (<span class="branch-1 cbranch-no" title="branch not covered" >currentAccount &amp;&amp; isAdmin(currentAccount)) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (isAdmin(currentAccount)) {
 <span class="cstat-no" title="statement not covered" >            items.push(...adminItems)</span>
         }
 &nbsp;
@@ -496,6 +504,11 @@ function Layout() {
                     &lt;/Group&gt;
 &nbsp;
                     &lt;Group gap="xs"&gt;
+&nbsp;
+                        {currentAccount &amp;&amp;
+                            &lt;ProfileAvatar  account={currentAccount}/&gt;
+                        }
+&nbsp;
                         &lt;ActionIcon
                             variant="default"
                             size="lg"
@@ -515,7 +528,7 @@ function Layout() {
                             &lt;/Menu.Target&gt;
                             &lt;Menu.Dropdown&gt;
                                 {currentAccount &amp;&amp;
-<span class="branch-1 cbranch-no" title="branch not covered" >                                    &lt;&gt;</span>
+                                    &lt;&gt;
                                         &lt;Menu.Item
                                             component="a"
                                             href={`/profile/${currentAccount.id}`}
@@ -526,19 +539,11 @@ function Layout() {
                                     &lt;/&gt;
                                 }
                                 {currentAccount ?
-<span class="branch-0 cbranch-no" title="branch not covered" >                                    &lt;Menu.Item</span>
-                                        onClick={<span class="fstat-no" title="function not covered" >async () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                                            await logout();</span>
-<span class="cstat-no" title="statement not covered" >                                            navigate("/login")</span>
-                                        }}
-                                    &gt;
+                                    &lt;Menu.Item onClick={<span class="fstat-no" title="function not covered" >async () =&gt; <span class="cstat-no" title="statement not covered" >a</span>wait logout()}&gt;</span>
                                         Logout
                                     &lt;/Menu.Item&gt;
                                     :
-                                    &lt;Menu.Item
-                                        component="a"
-                                        href="/login"
-                                    &gt;
+<span class="branch-1 cbranch-no" title="branch not covered" >                                    &lt;Menu.Item component="a" href="/login"&gt;</span>
                                         Login
                                     &lt;/Menu.Item&gt;
                                 }
@@ -555,14 +560,15 @@ function Layout() {
     );
 }
 &nbsp;
-export default Layout;</pre></td></tr></table></pre>
+export default Layout;
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-10T11:13:44.602Z
+                at 2025-11-24T05:02:19.805Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

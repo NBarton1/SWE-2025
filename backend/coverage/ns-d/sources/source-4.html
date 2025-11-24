@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > CoachService</title>
+  <title>Coverage Report > MatchType</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,15 +19,18 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.services</a>
+    <a href="../index.html">com.jknv.lum.model.type</a>
 </div>
 
-<h1>Coverage Summary for Class: CoachService (com.jknv.lum.services)</h1>
+<h1>Coverage Summary for Class: MatchType (com.jknv.lum.model.type)</h1>
 
 <table class="coverageStats">
-
 <tr>
   <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
 <th class="coverageStat 
 ">
   Method, %
@@ -38,13 +41,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">CoachService</td>
+  <td class="name">MatchType</td>
 <td class="coverageStat">
   <span class="percent">
     100%
   </span>
   <span class="absValue">
-    (7/7)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
@@ -52,21 +55,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (12/12)
-  </span>
-</td>
-</tr>
-  <tr>
-    <td class="name">CoachService$$SpringCGLIB$$0</td>
-  </tr>
-<tr>
-  <td class="name"><strong>Total</strong></td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (7/7)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
@@ -74,10 +63,11 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (12/12)
+    (2/2)
   </span>
 </td>
 </tr>
+
 </table>
 
 <br/>
@@ -85,45 +75,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.type
 &nbsp;
-&nbsp;
-&nbsp;import com.jknv.lum.model.dto.CoachDTO
-&nbsp;import com.jknv.lum.model.entity.Account
-&nbsp;import com.jknv.lum.model.entity.Coach
-&nbsp;import com.jknv.lum.repository.CoachRepository
-&nbsp;import jakarta.persistence.EntityNotFoundException
-&nbsp;import org.springframework.stereotype.Service
-&nbsp;import org.springframework.transaction.annotation.Transactional
-&nbsp;
-<b class="fc">&nbsp;@Service</b>
-&nbsp;@Transactional
-&nbsp;class CoachService (
-<b class="fc">&nbsp;    private val coachRepository: CoachRepository,</b>
-<b class="fc">&nbsp;    private val teamService: TeamService,</b>
-&nbsp;) {
-&nbsp;    fun createCoach(account: Account): CoachDTO =
-<b class="fc">&nbsp;        coachRepository.save(Coach(account = account)).toDTO()</b>
-&nbsp;
-&nbsp;    fun getCoaches(): List&lt;CoachDTO&gt; =
-<b class="fc">&nbsp;        coachRepository.findAll().map { it.toDTO() }</b>
-&nbsp;
-&nbsp;    fun countCoaches(): Long =
-<b class="fc">&nbsp;        coachRepository.count()</b>
-&nbsp;
-&nbsp;    fun setCoachingTeam(teamId: Long, accountId: Long): CoachDTO {
-<b class="fc">&nbsp;        val team = teamService.getTeamById(teamId)</b>
-<b class="fc">&nbsp;        val coach = getCoachById(accountId)</b>
-&nbsp;
-<b class="fc">&nbsp;        coach.coachingTeam = team</b>
-<b class="fc">&nbsp;        return coachRepository.save(coach).toDTO()</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    internal fun getCoachByUsername(username: String): Coach =
-<b class="fc">&nbsp;        coachRepository.getCoachByAccountUsername(username).orElseThrow { EntityNotFoundException(&quot;Coach $username not found&quot;) }</b>
-&nbsp;
-&nbsp;    internal fun getCoachById(id: Long): Coach =
-<b class="fc">&nbsp;        coachRepository.getCoachById(id).orElseThrow { EntityNotFoundException(&quot;Coach $id not found&quot;) }</b>
+&nbsp;enum class MatchType {
+<b class="fc">&nbsp;    STANDARD,</b>
+<b class="fc">&nbsp;    PLAYOFF</b>
 &nbsp;}
 </code>
 </pre>
@@ -148,7 +104,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-10 06:01</div>
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
 </div>
 </body>
 </html>

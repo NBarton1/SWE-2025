@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > Require</title>
+  <title>Coverage Report > EntityValidatorRegistry</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,34 +19,67 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.config</a>
+    <a href="../index.html">com.jknv.lum.components</a>
 </div>
 
-<h1>Coverage Summary for Class: Require (com.jknv.lum.config)</h1>
+<h1>Coverage Summary for Class: EntityValidatorRegistry (com.jknv.lum.components)</h1>
 
 <table class="coverageStats">
-
 <tr>
   <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
 </tr>
-  <tr>
-    <td class="name">Require$Admin</td>
-  </tr>
-  <tr>
-    <td class="name">Require$AdminOrAccountOwner</td>
-  </tr>
-  <tr>
-    <td class="name">Require$Coach</td>
-  </tr>
-  <tr>
-    <td class="name">Require$Guardian</td>
-  </tr>
-  <tr>
-    <td class="name">Require$PlayerOnly</td>
-  </tr>
 <tr>
-  <td class="name"><strong>Total</strong></td>
+  <td class="name">EntityValidatorRegistry</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (2/5)
+  </span>
+</td>
 </tr>
+
 </table>
 
 <br/>
@@ -54,36 +87,62 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.config
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.components
 &nbsp;
-&nbsp;import org.springframework.security.access.prepost.PreAuthorize
+&nbsp;import com.jknv.lum.model.entity.Coach
+&nbsp;import com.jknv.lum.model.entity.Post
+&nbsp;import com.jknv.lum.model.type.LikeType
+&nbsp;import com.jknv.lum.repository.CoachRepository
+&nbsp;import com.jknv.lum.repository.PostRepository
+&nbsp;import jakarta.persistence.EntityNotFoundException
+&nbsp;import org.springframework.stereotype.Component
+&nbsp;import kotlin.reflect.KClass
 &nbsp;
-&nbsp;annotation class Require {
+&nbsp;interface EntityValidator {
+&nbsp;    val entityType: KClass&lt;*&gt;
+&nbsp;    fun validateExists(entityId: Long)
+&nbsp;}
 &nbsp;
-&nbsp;    @Target(AnnotationTarget.FUNCTION)
-&nbsp;    @Retention(AnnotationRetention.RUNTIME)
-&nbsp;    @PreAuthorize(&quot;hasRole(&#39;PLAYER&#39;) and !hasAnyRole(&#39;GUARDIAN&#39;,&#39;COACH&#39;,&#39;ADMIN&#39;)&quot;)
-&nbsp;    annotation class PlayerOnly
+&nbsp;@Component
+&nbsp;class CoachValidator(
+&nbsp;    private val coachRepository: CoachRepository
+&nbsp;): EntityValidator {
+&nbsp;    override val entityType: KClass&lt;*&gt;
+&nbsp;        get() = Coach::class
 &nbsp;
-&nbsp;    @Target(AnnotationTarget.FUNCTION)
-&nbsp;    @Retention(AnnotationRetention.RUNTIME)
-&nbsp;    @PreAuthorize(&quot;hasRole(&#39;GUARDIAN&#39;)&quot;)
-&nbsp;    annotation class Guardian
+&nbsp;    override fun validateExists(entityId: Long) {
+&nbsp;        if (!coachRepository.existsById(entityId)) {
+&nbsp;            throw EntityNotFoundException(&quot;Coach with id $entityId not found&quot;)
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
 &nbsp;
-&nbsp;    @Target(AnnotationTarget.FUNCTION)
-&nbsp;    @Retention(AnnotationRetention.RUNTIME)
-&nbsp;    @PreAuthorize(&quot;hasRole(&#39;COACH&#39;)&quot;)
-&nbsp;    annotation class Coach
+&nbsp;@Component
+&nbsp;class PostValidator(
+&nbsp;    private val postRepository: PostRepository
+&nbsp;): EntityValidator {
+&nbsp;    override val entityType: KClass&lt;*&gt;
+&nbsp;        get() = Post::class
 &nbsp;
-&nbsp;    @Target(AnnotationTarget.FUNCTION)
-&nbsp;    @Retention(AnnotationRetention.RUNTIME)
-&nbsp;    @PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;)&quot;)
-&nbsp;    annotation class Admin
+&nbsp;    override fun validateExists(entityId: Long) {
+&nbsp;        if (!postRepository.existsById(entityId)) {
+&nbsp;            throw EntityNotFoundException(&quot;Post with id $entityId not found&quot;)
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
 &nbsp;
-&nbsp;    @Target(AnnotationTarget.FUNCTION)
-&nbsp;    @Retention(AnnotationRetention.RUNTIME)
-&nbsp;    @PreAuthorize(&quot;hasRole(&#39;ADMIN&#39;) or #id == authentication.principal.id&quot;)
-&nbsp;    annotation class AdminOrAccountOwner
+<b class="fc">&nbsp;@Component</b>
+&nbsp;class EntityValidatorRegistry(
+&nbsp;    validators: List&lt;EntityValidator&gt;
+&nbsp;) {
+<b class="fc">&nbsp;    private val validatorMap = validators.associateBy { it.entityType }</b>
+&nbsp;
+&nbsp;    fun validateExists(entityClass: KClass&lt;*&gt;, entityId: Long) {
+<b class="nc">&nbsp;        val validator = validatorMap[entityClass]</b>
+<b class="nc">&nbsp;            ?: throw IllegalArgumentException(&quot;No validator for ${entityClass.simpleName}&quot;)</b>
+&nbsp;
+<b class="nc">&nbsp;        validator.validateExists(entityId)</b>
+&nbsp;    }
 &nbsp;}
 </code>
 </pre>
@@ -108,7 +167,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-10 06:01</div>
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
 </div>
 </body>
 </html>

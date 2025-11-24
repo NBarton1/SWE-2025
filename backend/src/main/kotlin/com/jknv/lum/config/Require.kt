@@ -28,4 +28,9 @@ annotation class Require {
     @Retention(AnnotationRetention.RUNTIME)
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     annotation class AdminOrAccountOwner
+
+    @Target(AnnotationTarget.FUNCTION)
+    @Retention(AnnotationRetention.RUNTIME)
+    @PreAuthorize("hasRole('GUARDIAN') or hasRole('ADMIN')")
+    annotation class GuardianOrAdmin
 }

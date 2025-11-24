@@ -1,0 +1,135 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AccountDetailsService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.jknv.lum.services</a>
+</div>
+
+<h1>Coverage Summary for Class: AccountDetailsService (com.jknv.lum.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AccountDetailsService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/9)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.services
+&nbsp;
+&nbsp;import com.jknv.lum.LOGGER
+&nbsp;import com.jknv.lum.repository.AccountRepository
+&nbsp;import com.jknv.lum.security.AccountDetails
+&nbsp;import org.springframework.security.core.userdetails.UserDetailsService
+&nbsp;import org.springframework.security.core.userdetails.UsernameNotFoundException
+&nbsp;import org.springframework.stereotype.Service
+&nbsp;
+<b class="fc">&nbsp;@Service</b>
+&nbsp;class AccountDetailsService(
+<b class="fc">&nbsp;    val accountRepository: AccountRepository,</b>
+&nbsp;) : UserDetailsService {
+&nbsp;
+&nbsp;
+&nbsp;    override fun loadUserByUsername(username: String): AccountDetails {
+<b class="fc">&nbsp;        val account = accountRepository.findByUsername(username).orElseThrow { UsernameNotFoundException(&quot;User $username not found&quot;) }</b>
+&nbsp;
+<b class="fc">&nbsp;        val accountDetails = AccountDetails(account)</b>
+<b class="fc">&nbsp;        LOGGER.info(&quot;Found account with username: $username&quot;)</b>
+&nbsp;
+<b class="fc">&nbsp;        return accountDetails</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    fun loadUserById(id: Long): AccountDetails {
+<b class="fc">&nbsp;        val account = accountRepository.findById(id).orElseThrow {</b>
+<b class="fc">&nbsp;            UsernameNotFoundException(&quot;User not found with id: $id&quot;)</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return AccountDetails(account)</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
+</div>
+</body>
+</html>

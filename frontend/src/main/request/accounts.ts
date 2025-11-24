@@ -95,12 +95,13 @@ export const updateAccountPicture = async (id: number, file: File): Promise<Cont
 
 export const deleteAccount = async (id: number) => {
     try {
-        return await fetch(`http://localhost:8080/api/accounts/${id}`, {
+        await fetch(`http://localhost:8080/api/accounts/${id}`, {
             method: "DELETE",
             credentials: 'include',
         });
+        return true;
     } catch (err) {
         console.error("Failed to delete", err);
     }
-    return null
+    return false
 };

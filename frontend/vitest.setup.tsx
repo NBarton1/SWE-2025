@@ -4,10 +4,16 @@ import * as matchers from '@testing-library/jest-dom/matchers'
 import {createTheme, MantineProvider} from "@mantine/core";
 import {BrowserRouter} from "react-router";
 import type {Team} from "./src/main/types/team.ts";
-import {type Match, MatchState, MatchType} from "./src/main/types/match.ts";
+import {Match, type MatchResponse, MatchState, MatchType} from "./src/main/types/match.ts";
 import {type Account, type Coach, type Player, Role} from "./src/main/types/accountTypes.ts";
-import type {Content} from "./src/main/types/content.ts";
+import type {Content, ContentPreview} from "./src/main/types/content.ts";
 import {InviteStatus, type TeamInvite} from "./src/main/types/invite.ts";
+import type {Post} from "./src/main/types/post.ts";
+import type {UseLikesReturn} from "./src/main/hooks/useLikes.tsx";
+import type {Flag} from "./src/main/types/flag.ts";
+import type {LikeStatus} from "./src/main/types/like.ts";
+
+global.fetch = vi.fn()
 
 expect.extend(matchers)
 
@@ -30,6 +36,7 @@ export const mockTeamDK: Team = {
     draw: 0,
     pointsFor: 999,
     pointsAllowed: 0,
+    pct: 1
 };
 
 export const mockTeams: Team[] = [
@@ -42,6 +49,7 @@ export const mockTeams: Team[] = [
         draw: 0,
         pointsFor: 0,
         pointsAllowed: 1499,
+        pct: 0
     },
     {
         id: 3,
@@ -51,12 +59,13 @@ export const mockTeams: Team[] = [
         draw: 0,
         pointsFor: 500,
         pointsAllowed: 500,
+        pct: 0.5
     },
 ];
 
 export const mockDate = "2026-03-14";
 
-export const mockScheduledMatch: Match = {
+export const mockScheduledMatchResponse: MatchResponse = {
     id: 1,
     type: MatchType.STANDARD,
     date: `${mockDate}T03:00`,
@@ -69,7 +78,7 @@ export const mockScheduledMatch: Match = {
     state: MatchState.SCHEDULED,
 }
 
-export const mockLiveTimeStoppedMatch: Match = {
+export const mockLiveTimeStoppedMatchResponse: MatchResponse = {
     id: 2,
     type: MatchType.STANDARD,
     date: `${mockDate}T03:00`,
@@ -82,7 +91,7 @@ export const mockLiveTimeStoppedMatch: Match = {
     state: MatchState.LIVE,
 }
 
-export const mockLiveTimeRunningMatch: Match = {
+export const mockLiveTimeRunningMatchResponse: MatchResponse = {
     id: 3,
     type: MatchType.STANDARD,
     date: `${mockDate}T03:00`,
@@ -95,7 +104,7 @@ export const mockLiveTimeRunningMatch: Match = {
     state: MatchState.LIVE,
 }
 
-export const mockFinishedMatch: Match = {
+export const mockFinishedMatchResponse: MatchResponse = {
     id: 4,
     type: MatchType.STANDARD,
     date: `${mockDate}T03:00`,
@@ -107,6 +116,12 @@ export const mockFinishedMatch: Match = {
     timeRunning: true,
     state: MatchState.FINISHED,
 }
+
+export const mockScheduledMatch = new Match(mockScheduledMatchResponse);
+export const mockLiveTimeRunningMatch = new Match(mockLiveTimeRunningMatchResponse);
+export const mockLiveTimeStoppedMatch = new Match(mockLiveTimeStoppedMatchResponse);
+export const mockFinishedMatch = new Match(mockFinishedMatchResponse);
+
 
 export const mockMatches: Match[] = [
     mockScheduledMatch,
@@ -122,6 +137,26 @@ export const mockContent: Content = {
     contentType: "",
     downloadUrl: "",
 }
+
+export const mockContentPreview: ContentPreview = {
+    file: { type: "image/png" } as File,
+    previewUrl: "",
+}
+
+export const mockVideoContentPreview: ContentPreview = {
+    file: { type: "video/mp4" } as File,
+    previewUrl: "video/",
+}
+
+export const mockVideoContent: Content = {
+    id: 1,
+    filename: "",
+    fileSize: 0,
+    contentType: "video/",
+    downloadUrl: "",
+}
+
+export const mockUnapprovedContent: Content[] = [mockContent];
 
 export const mockPlayerAccount: Account = {
     id: 2,
@@ -208,6 +243,71 @@ export const mockContentImage: Content = {
     downloadUrl: "http://localhost:8080/api/content/1",
 }
 
+// @ts-ignore
+export const mockPost: Post = {
+    id: 1,
+    account: mockAdminAccount,
+    textContent: "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"DK won\"}]}]}",
+    isApproved: true,
+    media: []
+}
+
+// @ts-ignore
+export const mockPostDeletedAccount: Post = {
+    id: 1,
+    textContent: "{\"type\":\"doc\",\"content\":[{\"type\":\"paragraph\",\"content\":[{\"type\":\"text\",\"text\":\"DK won\"}]}]}",
+    isApproved: true,
+    media: []
+}
+
+// @ts-ignore
+export const mockUnapprovedPost: Post = {
+    id: 2,
+    account: mockPlayerAccount,
+    textContent: "",
+    isApproved: false
+}
+
+
+// @ts-ignore
+export const mockFlaggedPost: Post = {
+    id: 2,
+    account: mockPlayerAccount,
+    textContent: "DK lost",
+    flagCount: 1000,
+}
+
+// @ts-ignore
+export const mockFlag: Flag = {
+    post: mockFlaggedPost
+}
+
+export const mockFlaggedPosts = [mockFlaggedPost]
+
+export const mockLikeStatus: LikeStatus = {
+    id: 1,
+    account: mockAdminAccount,
+    likeType: "POST",
+    entityId: 1,
+    liked: true
+}
+
+export const mockUseLikesReturn: UseLikesReturn = {
+    numLikes: 1,
+    numDislikes: 1,
+    percentLikes: 50,
+    percentDislikes: 50,
+    reaction: null,
+    handleReact: vi.fn()
+}
+// @ts-ignore
+export const mockMatchPost: Post = {
+    id: 3,
+    match: mockScheduledMatchResponse,
+}
+
+export const mockPosts = [mockPost, mockUnapprovedPost];
+export const mockPostsWithMatch = [mockPost, mockMatchPost];
 
 afterEach(() => {
     cleanup()

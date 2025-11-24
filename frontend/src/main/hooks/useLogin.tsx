@@ -1,44 +1,38 @@
-import {useCallback, useEffect, useState} from "react";
-import {login} from "../request/auth.ts";
-import {useNavigate} from "react-router";
-import {getAccount} from "../request/accounts.ts";
-import type {Account} from "../types/accountTypes.ts";
+import { useCallback } from "react";
+import { useNavigate } from "react-router";
+import { getAccount } from "../request/accounts.ts";
+import { useAuth } from "./useAuth.tsx";
 
-const useLogin = () => {
-
-    const navigate = useNavigate()
-
-    const [currentAccount, setCurrentAccount] = useState<Account | null>(null)
-
-    useEffect(() => {
-        const idString = sessionStorage.getItem("account_id")
-        const accountId = Number(idString)
-        if (isNaN(accountId)) return
-        getAccount(accountId).then(setCurrentAccount)
-    }, []);
+export const useLogin = () => {
+    const navigate = useNavigate();
+    const { setCurrentAccount } = useAuth();
 
     const tryLogin = useCallback(async (username: string, password: string) => {
-        const res = await login({
-            username,
-            password,
+        const res = await fetch("http://localhost:8080/api/accounts/login", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({username, password}),
         });
 
-        if (!res.ok) {
-            return;
-        }
+        if (!res.ok)
+            return false;
 
-        const idString = await res.text()
-        const accountId = Number(idString)
-        if (isNaN(accountId)) return
-        sessionStorage.setItem("account_id", idString)
-        getAccount(accountId).then(setCurrentAccount)
+        const idString = await res.text();
+        const accountId = Number(idString);
 
-        navigate("/teams")
+        if (isNaN(accountId))
+            return false;
 
-    }, [navigate])
+        sessionStorage.setItem("account_id", idString);
 
-    return { currentAccount, tryLogin }
-}
+        const account = await getAccount(accountId);
+        setCurrentAccount(account);
 
+        navigate("/feed");
 
-export default useLogin;
+        return true;
+    }, [navigate, setCurrentAccount]);
+
+    return { tryLogin };
+};

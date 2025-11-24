@@ -27,7 +27,6 @@ const TeamInvitesTable = ({ account }: TeamInvitesTableProps) => {
             shadow="sm"
             radius="md"
             p="xl"
-            mt="md"
             withBorder
             data-testid="team-invites-table"
         >

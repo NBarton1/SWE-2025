@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > CoachDTO</title>
+  <title>Coverage Report > ContentController</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,18 +19,15 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.model.dto</a>
+    <a href="../index.html">com.jknv.lum.controller</a>
 </div>
 
-<h1>Coverage Summary for Class: CoachDTO (com.jknv.lum.model.dto)</h1>
+<h1>Coverage Summary for Class: ContentController (com.jknv.lum.controller)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
-<th class="coverageStat 
-">
-  Class, %
-</th>
 <th class="coverageStat 
 ">
   Method, %
@@ -41,13 +38,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">CoachDTO</td>
+  <td class="name">ContentController</td>
 <td class="coverageStat">
   <span class="percent">
     100%
   </span>
   <span class="absValue">
-    (1/1)
+    (6/6)
   </span>
 </td>
 <td class="coverageStat">
@@ -55,19 +52,32 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (1/1)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (4/4)
+    (16/16)
   </span>
 </td>
 </tr>
-
+  <tr>
+    <td class="name">ContentController$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (16/16)
+  </span>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -75,14 +85,64 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.model.dto
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.controller
 &nbsp;
-&nbsp;data class CoachDTO (
-<b class="fc">&nbsp;    var account: AccountDTO,</b>
-<b class="fc">&nbsp;    var team: TeamDTO? = null,</b>
-<b class="fc">&nbsp;    var likes: Int = 0,</b>
-<b class="fc">&nbsp;    var dislikes: Int = 0,</b>
-&nbsp;)
+&nbsp;import com.jknv.lum.config.Require
+&nbsp;import com.jknv.lum.model.dto.ContentDTO
+&nbsp;import com.jknv.lum.services.ContentService
+&nbsp;import org.springframework.http.MediaType
+&nbsp;import org.springframework.http.ResponseEntity
+&nbsp;import org.springframework.web.bind.annotation.*
+&nbsp;import org.springframework.web.multipart.MultipartFile
+&nbsp;
+<b class="fc">&nbsp;@RestController</b>
+&nbsp;@RequestMapping(&quot;/api/content&quot;)
+&nbsp;class ContentController(
+<b class="fc">&nbsp;    private val contentService: ContentService,</b>
+&nbsp;) {
+&nbsp;
+&nbsp;    // Might need use in the future (generic file upload)
+&nbsp;    @PostMapping(&quot;/upload&quot;)
+&nbsp;    fun upload(@RequestParam(&quot;file&quot;) file: MultipartFile): ResponseEntity&lt;ContentDTO&gt; {
+<b class="fc">&nbsp;        val metadata = contentService.upload(file)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(metadata)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{fileId}&quot;)
+&nbsp;    fun download(@PathVariable fileId: Long): ResponseEntity&lt;ByteArray&gt; {
+<b class="fc">&nbsp;        val contentDTO = contentService.getContent(fileId)</b>
+<b class="fc">&nbsp;        val contentBytes = contentService.download(contentDTO)</b>
+<b class="fc">&nbsp;        val contentType = MediaType.parseMediaType(contentDTO.contentType)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok()</b>
+<b class="fc">&nbsp;            .contentType(contentType)</b>
+<b class="fc">&nbsp;            .body(contentBytes)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/unapproved&quot;)
+&nbsp;    @Require.Admin
+&nbsp;    fun getUnapprovedContent(): ResponseEntity&lt;List&lt;ContentDTO&gt;&gt; {
+<b class="fc">&nbsp;        val response = contentService.getUnapprovedContent()</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PatchMapping(&quot;/{fileId}&quot;)
+&nbsp;    @Require.Admin
+&nbsp;    fun approveContent(
+&nbsp;        @PathVariable fileId: Long,
+&nbsp;    ): ResponseEntity&lt;ContentDTO&gt; {
+<b class="fc">&nbsp;        val response = contentService.approveContent(fileId)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok(response)</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{fileId}&quot;)
+&nbsp;    @Require.Admin
+&nbsp;    fun deleteContent(
+&nbsp;        @PathVariable fileId: Long,
+&nbsp;    ): ResponseEntity&lt;Void&gt; {
+<b class="fc">&nbsp;        contentService.deleteContentById(fileId)</b>
+<b class="fc">&nbsp;        return ResponseEntity.ok().build()</b>
+&nbsp;    }
+&nbsp;}
 </code>
 </pre>
 </div>
@@ -106,7 +166,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-10 06:01</div>
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
 </div>
 </body>
 </html>

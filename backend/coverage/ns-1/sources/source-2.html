@@ -82,11 +82,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import org.springframework.boot.autoconfigure.SpringBootApplication
 &nbsp;import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 &nbsp;import org.springframework.boot.runApplication
+&nbsp;import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 &nbsp;import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 &nbsp;
 &nbsp;
 &nbsp;@SpringBootApplication
 &nbsp;@EnableJpaRepositories(&quot;com.jknv.lum.repository&quot;)
+&nbsp;@EnableJpaAuditing
 &nbsp;class LeagueOfUnitedMinorsApplication
 &nbsp;
 <b class="fc">&nbsp;val LOGGER: Logger = LoggerFactory.getLogger(LeagueOfUnitedMinorsApplication::class.java)</b>
@@ -118,7 +120,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-10 06:01</div>
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
 </div>
 </body>
 </html>

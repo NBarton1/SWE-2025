@@ -46,6 +46,7 @@ class TeamInviteServiceTest {
         every { player.id } returns playerId
         every { player.account.toDTO() } returns accountDTO
         every { player.hasPermission } returns true
+        every { player.toDTO() } returns playerDTO
     }
 
     @Test
@@ -150,7 +151,7 @@ class TeamInviteServiceTest {
 
         val expected = TeamInviteDTO(
             team = teamDTO,
-            player = accountDTO,
+            player = playerDTO,
             status = InviteStatus.ACCEPTED,
         )
 
@@ -176,7 +177,7 @@ class TeamInviteServiceTest {
 
         val expected = TeamInviteDTO(
             team = teamDTO,
-            player = accountDTO,
+            player = playerDTO,
             status = InviteStatus.DECLINED,
         )
 

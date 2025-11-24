@@ -133,7 +133,7 @@ class TeamControllerTest {
 
         val expected = TeamInviteDTO(
             team = team.toDTO(),
-            player = account.toDTO(),
+            player = mockk(),
             status = InviteStatus.PENDING,
         )
 
@@ -166,5 +166,17 @@ class TeamControllerTest {
         verify { playerService.removePlayerFromTeam(account.id, details.id) }
 
         assertEquals(HttpStatus.OK, response.statusCode)
+    }
+
+    @Test
+    fun getPlayoffTeamsTest() {
+        every { teamService.getPlayoffTeams() } returns listOf(team.toDTO())
+
+        val response = teamController.getPlayoffTeams()
+
+        verify { teamService.getPlayoffTeams() }
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(listOf(team.toDTO()), response.body)
     }
 }

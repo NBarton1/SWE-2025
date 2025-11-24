@@ -6,6 +6,7 @@ data class TeamDTO (
     val win: Int = 0,
     val loss: Int = 0,
     val draw: Int = 0,
+    val pct: Double = 0.0,
     val pointsFor: Int = 0,
     val pointsAllowed: Int = 0,
 )

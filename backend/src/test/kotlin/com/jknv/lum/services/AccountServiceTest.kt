@@ -1,9 +1,6 @@
 package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.AccountDTO
-import com.jknv.lum.model.dto.AdminDTO
-import com.jknv.lum.model.dto.CoachDTO
-import com.jknv.lum.model.dto.GuardianDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.Content
 import com.jknv.lum.model.request.account.AccountCreateRequest
@@ -16,7 +13,6 @@ import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
-import jakarta.mail.Multipart
 import jakarta.persistence.EntityNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
@@ -35,10 +31,7 @@ class AccountServiceTest {
     val jwtService: JwtService = mockk()
     val bCryptPasswordEncoder: BCryptPasswordEncoder = mockk()
 
-    val coachService: CoachService = mockk()
-    val guardianService: GuardianService = mockk()
-    val adminService: AdminService = mockk()
-    val playerService: PlayerService = mockk()
+    val accountRoleService: AccountRoleService = mockk()
     val contentService: ContentService = mockk()
 
     val accountService: AccountService = AccountService(
@@ -46,11 +39,8 @@ class AccountServiceTest {
         authenticationManager,
         bCryptPasswordEncoder,
         jwtService,
-        coachService,
-        guardianService,
-        adminService,
-        playerService,
-        contentService
+        contentService,
+        accountRoleService
     )
 
     val req: AccountCreateRequest = mockk()
@@ -113,17 +103,13 @@ class AccountServiceTest {
         every { req.role } returns Role.ADMIN
 
         every { accountRepository.save(account) } returns account
-        every { adminService.createAdmin(account) } returns AdminDTO(account.toDTO())
-        every { coachService.createCoach(account) } returns CoachDTO(account.toDTO())
-        every { guardianService.createGuardian(account) } returns GuardianDTO(account.toDTO())
+        justRun { accountRoleService.createAccount(account) }
 
         val result = accountService.createAccountWithRoles(req)
 
         verify {
             accountRepository.save(account)
-            adminService.createAdmin(account)
-            coachService.createCoach(account)
-            guardianService.createGuardian(account)
+            accountRoleService.createAccount(account)
         }
 
         assertEquals(account.toDTO(), result)
@@ -190,28 +176,20 @@ class AccountServiceTest {
             role = Role.PLAYER,
         )
 
+        justRun { accountRoleService.updateRole(account, any()) }
+
         every { accountRepository.findById(account.id) } returns Optional.of(account)
         every { accountRepository.save(account) } returns account
-        every { playerService.createPlayer(any()) } returns mockk()
-
-        val expected = AccountDTO(
-            id = account.id,
-            name = update.name ?: account.name,
-            username = update.username ?: account.username,
-            email = update.email ?: account.email,
-            role = update.role ?: account.role,
-            picture = account.picture?.toDTO()
-        )
 
         val result = accountService.updateAccount(account.id, account.id, update)
 
         verify {
+            accountRoleService.updateRole(account, any())
             accountRepository.findById(account.id)
             accountRepository.save(account)
         }
 
-        assertEquals(expected, result)
-        assertEquals(expected, account.toDTO())
+        assertEquals(result, account.toDTO())
     }
 
     @Test
@@ -233,7 +211,7 @@ class AccountServiceTest {
             username = account.username,
             email = account.email,
             role = account.role,
-            picture = picture.toDTO()
+            picture = picture.takeIf { it.isApproved }?.toDTO()
         )
 
         val result = accountService.updatePictureForAccount(account.id, image)

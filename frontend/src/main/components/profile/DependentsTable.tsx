@@ -1,46 +1,50 @@
-import {Button, Checkbox, Divider, Group, Paper, Stack, Text, Title} from "@mantine/core";
-import {adoptPlayer, setPlayerPermission} from "../../request/players.ts";
-import {type Account, type Player} from "../../types/accountTypes.ts";
-import {useNavigate} from "react-router";
-import {getDependents} from "../../request/accounts.ts";
+import { Button, Divider, Group, Paper, Stack, Text, Title } from "@mantine/core";
+import { adoptPlayer, setPlayerPermission } from "../../request/players.ts";
+import type { Account, Player } from "../../types/accountTypes.ts";
+import { getDependents } from "../../request/accounts.ts";
 import PlayerSelectorModal from "./PlayerSelectModal.tsx";
-import {useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { Post } from "../../types/post.ts";
+import { getUnapprovedPostsForChildren } from "../../request/posts.ts";
+import Dependent from "./Dependent.tsx";
 
 interface DependentsTableProps {
     account: Account | null;
 }
 
-const DependentsTable = ({account}: DependentsTableProps) => {
+const DependentsTable = ({ account }: DependentsTableProps) => {
     const [addPlayerModalOpen, setAddPlayerModalOpen] = useState(false);
     const [dependents, setDependents] = useState<Player[]>([]);
-
-    const navigate = useNavigate();
+    const [unapprovedPosts, setUnapprovedPosts] = useState<Record<number, Post[]>>({});
 
     useEffect(() => {
         getDependents().then(setDependents);
+        getUnapprovedPostsForChildren().then(setUnapprovedPosts);
     }, [account]);
 
-    const handlePermissionChange = async (playerId: number, newValue: boolean) => {
+    const handlePermissionChange = useCallback(async (playerId: number, newValue: boolean) => {
         const result = await setPlayerPermission(playerId, newValue);
-        if (!result) return
+        if (!result) return;
 
         setDependents((prev: Player[]) =>
             prev.map((d) =>
-                d.account.id === playerId
-                    ? {...d, hasPermission: newValue}
-                    : d
+                d.account.id === playerId ? { ...d, hasPermission: newValue } : d
             )
         );
-    };
+    }, []);
+
+    const handlePostResolved = useCallback((childId: number, postId: number) => {
+        setUnapprovedPosts((prev) => ({
+            ...prev,
+            [childId]: prev[childId].filter((p) => p.id !== postId),
+        }));
+    }, []);
 
     return (
-        <Paper shadow="sm" radius="md" p="xl" mt="md" withBorder>
+        <Paper shadow="sm" radius="md" p="xl" withBorder>
             <Stack>
                 <Group align="center" justify="space-between">
-                    <Title
-                        data-testid="dependents-title"
-                        order={3}
-                    >
+                    <Title order={3} data-testid="dependents-title">
                         Your Dependents
                     </Title>
                     <Button
@@ -52,39 +56,26 @@ const DependentsTable = ({account}: DependentsTableProps) => {
                         Add Player
                     </Button>
                 </Group>
-                <Divider/>
+                <Divider />
 
                 {dependents.length === 0 ? (
-                    <Text data-testid="empty-state" c="dimmed">You have no dependents.</Text>
+                    <Text data-testid="empty-state" c="dimmed">
+                        You have no dependents.
+                    </Text>
                 ) : (
-                    dependents.map((dependent) => (
-                        <Group
-                            key={dependent.account.id}
-                            justify="space-between"
-                            style={{borderBottom: "1px solid #eee", padding: 8, cursor: "pointer"}}
-                            onClick={(event) => {
-                                if (!(event.target as HTMLElement).closest('.permission-checkbox')) {
-                                    navigate(`/profile/${dependent.account.id}`);
-                                }
-                            }}
-                            data-testid={`dependent-${dependent.account.id}`}
-                        >
-                            <Text>
-                                {dependent.account.name} ({dependent.account.username})
-                            </Text>
+                    dependents.map((dependent) => {
+                        const posts = unapprovedPosts[dependent.account.id] || [];
 
-                            <Checkbox
-                                className="permission-checkbox"
-                                label="Allow to accept invites"
-                                checked={dependent.hasPermission}
-                                onChange={(event) =>
-                                    handlePermissionChange(dependent.account.id, event.currentTarget.checked)
-                                }
-                                onClick={(event) => event.stopPropagation()}
-                                data-testid={`permission-checkbox-${dependent.account.id}`}
+                        return (
+                            <Dependent
+                                key={dependent.account.id}
+                                dependent={dependent}
+                                posts={posts}
+                                onPermissionChange={handlePermissionChange}
+                                onPostResolved={(postId) => handlePostResolved(dependent.account.id, postId)}
                             />
-                        </Group>
-                    ))
+                        );
+                    })
                 )}
             </Stack>
 

@@ -1,16 +1,14 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, test, beforeEach, expect, vi } from "vitest";
-import ProfileHeader from "../../../main/components/profile/ProfileHeader.tsx";
 import {
     renderWithWrap,
-    mockAdminAccount,
     mockPlayerAccount,
+    mockAdminAccount,
 } from "../../../../vitest.setup.tsx";
+import ProfileHeader from "../../../main/components/profile/ProfileHeader.tsx";
 import * as accountsRequest from "../../../main/request/accounts.ts";
-import * as authRequest from "../../../main/request/auth.ts";
 
-// Mock requests
 vi.mock("../../../main/request/accounts.ts", () => ({
     updateAccount: vi.fn(),
     updateAccountPicture: vi.fn(),
@@ -21,7 +19,18 @@ vi.mock("../../../main/request/auth.ts", () => ({
     logout: vi.fn(),
 }));
 
-describe("ProfileHeader with testids", () => {
+vi.mock("../../../main/hooks/useLogout.tsx", () => ({
+    useLogout: vi.fn().mockReturnValue({ logout: vi.fn() })
+}));
+
+vi.mock("../../../main/hooks/useAuth.tsx", () => ({
+    useAuth: vi.fn().mockReturnValue({
+        currentAccount: null,
+        setCurrentAccount: vi.fn()
+    })
+}));
+
+describe("ProfileHeader", () => {
     beforeEach(() => {
         vi.clearAllMocks();
     });
@@ -30,7 +39,6 @@ describe("ProfileHeader with testids", () => {
         renderWithWrap(
             <ProfileHeader
                 account={null}
-                currentAccount={mockAdminAccount}
                 setAccount={vi.fn()}
             />
         );
@@ -39,15 +47,21 @@ describe("ProfileHeader with testids", () => {
     });
 
     test("renders account information when provided", async () => {
+        const { useAuth } = await import("../../../main/hooks/useAuth.tsx");
+        vi.mocked(useAuth).mockReturnValue({
+            currentAccount: mockPlayerAccount,
+            setCurrentAccount: vi.fn()
+        });
+
         renderWithWrap(
             <ProfileHeader
                 account={mockPlayerAccount}
-                currentAccount={mockPlayerAccount}
                 setAccount={vi.fn()}
             />
         );
 
         await waitFor(() => {
+            expect(screen.getByTestId("account-name")).toBeInTheDocument();
             expect(screen.getByTestId("account-name")).toHaveTextContent(mockPlayerAccount.name);
             expect(screen.getByTestId("account-username")).toHaveTextContent(`@${mockPlayerAccount.username}`);
             expect(screen.getByTestId("account-role")).toHaveTextContent(mockPlayerAccount.role);
@@ -55,10 +69,15 @@ describe("ProfileHeader with testids", () => {
     });
 
     test("enters edit mode when clicking Edit Profile", async () => {
+        const { useAuth } = await import("../../../main/hooks/useAuth.tsx");
+        vi.mocked(useAuth).mockReturnValue({
+            currentAccount: mockPlayerAccount,
+            setCurrentAccount: vi.fn()
+        });
+
         renderWithWrap(
             <ProfileHeader
                 account={mockPlayerAccount}
-                currentAccount={mockPlayerAccount}
                 setAccount={vi.fn()}
             />
         );
@@ -75,10 +94,15 @@ describe("ProfileHeader with testids", () => {
     });
 
     test("cancel button exits edit mode", async () => {
+        const { useAuth } = await import("../../../main/hooks/useAuth.tsx");
+        vi.mocked(useAuth).mockReturnValue({
+            currentAccount: mockPlayerAccount,
+            setCurrentAccount: vi.fn()
+        });
+
         renderWithWrap(
             <ProfileHeader
                 account={mockPlayerAccount}
-                currentAccount={mockPlayerAccount}
                 setAccount={vi.fn()}
             />
         );
@@ -96,8 +120,14 @@ describe("ProfileHeader with testids", () => {
     });
 
     test("submits edited profile successfully", async () => {
+        const { useAuth } = await import("../../../main/hooks/useAuth.tsx");
+        vi.mocked(useAuth).mockReturnValue({
+            currentAccount: mockPlayerAccount,
+            setCurrentAccount: vi.fn()
+        });
+
         const mockSetAccount = vi.fn();
-        const mockUpdate = vi.spyOn(accountsRequest, "updateAccount").mockResolvedValue({
+        vi.mocked(accountsRequest.updateAccount).mockResolvedValue({
             ...mockPlayerAccount,
             name: "Updated Name",
         });
@@ -105,7 +135,6 @@ describe("ProfileHeader with testids", () => {
         renderWithWrap(
             <ProfileHeader
                 account={mockPlayerAccount}
-                currentAccount={mockPlayerAccount}
                 setAccount={mockSetAccount}
             />
         );
@@ -121,22 +150,33 @@ describe("ProfileHeader with testids", () => {
         await user.click(screen.getByTestId("save-button"));
 
         await waitFor(() => {
-            expect(mockUpdate).toHaveBeenCalledWith(
+            expect(accountsRequest.updateAccount).toHaveBeenCalledWith(
                 mockPlayerAccount.id,
                 expect.objectContaining({ name: "Updated Name" })
             );
-            expect(mockSetAccount).toHaveBeenCalledWith(expect.objectContaining({ name: "Updated Name" }));
+            expect(mockSetAccount).toHaveBeenCalledWith(
+                expect.objectContaining({ name: "Updated Name" })
+            );
         });
     });
 
-
     test("does not log out if deleting another user (admin deletes player)", async () => {
+        const { useAuth } = await import("../../../main/hooks/useAuth.tsx");
+        const { useLogout } = await import("../../../main/hooks/useLogout.tsx");
+
+        const mockLogout = vi.fn();
+        vi.mocked(useLogout).mockReturnValue({ logout: mockLogout });
+        vi.mocked(useAuth).mockReturnValue({
+            currentAccount: mockAdminAccount,
+            setCurrentAccount: vi.fn()
+        });
+
         const mockSetAccount = vi.fn();
+        vi.mocked(accountsRequest.deleteAccount).mockResolvedValue(true);
 
         renderWithWrap(
             <ProfileHeader
                 account={mockPlayerAccount}
-                currentAccount={mockAdminAccount}
                 setAccount={mockSetAccount}
             />
         );
@@ -148,7 +188,8 @@ describe("ProfileHeader with testids", () => {
         await user.click(deleteButton);
 
         await waitFor(() => {
-            expect(authRequest.logout).not.toHaveBeenCalled();
+            expect(mockLogout).not.toHaveBeenCalled();
+            expect(mockSetAccount).toHaveBeenCalledWith(null);
         });
     });
 });

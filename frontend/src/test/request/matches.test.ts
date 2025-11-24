@@ -9,14 +9,14 @@ import {
     updateMatch,
     type UpdateMatchRequest
 } from "../../main/request/matches.ts";
-import {mockScheduledMatch} from "../../../vitest.setup.tsx";
+import {mockScheduledMatchResponse} from "../../../vitest.setup.tsx";
 
 
 describe("matches", () => {
     beforeEach(() => {
         global.fetch = vi.fn().mockResolvedValue({
             ok: true,
-            json: async () => mockScheduledMatch,
+            json: async () => mockScheduledMatchResponse,
         } as Response);
     });
 

@@ -4,9 +4,10 @@ import {getTeam, getTeamPlayers, getTeamCoaches, removePlayerFromTeam} from "../
 import {type Team} from "../../types/team";
 import {type Player, type Coach, isCoach} from "../../types/accountTypes";
 import { useParams } from "react-router-dom";
-import {formatLikePCT, getLikePCT} from "../../types/util.ts";
-import useLogin from "../../hooks/useLogin.tsx";
+import {getLikePCT} from "../../types/util.ts";
 import InvitePlayerModal from "./TeamInviteModal.tsx";
+import {useAuth} from "../../hooks/useAuth.tsx";
+import Likes from "../likes/Likes.tsx";
 
 const TeamView = () => {
     const { id } = useParams<{ id: string }>();
@@ -31,7 +32,7 @@ const TeamView = () => {
         });
     }, [id]);
 
-    const {currentAccount} = useLogin();
+    const {currentAccount} = useAuth();
 
     useEffect(() => {
         if (!currentAccount || !isCoach(currentAccount)) {
@@ -91,7 +92,7 @@ const TeamView = () => {
                                         <Table.Tr>
                                             <Table.Td>{coach.account.name}</Table.Td>
                                             <Table.Td>{coach.account.username}</Table.Td>
-                                            <Table.Td>{formatLikePCT(coach.likes, coach.dislikes)}</Table.Td>
+                                            <Table.Td>{<Likes entityId={coach.account.id} likeType="COACH" compact/>}</Table.Td>
                                         </Table.Tr>
                                     ))}
                             </Table.Tbody>

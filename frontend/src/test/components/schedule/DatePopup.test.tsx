@@ -1,9 +1,9 @@
 import { vi } from "vitest";
-import {mockDate, mockMatches, mockTeams, renderWithWrap} from "../../../../vitest.setup.tsx";
+import {mockDate, mockMatches, mockPlayerAccount, mockTeams, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
 import DatePopup from "../../../main/components/schedule/DatePopup.tsx";
 import '@testing-library/jest-dom';
-import type {Match} from "../../../main/types/match.ts";
+import {Match} from "../../../main/types/match.ts";
 import React, {type Dispatch} from "react";
 import type {Team} from "../../../main/types/team.ts";
 
@@ -20,7 +20,15 @@ let mockProps: {
     matches: Match[];
     setMatches: Dispatch<React.SetStateAction<Match[]>>;
     teams: Team[];
+    setSelectedMatch: Dispatch<React.SetStateAction<Match | null>>
 };
+
+vi.mock("../../../main/hooks/useAuth.tsx", () => ({
+    useAuth: vi.fn().mockReturnValue({
+        currentAccount: mockPlayerAccount,
+        setCurrentAccount: vi.fn()
+    })
+}));
 
 describe("DatePopup", () => {
     beforeEach(() => {
@@ -31,6 +39,7 @@ describe("DatePopup", () => {
             matches: mockMatches,
             setMatches: mockSetMatches,
             teams: mockTeams,
+            setSelectedMatch: vi.fn()
         };
     });
 
@@ -52,8 +61,6 @@ describe("DatePopup", () => {
 
     test("update match form displayed", async () => {
         renderWithWrap(<DatePopup {...mockProps} />);
-
-        screen.debug(undefined, Infinity);
 
         await waitFor(() => {
             for (let i = 1; i <= mockMatches.length; i++) {

@@ -12,6 +12,10 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 server:
   error:
     include-message: always
@@ -31,5 +35,9 @@ lum:
   cookie:
     name: authToken
     expires-in: 3600
+
+  playoff:
+    teams: 8
+    min-matches: 2
 
   storage.path: "content-storage"

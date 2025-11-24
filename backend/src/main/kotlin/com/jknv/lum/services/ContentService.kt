@@ -2,6 +2,7 @@ package com.jknv.lum.services
 
 import com.jknv.lum.model.dto.ContentDTO
 import com.jknv.lum.model.entity.Content
+import com.jknv.lum.model.entity.Post
 import com.jknv.lum.repository.ContentRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.factory.annotation.Value
@@ -10,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.util.*
 
 @Service
 class ContentService(
@@ -22,6 +22,11 @@ class ContentService(
     fun upload(file: MultipartFile): ContentDTO =
         uploadContent(file).toDTO()
 
+    fun getUnapprovedContent(): List<ContentDTO> =
+        contentRepository.findAll()
+            .filter { !it.isApproved }
+            .map { it.toDTO() }
+
     fun getContent(id: Long): ContentDTO =
         getContentById(id).toDTO()
 
@@ -32,14 +37,26 @@ class ContentService(
         return fileBytes
     }
 
-    internal fun createContent(content: Content): Content {
-        return contentRepository.save(content)
+    fun approveContent(id: Long): ContentDTO {
+        val content = getContentById(id)
+        content.isApproved = true
+
+        return updateContent(content)
     }
+
+    fun deleteContentById(id: Long) =
+        contentRepository.deleteById(id)
+
+    internal fun createContent(content: Content): Content =
+        contentRepository.save(content)
+
+    internal fun updateContent(content: Content): ContentDTO =
+        contentRepository.save(content).toDTO()
 
     internal fun getContentById(id: Long): Content =
         contentRepository.findById(id).orElseThrow { EntityNotFoundException("Content $id not found") }
 
-    internal fun uploadContent(file: MultipartFile): Content {
+    internal fun uploadContent(file: MultipartFile, post: Post? = null): Content {
         if (file.isEmpty) {
             throw IllegalArgumentException("file can not be empty")
         }
@@ -60,9 +77,13 @@ class ContentService(
             Content(
                 filename = originalFilename,
                 contentType = contentType,
-                fileSize = file.size
+                fileSize = file.size,
+                post = post,
+                isApproved = post != null
             )
         )
+
+        post?.media?.add(content)
 
         val targetPath = uploadPath.resolve(content.filename)
         Files.copy(file.inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING)

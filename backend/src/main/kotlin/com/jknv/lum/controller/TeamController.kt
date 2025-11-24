@@ -91,4 +91,10 @@ class TeamController (
         val response = playerService.removePlayerFromTeam(playerId, details.id)
         return ResponseEntity.ok(response)
     }
+
+    @GetMapping("/playoff")
+    fun getPlayoffTeams(): ResponseEntity<List<TeamDTO>> {
+        val response = teamService.getPlayoffTeams()
+        return ResponseEntity.ok(response)
+    }
 }

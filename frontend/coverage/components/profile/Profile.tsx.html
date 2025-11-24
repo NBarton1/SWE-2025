@@ -30,9 +30,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">62.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>4/6</span>
+                <span class='fraction'>5/8</span>
             </div>
         
             
@@ -108,7 +108,18 @@
 <a name='L43'></a><a href='#L43'>43</a>
 <a name='L44'></a><a href='#L44'>44</a>
 <a name='L45'></a><a href='#L45'>45</a>
-<a name='L46'></a><a href='#L46'>46</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -133,7 +144,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -154,19 +174,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useEffect, useState } from 'react';
-import {Container} from '@mantine/core';
+import {Container, Stack} from '@mantine/core';
 import '@mantine/core/styles.css';
-import {type Account, accountEquals, isPlayer} from "../../types/accountTypes.ts";
+import {type Account, accountEquals, isCoach, isPlayer} from "../../types/accountTypes.ts";
 import {useParams} from "react-router";
 import {getAccount} from "../../request/accounts.ts";
-import useLogin from "../../hooks/useLogin.tsx";
-import ProfileHeader from "./ProfileHeader.tsx";
 import TeamInvitesTable from "./TeamInvitesTable.tsx";
 import DependentsTable from "./DependentsTable.tsx";
+import {useAuth} from "../../hooks/useAuth.tsx";
+import ProfileHeader from "./ProfileHeader.tsx";
+import Likes from "../likes/Likes.tsx";
 &nbsp;
 const ProfilePage = () =&gt; {
     const { id } = useParams();
-    const { currentAccount } = useLogin();
+    const { currentAccount } = useAuth();
 &nbsp;
     const [account, setAccount] = useState&lt;Account | null&gt;(null);
 &nbsp;
@@ -178,21 +199,30 @@ const ProfilePage = () =&gt; {
         });
     }, [id]);
 &nbsp;
+&nbsp;
     return (
         &lt;Container
             size="md"
             py={40}
             data-testid="profile-page-container"
-        &gt;
-            &lt;ProfileHeader account={account} currentAccount={currentAccount} setAccount={setAccount} /&gt;
 &nbsp;
-            {accountEquals(currentAccount, account) &amp;&amp; (
-                isPlayer(account) ? (
-                    &lt;TeamInvitesTable account={account} /&gt;
-                ) : (
-<span class="branch-1 cbranch-no" title="branch not covered" >                    &lt;DependentsTable account={account} /&gt;</span>
-                )
-            )}
+        &gt;
+            &lt;Stack gap="md"&gt;
+                &lt;ProfileHeader account={account} setAccount={setAccount} /&gt;
+&nbsp;
+                {isCoach(account) &amp;&amp; (
+                    // @ts-expect-error already null safe from isCoach
+<span class="branch-1 cbranch-no" title="branch not covered" >                    &lt;Likes entityId={account.id} likeType="COACH"/&gt;</span>
+                )}
+&nbsp;
+                {accountEquals(currentAccount, account) &amp;&amp; (
+                    isPlayer(account) ? (
+                        &lt;TeamInvitesTable account={account} /&gt;
+                    ) : (
+<span class="branch-1 cbranch-no" title="branch not covered" >                        &lt;DependentsTable account={account} /&gt;</span>
+                    )
+                )}
+            &lt;/Stack&gt;
         &lt;/Container&gt;
     );
 };
@@ -205,7 +235,7 @@ export default ProfilePage;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-10T11:13:44.602Z
+                at 2025-11-24T05:02:19.805Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

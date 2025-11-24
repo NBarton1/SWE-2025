@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > AdminSeeder</title>
+  <title>Coverage Report > WebSocketConfig</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">com.jknv.lum.config.seed</a>
+    <a href="../index.html">com.jknv.lum.config</a>
 </div>
 
-<h1>Coverage Summary for Class: AdminSeeder (com.jknv.lum.config.seed)</h1>
+<h1>Coverage Summary for Class: WebSocketConfig (com.jknv.lum.config)</h1>
 
 <table class="coverageStats">
 
@@ -34,15 +34,19 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 <th class="coverageStat 
 ">
-  Branch, %
-</th>
-<th class="coverageStat 
-">
   Line, %
 </th>
 </tr>
 <tr>
-  <td class="name">AdminSeeder</td>
+  <td class="name">WebSocketConfig</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -51,25 +55,9 @@ Current scope:     <a href="../../index.html">all classes</a>
     (4/4)
   </span>
 </td>
-<td class="coverageStat">
-  <span class="percent">
-    50%
-  </span>
-  <span class="absValue">
-    (1/2)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (22/22)
-  </span>
-</td>
 </tr>
   <tr>
-    <td class="name">AdminSeeder$$SpringCGLIB$$0</td>
+    <td class="name">WebSocketConfig$$SpringCGLIB$$0</td>
   </tr>
 <tr>
   <td class="name"><strong>Total</strong></td>
@@ -78,15 +66,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (4/4)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    50%
-  </span>
-  <span class="absValue">
-    (1/2)
+    (3/3)
   </span>
 </td>
 <td class="coverageStat">
@@ -94,7 +74,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (22/22)
+    (4/4)
   </span>
 </td>
 </tr>
@@ -105,61 +85,26 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.config.seed
+<code class="sourceCode" id="sourceCode">&nbsp;package com.jknv.lum.config
 &nbsp;
-&nbsp;import com.jknv.lum.LOGGER
-&nbsp;import com.jknv.lum.model.entity.Account
-&nbsp;import com.jknv.lum.model.entity.Admin
-&nbsp;import com.jknv.lum.model.entity.Coach
-&nbsp;import com.jknv.lum.model.entity.Guardian
-&nbsp;import com.jknv.lum.model.type.Role
-&nbsp;import com.jknv.lum.repository.AccountRepository
-&nbsp;import com.jknv.lum.repository.AdminRepository
-&nbsp;import com.jknv.lum.repository.CoachRepository
-&nbsp;import com.jknv.lum.repository.GuardianRepository
-&nbsp;import org.springframework.boot.CommandLineRunner
-&nbsp;import org.springframework.core.annotation.Order
-&nbsp;import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-&nbsp;import org.springframework.stereotype.Component
-&nbsp;import org.springframework.transaction.annotation.Transactional
+&nbsp;import org.springframework.context.annotation.Configuration
+&nbsp;import org.springframework.messaging.simp.config.MessageBrokerRegistry
+&nbsp;import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
+&nbsp;import org.springframework.web.socket.config.annotation.StompEndpointRegistry
+&nbsp;import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
 &nbsp;
-<b class="fc">&nbsp;@Component</b>
-&nbsp;@Order(3)
-&nbsp;class AdminSeeder (
-<b class="fc">&nbsp;    private val adminRepository: AdminRepository,</b>
-<b class="fc">&nbsp;    private val coachRepository: CoachRepository,</b>
-<b class="fc">&nbsp;    private val guardianRepository: GuardianRepository,</b>
-<b class="fc">&nbsp;    private val accountRepository: AccountRepository,</b>
-<b class="fc">&nbsp;    private val bCryptPasswordEncoder: BCryptPasswordEncoder,</b>
-&nbsp;) : CommandLineRunner {
+<b class="fc">&nbsp;@Configuration</b>
+&nbsp;@EnableWebSocketMessageBroker
+&nbsp;class WebSocketConfig: WebSocketMessageBrokerConfigurer {
 &nbsp;
-&nbsp;    @Transactional
-&nbsp;    override fun run(vararg args: String?) {
-<b class="pc">&nbsp;        if (adminRepository.count() == 0L) {</b>
-<b class="fc">&nbsp;            val admins = listOf(</b>
-<b class="fc">&nbsp;                adminOf(&quot;Admin G&quot;, &quot;admin&quot;)</b>
-&nbsp;            )
-&nbsp;
-<b class="fc">&nbsp;            admins.forEach {</b>
-<b class="fc">&nbsp;                it.account = accountRepository.save(it.account)</b>
-<b class="fc">&nbsp;                adminRepository.save(it)</b>
-<b class="fc">&nbsp;                coachRepository.save(Coach(account = it.account))</b>
-<b class="fc">&nbsp;                guardianRepository.save(Guardian(account = it.account))</b>
-<b class="fc">&nbsp;            }</b>
-<b class="fc">&nbsp;            LOGGER.info(&quot;Admins seeded&quot;)</b>
-&nbsp;        }
+&nbsp;    override fun registerStompEndpoints(registry: StompEndpointRegistry) {
+<b class="fc">&nbsp;        registry.addEndpoint(&quot;/ws&quot;).setAllowedOriginPatterns(&quot;*&quot;)</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    fun adminOf(name: String, username: String) : Admin =
-<b class="fc">&nbsp;        Admin(account = accountOf(name, username))</b>
-&nbsp;
-&nbsp;    fun accountOf(name: String, username: String) : Account =
-<b class="fc">&nbsp;        Account(</b>
-<b class="fc">&nbsp;            name = name,</b>
-<b class="fc">&nbsp;            username = username,</b>
-<b class="fc">&nbsp;            password = bCryptPasswordEncoder.encode(&quot;password&quot;),</b>
-<b class="fc">&nbsp;            role = Role.ADMIN,</b>
-&nbsp;        )
+&nbsp;    override fun configureMessageBroker(registry: MessageBrokerRegistry) {
+<b class="fc">&nbsp;        registry.enableSimpleBroker(&quot;/topic&quot;)</b>
+<b class="fc">&nbsp;        registry.setApplicationDestinationPrefixes(&quot;/app&quot;)</b>
+&nbsp;    }
 &nbsp;}
 </code>
 </pre>
@@ -184,7 +129,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-11-10 06:01</div>
+    <div style="float:right;">generated on 2025-11-24 05:04</div>
 </div>
 </body>
 </html>
