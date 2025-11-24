@@ -10,16 +10,15 @@ import com.jknv.lum.model.request.account.AccountCreateRequest
 import com.jknv.lum.model.request.player.PlayerFilter
 import com.jknv.lum.model.type.Role
 import com.jknv.lum.repository.PlayerRepository
-import io.mockk.awaits
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import jakarta.persistence.EntityNotFoundException
-import org.junit.jupiter.api.assertThrows
-import java.util.Optional
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.junit.jupiter.api.assertThrows
+import jakarta.persistence.EntityNotFoundException
+import java.util.Optional
 
 class PlayerServiceTest {
     val playerRepository: PlayerRepository = mockk()

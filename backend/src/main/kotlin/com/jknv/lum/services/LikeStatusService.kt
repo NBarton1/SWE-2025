@@ -5,7 +5,6 @@ import com.jknv.lum.model.dto.LikeStatusDTO
 import com.jknv.lum.model.entity.Account
 import com.jknv.lum.model.entity.LikeStatus
 import com.jknv.lum.model.type.LikeType
-import com.jknv.lum.repository.AccountRepository
 import com.jknv.lum.repository.LikeRepository
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class LikeStatusService(
     private val likeRepository: LikeRepository,
-    private val accountRepository: AccountRepository,
+    private val accountService: AccountService,
     private val entityValidatorRegistry: EntityValidatorRegistry
 ) {
 
@@ -24,7 +23,7 @@ class LikeStatusService(
 
     internal fun createLikeStatusEntity(accountId: Long, entityId: Long, likeType: LikeType, liked: Boolean): LikeStatus {
 
-        val account = accountRepository.findById(accountId).orElseThrow()
+        val account = accountService.getAccountById(accountId)
 
         val existing = getLikeStatusByAccount(account, entityId, likeType) ?:
             return likeRepository.save(
@@ -54,7 +53,7 @@ class LikeStatusService(
 
     fun getLikeStatus(accountId: Long, entityId: Long, likeType: LikeType): LikeStatusDTO? {
         validateEntityExists(entityId, likeType)
-        val account = accountRepository.findById(accountId).orElseThrow()
+        val account = accountService.getAccountById(accountId)
         return getLikeStatusByAccount(account, entityId, likeType)?.toDTO()
     }
 

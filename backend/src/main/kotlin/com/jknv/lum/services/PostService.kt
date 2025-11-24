@@ -3,7 +3,6 @@ package com.jknv.lum.services
 import com.jknv.lum.LOGGER
 import com.jknv.lum.model.dto.LikeStatusDTO
 import com.jknv.lum.model.dto.PostDTO
-import com.jknv.lum.model.entity.Guardian
 import com.jknv.lum.model.entity.Match
 import com.jknv.lum.model.entity.Post
 import com.jknv.lum.model.request.post.PostCreateRequest
@@ -50,9 +49,6 @@ class PostService (
 
     internal fun getAllUnapprovedPostsFor(accountId: Long): List<PostDTO> =
         postRepository.findByIsApprovedIsFalseAndAccountId(accountId).map { it.toDTO() }
-
-    fun getAllRootPosts(): List<PostDTO> =
-        postRepository.findByParentPostIsNull().map { it.toDTO() }
 
     fun getVisibleChildren(id: Long, accountId: Long): List<PostDTO> =
         getPostById(id).children.filter { isPostVisibleToAccount(it, accountId) }.map { it.toDTO() }
@@ -124,24 +120,22 @@ class PostService (
             throw IllegalAccessException("Unable to approve post $postId")
         }
 
-        return post.toDTO()
+        return updatePost(post)
     }
 
-    fun disapproveChildPost(guardianId: Long, postId: Long): PostDTO {
+    fun disapproveChildPost(guardianId: Long, postId: Long) {
         val account = accountService.getAccountById(guardianId)
-
-        val guardian = account.guardian ?: throw EntityNotFoundException("Guardian $guardianId not found")
 
         val post = getPostById(postId)
 
-        val isGuardianForChild = guardian.isGuardianOf(post.account?.id)
+        val isGuardianForChild = account.guardian?.isGuardianOf(post.account?.id) ?: false
         if (isGuardianForChild || account.role == Role.ADMIN) {
-            postRepository.deleteById(postId)
+            postRepository.delete(post)
         } else {
             throw IllegalAccessException("Unable to disapprove post $postId")
         }
-
-        return post.toDTO()
     }
 
+    internal fun updatePost(post: Post) =
+        postRepository.save(post).toDTO()
 }
