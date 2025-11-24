@@ -333,6 +333,7 @@ describe("ScheduleExcelImporter", () => {
             SheetNames: ["Sheet1"],
             Sheets: { Sheet1: {} }
         };
+        const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
         vi.mocked(XLSX.read).mockReturnValue(mockWorkbook);
         vi.mocked(XLSX.utils.sheet_to_json).mockReturnValue([]);
@@ -343,11 +344,13 @@ describe("ScheduleExcelImporter", () => {
         dropzone.click();
 
         await waitFor(() => {
-            expect(dropzone.getAttribute("data-disabled")).toBe("false");
+            expect(consoleErrorSpy).toHaveBeenCalledWith("Excel file returned no rows.");
         });
 
         expect(matchRequest.createMatch).not.toHaveBeenCalled();
-        expect(screen.getByText("Successfully imported schedule!")).not.toBeInTheDocument();
+        expect(screen.queryByText("Successfully imported schedule!")).not.toBeInTheDocument();
+
+        consoleErrorSpy.mockRestore();
     });
 
     test("handles Excel parsing error", async () => {
@@ -367,14 +370,18 @@ describe("ScheduleExcelImporter", () => {
         });
 
         await waitFor(() => {
-            expect(screen.getByText("Successfully imported schedule!")).not.toBeInTheDocument();
+            expect(consoleErrorSpy).toHaveBeenCalledWith("Excel file returned no rows.");
+        });
+
+        await waitFor(() => {
+            expect(dropzone.getAttribute("data-disabled")).toBe("false");
         });
 
         expect(matchRequest.createMatch).not.toHaveBeenCalled();
+        expect(screen.queryByText("Successfully imported schedule!")).not.toBeInTheDocument();
 
         consoleErrorSpy.mockRestore();
     });
-
     test("notification can be closed", async () => {
         const mockWorkbook = {
             SheetNames: ["Sheet1"],
