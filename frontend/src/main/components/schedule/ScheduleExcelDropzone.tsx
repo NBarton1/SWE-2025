@@ -143,7 +143,7 @@ export function ScheduleExcelImporter({ setMatches }: ScheduleExcelImporterProps
         try {
             const rows = await excelToJSON(file);
 
-            if (!rows) {
+            if (rows.length === 0 ) {
                 console.error("Excel file returned no rows.");
                 return;
             }
