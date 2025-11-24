@@ -9,9 +9,14 @@ import Calendar from "./Calendar.tsx";
 import {Button, Group, Modal, Paper, Title} from "@mantine/core";
 import CreateMatchForm from "./CreateMatchForm.tsx";
 import { useSearchParams } from 'react-router-dom';
+import ScheduleExcelImporter from "./ScheduleExcelDropzone.tsx";
+import {isAdmin} from "../../types/accountTypes.ts";
+import {useAuth} from "../../hooks/useAuth.tsx";
 
 
 const Schedule = () => {
+
+    const { currentAccount } = useAuth();
 
     const [matches, setMatches] = useState<Match[]>([]);
     const [teams, setTeams] = useState<Team[]>([]);
@@ -27,6 +32,8 @@ const Schedule = () => {
     }, [searchParams]);
 
     const [newMatchModalOpened, setNewMatchModalOpened] = useState(false);
+
+    const [scheduleImportModalOpened, setScheduleImportModalOpened] = useState(false);
 
     useEffect(() => {
         getMatches().then(setMatches);
@@ -57,6 +64,14 @@ const Schedule = () => {
                 >
                     {onListView ? "Calendar View" : "List View"}
                 </Button>
+
+                {isAdmin(currentAccount) && <Button
+                    onClick={() => setScheduleImportModalOpened(true)}
+                >
+                    Import Schedule from Excel
+                </Button>
+                }
+
             </Group>
 
             {onListView ? (
@@ -87,12 +102,33 @@ const Schedule = () => {
                     New Match
                 </Title>
 
-                <CreateMatchForm
-                    teams={teams}
-                    matches={matches}
+                    <CreateMatchForm
+                        teams={teams}
+                        matches={matches}
+                        setMatches={setMatches}
+                        date={null}
+                    />
+
+            </Modal>
+
+            <Modal
+                opened={scheduleImportModalOpened}
+                onClose={() => setScheduleImportModalOpened(false)}
+                size="lg"
+                data-testid="schedule-import-popup"
+            >
+                <Title
+                    order={2}
+                    mb="md"
+                    ta="center"
+                >
+                    Import Schedule from Excel
+                </Title>
+
+                <ScheduleExcelImporter
                     setMatches={setMatches}
-                    date={null}
                 />
+
             </Modal>
         </Paper>
     );
