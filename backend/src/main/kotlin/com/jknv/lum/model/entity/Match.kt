@@ -15,7 +15,6 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.MapsId
 import jakarta.persistence.OneToOne
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
@@ -63,8 +62,7 @@ class Match(
     @JoinColumn(name = "away_team_id", nullable = false)
     var awayTeam: Team,
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "post_id")
+    @OneToOne(mappedBy = "match", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     var post: Post? = null,
 
 ) {

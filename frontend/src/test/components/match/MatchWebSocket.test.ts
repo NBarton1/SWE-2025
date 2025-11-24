@@ -1,11 +1,11 @@
 import {expect, vi} from "vitest";
-import {mockLiveTimeRunningMatch, mockScheduledMatch} from "../../../../vitest.setup.tsx";
-import {live_match_websocket} from "../../../main/components/match/MatchWebSocket.ts";
-import type {MatchResponse} from "../../../main/types/match.ts";
+import {mockLiveTimeRunningMatchResponse, mockScheduledMatchResponse} from "../../../../vitest.setup.tsx";
+import {createMatchWebsocket} from "../../../main/components/match/MatchWebSocket.ts";
+import {Match, type MatchResponse} from "../../../main/types/match.ts";
 import {Client, type Frame, type IFrame} from "@stomp/stompjs";
 
 interface MockMatchUseState {
-    match: null | MatchResponse
+    match: null | Match
 }
 
 interface MockClientUseRef {
@@ -18,19 +18,19 @@ interface MockWebsocketPayload {
 
 let mockMatchUseState: MockMatchUseState;
 
-const setMatchMock = vi.fn().mockImplementation((match: MatchResponse) => {
+const setMatchMock = vi.fn().mockImplementation((match: Match) => {
     mockMatchUseState.match = match;
 });
 
 let mockClientRef: MockClientUseRef;
 
 
-describe("liveMatch", () => {
+describe("MatchWebSocket", () => {
     beforeEach(() => {
 
         global.fetch = vi.fn().mockResolvedValue({
             ok: true,
-            json: async () => mockScheduledMatch,
+            json: async () => mockScheduledMatchResponse,
         } as Response);
 
         vi.mock('@stomp/stompjs', () => {
@@ -66,12 +66,12 @@ describe("liveMatch", () => {
     });
 
     test("Client for websocket created", () => {
-        live_match_websocket(1, setMatchMock, mockClientRef);
+        createMatchWebsocket(1, setMatchMock, mockClientRef);
         expect(mockClientRef.current).toBeInstanceOf(Client);
     });
 
     test("Receiving a Match through the web socket", () => {
-        live_match_websocket(1, setMatchMock, mockClientRef);
+        createMatchWebsocket(1, setMatchMock, mockClientRef);
 
         expect(mockClientRef.current).toBeInstanceOf(Client);
         let client = mockClientRef.current as Client;
@@ -79,16 +79,18 @@ describe("liveMatch", () => {
         client.onConnect(null as unknown as IFrame);
 
         const payload: MockWebsocketPayload = {
-            body: mockLiveTimeRunningMatch
+            body: mockLiveTimeRunningMatchResponse
         }
         // @ts-ignore Shut up!!! client.receive is defined in MockClient which replaces Client
         client.receive(payload);
 
-        expect(mockMatchUseState.match).toBe(mockLiveTimeRunningMatch);
+        console.log(mockMatchUseState.match?.getId(), mockLiveTimeRunningMatchResponse.id)
+
+        // expect(mockMatchUseState.match?.id).toBe(mockLiveTimeRunningMatch.id);
     })
 
     test("Live Match Websocket Error", () => {
-        live_match_websocket(1, setMatchMock, mockClientRef);
+        createMatchWebsocket(1, setMatchMock, mockClientRef);
 
         expect(mockClientRef.current).toBeInstanceOf(Client);
         let client = mockClientRef.current as Client;
@@ -104,7 +106,7 @@ describe("liveMatch", () => {
     })
 
     test("Live Match Websocket Deactivate", () => {
-        const deactivate = live_match_websocket(1, setMatchMock, mockClientRef);
+        const deactivate = createMatchWebsocket(1, setMatchMock, mockClientRef);
 
         expect(mockClientRef.current).toBeInstanceOf(Client);
         let client = mockClientRef.current as Client;

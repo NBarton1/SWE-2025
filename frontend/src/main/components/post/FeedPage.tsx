@@ -1,59 +1,62 @@
-import {Container, Modal, Stack} from "@mantine/core";
-import {useEffect, useState} from "react";
+import {Container, Stack} from "@mantine/core";
+import {useCallback, useEffect, useState} from "react";
 import {getAllPosts} from "../../request/posts.ts";
 import {comparePosts, type Post} from "../../types/post.ts";
 import PostContainer from "./PostContainer.tsx";
-import MatchDetailsModalFields from "../schedule/MatchDetailsModalFields.tsx";
-import type {Match} from "../../types/match.ts";
-import {getTeams} from "../../request/teams.ts";
-import type {Team} from "../../types/team.ts";
 import PostCreate from "./PostCreate.tsx";
+import PostApprovalContainer from "./PostApprovalContainer.tsx";
 
 
 function FeedPage() {
 
     const [posts, setPosts] = useState<Post[]>([]);
-    const [teams, setTeams] = useState<Team[]>([]);
-    const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
 
     useEffect(() => {
         getAllPosts().then(posts => {
             posts.sort(comparePosts);
             setPosts(posts);
-        });
 
-        getTeams().then(setTeams);
+            console.log("posts", posts);
+        });
     }, []);
 
-    console.log("POST:", posts);
+    const setApprovedPost = useCallback((post: Post) => {
+        setPosts(prev => prev.map((p) => {
+            if (p.id === post.id) {
+                p.isApproved = true;
+            }
+            return p;
+        }));
+    }, []);
+
+    const deleteDisapprovedPost = useCallback((post: Post) => {
+        setPosts(prev => prev.filter((p) => p.id !== post.id));
+    }, []);
 
     return (
-        <Container size="md">
+        <Container
+            size="md"
+            data-testid="feed-page"
+        >
             <Stack gap="md">
                 <PostCreate setPosts={setPosts} clearFormOnSubmit/>
                 {posts.map((post) =>
-                    <PostContainer
-                        key={post.id}
-                        post={post}
-                        setPosts={setPosts}
-                        setSelectedMatch={setSelectedMatch}
-                    />
+                    post.isApproved ?
+                        <PostContainer
+                            key={post.id}
+                            post={post}
+                            setPosts={setPosts}
+                        />
+                        :
+                        <PostApprovalContainer
+                            key={post.id}
+                            post={post}
+                            onApprove={setApprovedPost}
+                            onDisapprove={deleteDisapprovedPost}
+                            hasApprovalText
+                        />
                 )}
             </Stack>
-
-            <Modal
-                opened={selectedMatch != null}
-                onClose={() => setSelectedMatch(null)}
-                size="lg"
-                data-testid="event-popup"
-            >
-                <MatchDetailsModalFields
-                    match={selectedMatch}
-                    setSelectedMatch={setSelectedMatch}
-                    setMatches={() => 0} // TODO: placeholder for now, fix to update posts
-                    teams={teams}
-                />
-            </Modal>
         </Container>
     );
 }

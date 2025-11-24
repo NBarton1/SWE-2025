@@ -21,6 +21,7 @@ const LikesButtons = ({
                 size="md"
                 onClick={() => handleReact(true)}
                 leftSection={<ThumbsUp size={18} />}
+                data-testid="like-button"
             >
                 {`${numLikes} (${Math.round(percentLikes)}%)`}
             </Button>
@@ -31,6 +32,7 @@ const LikesButtons = ({
                 size="md"
                 onClick={() => handleReact(false)}
                 leftSection={<ThumbsDown size={18} />}
+                data-testid="dislike-button"
             >
                 {`${numDislikes} (${Math.round(percentDislikes)}%)`}
             </Button>

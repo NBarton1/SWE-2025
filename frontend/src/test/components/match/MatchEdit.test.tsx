@@ -1,16 +1,20 @@
 import {vi} from "vitest";
-import {mockLiveTimeStoppedMatch, mockScheduledMatch, renderWithWrap} from "../../../../vitest.setup.tsx";
+import {
+    mockLiveTimeStoppedMatch,
+    mockScheduledMatch,
+    renderWithWrap
+} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import {type MatchResponse} from "../../../main/types/match.ts";
 import type {UpdateMatchRequest} from "../../../main/request/matches.ts";
 import MatchEdit from "../../../main/components/match/MatchEdit.tsx";
+import type {Match} from "../../../main/types/match.ts";
 
 
-const mockUpdateLiveMatch = vi.fn();
+const mockUpdateMatch = vi.fn();
 
 let mockProps: {
-    match: MatchResponse
-    updateLiveMatch: (req: UpdateMatchRequest) => void
+    match: Match
+    updateMatch: (req: UpdateMatchRequest) => void
 }
 
 describe("LiveMatchEdit", () => {
@@ -21,7 +25,7 @@ describe("LiveMatchEdit", () => {
     test("live match update components rendered for live match", async () => {
         mockProps = {
             match: mockLiveTimeStoppedMatch,
-            updateLiveMatch: mockUpdateLiveMatch,
+            updateMatch: mockUpdateMatch,
         };
 
         renderWithWrap(<MatchEdit {...mockProps} />);
@@ -35,7 +39,7 @@ describe("LiveMatchEdit", () => {
     test("live match update components not rendered for not live match", async () => {
         mockProps = {
             match: mockScheduledMatch,
-            updateLiveMatch: mockUpdateLiveMatch,
+            updateMatch: mockUpdateMatch,
         };
 
         renderWithWrap(<MatchEdit {...mockProps} />);

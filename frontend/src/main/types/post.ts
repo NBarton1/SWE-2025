@@ -11,6 +11,7 @@ export interface Post {
     creationTime: string,
     match: MatchResponse | null,
     parentId: number | null
+    isApproved: boolean
 }
 
 export function formatCreationTime(post: Post): string {

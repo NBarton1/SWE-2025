@@ -65,9 +65,8 @@ const DatePopup = ({ date, matches, teams, setMatches, setSelectedMatch }: DateP
                             <MatchDetailsForm
                                 match={match}
                                 teams={teams}
-                                matches={matches}
                                 setMatches={setMatches}
-                                setMatch={setSelectedMatch}
+                                setSelectedMatch={setSelectedMatch}
                             />
                         ))}
                     </Stack>

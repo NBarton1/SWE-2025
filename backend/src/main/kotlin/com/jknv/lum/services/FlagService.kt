@@ -19,6 +19,9 @@ class FlagService(
 
     fun createFlagByIds(postId: Long, accountId: Long): FlagDTO {
         val post = postService.getPostById(postId)
+
+        if (!post.isApproved) throw IllegalAccessException("Cannot flag unapproved post $post")
+
         val account = accountService.getAccountById(accountId)
 
         post.flagCount++

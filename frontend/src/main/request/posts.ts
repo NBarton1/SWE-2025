@@ -58,8 +58,8 @@ export const deletePost = async (id: number) => {
         return true;
     } catch (err) {
         console.error("Failed to delete", err);
+        return false
     }
-    return false
 };
 
 export const getChildren = async (post: Post) => {
@@ -72,6 +72,55 @@ export const getChildren = async (post: Post) => {
         return await res.json();
     } catch (err) {
         console.error("Failed to get children", err);
+        return [];
     }
-    return [];
 };
+
+export const getUnapprovedPostsForChildren = async (): Promise<Record<number, Post[]>> => {
+    try {
+        const res = await fetch(`http://localhost:8080/api/posts/unapproved`, {
+            method: "GET",
+            credentials: 'include',
+        });
+
+        return await res.json();
+    } catch (err) {
+        console.error("Failed to get unapproved", err);
+        return [];
+    }
+};
+
+export const getFlaggedPosts = async (): Promise<Post[]> => {
+    try {
+        const res = await fetch("http://localhost:8080/api/posts/flags", {
+            method: "GET",
+            credentials: 'include',
+        });
+
+        return await res.json()
+    } catch (err) {
+        console.error("Failed to get flagged posts", err)
+        return [];
+    }
+}
+
+export const approve = async (id: number): Promise<Post | null> => {
+    try {
+        const res = await fetch(`http://localhost:8080/api/posts/${id}/approve`, {
+            method: "PATCH",
+            credentials: 'include',
+        });
+
+        return await res.json();
+    } catch (err) {
+        console.error("Failed to approve", err)
+        return null;
+    }
+}
+
+export const disapprove = async (id: number): Promise<Response> => {
+    return await fetch(`http://localhost:8080/api/posts/${id}/disapprove`, {
+        method: "DELETE",
+        credentials: 'include',
+    });
+}

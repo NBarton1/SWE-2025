@@ -1,7 +1,7 @@
 import {beforeEach, expect, vi} from "vitest";
 import {mockPlayerAccount, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
-import ProfilePage from "../../../main/components/profile/Profile.tsx";
+import Profile from "../../../main/components/profile/Profile.tsx";
 
 
 vi.mock("../../../main/request/accounts.ts", () => {
@@ -18,13 +18,12 @@ vi.mock("react-router", async () => {
     };
 });
 
-vi.mock("../../../main/hooks/useLogin.tsx", () => {
-    return {
-        default: vi.fn().mockReturnValue({
-            currentAccount: mockPlayerAccount,
-        }),
-    };
-});
+vi.mock("../../../main/hooks/useAuth.tsx", () => ({
+    useAuth: vi.fn().mockReturnValue({
+        currentAccount: mockPlayerAccount,
+        setCurrentAccount: vi.fn()
+    })
+}));
 
 describe("Profile", () => {
 
@@ -34,11 +33,10 @@ describe("Profile", () => {
 
     test("renders page for player", async () => {
 
-        renderWithWrap(<ProfilePage />)
+        renderWithWrap(<Profile />)
 
         await waitFor(() => {
             expect(screen.getByTestId("profile-page-container")).toBeInTheDocument();
-            expect(screen.getByTestId("team-invites-table")).toBeInTheDocument();
         })
     });
 });

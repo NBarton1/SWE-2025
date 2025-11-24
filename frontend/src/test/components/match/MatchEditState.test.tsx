@@ -1,14 +1,14 @@
 import {expect, vi} from "vitest";
-import {mockScheduledMatch, renderWithWrap} from "../../../../vitest.setup.tsx";
+import {mockScheduledMatchResponse, renderWithWrap} from "../../../../vitest.setup.tsx";
 import {screen, waitFor} from "@testing-library/react";
 import {type MatchResponse} from "../../../main/types/match.ts";
 import type {UpdateMatchRequest} from "../../../main/request/matches.ts";
-import LiveMatchEditState from "../../../main/components/match/MatchEditState.tsx";
+import MatchEditState from "../../../main/components/match/MatchEditState.tsx";
 
 
 let mockProps: {
     match: MatchResponse
-    updateLiveMatch: (req: UpdateMatchRequest) => void
+    updateMatch: (req: UpdateMatchRequest) => void
 }
 
 describe("LiveMatchEditState", () => {
@@ -16,11 +16,11 @@ describe("LiveMatchEditState", () => {
         vi.clearAllMocks();
 
         mockProps = {
-            match: mockScheduledMatch,
-            updateLiveMatch: vi.fn()
+            match: mockScheduledMatchResponse,
+            updateMatch: vi.fn()
         }
 
-        renderWithWrap(<LiveMatchEditState {...mockProps} />);
+        renderWithWrap(<MatchEditState {...mockProps} />);
     });
 
     test("live match edit state components render", async () => {

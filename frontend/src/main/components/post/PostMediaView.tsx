@@ -7,10 +7,14 @@ interface PostMediaViewProps {
 }
 
 function PostMediaView({ content }: PostMediaViewProps) {
-    const isVideo = content.contentType?.startsWith('video/');
+    const isVideo = content.contentType?.startsWith("video/");
 
     return isVideo ? (
-        <AspectRatio ratio={16/9} mx="auto">
+        <AspectRatio
+            data-testid="post-media-view-video"
+            ratio={16/9}
+            mx="auto"
+        >
             <video
                 controls
                 style={{
@@ -21,7 +25,11 @@ function PostMediaView({ content }: PostMediaViewProps) {
             </video>
         </AspectRatio>
     ) : (
-        <AspectRatio ratio={16/9} mx="auto">
+        <AspectRatio
+            data-testid="post-media-view-image"
+            ratio={16/9}
+            mx="auto"
+        >
             <Image
                 src={content.downloadUrl}
                 fit="contain"

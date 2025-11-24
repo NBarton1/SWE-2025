@@ -1,9 +1,10 @@
-import {getMatch} from "../../request/matches.ts";
+import {getMatch, type UpdateMatchRequest} from "../../request/matches.ts";
 import {Client, type IMessage} from "@stomp/stompjs";
 import {Match, type MatchResponse} from "../../types/match.ts";
+import type {RefObject} from "react";
 
 
-export function live_match_websocket(
+export function createMatchWebsocket(
     matchId: number,
     setMatch: React.Dispatch<React.SetStateAction<Match|null>>,
     clientRef: React.RefObject<Client|null>
@@ -36,3 +37,27 @@ export function live_match_websocket(
         stompClient.deactivate().then(() => console.log("Deactivated"));
     };
 }
+
+export function updateMatchCallback(
+    matchId: number,
+    clientRef: RefObject<Client | null>
+) {
+    return (
+        req: UpdateMatchRequest
+    ) => {
+
+        const client = clientRef.current;
+
+        if (client?.connected) {
+
+            client.publish({
+                destination: `/app/match/live-update/${matchId}`,
+                body: JSON.stringify(req),
+            });
+        } else {
+            console.error("Not Connected");
+        }
+    };
+}
+
+
