@@ -1,5 +1,5 @@
 import { vi, describe, test, beforeEach, expect } from "vitest";
-import {renderWithWrap} from "../../../../vitest.setup.tsx";
+import {mockPlayerAccount, renderWithWrap} from "../../../../vitest.setup.tsx";
 import { screen, waitFor } from "@testing-library/react";
 import * as matchRequest from "../../../main/request/matches.ts";
 import * as teamRequest from "../../../main/request/teams.ts";
@@ -13,6 +13,14 @@ vi.mock("../../../main/components/schedule/Calendar.tsx", () => ({
 
 vi.mock("../../../main/components/schedule/ScheduleList.tsx", () => ({
     default: () => <div data-testid="schedule-list"/>
+}));
+
+
+vi.mock("../../../main/hooks/useAuth.tsx", () => ({
+    useAuth: vi.fn().mockReturnValue({
+        currentAccount: mockPlayerAccount,
+        setCurrentAccount: vi.fn()
+    })
 }));
 
 describe("Schedule", () => {
